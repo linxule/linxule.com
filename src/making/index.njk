@@ -544,7 +544,7 @@ marker: "making"
                 <h2 class="spread-title"><a href="{{ portrait.url }}">{{ portrait.data.title }}</a></h2>
                 <div class="spread-info">
                     {{ portrait.data.generator }}{% if portrait.data.settings %} · {{ portrait.data.settings }}{% endif %}<br>
-                    {% if portrait.data.prompter %}prompted by <a href="/making/prompter/{{ portrait.data.prompter | prompterFamily }}/">{{ portrait.data.prompter }}</a><br>{% endif %}
+                    {% if portrait.data.prompter %}prompted by <a href="/making/prompter/{{ portrait.data.prompter | prompterFamily }}/">{{ portrait.data.prompter | prompterFamily }}</a>{% if portrait.data.prompter | prompterModel %} · <a href="/making/prompter/{{ portrait.data.prompter | slugify }}/">{{ portrait.data.prompter | prompterModel }}</a>{% endif %}<br>{% endif %}
                     {{ portrait.data.date | readableDate }}
                 </div>
             </div>
