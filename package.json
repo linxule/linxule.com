@@ -11,5 +11,8 @@
     "@11ty/eleventy-img": "^6.0.4",
     "markdown-it": "^14.0.0",
     "markdown-it-footnote": "^4.0.0"
+  },
+  "devDependencies": {
+    "pagefind": "^1.4.0"
   }
 }
