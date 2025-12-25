@@ -20,7 +20,7 @@
     
     /* The bloom - violet on interaction */
     --bloom: #8b7089;
-    --bloom-glow: rgba(139, 112, 137, 0.12);
+    --bloom-glow: rgba(139, 112, 137, 0.15);
     
     /* Measure */
     --measure: 38rem;
