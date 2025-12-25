@@ -449,6 +449,67 @@ marker: "making"
     }
 
     /* ========================================
+       Mobile: Remove scroll-snap, simplify layout
+       ======================================== */
+
+    @media (max-width: 768px) {
+        /* Remove scroll-snap behavior */
+        .portrait-book {
+            scroll-snap-type: none;
+            height: auto;
+            overflow-y: visible;
+        }
+
+        .portrait-spread {
+            scroll-snap-align: none;
+            scroll-snap-stop: normal;
+            height: auto;
+            min-height: auto;
+            padding: 3rem 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .portrait-spread.header-spread {
+            padding: 4rem 1.5rem 3rem;
+        }
+
+        .header-spread .header-links {
+            top: 1.5rem;
+            right: 1.5rem;
+        }
+
+        /* Hide nav dots (no function without scroll-snap) */
+        .book-nav {
+            display: none;
+        }
+
+        /* Hide scroll hint */
+        .scroll-hint {
+            display: none;
+        }
+
+        /* Prompt stagger removed for mobile scanning */
+        .prompt-line:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .prompt-poem {
+            font-size: 0.95rem;
+        }
+
+        /* Images full color on mobile (no hover to earn) */
+        .specimen img {
+            filter: none;
+            opacity: 1;
+        }
+
+        /* Tools section */
+        .tools-section {
+            padding: 3rem 1.5rem;
+        }
+    }
+
+    /* ========================================
        Lightbox
        ======================================== */
 

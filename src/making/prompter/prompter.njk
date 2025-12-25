@@ -315,6 +315,48 @@ eleventyComputed:
     }
 
     /* ========================================
+       Mobile: Remove scroll-snap, simplify layout
+       ======================================== */
+
+    @media (max-width: 768px) {
+        .portrait-book {
+            scroll-snap-type: none;
+            height: auto;
+            overflow-y: visible;
+        }
+
+        .portrait-spread {
+            scroll-snap-align: none;
+            scroll-snap-stop: normal;
+            height: auto;
+            min-height: auto;
+            padding: 3rem 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .portrait-spread.header-spread {
+            padding: 4rem 1.5rem 3rem;
+        }
+
+        .book-nav {
+            display: none;
+        }
+
+        .scroll-hint {
+            display: none;
+        }
+
+        .prompt-line:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .specimen img {
+            filter: none;
+            opacity: 1;
+        }
+    }
+
+    /* ========================================
        Lightbox
        ======================================== */
 

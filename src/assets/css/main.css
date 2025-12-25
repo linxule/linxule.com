@@ -1010,8 +1010,19 @@ a:focus-visible {
 
 /* Writing book responsive */
 @media (max-width: 768px) {
+    /* Remove scroll-snap on mobile */
+    .writing-book {
+        scroll-snap-type: none;
+        height: auto;
+        overflow-y: visible;
+    }
+
     .essay-spread {
-        padding: 6rem 6vw;
+        scroll-snap-align: none;
+        scroll-snap-stop: normal;
+        height: auto;
+        min-height: auto;
+        padding: 3rem 1.5rem;
     }
 
     .essay-title {
@@ -1025,8 +1036,8 @@ a:focus-visible {
     }
 
     .spread-position {
-        top: 6rem;
-        right: 6vw;
+        top: 3rem;
+        right: 1.5rem;
     }
 }
 
