@@ -1,0 +1,70 @@
+---
+pagination:
+  data: collections.tagPages
+  size: 1
+  alias: tag
+permalink: /tag/{{ tag.slug }}/
+layout: layouts/base.njk
+marker: tag
+---
+
+<style>
+    /* Override base layout for full-bleed book */
+    {% if tag.writing.length >= 1 %}
+    main {
+        padding: 0;
+        max-width: none;
+        margin: 0;
+    }
+    {% endif %}
+
+    /* Tag header for empty state */
+    .tag-header {
+        margin-bottom: 2rem;
+    }
+
+    .tag-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+
+    .tag-name {
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: var(--ink);
+    }
+
+    .empty-tag {
+        padding: 8rem 4rem;
+        max-width: 600px;
+    }
+
+    .empty-tag p {
+        color: var(--ink-faint);
+        margin-bottom: 2rem;
+    }
+</style>
+
+{% if tag.writing.length >= 1 %}
+{# Writing-book for any number of essays #}
+{% set essays = tag.writing %}
+{% set headerTitle = tag.name %}
+{% set headerCount = tag.writing.length %}
+{% set backLink = "/writing/" %}
+{% include "components/writing-book.njk" %}
+
+{% else %}
+{# No writing posts - empty state #}
+<div class="empty-tag">
+    <header class="tag-header">
+        <div class="tag-label">tagged</div>
+        <h1 class="tag-name">{{ tag.name }}</h1>
+    </header>
+    <p>No essays found with this tag.</p>
+    <a href="/writing/" class="back-link">← all writing</a>
+</div>
+{% endif %}

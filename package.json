@@ -1,0 +1,15 @@
+{
+  "name": "xule-site",
+  "version": "1.0.0",
+  "description": "Personal website - book aesthetic, algorithmic age",
+  "scripts": {
+    "start": "eleventy --serve",
+    "build": "eleventy && npx pagefind --site _site"
+  },
+  "dependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-img": "^6.0.4",
+    "markdown-it": "^14.0.0",
+    "markdown-it-footnote": "^4.0.0"
+  }
+}

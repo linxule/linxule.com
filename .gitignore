@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build output
+_site/
+
+# System files
+**/.DS_Store
+
+# Local-only documentation (private workflows)
+LOCAL_MANUAL.md

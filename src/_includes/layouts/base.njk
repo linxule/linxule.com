@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="{{ site.language | default('en') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} · {% endif %}{{ site.title }}</title>
+
+    {# Meta Description #}
+    <meta name="description" content="{{ description | default(site.description) }}">
+    <meta name="author" content="{{ site.author }}">
+
+    {# Open Graph #}
+    <meta property="og:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
+    <meta property="og:description" content="{{ description | default(site.description) }}">
+    <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
+    <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+    <meta property="og:image" content="{{ site.url }}{{ ogImage | default('/assets/og-image.png') }}">
+
+    {# Twitter Card #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
+    <meta name="twitter:description" content="{{ description | default(site.description) }}">
+    <meta name="twitter:image" content="{{ site.url }}{{ ogImage | default('/assets/og-image.png') }}">
+
+    {# Favicon #}
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/assets/favicon-192.png" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+    {# Fonts - Preconnect for performance #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="alternate" type="application/atom+xml" title="{{ site.title }} - Writing" href="/feed.xml">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    
+    <div class="bloom-cursor" id="bloom"></div>
+    
+    <nav class="spine">
+        <a href="/" class="spine-name">XULE LIN</a>
+        {% if marker %}
+        <span class="spine-marker">{{ marker }}</span>
+        {% endif %}
+    </nav>
+    
+    <main>
+        {{ content | safe }}
+    </main>
+    
+    {% if rendering %}
+    <div class="rendering">{{ rendering }}</div>
+    {% endif %}
+    
+    <script>
+        // Bloom cursor effect
+        const bloom = document.getElementById('bloom');
+        document.addEventListener('mousemove', (e) => {
+            bloom.style.left = e.clientX + 'px';
+            bloom.style.top = e.clientY + 'px';
+        });
+
+        // External links open in new tab
+        document.querySelectorAll('a[href^="http"]').forEach(link => {
+            if (!link.href.includes(window.location.hostname)) {
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            }
+        });
+
+        // Enable browser scroll restoration
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'auto';
+        }
+
+        // Temporarily disable smooth scroll during back/forward navigation
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                document.documentElement.style.scrollBehavior = 'auto';
+                setTimeout(() => {
+                    document.documentElement.style.scrollBehavior = 'smooth';
+                }, 100);
+            }
+        });
+
+        // Scroll position restoration for in-page navigation
+        (function() {
+            const currentPath = window.location.pathname;
+
+            // Check if we need to restore scroll position
+            const savedScroll = sessionStorage.getItem('scrollRestore');
+            if (savedScroll) {
+                try {
+                    const { path, position } = JSON.parse(savedScroll);
+                    if (path === currentPath) {
+                    // Disable smooth scroll, restore position, re-enable
+                    document.documentElement.style.scrollBehavior = 'auto';
+                    window.scrollTo(0, position);
+                    sessionStorage.removeItem('scrollRestore');
+                    setTimeout(() => {
+                        document.documentElement.style.scrollBehavior = 'smooth';
+                    }, 100);
+                    } else {
+                        sessionStorage.removeItem('scrollRestore');
+                    }
+                } catch (e) {
+                    // Corrupted data, clean up and continue
+                    sessionStorage.removeItem('scrollRestore');
+                }
+            }
+
+            // Save scroll position when clicking links to detail pages
+            // (links that go deeper into the site)
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (!link) return;
+
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('http')) return;
+
+                // Save current scroll position with current path
+                sessionStorage.setItem('scrollPos_' + currentPath, window.scrollY);
+            });
+
+            // Check if we're returning to a page we left
+            const savedPos = sessionStorage.getItem('scrollPos_' + currentPath);
+            if (savedPos && document.referrer) {
+                // Only restore if coming from a child page (longer path)
+                try {
+                    const referrerPath = new URL(document.referrer).pathname;
+                    if (referrerPath.startsWith(currentPath) && referrerPath !== currentPath) {
+                        document.documentElement.style.scrollBehavior = 'auto';
+                        window.scrollTo(0, parseInt(savedPos));
+                        sessionStorage.removeItem('scrollPos_' + currentPath);
+                        setTimeout(() => {
+                            document.documentElement.style.scrollBehavior = 'smooth';
+                        }, 100);
+                    }
+                } catch (e) {
+                    // Malformed referrer, skip restoration
+                }
+            }
+        })();
+    </script>
+    
+</body>
+</html>

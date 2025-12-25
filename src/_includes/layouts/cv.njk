@@ -1,0 +1,238 @@
+---
+layout: layouts/base.njk
+marker: "cv"
+---
+
+<style>
+    main {
+        padding: 10rem 4rem 6rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .cv-container {
+        position: relative;
+    }
+
+    .page-marker {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    /* CV Header - name (h2) */
+    .cv-content > h2:first-of-type {
+        font-size: 1.8rem;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+        border: none;
+        padding: 0;
+        margin-top: 0;
+    }
+
+    /* Contact info (h3s after name) */
+    .cv-content > h3 {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        font-style: normal;
+        font-weight: 400;
+        margin: 0.25rem 0;
+        line-height: 1.8;
+    }
+
+    .cv-content > h3 a {
+        color: var(--ink-faint);
+    }
+
+    .cv-content > h3 a:hover {
+        color: var(--bloom);
+    }
+
+    /* Section headers (h1) */
+    .cv-content h1 {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin: 3rem 0 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--ink-ghost);
+        font-weight: 400;
+    }
+
+    .cv-content h1:first-of-type {
+        margin-top: 2rem;
+    }
+
+    /* Research interests paragraph */
+    .cv-content > p {
+        font-size: 0.95rem;
+        color: var(--ink-light);
+        line-height: 2;
+        max-width: 650px;
+    }
+
+    /* The accident: "What forms of organizing emerge?" */
+    .cv-content > p em {
+        font-style: italic;
+    }
+
+    /* Entry lists */
+    .cv-content > ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .cv-content > ul > li {
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+
+    /* Handle <br/> spacing between major entries */
+    .cv-content > ul > li > br:first-child {
+        display: block;
+        content: "";
+        margin-top: 1rem;
+    }
+
+    /* Nested lists (details under entries) */
+    .cv-content > ul > li > ul {
+        list-style: none;
+        padding: 0;
+        margin: 0.25rem 0 0 1.5rem;
+    }
+
+    .cv-content > ul > li > ul > li {
+        font-size: 0.9rem;
+        color: var(--ink-light);
+        line-height: 1.8;
+        margin-bottom: 0.25rem;
+        position: relative;
+        padding-left: 1rem;
+    }
+
+    .cv-content > ul > li > ul > li::before {
+        content: "–";
+        position: absolute;
+        left: 0;
+        color: var(--ink-ghost);
+    }
+
+    /* Third level nesting */
+    .cv-content > ul > li > ul > li > ul {
+        list-style: none;
+        padding: 0;
+        margin: 0.25rem 0 0.5rem 0.5rem;
+    }
+
+    .cv-content > ul > li > ul > li > ul > li {
+        font-size: 0.85rem;
+        color: var(--ink-light);
+        line-height: 1.7;
+        margin-bottom: 0.25rem;
+        position: relative;
+        padding-left: 1rem;
+    }
+
+    .cv-content > ul > li > ul > li > ul > li::before {
+        content: "·";
+        position: absolute;
+        left: 0.2rem;
+        color: var(--ink-ghost);
+    }
+
+    /* Fourth level nesting */
+    .cv-content > ul > li > ul > li > ul > li > ul {
+        list-style: none;
+        padding: 0;
+        margin: 0.25rem 0 0.5rem 0.5rem;
+    }
+
+    .cv-content > ul > li > ul > li > ul > li > ul > li {
+        font-size: 0.8rem;
+        color: var(--ink-faint);
+        line-height: 1.6;
+        margin-bottom: 0.2rem;
+        position: relative;
+        padding-left: 1rem;
+    }
+
+    .cv-content > ul > li > ul > li > ul > li > ul > li::before {
+        content: "·";
+        position: absolute;
+        left: 0.2rem;
+        color: var(--ink-ghost);
+    }
+
+    /* Links */
+    .cv-content a {
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 0.15em;
+        transition: color 0.2s ease, text-decoration-color 0.2s ease;
+    }
+
+    .cv-content a:hover {
+        color: var(--bloom);
+        text-decoration-color: var(--bloom);
+    }
+
+    /* Emphasis */
+    .cv-content strong {
+        font-weight: 500;
+    }
+
+    /* Professional affiliations - plain text with line breaks */
+    .cv-content > p br {
+        display: block;
+        content: "";
+        margin-bottom: 0.25rem;
+    }
+
+    /* Footer */
+    .cv-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .cv-updated {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-ghost);
+    }
+
+    @media print {
+        main { padding: 2rem; }
+        .cv-footer { display: none; }
+        .page-marker { display: none; }
+    }
+
+    @media (max-width: 768px) {
+        main {
+            padding: 8rem 1.5rem 4rem;
+        }
+    }
+</style>
+
+<div class="cv-container">
+    <div class="page-marker">005</div>
+    <div class="cv-content">
+        {{ content | safe }}
+    </div>
+</div>
+
+<footer class="cv-footer">
+    <a href="/" class="back-link">← return</a>
+    <span class="cv-updated">updated {{ page.date | readableDate }}</span>
+</footer>

@@ -1,0 +1,247 @@
+---
+layout: layouts/base.njk
+title: writing
+marker: "writing"
+---
+
+<style>
+    main {
+        padding: 12rem 4rem 6rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .page-header {
+        margin-bottom: 6rem;
+        position: relative;
+    }
+
+    .header-links {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .search-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        color: var(--ink-faint);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .search-link:hover {
+        color: var(--bloom);
+    }
+
+    .page-marker {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .page-title {
+        font-size: 1rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+    }
+    
+    .page-description {
+        font-size: 0.9rem;
+        color: var(--ink-light);
+        max-width: 450px;
+    }
+    
+    .page-description a {
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+    }
+    
+    .entries {
+        padding-left: 180px;
+    }
+    
+    .entry {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .entry-link {
+        display: inline-block;
+        text-decoration: none;
+        transition: transform 0.2s ease;
+    }
+    
+    .entry-link:hover {
+        transform: translateX(0.5rem);
+    }
+    
+    .entry-series {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-faint);
+        letter-spacing: 0.1em;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .entry-title {
+        font-size: 1.1rem;
+        font-weight: 400;
+        color: var(--ink-light);
+        transition: color 0.2s ease;
+    }
+
+    .entry-title.accident {
+        color: var(--accident);
+    }
+
+    .entry-link:hover .entry-title {
+        color: var(--bloom);
+    }
+
+    .entry-link:hover .entry-title.accident {
+        color: var(--accident);
+    }
+
+    .entry-date {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-ghost);
+        margin-left: 1rem;
+    }
+
+    .entry-subtitle {
+        display: block;
+        font-size: 0.85rem;
+        font-style: italic;
+        color: var(--ink-faint);
+        margin-top: 0.15rem;
+        margin-left: 1rem;
+    }
+
+    .entry-link:hover .entry-subtitle {
+        color: var(--ink-light);
+    }
+
+    /* Stagger entries - 7-entry repeating wave */
+    .entry:nth-child(7n+1) { padding-left: 0; }
+    .entry:nth-child(7n+2) { padding-left: 2rem; }
+    .entry:nth-child(7n+3) { padding-left: 4rem; }
+    .entry:nth-child(7n+4) { padding-left: 5rem; }
+    .entry:nth-child(7n+5) { padding-left: 3rem; }
+    .entry:nth-child(7n+6) { padding-left: 1.5rem; }
+    .entry:nth-child(7n)   { padding-left: 0.5rem; }
+    
+    .page-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .subscribe-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-faint);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+    }
+
+    .subscribe-link:hover {
+        color: var(--bloom);
+    }
+
+    /* Filter chips */
+    .filter-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        margin-bottom: 4rem;
+    }
+
+    .filter-chip {
+        color: var(--ink-faint);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .filter-chip:not(.active) {
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 3px;
+    }
+
+    .filter-chip:hover {
+        color: var(--bloom);
+    }
+
+    .filter-chip.active {
+        color: var(--ink);
+        text-decoration: none;
+    }
+
+    @media (max-width: 900px) {
+        main {
+            padding: 8rem 2rem 4rem;
+        }
+        
+        .entries {
+            padding-left: 0;
+        }
+        
+        .entry:nth-child(n) {
+            padding-left: 0;
+        }
+    }
+</style>
+
+<header class="page-header">
+    <h1 class="page-title">writing</h1>
+    <p class="page-description">
+        Recent work published at <a href="https://threadcounts.substack.com/">Thread Counts</a>
+        (also on <a href="https://github.com/linxule/loom">GitHub</a> with Chinese versions).
+        Archive includes earlier tutorials and resources.
+    </p>
+    <div class="header-links">
+        <a href="/search/" class="search-link">search</a>
+        <span class="page-marker">003</span>
+    </div>
+</header>
+
+<nav class="filter-chips">
+    <span class="filter-chip active">all</span>
+    {%- for series in collections.writingBySeries -%}
+    <a href="/writing/series/{{ series.slug }}/" class="filter-chip">{{ series.name | lower }}</a>
+    {%- endfor -%}
+</nav>
+
+<div class="entries">
+    {%- for post in collections.writing -%}
+    <div class="entry">
+        <a href="{{ post.url }}" class="entry-link">
+            {%- if post.data.series -%}
+            <span class="entry-series">{{ post.data.series }}</span>
+            {%- endif -%}
+            <span class="entry-title{% if post.data.accident %} accident{% endif %}">{{ post.data.title }}</span>
+            <span class="entry-date">{{ post.date | readableDate }}</span>
+            {%- if post.data.subtitle -%}
+            <span class="entry-subtitle">{{ post.data.subtitle }}</span>
+            {%- endif -%}
+        </a>
+    </div>
+    {%- endfor -%}
+</div>
+
+<footer class="page-footer">
+    <a href="/" class="back-link">← return</a>
+    <a href="/feed.xml" class="subscribe-link">subscribe via rss →</a>
+</footer>

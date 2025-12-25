@@ -1,0 +1,456 @@
+---
+layout: layouts/base.njk
+marker: "making"
+pagination:
+  data: collections.portraitsByPrompterFamily
+  size: 1
+  alias: family
+permalink: /making/prompter/{{ family.slug }}/
+eleventyComputed:
+  title: "{{ family.name }} · making"
+---
+
+<style>
+    /* Override base layout for full-bleed book */
+    main {
+        padding: 0;
+        max-width: none;
+        margin: 0;
+    }
+
+    /* ========================================
+       Portrait Book - Scroll Snap Container
+       ======================================== */
+
+    .portrait-book {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .portrait-book::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+    }
+
+    /* ========================================
+       Individual Spread
+       ======================================== */
+
+    .portrait-spread {
+        height: 100vh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        padding: 8rem 4rem;
+        align-content: center;
+        box-sizing: border-box;
+    }
+
+    /* ========================================
+       Header Spread (First Page)
+       ======================================== */
+
+    .portrait-spread.header-spread {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding-left: 8rem;
+    }
+
+    .header-spread .back-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-faint);
+        text-decoration: none;
+        margin-bottom: 2rem;
+        transition: color 0.2s ease;
+    }
+
+    .header-spread .back-link:hover {
+        color: var(--bloom);
+    }
+
+    .header-spread .prompter-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+    }
+
+    .header-spread .page-title {
+        font-size: 1.8rem;
+        font-weight: 300;
+        font-style: italic;
+        margin-bottom: 1rem;
+    }
+
+    .header-spread .page-count {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        margin-bottom: 3rem;
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+        position: absolute;
+        bottom: 4rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-ghost);
+        text-align: center;
+        opacity: 1;
+        transition: opacity 0.5s ease;
+    }
+
+    .scroll-hint.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* ========================================
+       Portrait Spread Layout
+       ======================================== */
+
+    .spread-prompt {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .prompt-poem {
+        margin-bottom: 2rem;
+    }
+
+    .prompt-line {
+        display: block;
+        font-size: 1.1rem;
+        line-height: 2;
+        color: var(--ink-faint);
+        transition: color 0.3s ease;
+    }
+
+    .prompt-line:nth-child(1) { margin-left: 0; }
+    .prompt-line:nth-child(2) { margin-left: 1.5rem; }
+    .prompt-line:nth-child(3) { margin-left: 0.75rem; }
+    .prompt-line:nth-child(4) { margin-left: 2.25rem; }
+    .prompt-line:nth-child(5) { margin-left: 0.5rem; }
+    .prompt-line:nth-child(6) { margin-left: 1.75rem; }
+    .prompt-line:nth-child(7) { margin-left: 1rem; }
+    .prompt-line:nth-child(8) { margin-left: 2rem; }
+
+    .prompt-poem:hover .prompt-line {
+        color: var(--ink-light);
+    }
+
+    .prompt-line.accident {
+        color: var(--accident);
+    }
+
+    .spread-meta {
+        border-top: 1px solid var(--ink-ghost);
+        padding-top: 1.5rem;
+    }
+
+    .spread-title {
+        font-size: 0.95rem;
+        font-weight: 300;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+    }
+
+    .spread-title a {
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .spread-title a:hover {
+        color: var(--bloom);
+    }
+
+    .spread-info {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-faint);
+        line-height: 1.8;
+    }
+
+    .spread-info a {
+        color: var(--ink-faint);
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 2px;
+    }
+
+    .spread-info a:hover {
+        color: var(--bloom);
+    }
+
+    /* ========================================
+       Specimen Grid (Right Side)
+       ======================================== */
+
+    .spread-specimens {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        align-self: center;
+    }
+
+    /* Portrait orientation: constrained height */
+    .portrait-spread[data-orientation="portrait"] .spread-specimens {
+        grid-template-columns: 1fr 1fr;
+        max-height: 65vh;
+        overflow: hidden;
+    }
+
+    .portrait-spread[data-orientation="portrait"] .specimen img {
+        max-height: 30vh;
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+        margin: 0 auto;
+    }
+
+    .specimen {
+        position: relative;
+        overflow: hidden;
+        background: var(--paper-dark);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .specimen img {
+        width: 100%;
+        height: auto;
+        display: block;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: all 0.5s ease;
+    }
+
+    .specimen:hover img {
+        filter: grayscale(0%);
+        opacity: 1;
+    }
+
+    .specimen-num {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.5rem;
+        color: var(--bloom);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .specimen:hover .specimen-num {
+        opacity: 1;
+    }
+
+    /* ========================================
+       Position Indicator (Nav Dots)
+       ======================================== */
+
+    .book-nav {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.5rem;
+        z-index: 100;
+    }
+
+    .book-nav-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ink-ghost);
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border: none;
+        padding: 0;
+    }
+
+    .book-nav-dot:hover {
+        background: var(--bloom);
+    }
+
+    .book-nav-dot.active {
+        background: var(--ink);
+    }
+
+    /* ========================================
+       Responsive
+       ======================================== */
+
+    @media (max-width: 900px) {
+        .portrait-spread {
+            grid-template-columns: 1fr;
+            padding: 6rem 2rem;
+            gap: 2rem;
+        }
+
+        .portrait-spread.header-spread {
+            padding: 6rem 2rem;
+        }
+
+        .spread-specimens {
+            max-width: 300px;
+        }
+    }
+
+    /* ========================================
+       Lightbox
+       ======================================== */
+
+    .lightbox {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(26, 26, 26, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        cursor: zoom-out;
+    }
+
+    .lightbox.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .lightbox img {
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .lightbox-close:hover {
+        color: var(--paper);
+    }
+</style>
+
+<div class="portrait-book" id="portrait-book">
+
+    <!-- Header Spread -->
+    <section class="portrait-spread header-spread" data-spread="0">
+        <a href="/making/" class="back-link">← all portraits</a>
+        <div class="prompter-label">prompted by</div>
+        <h1 class="page-title">{{ family.name }}</h1>
+        <p class="page-count">{{ family.count }} set{% if family.count != 1 %}s{% endif %}</p>
+
+        <div class="scroll-hint" id="scroll-hint">
+            ↓ scroll to explore
+        </div>
+    </section>
+
+    <!-- Portrait Spreads -->
+    {%- for portrait in family.items -%}
+    <section class="portrait-spread" data-spread="{{ loop.index }}" data-orientation="{{ portrait.data.orientation | default('landscape') }}">
+
+        <div class="spread-prompt">
+            <div class="prompt-poem">
+                {%- for line in portrait.data.prompt -%}
+                <span class="prompt-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                {%- endfor -%}
+            </div>
+
+            <div class="spread-meta">
+                <h2 class="spread-title"><a href="{{ portrait.url }}">{{ portrait.data.title }}</a></h2>
+                <div class="spread-info">
+                    {{ portrait.data.generator }}{% if portrait.data.settings %} · {{ portrait.data.settings }}{% endif %}<br>
+                    {{ portrait.data.prompter }}<br>
+                    {{ portrait.data.date | readableDate }}
+                </div>
+            </div>
+        </div>
+
+        <div class="spread-specimens">
+            {%- for image in portrait.data.images -%}
+            <figure class="specimen" data-src="{{ image.src }}">
+                {% optimizedImage image.src, image.alt | default(portrait.data.title), "(max-width: 900px) 50vw, 25vw" %}
+                <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
+            </figure>
+            {%- endfor -%}
+        </div>
+
+    </section>
+    {%- endfor -%}
+
+</div>
+
+<!-- Navigation Dots -->
+<nav class="book-nav" id="book-nav">
+    <button class="book-nav-dot active" data-target="0" aria-label="Go to introduction"></button>
+    {%- for portrait in family.items -%}
+    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ portrait.data.title }}"></button>
+    {%- endfor -%}
+</nav>
+
+<script>
+(function() {
+    const book = document.getElementById('portrait-book');
+    const dots = document.querySelectorAll('.book-nav-dot');
+    const spreads = document.querySelectorAll('.portrait-spread');
+    const scrollHint = document.getElementById('scroll-hint');
+
+    // Update active dot on scroll
+    book.addEventListener('scroll', () => {
+        const scrollPos = book.scrollTop;
+        const spreadHeight = window.innerHeight;
+        const currentIndex = Math.round(scrollPos / spreadHeight);
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+        });
+
+        // Hide scroll hint after first scroll
+        if (scrollPos > 50 && scrollHint) {
+            scrollHint.classList.add('hidden');
+        }
+    });
+
+    // Click dot to jump to spread
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            spreads[i].scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+})();
+</script>
+
+{% include "components/lightbox.njk" %}

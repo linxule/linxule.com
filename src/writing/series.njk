@@ -1,0 +1,111 @@
+---
+pagination:
+  data: collections.writingBySeries
+  size: 1
+  alias: series
+permalink: /writing/series/{{ series.slug }}/
+layout: layouts/base.njk
+marker: writing
+eleventyComputed:
+  title: "{{ series.name }} · writing"
+---
+
+<style>
+    main {
+        padding: 0;
+        max-width: none;
+        margin: 0;
+    }
+</style>
+
+{% set essays = series.items %}
+{% set headerTitle = series.name %}
+{% set headerCount = series.count %}
+{% set backLink = "/writing/" %}
+{% set backText = "← all writing" %}
+
+{# Unique poems and descriptions for each series #}
+{% if series.slug == "loom" %}
+{% set headerPoem %}
+        │   │   │   │   │
+        │   │   │   │   │
+    ────┼───┼───<span class="a">◆</span>───┼───┼────
+        │   │   │   │   │
+        │   │   │   │   │
+{% endset %}
+{% set headerDescription %}
+      Weaving meaning
+          in the <span class="a">third space</span>
+              between
+          human and AI.
+      A growing series
+  on collaborative understanding.
+{% endset %}
+
+{% elif series.slug == "singles" %}
+{% set headerPoem %}
+                  ·
+          ·                   ·
+                      <span class="a">◆</span>
+      ·
+                  ·
+{% endset %}
+{% set headerDescription %}
+            <span class="a">Scattered</span>
+    observations.
+                        Standalone
+        pieces responding
+                to moments
+    in the AI landscape.
+{% endset %}
+
+{% elif series.slug == "epistemic-voids" %}
+{% set headerPoem %}
+        [               ]
+                    ?
+        [       <span class="a">◆</span>       ]
+{% endset %}
+{% set headerDescription %}
+    <span class="a">Gaps</span> in AI discourse—
+        facades,
+            fallacies,
+                false ceilings.
+
+    A critique of hollow reasoning.
+{% endset %}
+
+{% elif series.slug == "organizational-futures" %}
+{% set headerPoem %}
+            · · · · ·
+             ╲  │  ╱
+              ╲ │ ╱
+                <span class="a">◆</span>
+              ╱ │ ╲
+             ╱  │  ╲
+            · · · · ·
+{% endset %}
+{% set headerDescription %}
+        Nodes
+            <span class="a">converging</span>
+                in the
+            narrow corridor.
+        Visions of
+    collaboration after AGI.
+{% endset %}
+
+{% elif series.slug == "archive" %}
+{% set headerPoem %}
+        ═══════════════
+          ───────────
+            ───────
+              ─<span class="a">◆</span>─
+{% endset %}
+{% set headerDescription %}
+    <span class="a">Layered</span> time, stacked foundations.
+      Older tutorials and resources—
+        scaffolding for thought.
+{% endset %}
+
+{% endif %}
+
+{% include "components/writing-book.njk" %}

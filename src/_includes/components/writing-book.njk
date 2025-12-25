@@ -1,0 +1,129 @@
+{#
+   Writing Book Component - Scroll-snap title page spreads for essays
+
+   Required variables:
+   - essays: array of writing posts
+   - headerTitle: tag/series name
+   - headerCount: number of essays
+
+   Optional variables:
+   - headerDescription: description text for header spread
+   - headerPoem: ASCII concrete poem for visual interest
+   - backLink: where to go back (default: /writing/)
+   - backText: back link text (default: ← all writing)
+#}
+
+<div class="writing-book" id="writing-book">
+
+    <!-- Header Spread -->
+    <section class="essay-spread header-spread" data-spread="0">
+        {% if headerPoem %}
+        <pre class="header-poem">{{ headerPoem | safe }}</pre>
+        {% endif %}
+        <h1 class="header-title">{{ headerTitle }}</h1>
+        {% if headerDescription %}
+        <pre class="header-description">{{ headerDescription | safe }}</pre>
+        {% endif %}
+        <span class="header-count">{{ headerCount }} essay{% if headerCount != 1 %}s{% endif %}</span>
+        <nav class="header-nav">
+            <a href="{{ backLink | default('/writing/') }}" class="back-link">{{ backText | default('← all writing') }}</a>
+            <span class="scroll-hint" id="writing-scroll-hint">↓ scroll</span>
+        </nav>
+    </section>
+
+    <!-- Essay Spreads -->
+    {% for essay in essays %}
+    <section class="essay-spread" data-spread="{{ loop.index }}">
+        <span class="spread-position">{{ loop.index | padStart(3, '0') }} / {{ essays | length | padStart(3, '0') }}</span>
+
+        {% if essay.data.series %}
+        <div class="essay-series">{{ essay.data.series }}</div>
+        {% endif %}
+
+        <h2 class="essay-title">{{ essay.data.title }}</h2>
+
+        {% if essay.data.subtitle %}
+        <p class="essay-subtitle">{{ essay.data.subtitle }}</p>
+        {% endif %}
+
+        <div class="essay-horizon"></div>
+
+        <p class="essay-opening">
+            "{{ essay.data.opening | default(essay.templateContent | excerpt(250)) }}"
+        </p>
+
+        <div class="essay-meta">
+            {% if essay.data.authors %}with {{ essay.data.authors | join(", ") }}<br>{% endif %}
+            {{ essay.date | readableDate }}
+        </div>
+
+        <a href="{{ essay.url }}" class="essay-read-link">read essay →</a>
+    </section>
+    {% endfor %}
+
+</div>
+
+<!-- Navigation Dots -->
+<nav class="book-nav" id="writing-nav">
+    <button class="book-nav-dot active" data-target="0" aria-label="Go to introduction"></button>
+    {% for essay in essays %}
+    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ essay.data.title }}"></button>
+    {% endfor %}
+</nav>
+
+<script>
+(function() {
+    const book = document.getElementById('writing-book');
+    const dots = document.querySelectorAll('#writing-nav .book-nav-dot');
+    const spreads = book.querySelectorAll('.essay-spread');
+    const scrollHint = document.getElementById('writing-scroll-hint');
+
+    // Update active dot on scroll
+    book.addEventListener('scroll', () => {
+        const scrollPos = book.scrollTop;
+        const spreadHeight = window.innerHeight;
+        const currentIndex = Math.round(scrollPos / spreadHeight);
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+        });
+
+        // Hide scroll hint after first scroll
+        if (scrollPos > 50 && scrollHint) {
+            scrollHint.classList.add('hidden');
+        }
+    });
+
+    // Click dot to jump to spread
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            spreads[i].scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Keyboard navigation
+    book.addEventListener('keydown', (e) => {
+        const currentScroll = book.scrollTop;
+        const spreadHeight = window.innerHeight;
+
+        if (e.key === 'ArrowDown' || e.key === ' ') {
+            e.preventDefault();
+            const nextIndex = Math.min(
+                Math.floor(currentScroll / spreadHeight) + 1,
+                spreads.length - 1
+            );
+            spreads[nextIndex].scrollIntoView({ behavior: 'smooth' });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevIndex = Math.max(
+                Math.ceil(currentScroll / spreadHeight) - 1,
+                0
+            );
+            spreads[prevIndex].scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    // Make book focusable for keyboard nav
+    book.setAttribute('tabindex', '0');
+})();
+</script>

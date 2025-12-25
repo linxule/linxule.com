@@ -1,0 +1,267 @@
+---
+layout: layouts/base.njk
+marker: "thinking"
+---
+
+<style>
+    main {
+        padding: 10rem 4rem 6rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .spread-opening {
+        min-height: 80vh;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 4rem;
+        align-items: end;
+        padding-bottom: 8rem;
+        position: relative;
+    }
+
+    .page-marker {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .territory-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+
+    .thesis-statement {
+        font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+        font-weight: 300;
+        line-height: 1.9;
+        max-width: 500px;
+    }
+
+    .boundary-pairs {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 3rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--ink-faint);
+        letter-spacing: 0.1em;
+    }
+
+    .boundary-pair {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .boundary-pair:hover {
+        color: var(--bloom);
+    }
+
+    .boundary-pair .slash {
+        color: var(--ink-ghost);
+    }
+
+    .horizon {
+        width: 100%;
+        height: 1px;
+        background: var(--ink-ghost);
+        margin: 6rem 0;
+    }
+
+    .spread-problem {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 4rem;
+        padding: 4rem 0;
+    }
+
+    .section-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        padding-top: 0.5rem;
+    }
+
+    .section-content {
+        max-width: 600px;
+    }
+
+    .section-content p {
+        color: var(--ink-light);
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+        line-height: 1.9;
+    }
+
+    .observations-intro {
+        font-size: 1rem;
+        color: var(--ink-light);
+        max-width: 500px;
+        margin-bottom: 4rem;
+        line-height: 1.9;
+        font-style: italic;
+    }
+
+    .observation {
+        padding: 2rem 0;
+        margin-left: 3rem;
+    }
+
+    .observation-title {
+        font-size: 1.1rem;
+        font-weight: 400;
+        font-style: italic;
+        margin-bottom: 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .observation-title:hover {
+        color: var(--bloom);
+    }
+
+    .observation-body {
+        color: var(--ink-light);
+        font-size: 0.95rem;
+        line-height: 2;
+    }
+
+    .observation-body .fragment {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .observation:nth-child(2) { margin-left: 6rem; }
+    .observation:nth-child(3) { margin-left: 9rem; }
+    .observation:nth-child(4) { margin-left: 12rem; }
+    .observation:nth-child(5) { margin-left: 15rem; }
+
+    .spread-method {
+        padding: 4rem 0;
+    }
+
+    .method-text {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem 3rem;
+        max-width: 800px;
+    }
+
+    .method-item {
+        font-size: 0.9rem;
+        color: var(--ink-faint);
+        font-style: italic;
+        transition: color 0.3s ease;
+    }
+
+    .method-item:hover {
+        color: var(--bloom);
+    }
+
+    .page-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    @media (max-width: 900px) {
+        main {
+            padding: 8rem 2rem 4rem;
+        }
+
+        .spread-opening,
+        .spread-problem {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .observation:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .method-text {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+
+<section class="spread-opening">
+    <span class="page-marker">001</span>
+    <div>
+        <div class="territory-label">Thesis</div>
+    </div>
+    <div>
+        <p class="thesis-statement">{{ thesis }}</p>
+        <div class="boundary-pairs">
+            {% for pair in boundaries %}
+            <span class="boundary-pair">{{ pair.left }} <span class="slash">/</span> {{ pair.right }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="horizon"></div>
+
+<section class="spread-problem">
+    <div class="section-label">The problem<br>I keep coming back to</div>
+    <div class="section-content">
+        {% for p in problem %}
+        <p>{{ p }}</p>
+        {% endfor %}
+    </div>
+</section>
+
+<div class="horizon"></div>
+
+<section class="observations">
+    <p class="observations-intro">{{ observations_intro }}</p>
+
+    {% for obs in observations %}
+    <div class="observation">
+        <div class="observation-title">{{ obs.title }}</div>
+        <div class="observation-body">
+            {% for frag in obs.fragments %}
+            <span class="fragment{% if frag.accident %} accident{% endif %}">{{ frag.text | default(frag) }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</section>
+
+<div class="horizon"></div>
+
+<section class="spread-problem">
+    <div class="section-label">What I'm<br>working on</div>
+    <div class="section-content">
+        {% for item in working_on %}
+        <p>{{ item }}</p>
+        {% endfor %}
+    </div>
+</section>
+
+<div class="horizon"></div>
+
+<section class="spread-method">
+    <div class="section-label" style="margin-bottom: 2rem;">How I tend to work</div>
+    <div class="method-text">
+        {% for method in methods %}
+        <span class="method-item">{{ method }}</span>
+        {% endfor %}
+    </div>
+</section>
+
+<footer class="page-footer">
+    <a href="/" class="back-link">← return</a>
+</footer>

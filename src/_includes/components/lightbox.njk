@@ -1,0 +1,130 @@
+{#
+  Shared Lightbox Component
+
+  Usage: {% include "components/lightbox.njk" %}
+
+  Requires:
+  - .specimen elements with data-src attribute
+  - Images inside specimens should have alt text
+
+  Features:
+  - Keyboard accessible (Enter/Space to open, Escape to close)
+  - Focus trap when open
+  - Focus returns to trigger on close
+  - ARIA attributes for screen readers
+  - Respects prefers-reduced-motion
+#}
+
+<!-- Lightbox Modal -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox" aria-hidden="true">
+    <button class="lightbox-close" aria-label="Close lightbox">close</button>
+    <img src="" alt="">
+</div>
+
+<script>
+(function() {
+    const lightbox = document.getElementById('lightbox');
+    if (!lightbox) return;
+
+    const lightboxImg = lightbox.querySelector('img');
+    const closeBtn = lightbox.querySelector('.lightbox-close');
+    const specimens = document.querySelectorAll('.specimen');
+
+    let triggerElement = null; // Track which element opened the lightbox
+
+    // Make specimens focusable and add ARIA
+    specimens.forEach((specimen, index) => {
+        specimen.setAttribute('tabindex', '0');
+        specimen.setAttribute('role', 'button');
+        const img = specimen.querySelector('img');
+        const altText = img ? img.alt : 'Image ' + (index + 1);
+        specimen.setAttribute('aria-label', 'View ' + altText + ' full size');
+    });
+
+    function openLightbox(specimen) {
+        triggerElement = specimen;
+        const img = specimen.querySelector('img');
+        const src = specimen.dataset.src || (img ? img.src : '');
+        const alt = img ? img.alt : '';
+
+        lightboxImg.src = src;
+        lightboxImg.alt = alt;
+        lightbox.classList.add('active');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        // Focus the close button
+        closeBtn.focus();
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+
+        // Return focus to trigger element
+        if (triggerElement) {
+            triggerElement.focus();
+            triggerElement = null;
+        }
+    }
+
+    // Click to open
+    specimens.forEach(specimen => {
+        specimen.addEventListener('click', (e) => {
+            // Don't open if clicking a link inside
+            if (e.target.tagName === 'A') return;
+            openLightbox(specimen);
+        });
+
+        // Keyboard: Enter/Space to open
+        specimen.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openLightbox(specimen);
+            }
+        });
+    });
+
+    // Click anywhere in lightbox to close
+    lightbox.addEventListener('click', closeLightbox);
+
+    // Close button click (stop propagation to prevent double-fire)
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeLightbox();
+    });
+
+    // Escape key to close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            closeLightbox();
+        }
+    });
+
+    // Focus trap - keep focus inside lightbox when open
+    lightbox.addEventListener('keydown', (e) => {
+        if (e.key !== 'Tab') return;
+        if (!lightbox.classList.contains('active')) return;
+
+        // Only focusable elements in lightbox are close button and image
+        const focusableElements = [closeBtn, lightboxImg];
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+            // Shift+Tab: if on first element, go to last
+            if (document.activeElement === firstFocusable) {
+                e.preventDefault();
+                lastFocusable.focus();
+            }
+        } else {
+            // Tab: if on last element, go to first
+            if (document.activeElement === lastFocusable) {
+                e.preventDefault();
+                firstFocusable.focus();
+            }
+        }
+    });
+})();
+</script>

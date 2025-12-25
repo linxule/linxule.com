@@ -1,0 +1,348 @@
+---
+layout: layouts/base.njk
+marker: "writing"
+---
+
+<style>
+    .article-container {
+        display: grid;
+        grid-template-columns: 1fr minmax(auto, var(--measure)) 280px 1fr;
+        gap: 0 2rem;
+        padding: 10rem 2rem 6rem;
+    }
+    
+    article {
+        grid-column: 2;
+    }
+    
+    .marginalia {
+        grid-column: 3;
+    }
+    
+    .article-header {
+        margin-bottom: 4rem;
+    }
+    
+    .article-series {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+    }
+    
+    .article-title {
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-weight: 300;
+        line-height: 1.2;
+        margin-bottom: 0.75rem;
+    }
+    
+    .article-subtitle {
+        font-size: 1.2rem;
+        font-weight: 300;
+        font-style: italic;
+        color: var(--ink-light);
+        margin-bottom: 2rem;
+    }
+    
+    .article-meta {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 2rem;
+    }
+    
+    .meta-label {
+        color: var(--ink-ghost);
+    }
+    
+    .article-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .abstract {
+        font-size: 1.1rem;
+        font-style: italic;
+        color: var(--ink-light);
+        border-left: 2px solid var(--ink-ghost);
+        padding-left: 1.5rem;
+        margin: 3rem 0;
+        line-height: 1.9;
+    }
+    
+    .abstract strong {
+        font-weight: 500;
+        color: var(--ink);
+        font-style: normal;
+    }
+    
+    .article-body {
+        line-height: 1.8;
+    }
+
+    /* Blockquotes break the column rhythm - shift left */
+    .article-body blockquote {
+        margin: 2.5rem 0 2.5rem -2rem;
+        padding: 1.5rem 0 1.5rem 1.5rem;
+        border-left: 1px solid var(--ink-ghost);
+        font-style: italic;
+        color: var(--ink-light);
+    }
+
+    .article-body blockquote p {
+        margin: 0 0 1rem 0;
+        line-height: 1.9;
+    }
+
+    .article-body blockquote p:last-child {
+        margin-bottom: 0;
+    }
+
+    .article-body blockquote strong {
+        font-weight: 500;
+        color: var(--ink);
+        font-style: normal;
+    }
+
+    /* On mobile, no negative margin */
+    @media (max-width: 768px) {
+        .article-body blockquote {
+            margin-left: 0;
+        }
+    }
+    
+    .pullquote {
+        margin: 2.5rem 0;
+        border-left: 2px solid var(--ink-ghost);
+        padding-left: 1.5rem;
+    }
+    
+    .pullquote-text {
+        font-size: 1.05rem;
+        font-style: italic;
+        color: var(--ink-light);
+        line-height: 1.9;
+    }
+    
+    .pullquote-source {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        margin-top: 0.75rem;
+    }
+    
+    .authors {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+    
+    .authors-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+    }
+    
+    .author {
+        margin-bottom: 1.5rem;
+    }
+    
+    .author-name {
+        font-weight: 500;
+    }
+    
+    .author-bio {
+        font-size: 0.9rem;
+        color: var(--ink-light);
+    }
+    
+    .external-link {
+        display: inline-block;
+        margin-top: 2rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--ink-light);
+        text-decoration: none;
+        padding: 0.75rem 1.25rem;
+        border: 1px solid var(--ink-ghost);
+        transition: all 0.2s ease;
+    }
+    
+    .external-link:hover {
+        border-color: var(--bloom);
+        color: var(--bloom);
+    }
+    
+    .article-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .nav-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .page-marker {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-ghost);
+    }
+    
+    @media (max-width: 1100px) {
+        .article-container {
+            grid-template-columns: 1fr minmax(auto, var(--measure)) 1fr;
+        }
+        
+        .marginalia {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .article-container {
+            grid-template-columns: 1fr;
+            padding: 8rem 1.5rem 4rem;
+        }
+        
+        article {
+            grid-column: 1;
+        }
+    }
+</style>
+
+<div class="article-container">
+
+    <article data-pagefind-body data-pagefind-filter="type:writing">
+        
+        <header class="article-header">
+            {% if series %}
+            <div class="article-series">{{ series }}</div>
+            {% endif %}
+            <h1 class="article-title">{{ title }}</h1>
+            {% if subtitle %}
+            <p class="article-subtitle">{{ subtitle }}</p>
+            {% endif %}
+            <div class="article-meta">
+                {% if authors %}
+                <span class="meta-item">
+                    <span class="meta-label">with</span>
+                    <span>{{ authors | join(", ") }}</span>
+                </span>
+                {% endif %}
+                <span class="meta-item">
+                    <span class="meta-label">date</span>
+                    <span>{{ date | readableDate }}</span>
+                </span>
+            </div>
+            {% if keywords %}
+            <div class="article-tags">
+                {% for keyword in keywords %}
+                <a href="/tag/{{ keyword | slugify }}/" class="tag">{{ keyword }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </header>
+        
+        <div class="article-body">
+            {{ content | safe }}
+        </div>
+        
+        {% if link %}
+        <a href="{{ link }}" class="external-link">Read on Thread Counts →</a>
+        {% endif %}
+        
+        <footer class="article-footer">
+            <a href="/writing/" class="nav-link">← all writing</a>
+            <span class="page-marker">003</span>
+        </footer>
+        
+    </article>
+
+</div>
+
+<!-- Article Image Lightbox -->
+<div class="lightbox" id="article-lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox" aria-hidden="true">
+    <button class="lightbox-close" aria-label="Close lightbox">close</button>
+    <img src="" alt="">
+</div>
+
+<script>
+(function() {
+    const lightbox = document.getElementById('article-lightbox');
+    if (!lightbox) return;
+
+    const lightboxImg = lightbox.querySelector('img');
+    const closeBtn = lightbox.querySelector('.lightbox-close');
+    const articleImages = document.querySelectorAll('.article-body img');
+
+    let triggerElement = null;
+
+    // Make images focusable and add cursor
+    articleImages.forEach(img => {
+        img.style.cursor = 'pointer';
+        img.setAttribute('tabindex', '0');
+        img.setAttribute('role', 'button');
+        img.setAttribute('aria-label', 'View ' + (img.alt || 'image') + ' full size');
+    });
+
+    function openLightbox(img) {
+        triggerElement = img;
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt || '';
+        lightbox.classList.add('active');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (triggerElement) {
+            triggerElement.focus();
+            triggerElement = null;
+        }
+    }
+
+    // Click to open
+    articleImages.forEach(img => {
+        img.addEventListener('click', () => openLightbox(img));
+        img.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openLightbox(img);
+            }
+        });
+    });
+
+    // Close on click anywhere in lightbox
+    lightbox.addEventListener('click', closeLightbox);
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeLightbox();
+    });
+
+    // Escape to close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            closeLightbox();
+        }
+    });
+})();
+</script>

@@ -1,0 +1,1047 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;400;500&display=swap');
+
+/* ========================================
+   Design Tokens
+   ======================================== */
+
+:root {
+    /* Paper */
+    --paper: #f4f1eb;
+    --paper-dark: #e8e4dc;
+    
+    /* Ink */
+    --ink: #1a1a1a;
+    --ink-light: #6b6b6b;
+    --ink-faint: #a0a0a0;
+    --ink-ghost: #c8c8c8;
+    
+    /* The accident - cyan that doesn't belong */
+    --accident: #4ee1d4;
+    
+    /* The bloom - violet on interaction */
+    --bloom: #8b7089;
+    --bloom-glow: rgba(139, 112, 137, 0.12);
+    
+    /* Measure */
+    --measure: 38rem;
+}
+
+/* ========================================
+   Reset & Base
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+    font-size: 18px;
+    min-height: 100vh;
+}
+
+/* Paper texture */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.35;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* ========================================
+   Bloom Cursor
+   ======================================== */
+
+.bloom-cursor {
+    position: fixed;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--bloom-glow) 0%, transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 0;
+}
+
+body:hover .bloom-cursor {
+    opacity: 1;
+}
+
+/* ========================================
+   Links
+   ======================================== */
+
+a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--ink-ghost);
+    text-underline-offset: 0.15em;
+    transition: text-decoration-color 0.2s ease, color 0.2s ease;
+}
+
+a:hover {
+    color: var(--bloom);
+    text-decoration-color: var(--bloom);
+}
+
+/* Nav links - no underline */
+.spine-name,
+.back-link,
+.nav-link,
+.pathway,
+.tag {
+    text-decoration: none;
+}
+
+/* ========================================
+   Spine (persistent nav)
+   ======================================== */
+
+.spine {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: linear-gradient(
+        to bottom,
+        rgba(244, 241, 235, 0.95) 0%,
+        rgba(244, 241, 235, 0.85) 40%,
+        rgba(244, 241, 235, 0.6) 70%,
+        transparent 100%
+    );
+}
+
+.spine-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--ink-light);
+    position: relative;
+}
+
+/* The accident - a small wandering thing that got lost on your name */
+.spine-name::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--accident);
+    border-radius: 50%;
+    /* Starts somewhere in the middle */
+    left: 50%;
+    top: 50%;
+    animation:
+        wander 23s ease-in-out infinite,
+        breathe 2.8s ease-in-out infinite,
+        flicker 7s ease-in-out infinite;
+    box-shadow:
+        0 0 8px var(--accident),
+        0 0 16px rgba(78, 225, 212, 0.3);
+    z-index: 10;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .spine-name::after {
+        animation: none;
+    }
+}
+
+@keyframes breathe {
+    0%, 100% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.4);
+    }
+    60% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes flicker {
+    0%, 100% {
+        opacity: 0.75;
+    }
+    15% {
+        opacity: 0.9;
+    }
+    30% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 0.8;
+    }
+    85% {
+        opacity: 0.95;
+    }
+}
+
+@keyframes wander {
+    0% {
+        translate: 0 0;
+    }
+    6% {
+        translate: 35px -8px;
+    }
+    12% {
+        translate: 50px 2px;
+    }
+    18% {
+        translate: 42px -12px;
+    }
+    25% {
+        translate: 20px -6px;
+    }
+    31% {
+        translate: -15px 4px;
+    }
+    38% {
+        translate: -40px -2px;
+    }
+    44% {
+        translate: -55px 8px;
+    }
+    50% {
+        translate: -48px -10px;
+    }
+    56% {
+        translate: -30px 0px;
+    }
+    63% {
+        translate: -10px 10px;
+    }
+    69% {
+        translate: 15px 6px;
+    }
+    75% {
+        translate: 38px -4px;
+    }
+    81% {
+        translate: 25px 8px;
+    }
+    88% {
+        translate: 5px -8px;
+    }
+    94% {
+        translate: -20px 3px;
+    }
+    100% {
+        translate: 0 0;
+    }
+}
+
+.spine-marker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+}
+
+/* ========================================
+   Typography
+   ======================================== */
+
+h1, h2, h3, h4 {
+    font-weight: 400;
+}
+
+h1 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.3;
+}
+
+h2 {
+    font-size: 1.3rem;
+    margin: 3rem 0 1.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--ink-ghost);
+}
+
+h3 {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--ink-light);
+    margin: 2rem 0 1rem;
+}
+
+p {
+    margin-bottom: 1.5rem;
+}
+
+/* ========================================
+   Mono text (labels, meta)
+   ======================================== */
+
+.mono {
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+.label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+}
+
+/* ========================================
+   The Accident
+   ======================================== */
+
+.accident {
+    color: var(--accident) !important;
+}
+
+/* ========================================
+   Spreads (page sections)
+   ======================================== */
+
+.spread {
+    min-height: 100vh;
+    padding: 8vh 8vw;
+    position: relative;
+}
+
+/* ========================================
+   Horizon line
+   ======================================== */
+
+.horizon {
+    width: 100%;
+    height: 1px;
+    background: var(--ink-ghost);
+    margin: 4rem 0;
+}
+
+/* ========================================
+   Footer
+   ======================================== */
+
+.page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4rem 0;
+    border-top: 1px solid var(--ink-ghost);
+    margin-top: 4rem;
+}
+
+.page-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink-faint);
+}
+
+.back-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+}
+
+/* ========================================
+   Rendering marker
+   ======================================== */
+
+.rendering {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--ink-faint);
+    opacity: 0.3;
+    transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.rendering:hover {
+    opacity: 0.8;
+    color: var(--bloom);
+}
+
+/* ========================================
+   Tags
+   ======================================== */
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--ink-faint);
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--ink-ghost);
+    transition: all 0.2s ease;
+}
+
+.tag:hover {
+    color: var(--bloom);
+    border-color: var(--bloom);
+}
+
+/* ========================================
+   Marginalia / Footnotes
+   ======================================== */
+
+/* Position marginalia in the grid */
+.article-body .marginalia {
+    position: absolute;
+    right: -300px;
+    width: 260px;
+    top: 0;
+}
+
+.margin-note {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    line-height: 1.6;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+}
+
+.fn-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--ink-ghost);
+    font-style: normal;
+    margin-right: 0.5rem;
+}
+
+.fn-ref {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--ink-faint);
+    vertical-align: super;
+    text-decoration: none;
+    margin-left: 0.1rem;
+}
+
+.fn-ref:hover {
+    color: var(--bloom);
+}
+
+/* ========================================
+   Article Body - Markdown Elements
+   ======================================== */
+
+.article-body {
+    position: relative;
+}
+
+.article-body h1 {
+    font-size: 1.8rem;
+    margin: 3rem 0 1.5rem;
+}
+
+.article-body h2 {
+    font-size: 1.4rem;
+    margin: 3rem 0 1.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--ink-ghost);
+}
+
+.article-body h3 {
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--ink-light);
+    margin: 2rem 0 1rem;
+}
+
+.article-body h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 1.5rem 0 1rem;
+}
+
+.article-body p {
+    margin-bottom: 1.5rem;
+}
+
+.article-body ul,
+.article-body ol {
+    margin: 1.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.article-body li {
+    margin-bottom: 0.75rem;
+}
+
+.article-body li::marker {
+    color: var(--ink-faint);
+}
+
+.article-body blockquote {
+    margin: 2rem 0;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--ink-ghost);
+    color: var(--ink-light);
+    font-style: italic;
+}
+
+.article-body blockquote p {
+    margin-bottom: 1rem;
+}
+
+.article-body blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+.article-body pre {
+    background: var(--paper-dark);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.article-body code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9em;
+    background: var(--paper-dark);
+    padding: 0.15em 0.4em;
+    border-radius: 2px;
+}
+
+.article-body pre code {
+    background: none;
+    padding: 0;
+    font-size: 1em;
+}
+
+.article-body hr {
+    border: none;
+    height: 1px;
+    background: var(--ink-ghost);
+    margin: 3rem 0;
+}
+
+.article-body strong {
+    font-weight: 500;
+}
+
+.article-body em {
+    font-style: italic;
+}
+
+.article-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    font-size: 0.9rem;
+}
+
+.article-body th,
+.article-body td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--ink-ghost);
+}
+
+.article-body th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 400;
+}
+
+.article-body img {
+    max-width: calc(100% + 4rem);
+    margin: 3rem -2rem;
+    height: auto;
+    filter: grayscale(15%);
+    border: 1px solid var(--ink-ghost);
+    background: var(--paper-dark);
+    padding: 1rem;
+    transition: filter 0.3s ease;
+}
+
+.article-body img:hover {
+    filter: grayscale(0%);
+}
+
+.article-body figure {
+    margin: 3rem -2rem;
+    max-width: calc(100% + 4rem);
+}
+
+.article-body figure img {
+    margin: 0;
+    max-width: 100%;
+}
+
+.article-body figcaption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    text-align: center;
+    margin-top: 0.75rem;
+    padding: 0 1rem;
+}
+
+/* ========================================
+   Concept boxes
+   ======================================== */
+
+.concept {
+    background: var(--paper-dark);
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    border-radius: 2px;
+}
+
+.concept-term {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
+.concept-definition {
+    font-size: 0.95rem;
+    color: var(--ink-light);
+    line-height: 1.8;
+    font-style: italic;
+}
+
+/* ========================================
+   Specimens (images)
+   ======================================== */
+
+.specimen {
+    background: var(--paper-dark);
+    overflow: hidden;
+    opacity: 0.5;
+    filter: grayscale(100%);
+    transition: all 0.5s ease;
+}
+
+.specimen:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+    box-shadow: 0 20px 60px var(--bloom-glow);
+}
+
+.specimen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: zoom-in;
+}
+
+/* ========================================
+   Focus States (Accessibility)
+   ======================================== */
+
+:focus-visible {
+    outline: 2px solid var(--bloom);
+    outline-offset: 3px;
+}
+
+/* Links - subtle underline change on focus */
+a:focus-visible {
+    color: var(--bloom);
+    text-decoration-color: var(--bloom);
+}
+
+/* Tags - match hover behavior */
+.tag:focus-visible {
+    border-color: var(--bloom);
+    color: var(--bloom);
+}
+
+/* Navigation dots */
+.book-nav-dot:focus-visible {
+    background: var(--bloom);
+    outline: none;
+}
+
+/* Specimens (image triggers) */
+.specimen:focus-visible {
+    outline: 2px solid var(--bloom);
+    outline-offset: 4px;
+    opacity: 1;
+    filter: grayscale(0%);
+}
+
+/* ========================================
+   Lightbox
+   ======================================== */
+
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 26, 26, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    cursor: zoom-out;
+}
+
+.lightbox.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    filter: none;
+    opacity: 1;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.lightbox.active img {
+    transform: scale(1);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus-visible {
+    color: var(--paper);
+    outline: none;
+}
+
+/* ========================================
+   Reduced Motion (Accessibility)
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    /* Disable smooth scrolling */
+    html {
+        scroll-behavior: auto;
+    }
+
+    /* Hide bloom cursor entirely */
+    .bloom-cursor {
+        display: none;
+    }
+
+    /* Stop infinite animations on accident dot */
+    .spine-name::after {
+        animation: none;
+    }
+
+    /* Reduce all transitions to near-instant */
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+
+    /* Lightbox - no scale animation */
+    .lightbox img {
+        transform: none;
+    }
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+@media (max-width: 1100px) {
+    .article-body .marginalia {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .spine {
+        padding: 1.5rem 2rem;
+    }
+
+    .spread {
+        padding: 6vh 6vw;
+    }
+}
+
+/* ========================================
+   Writing Book - Scroll Snap Container
+   ======================================== */
+
+.writing-book {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+.writing-book::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+/* ========================================
+   Essay Spread
+   ======================================== */
+
+.essay-spread {
+    height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 12vw;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Header spread */
+.essay-spread.header-spread {
+    align-items: flex-start;
+}
+
+.header-poem {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(0.55rem, 1vw, 0.75rem);
+    line-height: 1.3;
+    color: var(--ink-ghost);
+    margin-bottom: 2rem;
+    white-space: pre;
+}
+
+.header-poem .a {
+    color: var(--accident);
+}
+
+.header-title {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 300;
+    margin-bottom: 1rem;
+}
+
+.header-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    margin-bottom: 2rem;
+}
+
+.header-description {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+    color: var(--ink-light);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    white-space: pre;
+}
+
+.header-description .a {
+    color: var(--accident);
+}
+
+.header-nav {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.header-nav .scroll-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-ghost);
+}
+
+/* Essay content */
+.essay-series {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+}
+
+.essay-title {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+}
+
+.essay-subtitle {
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--ink-light);
+    margin-bottom: 2rem;
+}
+
+.essay-horizon {
+    width: 200px;
+    height: 1px;
+    background: var(--ink-ghost);
+    margin: 2rem 0;
+}
+
+.essay-opening {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--ink-light);
+    line-height: 1.9;
+    max-width: 500px;
+}
+
+.essay-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    margin-top: 2rem;
+    line-height: 1.8;
+}
+
+.essay-read-link {
+    position: absolute;
+    bottom: 8rem;
+    right: 12vw;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.essay-read-link:hover {
+    color: var(--bloom);
+}
+
+.spread-position {
+    position: absolute;
+    top: 8rem;
+    right: 12vw;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink-ghost);
+}
+
+/* Scroll hint for writing book */
+.essay-spread .scroll-hint {
+    position: absolute;
+    bottom: 4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink-ghost);
+    transition: opacity 0.5s ease;
+}
+
+.essay-spread .scroll-hint.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Empty tag state */
+.empty-tag {
+    padding: 12rem 4rem 6rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.empty-tag h1 {
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+}
+
+.empty-tag p {
+    color: var(--ink-light);
+    margin-bottom: 2rem;
+}
+
+/* Writing book responsive */
+@media (max-width: 768px) {
+    .essay-spread {
+        padding: 6rem 6vw;
+    }
+
+    .essay-title {
+        font-size: 1.8rem;
+    }
+
+    .essay-read-link {
+        position: static;
+        margin-top: 2rem;
+        display: inline-block;
+    }
+
+    .spread-position {
+        top: 6rem;
+        right: 6vw;
+    }
+}
+
+/* ========================================
+   Print
+   ======================================== */
+
+@media print {
+    .spine,
+    .bloom-cursor,
+    .rendering {
+        display: none;
+    }
+    
+    body::before {
+        display: none;
+    }
+}

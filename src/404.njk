@@ -1,0 +1,48 @@
+---
+layout: layouts/base.njk
+title: "not found"
+permalink: /404.html
+---
+
+<style>
+    main {
+        padding: 12rem 4rem 6rem;
+        max-width: 800px;
+        margin: 0 auto;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .error-content {
+        text-align: center;
+    }
+
+    .error-code {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-faint);
+        margin-bottom: 2rem;
+    }
+
+    .error-message {
+        font-size: 1.2rem;
+        font-weight: 300;
+        margin-bottom: 3rem;
+        color: var(--ink-light);
+    }
+
+    .back-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+    }
+</style>
+
+<div class="error-content">
+    <div class="error-code">404</div>
+    <p class="error-message">This page doesn't exist.</p>
+    <a href="/" class="back-link">← return home</a>
+</div>

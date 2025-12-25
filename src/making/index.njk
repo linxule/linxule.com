@@ -1,0 +1,692 @@
+---
+layout: layouts/base.njk
+title: making
+marker: "making"
+---
+
+<style>
+    /* Override base layout for full-bleed book */
+    main {
+        padding: 0;
+        max-width: none;
+        margin: 0;
+    }
+
+    /* ========================================
+       Portrait Book - Scroll Snap Container
+       ======================================== */
+
+    .portrait-book {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .portrait-book::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+    }
+
+    /* ========================================
+       Individual Spread
+       ======================================== */
+
+    .portrait-spread {
+        height: 100vh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        padding: 8rem 4rem;
+        align-content: center;
+        box-sizing: border-box;
+    }
+
+    /* ========================================
+       Header Spread (First Page)
+       ======================================== */
+
+    .portrait-spread.header-spread {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding-left: 8rem;
+        position: relative;
+    }
+
+    .header-spread .header-links {
+        position: absolute;
+        top: 8rem;
+        right: 4rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .header-spread .search-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        color: var(--ink-faint);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .header-spread .search-link:hover {
+        color: var(--bloom);
+    }
+
+    .header-spread .page-marker {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .header-spread .section-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+    }
+
+    .header-spread .page-title {
+        font-size: 1.2rem;
+        font-weight: 400;
+        margin-bottom: 3rem;
+    }
+
+    .header-spread .page-description {
+        max-width: 400px;
+        margin-bottom: 3rem;
+    }
+
+    .header-spread .poem-shape {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .header-spread .poem-line {
+        font-size: 1rem;
+        font-style: italic;
+        color: var(--ink-light);
+        line-height: 1.9;
+    }
+
+    .header-spread .poem-line:nth-child(1) { margin-left: 0; }
+    .header-spread .poem-line:nth-child(2) { margin-left: 2rem; }
+    .header-spread .poem-line:nth-child(3) { margin-left: 1rem; }
+    .header-spread .poem-line:nth-child(4) { margin-left: 3rem; }
+
+    .header-spread .poem-line.accident {
+        color: var(--accident);
+    }
+
+    /* Filter chips */
+    .filter-chips {
+        display: flex;
+        gap: 1.5rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+    }
+
+    .filter-chip {
+        color: var(--ink-faint);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .filter-chip:not(.active) {
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 3px;
+    }
+
+    .filter-chip:hover {
+        color: var(--bloom);
+    }
+
+    .filter-chip.active {
+        color: var(--ink);
+        text-decoration: none;
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+        position: absolute;
+        bottom: 4rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-ghost);
+        text-align: center;
+        opacity: 1;
+        transition: opacity 0.5s ease;
+    }
+
+    .scroll-hint.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* ========================================
+       Portrait Spread Layout
+       ======================================== */
+
+    .spread-prompt {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .prompt-poem {
+        margin-bottom: 2rem;
+    }
+
+    .prompt-line {
+        display: block;
+        font-size: 1.1rem;
+        line-height: 2;
+        color: var(--ink-faint);
+        transition: color 0.3s ease;
+    }
+
+    .prompt-line:nth-child(1) { margin-left: 0; }
+    .prompt-line:nth-child(2) { margin-left: 1.5rem; }
+    .prompt-line:nth-child(3) { margin-left: 0.75rem; }
+    .prompt-line:nth-child(4) { margin-left: 2.25rem; }
+    .prompt-line:nth-child(5) { margin-left: 0.5rem; }
+    .prompt-line:nth-child(6) { margin-left: 1.75rem; }
+    .prompt-line:nth-child(7) { margin-left: 1rem; }
+    .prompt-line:nth-child(8) { margin-left: 2rem; }
+
+    .prompt-poem:hover .prompt-line {
+        color: var(--ink-light);
+    }
+
+    .prompt-line.accident {
+        color: var(--accident);
+    }
+
+    .spread-meta {
+        border-top: 1px solid var(--ink-ghost);
+        padding-top: 1.5rem;
+    }
+
+    .spread-title {
+        font-size: 0.95rem;
+        font-weight: 300;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+    }
+
+    .spread-title a {
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .spread-title a:hover {
+        color: var(--bloom);
+    }
+
+    .spread-info {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-faint);
+        line-height: 1.8;
+    }
+
+    .spread-info a {
+        color: var(--ink-faint);
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 2px;
+    }
+
+    .spread-info a:hover {
+        color: var(--bloom);
+    }
+
+    /* ========================================
+       Specimen Grid (Right Side)
+       ======================================== */
+
+    .spread-specimens {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        align-self: center;
+    }
+
+    /* Portrait orientation: single column, constrained height */
+    .portrait-spread[data-orientation="portrait"] .spread-specimens {
+        grid-template-columns: 1fr 1fr;
+        max-height: 65vh;
+        overflow: hidden;
+    }
+
+    .portrait-spread[data-orientation="portrait"] .specimen img {
+        max-height: 30vh;
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+        margin: 0 auto;
+    }
+
+    .specimen {
+        position: relative;
+        overflow: hidden;
+        background: var(--paper-dark);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .specimen img {
+        width: 100%;
+        height: auto;
+        display: block;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: all 0.5s ease;
+    }
+
+    .specimen:hover img {
+        filter: grayscale(0%);
+        opacity: 1;
+    }
+
+    .specimen-num {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.5rem;
+        color: var(--bloom);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .specimen:hover .specimen-num {
+        opacity: 1;
+    }
+
+    /* ========================================
+       Position Indicator (Nav Dots)
+       ======================================== */
+
+    .book-nav {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.5rem;
+        z-index: 100;
+    }
+
+    .book-nav-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ink-ghost);
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border: none;
+        padding: 0;
+    }
+
+    .book-nav-dot:hover {
+        background: var(--bloom);
+    }
+
+    .book-nav-dot.active {
+        background: var(--ink);
+    }
+
+    /* ========================================
+       Tools Section (Outside Book)
+       ======================================== */
+
+    .tools-section {
+        padding: 6rem 4rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .tools-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 2rem;
+    }
+
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .tool-card {
+        padding-top: 1rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .tool-title {
+        font-size: 0.9rem;
+        font-weight: 400;
+        margin-bottom: 0.5rem;
+    }
+
+    .tool-title a {
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .tool-title a:hover {
+        color: var(--bloom);
+    }
+
+    .tool-title a.accident {
+        color: var(--accident);
+    }
+
+    .tool-description {
+        font-size: 0.75rem;
+        color: var(--ink-light);
+        line-height: 1.6;
+    }
+
+    .page-footer {
+        padding: 3rem 4rem;
+        border-top: 1px solid var(--ink-ghost);
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* ========================================
+       Responsive
+       ======================================== */
+
+    @media (max-width: 900px) {
+        .portrait-spread {
+            grid-template-columns: 1fr;
+            padding: 6rem 2rem;
+            gap: 2rem;
+        }
+
+        .portrait-spread.header-spread {
+            padding: 6rem 2rem;
+        }
+
+        .spread-specimens {
+            max-width: 300px;
+        }
+
+        .tools-section {
+            padding: 4rem 2rem;
+        }
+
+        .tools-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .page-footer {
+            padding: 2rem;
+        }
+    }
+
+    /* ========================================
+       Lightbox
+       ======================================== */
+
+    .lightbox {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(26, 26, 26, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        cursor: zoom-out;
+    }
+
+    .lightbox.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .lightbox img {
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .lightbox-close:hover {
+        color: var(--paper);
+    }
+</style>
+
+<div class="portrait-book" id="portrait-book">
+
+    <!-- Header Spread -->
+    <section class="portrait-spread header-spread" data-spread="0" id="portraits">
+        <div class="header-links">
+            <a href="/search/" class="search-link">search</a>
+            <span class="page-marker">002</span>
+        </div>
+        <h1 class="page-title">making</h1>
+        <div class="section-label">PORTRAITS</div>
+
+        <div class="page-description">
+            <div class="poem-shape">
+                <span class="poem-line">Prompts as poems.</span>
+                <span class="poem-line">Midjourney as collaborator.</span>
+                <span class="poem-line">Self-representation</span>
+                <span class="poem-line accident">through machine rendering.</span>
+            </div>
+        </div>
+
+        <nav class="filter-chips">
+            <a href="/making/" class="filter-chip active">all</a>
+            {%- for family in collections.portraitsByPrompterFamily -%}
+            <a href="/making/prompter/{{ family.slug }}/" class="filter-chip">{{ family.name }}</a>
+            {%- endfor -%}
+        </nav>
+
+        <div class="scroll-hint" id="scroll-hint">
+            ↓ scroll to explore
+        </div>
+    </section>
+
+    <!-- Portrait Spreads -->
+    {%- for portrait in collections.portraits -%}
+    <section class="portrait-spread" data-spread="{{ loop.index }}" data-orientation="{{ portrait.data.orientation | default('landscape') }}">
+
+        <div class="spread-prompt">
+            <div class="prompt-poem">
+                {%- for line in portrait.data.prompt -%}
+                <span class="prompt-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                {%- endfor -%}
+            </div>
+
+            <div class="spread-meta">
+                <h2 class="spread-title"><a href="{{ portrait.url }}">{{ portrait.data.title }}</a></h2>
+                <div class="spread-info">
+                    {{ portrait.data.generator }}{% if portrait.data.settings %} · {{ portrait.data.settings }}{% endif %}<br>
+                    {% if portrait.data.prompter %}prompted by <a href="/making/prompter/{{ portrait.data.prompter | prompterFamily }}/">{{ portrait.data.prompter }}</a><br>{% endif %}
+                    {{ portrait.data.date | readableDate }}
+                </div>
+            </div>
+        </div>
+
+        <div class="spread-specimens">
+            {%- for image in portrait.data.images -%}
+            <figure class="specimen" data-src="{{ image.src }}">
+                {% optimizedImage image.src, image.alt | default(portrait.data.title), "(max-width: 900px) 50vw, 25vw" %}
+                <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
+            </figure>
+            {%- endfor -%}
+        </div>
+
+    </section>
+    {%- endfor -%}
+
+</div>
+
+<!-- Navigation Dots -->
+<nav class="book-nav" id="book-nav">
+    <button class="book-nav-dot active" data-target="0" aria-label="Go to introduction"></button>
+    {%- for portrait in collections.portraits -%}
+    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ portrait.data.title }}"></button>
+    {%- endfor -%}
+</nav>
+
+<!-- Tools Section (Outside Book) -->
+<section class="tools-section">
+    <div class="tools-label">Tools</div>
+    <div class="tools-grid">
+        <div class="tool-card">
+            <h3 class="tool-title"><a href="https://research-memex.org">Research Memex →</a></h3>
+            <p class="tool-description">Making human-AI research more auditable.</p>
+        </div>
+        <div class="tool-card">
+            <h3 class="tool-title"><a href="https://github.com/linxule/openinterviewer">Open Interviewer →</a></h3>
+            <p class="tool-description">Qualitative interviews at scale.</p>
+        </div>
+        <div class="tool-card">
+            <h3 class="tool-title"><a href="https://github.com/linxule/openai-assistants-discord-bot">Discord Literature Bot →</a></h3>
+            <p class="tool-description">Discord chatbot with custom knowledge bases.</p>
+        </div>
+    </div>
+</section>
+
+<section class="tools-section">
+    <div class="tools-label">GPTs</div>
+    <div class="tools-grid">
+        <div class="tool-card">
+            <h3 class="tool-title"><a href="https://chat.openai.com/g/g-FvlPlwLn1-bertopic-navigator">BERTopic Navigator →</a></h3>
+            <p class="tool-description">Topic modeling made navigable.</p>
+        </div>
+        <div class="tool-card">
+            <h3 class="tool-title"><a href="https://chat.openai.com/g/g-wDUM3ows9-red-pen-scholar" class="accident">Red Pen Scholar →</a></h3>
+            <p class="tool-description">Little Red Schoolhouse writing principles.</p>
+        </div>
+        <div class="tool-card">
+            <h3 class="tool-title"><a href="https://chat.openai.com/g/g-pIFoLpzVx-academic-notes-assistant">Academic Notes Assistant →</a></h3>
+            <p class="tool-description">Structured notes for research.</p>
+        </div>
+    </div>
+</section>
+
+<footer class="page-footer">
+    <a href="/" class="back-link">← return</a>
+</footer>
+
+<script>
+(function() {
+    const book = document.getElementById('portrait-book');
+    const dots = document.querySelectorAll('.book-nav-dot');
+    const spreads = document.querySelectorAll('.portrait-spread');
+    const scrollHint = document.getElementById('scroll-hint');
+    const STORAGE_KEY = 'making-scroll-position';
+
+    // Restore scroll position on load
+    const savedIndex = sessionStorage.getItem(STORAGE_KEY);
+    if (savedIndex !== null) {
+        const index = parseInt(savedIndex, 10);
+        if (index > 0 && index < spreads.length) {
+            // Use setTimeout to ensure layout is complete
+            setTimeout(() => {
+                spreads[index].scrollIntoView({ behavior: 'instant' });
+            }, 0);
+        }
+    }
+
+    // Update active dot on scroll and save position
+    book.addEventListener('scroll', () => {
+        const scrollPos = book.scrollTop;
+        const spreadHeight = window.innerHeight;
+        const currentIndex = Math.round(scrollPos / spreadHeight);
+
+        // Save current position
+        sessionStorage.setItem(STORAGE_KEY, currentIndex.toString());
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+        });
+
+        // Hide scroll hint after first scroll
+        if (scrollPos > 50 && scrollHint) {
+            scrollHint.classList.add('hidden');
+        }
+    });
+
+    // Click dot to jump to spread
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            spreads[i].scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Lightbox
+    const lightbox = document.createElement('div');
+    lightbox.className = 'lightbox';
+    lightbox.innerHTML = '<button class="lightbox-close">close</button><img src="" alt="">';
+    document.body.appendChild(lightbox);
+
+    const lightboxImg = lightbox.querySelector('img');
+    const specimens = document.querySelectorAll('.specimen');
+
+    specimens.forEach(specimen => {
+        specimen.addEventListener('click', () => {
+            const src = specimen.dataset.src || specimen.querySelector('img').src;
+            lightboxImg.src = src;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    lightbox.addEventListener('click', () => {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+})();
+</script>

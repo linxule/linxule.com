@@ -1,0 +1,436 @@
+---
+layout: layouts/base.njk
+marker: "making"
+---
+
+<style>
+    main {
+        padding: 12rem 4rem 6rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .portrait-spread {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6rem;
+        min-height: 80vh;
+        align-items: start;
+    }
+    
+    .prompt-field {
+        padding-top: 4rem;
+    }
+    
+    .portrait-num {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-ghost);
+        letter-spacing: 0.2em;
+        margin-bottom: 3rem;
+    }
+    
+    .prompt-poem {
+        position: relative;
+    }
+    
+    .prompt-line {
+        display: block;
+        font-size: 1.1rem;
+        line-height: 2.4;
+        color: var(--ink-faint);
+        transition: color 0.4s ease, transform 0.4s ease;
+        cursor: default;
+    }
+    
+    .prompt-line:nth-child(1) { margin-left: 0; }
+    .prompt-line:nth-child(2) { margin-left: 2rem; }
+    .prompt-line:nth-child(3) { margin-left: 1rem; }
+    .prompt-line:nth-child(4) { margin-left: 3rem; }
+    .prompt-line:nth-child(5) { margin-left: 0.5rem; }
+    .prompt-line:nth-child(6) { margin-left: 2.5rem; }
+    .prompt-line:nth-child(7) { margin-left: 1.5rem; }
+    .prompt-line:nth-child(8) { margin-left: 1rem; }
+    
+    .prompt-line:hover {
+        color: var(--bloom);
+        transform: translateX(0.25rem);
+    }
+    
+    .prompt-poem:hover .prompt-line {
+        color: var(--ink-light);
+    }
+    
+    .prompt-poem:hover .prompt-line:hover {
+        color: var(--bloom);
+    }
+    
+    .prompt-line.accident {
+        color: var(--accident);
+    }
+    
+    .prompt-poem:hover .prompt-line.accident {
+        color: var(--accident);
+    }
+    
+    .portrait-info {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+    
+    .portrait-title {
+        font-size: 1.2rem;
+        font-weight: 300;
+        font-style: italic;
+        color: var(--ink);
+        margin-bottom: 0.5rem;
+    }
+    
+    .portrait-title:hover {
+        color: var(--bloom);
+    }
+    
+    .portrait-meta {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-faint);
+        line-height: 1.8;
+    }
+
+    .portrait-description {
+        margin-top: 2rem;
+        font-size: 0.95rem;
+        color: var(--ink-light);
+        line-height: 1.9;
+        font-style: italic;
+    }
+
+    /* ========================================
+       Layout: Drift
+       Scattered like specimens on a naturalist's board
+       ======================================== */
+
+    .specimens-field.layout-drift {
+        position: relative;
+        min-height: 700px;
+        padding-bottom: 4rem;
+    }
+
+    .layout-drift .specimen {
+        position: absolute;
+        background: var(--paper-dark);
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+
+    /* 16:9 landscape positions - staggered like pinned prints */
+    .layout-drift .specimen:nth-child(1) { width: 55%; top: 0; right: 0; }
+    .layout-drift .specimen:nth-child(2) { width: 45%; top: 22%; right: 40%; }
+    .layout-drift .specimen:nth-child(3) { width: 50%; top: 48%; right: 5%; }
+    .layout-drift .specimen:nth-child(4) { width: 40%; top: 72%; right: 45%; }
+
+    .layout-drift .specimen:hover {
+        z-index: 10;
+        transform: scale(1.08);
+        box-shadow: 0 20px 60px var(--bloom-glow);
+    }
+
+    /* ========================================
+       Layout: Column
+       Vertical cascade, like leafing through prints
+       ======================================== */
+
+    .specimens-field.layout-column {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+
+    .layout-column .specimen {
+        position: relative;
+        background: var(--paper-dark);
+        overflow: hidden;
+        transition: all 0.4s ease;
+        width: 75%;
+    }
+
+    .layout-column .specimen:nth-child(odd) { margin-left: 0; }
+    .layout-column .specimen:nth-child(even) { margin-left: 25%; }
+    .layout-column .specimen:nth-child(3n) { width: 65%; margin-left: 10%; }
+
+    .layout-column .specimen:hover {
+        transform: translateX(0.5rem);
+        box-shadow: 0 15px 40px var(--bloom-glow);
+    }
+
+    /* ========================================
+       Layout: Focus
+       Hero image with supporting cluster
+       ======================================== */
+
+    .specimens-field.layout-focus {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 1rem;
+    }
+
+    .layout-focus .specimen {
+        position: relative;
+        background: var(--paper-dark);
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+
+    .layout-focus .specimen:first-child {
+        grid-column: 1 / -1;
+        width: 85%;
+        margin: 0 auto 1rem;
+    }
+
+    .layout-focus .specimen:not(:first-child) {
+        width: 100%;
+    }
+
+    .layout-focus .specimen:hover {
+        transform: scale(1.03);
+        box-shadow: 0 15px 40px var(--bloom-glow);
+    }
+
+    /* ========================================
+       Layout: Stack (portrait orientation)
+       Vertical images in a flowing column with offsets
+       ======================================== */
+
+    .specimens-field.layout-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        max-width: 320px;
+        margin-left: auto;
+    }
+
+    .layout-stack .specimen {
+        position: relative;
+        background: var(--paper-dark);
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+
+    .layout-stack .specimen:nth-child(odd) { margin-right: 2rem; }
+    .layout-stack .specimen:nth-child(even) { margin-left: 2rem; }
+    .layout-stack .specimen:nth-child(3n) { margin-left: 1rem; margin-right: 1rem; }
+
+    .layout-stack .specimen:hover {
+        transform: translateY(-0.5rem);
+        box-shadow: 0 15px 40px var(--bloom-glow);
+    }
+
+    /* ========================================
+       Layout: Grid (portrait orientation)
+       2x2 grid for vertical images
+       ======================================== */
+
+    .specimens-field.layout-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        max-width: 500px;
+        margin-left: auto;
+    }
+
+    .layout-grid .specimen {
+        position: relative;
+        background: var(--paper-dark);
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+
+    .layout-grid .specimen:nth-child(even) {
+        margin-top: 3rem;
+    }
+
+    .layout-grid .specimen:hover {
+        transform: scale(1.03);
+        box-shadow: 0 15px 40px var(--bloom-glow);
+    }
+
+    /* ========================================
+       Layout: Filmstrip (portrait orientation)
+       Horizontal row of vertical images
+       ======================================== */
+
+    .specimens-field.layout-filmstrip {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+    }
+
+    .layout-filmstrip .specimen {
+        flex: 0 0 auto;
+        width: 200px;
+        position: relative;
+        background: var(--paper-dark);
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+
+    .layout-filmstrip .specimen:nth-child(odd) {
+        margin-top: 0;
+    }
+
+    .layout-filmstrip .specimen:nth-child(even) {
+        margin-top: 2rem;
+    }
+
+    .layout-filmstrip .specimen:hover {
+        transform: translateY(-0.5rem);
+        box-shadow: 0 15px 40px var(--bloom-glow);
+    }
+
+    /* ========================================
+       Shared specimen styles
+       ======================================== */
+
+    .specimen img {
+        width: 100%;
+        height: auto;
+        display: block;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: all 0.5s ease;
+        cursor: zoom-in;
+    }
+
+    .specimen:hover img {
+        filter: grayscale(0%);
+        opacity: 1;
+    }
+    
+    .specimen-num {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.55rem;
+        color: var(--bloom);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .specimen:hover .specimen-num {
+        opacity: 1;
+    }
+
+    .portrait-nav {
+        display: flex;
+        justify-content: space-between;
+        padding: 4rem 0;
+        border-top: 1px solid var(--ink-ghost);
+        margin-top: 6rem;
+    }
+    
+    .nav-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .page-marker {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-ghost);
+    }
+    
+    @media (max-width: 1000px) {
+        main {
+            padding: 8rem 2rem 4rem;
+        }
+        
+        .portrait-spread {
+            grid-template-columns: 1fr;
+            gap: 4rem;
+        }
+        
+        .specimens-field {
+            min-height: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .specimen {
+            position: relative;
+        }
+        
+        .specimen:nth-child(n) {
+            top: auto;
+            right: auto;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1;
+        }
+    }
+</style>
+
+<article class="portrait-spread" data-pagefind-body data-pagefind-filter="type:portrait">
+    
+    <div class="prompt-field">
+        
+        <div class="portrait-num">{{ series | default("portraits") | upper }} NO. {{ seriesNumber | default("01") }}</div>
+        
+        <div class="prompt-poem">
+            {% for line in prompt %}
+            <span class="prompt-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="portrait-info">
+            <h1 class="portrait-title">{{ title | default(date | readableDate) }}</h1>
+            <div class="portrait-meta">
+                {{ generator | default("midjourney v6") }}{% if settings %} · {{ settings }}{% endif %}<br>
+                {% if prompter %}prompted by <a href="/making/prompter/{{ prompter | prompterFamily }}/">{{ prompter | prompterFamily }}</a>{% if prompter | prompterModel %} · <a href="/making/prompter/{{ prompter | slugify }}/">{{ prompter | prompterModel }}</a>{% endif %}<br>{% endif %}
+                <a href="/making/#{{ series | default('portraits') | slugify }}">{{ series | default("portraits") }}</a> · {{ date | readableDate }}
+            </div>
+            {% if content | trim %}
+            <div class="portrait-description">
+                {{ content | safe }}
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+    
+    <div class="specimens-field layout-{{ page.fileSlug | layoutVariant(orientation) }}">
+        {% for image in images %}
+        <figure class="specimen" data-src="{{ image.src }}">
+            {% optimizedImage image.src, image.alt | default(title), "(max-width: 900px) 100vw, 50vw" %}
+            <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
+        </figure>
+        {% endfor %}
+        
+        {% if not images %}
+        <!-- Placeholder specimens -->
+        <figure class="specimen"><span class="specimen-num">001</span></figure>
+        <figure class="specimen"><span class="specimen-num">002</span></figure>
+        <figure class="specimen"><span class="specimen-num">003</span></figure>
+        <figure class="specimen"><span class="specimen-num">004</span></figure>
+        {% endif %}
+    </div>
+    
+</article>
+
+<nav class="portrait-nav">
+    <a href="/making/" class="nav-link">← all portraits</a>
+    <span class="page-marker">002</span>
+    {% if next %}
+    <a href="{{ next.url }}" class="nav-link">next: {{ next.title }} →</a>
+    {% else %}
+    <span></span>
+    {% endif %}
+</nav>
+
+{% include "components/lightbox.njk" %}

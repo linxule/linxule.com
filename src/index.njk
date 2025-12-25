@@ -1,0 +1,289 @@
+---
+layout: layouts/base.njk
+---
+
+<style>
+    main {
+        padding: 0;
+        max-width: none;
+    }
+    
+    .spread {
+        min-height: 100vh;
+        padding: 8vh 8vw;
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4vw;
+    }
+    
+    .spread-one {
+        align-items: end;
+        padding-bottom: 12vh;
+    }
+    
+    .colophon {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-light);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+    
+    .colophon-name {
+        font-size: 0.85rem;
+        margin-bottom: 2rem;
+        letter-spacing: 0.3em;
+    }
+    
+    .colophon-name:hover {
+        color: var(--bloom);
+    }
+    
+    .colophon-meta {
+        line-height: 2.2;
+    }
+    
+    .right-field {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 70vh;
+    }
+    
+    .core-question {
+        font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+        font-weight: 300;
+        line-height: 1.8;
+        max-width: 400px;
+        margin-left: auto;
+    }
+    
+    .core-question .line {
+        display: block;
+    }
+    
+    .core-question .line:nth-child(2) { text-indent: 2em; }
+    .core-question .line:nth-child(3) { text-indent: 4em; }
+    .core-question .line:nth-child(4) { text-indent: 1em; }
+    
+    .core-question:hover .line {
+        color: var(--ink-light);
+    }
+    
+    .core-question .line:hover {
+        color: var(--bloom) !important;
+    }
+    
+    .core-question .line.accident {
+        color: var(--accident);
+    }
+    
+    .core-question:hover .line.accident {
+        color: var(--accident);
+    }
+    
+    .page-marker {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        text-align: right;
+    }
+    
+    .spread-two {
+        align-items: center;
+    }
+    
+    .arc-container {
+        position: relative;
+        height: 60vh;
+    }
+    
+    .arc {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50vw;
+        height: 50vw;
+        border: 1px solid var(--ink-ghost);
+        border-radius: 50%;
+        opacity: 0.3;
+        transition: border-color 0.5s ease, opacity 0.5s ease;
+    }
+    
+    .arc-container:hover .arc {
+        border-color: var(--bloom);
+        opacity: 0.5;
+    }
+    
+    .pathways {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding-left: 2rem;
+    }
+    
+    .pathway {
+        font-size: 1rem;
+        color: var(--ink-faint);
+        font-weight: 400;
+        transition: color 0.3s ease, transform 0.3s ease;
+        position: relative;
+    }
+    
+    .pathway:hover {
+        color: var(--bloom);
+        transform: translateX(0.5rem);
+    }
+    
+    .pathway-num {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-ghost);
+        position: absolute;
+        left: -2rem;
+        top: 0.2rem;
+    }
+    
+    .pathway:hover .pathway-num {
+        color: var(--bloom);
+    }
+    
+    .spread-three {
+        min-height: 50vh;
+        align-items: end;
+        padding-bottom: 8vh;
+    }
+    
+    .closing-left {
+        font-size: 0.9rem;
+        color: var(--ink-light);
+        line-height: 2;
+    }
+    
+    .closing-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-end;
+    }
+    
+    .closing-links a {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        text-decoration: none;
+    }
+    
+    .closing-links a:hover {
+        color: var(--bloom);
+    }
+    
+    .correspondence-group {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        margin-top: 0.5rem;
+    }
+    
+    .correspondence-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-ghost);
+    }
+    
+    .correspondence-group a {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+    }
+    
+    @media (max-width: 768px) {
+        .spread {
+            grid-template-columns: 1fr;
+            padding: 6vh 6vw;
+        }
+        
+        .right-field {
+            height: auto;
+            gap: 4rem;
+        }
+        
+        .arc-container {
+            display: none;
+        }
+        
+        .pathways {
+            padding-left: 0;
+        }
+    }
+</style>
+
+<!-- Spread One: Opening -->
+<section class="spread spread-one">
+    <div class="colophon">
+        <div class="colophon-name">XULE LIN</div>
+        <div class="colophon-meta">
+            human–AI organizing<br>
+            coordination studies<br>
+            <br>
+            London / elsewhere<br>
+            2019—
+        </div>
+    </div>
+    <div class="right-field">
+        <div class="core-question">
+            <span class="line">I study what happens</span>
+            <span class="line">when algorithms shift</span>
+            <span class="line">from tools</span>
+            <span class="line accident">to participants.</span>
+        </div>
+        <div class="page-marker">000</div>
+    </div>
+</section>
+
+<!-- Spread Two: Navigation -->
+<section class="spread spread-two">
+    <div class="arc-container">
+        <div class="arc"></div>
+    </div>
+    <nav class="pathways">
+        <a class="pathway" href="/thinking/">
+            <span class="pathway-num">001</span>
+            thinking
+        </a>
+        <a class="pathway" href="/making/">
+            <span class="pathway-num">002</span>
+            making
+        </a>
+        <a class="pathway" href="/writing/">
+            <span class="pathway-num">003</span>
+            writing
+        </a>
+        <a class="pathway" href="/teaching/">
+            <span class="pathway-num">004</span>
+            teaching
+        </a>
+    </nav>
+</section>
+
+<!-- Spread Three: Closing -->
+<section class="spread spread-three">
+    <div class="closing-left">
+        This surface is one rendering.<br>
+        The source remains.
+    </div>
+    <div class="closing-links">
+        <a href="/llms.txt">for AI readers: llms.txt</a>
+        <a href="/cv/">cv</a>
+        <a href="https://github.com/linxule">github</a>
+        <a href="https://threadcounts.substack.com">thread counts</a>
+        <a href="https://xhslink.com/m/5411hXmoy5T">xiaohongshu 小红书</a>
+        <div class="correspondence-group">
+            <span class="correspondence-label">correspondence:</span>
+            <a href="mailto:xule.lin@imperial.ac.uk">email</a>
+            <a href="https://twitter.com/linxule">twitter</a>
+            <a href="https://linkedin.com/in/linxule">linkedin</a>
+        </div>
+    </div>
+</section>

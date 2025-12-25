@@ -1,0 +1,135 @@
+---
+layout: layouts/base.njk
+marker: "teaching"
+---
+
+<style>
+    main {
+        padding: 12rem 4rem 6rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .page-header {
+        margin-bottom: 8rem;
+        position: relative;
+    }
+
+    .page-marker {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .page-title {
+        font-size: 1rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+    }
+
+    .page-description {
+        font-size: 0.9rem;
+        color: var(--ink-light);
+        max-width: 400px;
+    }
+
+    .teaching-field {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8rem;
+        align-items: start;
+    }
+
+    .teaching-item {
+        max-width: 350px;
+    }
+
+    .teaching-item:nth-child(2) {
+        justify-self: end;
+        margin-top: 6rem;
+    }
+
+    .item-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+
+    .item-title {
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+    }
+
+    .item-title a {
+        text-decoration: none;
+    }
+
+    .item-description {
+        font-size: 0.9rem;
+        color: var(--ink-light);
+        line-height: 1.8;
+    }
+
+    .item-specimen {
+        width: 80px;
+        height: 80px;
+        background: var(--paper-dark);
+        margin-bottom: 1.5rem;
+    }
+
+    .page-footer {
+        margin-top: auto;
+        padding-top: 4rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    @media (max-width: 900px) {
+        main {
+            padding: 8rem 2rem 4rem;
+        }
+
+        .teaching-field {
+            grid-template-columns: 1fr;
+            gap: 4rem;
+        }
+
+        .teaching-item:nth-child(2) {
+            justify-self: start;
+            margin-top: 0;
+        }
+    }
+</style>
+
+<header class="page-header">
+    <h1 class="page-title">teaching</h1>
+    <p class="page-description">
+        {{ description | default("Materials and") }} <span class="accident">{{ accident | default("invitations") }}</span>.
+    </p>
+    <div class="page-marker">004</div>
+</header>
+
+<div class="teaching-field">
+    {% for item in items %}
+    <div class="teaching-item">
+        <div class="item-specimen"></div>
+        <div class="item-label">{{ item.label }}</div>
+        <h2 class="item-title"><a href="{{ item.url }}">{{ item.title }} →</a></h2>
+        <p class="item-description">{{ item.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<footer class="page-footer">
+    <a href="/" class="back-link">← return</a>
+</footer>

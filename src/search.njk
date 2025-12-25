@@ -1,0 +1,195 @@
+---
+layout: layouts/base.njk
+title: "search"
+permalink: /search/
+---
+
+<style>
+    main {
+        padding: 12rem 4rem 6rem;
+        max-width: 800px;
+        margin: 0 auto;
+        min-height: 80vh;
+    }
+
+    .page-header {
+        margin-bottom: 4rem;
+        position: relative;
+    }
+
+    .page-title {
+        font-size: 1rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+    }
+
+    .page-description {
+        font-size: 0.9rem;
+        color: var(--ink-light);
+        max-width: 400px;
+    }
+
+    .page-marker {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .page-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    @media (max-width: 768px) {
+        main {
+            padding: 8rem 1.5rem 4rem;
+        }
+    }
+</style>
+
+<!-- Load Pagefind CSS first -->
+<link href="/pagefind/pagefind-ui.css" rel="stylesheet">
+
+<!-- Override Pagefind styles AFTER loading their CSS -->
+<style>
+    /* Pagefind UI overrides for book aesthetic */
+    :root {
+        --pagefind-ui-scale: 1;
+        --pagefind-ui-primary: var(--ink);
+        --pagefind-ui-text: var(--ink-light);
+        --pagefind-ui-background: var(--paper);
+        --pagefind-ui-border: var(--ink-ghost);
+        --pagefind-ui-tag: var(--ink-faint);
+        --pagefind-ui-border-width: 1px;
+        --pagefind-ui-border-radius: 0;
+        --pagefind-ui-font: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    /* Hide the default search icon - it's a :before pseudo-element on the form */
+    .pagefind-ui__form:before {
+        display: none !important;
+        content: none !important;
+    }
+
+    /* Search input field - reset padding since icon is hidden */
+    .pagefind-ui__search-input {
+        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        font-size: 1rem !important;
+        padding: 1rem !important;
+        padding-left: 1rem !important;
+        border: 1px solid var(--ink-ghost) !important;
+        background: var(--paper) !important;
+        background-image: none !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .pagefind-ui__search-input::placeholder {
+        color: var(--ink-faint) !important;
+        font-style: italic !important;
+    }
+
+    .pagefind-ui__search-input:focus {
+        border-color: var(--bloom) !important;
+        outline: none !important;
+    }
+
+    /* Clear button */
+    .pagefind-ui__search-clear {
+        right: 1rem !important;
+        color: var(--ink-faint) !important;
+    }
+
+    .pagefind-ui__result {
+        padding: 1.5rem 0 !important;
+        border-bottom: 1px solid var(--ink-ghost) !important;
+    }
+
+    .pagefind-ui__result-title {
+        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        font-weight: 400 !important;
+        font-size: 1.1rem !important;
+    }
+
+    .pagefind-ui__result-link {
+        color: var(--ink) !important;
+        text-decoration: none !important;
+    }
+
+    .pagefind-ui__result-link:hover {
+        color: var(--bloom) !important;
+    }
+
+    .pagefind-ui__result-excerpt {
+        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        font-size: 0.95rem !important;
+        color: var(--ink-light) !important;
+        line-height: 1.8 !important;
+    }
+
+    .pagefind-ui__message {
+        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        color: var(--ink-light) !important;
+    }
+
+    .pagefind-ui__result-tag {
+        font-family: 'IBM Plex Mono', monospace !important;
+        font-size: 0.65rem !important;
+        letter-spacing: 0.1em !important;
+        text-transform: uppercase !important;
+        background: var(--paper-dark) !important;
+        color: var(--ink-faint) !important;
+        padding: 0.25rem 0.5rem !important;
+        border: none !important;
+    }
+
+    .pagefind-ui__button {
+        font-family: 'IBM Plex Mono', monospace !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.1em !important;
+        background: var(--paper) !important;
+        border: 1px solid var(--ink-ghost) !important;
+        color: var(--ink-faint) !important;
+    }
+
+    .pagefind-ui__button:hover {
+        background: var(--paper-dark) !important;
+        color: var(--ink) !important;
+    }
+</style>
+
+<header class="page-header">
+    <h1 class="page-title">search</h1>
+    <p class="page-description">Find writing and portraits by keyword.</p>
+</header>
+
+<div id="search"></div>
+
+<footer class="page-footer">
+    <a href="/" class="back-link" id="back-link">← return</a>
+</footer>
+
+<script src="/pagefind/pagefind-ui.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        new PagefindUI({
+            element: "#search",
+            showSubResults: true,
+            showImages: false,
+            excerptLength: 50
+        });
+
+        // Back button with history support
+        document.getElementById('back-link').addEventListener('click', function(e) {
+            if (window.history.length > 1) {
+                e.preventDefault();
+                history.back();
+            }
+            // If no history, follows href="/" as fallback
+        });
+    });
+</script>
