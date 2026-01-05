@@ -95,6 +95,13 @@ module.exports = function(eleventyConfig) {
     return collectionApi.getFilteredByGlob("src/thinking/**/*.md");
   });
 
+  // Artifacts collection - things Claude made directly (not prompted to other AIs)
+  eleventyConfig.addCollection("artifacts", function(collectionApi) {
+    return collectionApi.getFilteredByGlob("src/making/artifacts/**/*.md").sort((a, b) => {
+      return b.date - a.date;
+    });
+  });
+
   // Writing grouped by series for filtering
   eleventyConfig.addCollection("writingBySeries", function(collectionApi) {
     const allWriting = collectionApi.getFilteredByGlob("src/writing/**/*.md");

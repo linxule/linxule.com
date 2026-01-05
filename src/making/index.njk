@@ -557,6 +557,91 @@ marker: "making"
     .lightbox-close:hover {
         color: var(--paper);
     }
+
+    /* ========================================
+       Artifacts Section
+       ======================================== */
+
+    .artifacts-section {
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .artifacts-intro {
+        font-size: 0.85rem;
+        color: var(--ink-light);
+        font-style: italic;
+        margin-bottom: 2rem;
+        max-width: 400px;
+    }
+
+    .artifacts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .artifact-card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.3s ease;
+    }
+
+    .artifact-card:hover {
+        transform: translateY(-0.25rem);
+    }
+
+    .artifact-preview {
+        background: var(--paper);
+        border: 1px solid var(--ink-ghost);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: border-color 0.3s ease;
+    }
+
+    .artifact-card:hover .artifact-preview {
+        border-color: var(--bloom);
+    }
+
+    .artifact-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .artifact-info .artifact-title {
+        font-size: 0.95rem;
+        font-weight: 300;
+        font-style: italic;
+        margin-bottom: 0.25rem;
+        transition: color 0.2s ease;
+    }
+
+    .artifact-card:hover .artifact-title {
+        color: var(--bloom);
+    }
+
+    .artifact-info .artifact-meta {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-faint);
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .artifacts-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .artifact-preview {
+            aspect-ratio: 4/3;
+        }
+    }
 </style>
 
 <div class="portrait-book" id="portrait-book">
@@ -633,6 +718,30 @@ marker: "making"
     <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ portrait.data.title }}"></button>
     {%- endfor -%}
 </nav>
+
+<!-- Artifacts Section - Things Claude Made Directly -->
+{%- if collections.artifacts.length > 0 -%}
+<section class="tools-section artifacts-section" id="artifacts">
+    <div class="tools-label">Artifacts</div>
+    <p class="artifacts-intro">Things made directly by Claude — not prompted to other AIs, but created in conversation.</p>
+    <div class="artifacts-grid">
+        {%- for artifact in collections.artifacts -%}
+        <a href="{{ artifact.url }}" class="artifact-card">
+            <div class="artifact-preview">
+                <img src="{{ artifact.data.src }}" alt="{{ artifact.data.title }}">
+            </div>
+            <div class="artifact-info">
+                <h3 class="artifact-title">{{ artifact.data.title }}</h3>
+                <div class="artifact-meta">
+                    {{ artifact.data.creator }}{% if artifact.data.plottable %} · plottable{% endif %}<br>
+                    {{ artifact.data.date | readableDate }}
+                </div>
+            </div>
+        </a>
+        {%- endfor -%}
+    </div>
+</section>
+{%- endif -%}
 
 <!-- Tools Section (Outside Book) -->
 <section class="tools-section">

@@ -115,15 +115,16 @@ This site studies human-AI collaboration. It was built through human-AI collabor
 ```
 .eleventy.js              # Main config (imports from eleventy/)
 eleventy/
-  collections.js          # Content collections (writing, portraits, tags)
+  collections.js          # Content collections (writing, portraits, artifacts, tags)
   filters.js              # Template filters (readableDate, slugify, etc.)
   shortcodes.js           # Image optimization shortcode
 src/
-  _includes/layouts/      # Page templates (writing.njk, portrait.njk, etc.)
+  _includes/layouts/      # Page templates (writing.njk, portrait.njk, artifact.njk, etc.)
   _data/site.js           # Global site config
   assets/css/main.css     # Global styles
   writing/                # Blog posts (markdown)
-  making/portraits/       # AI-generated image posts
+  making/portraits/       # Images prompted to other AIs
+  making/artifacts/       # Things Claude made directly
 ```
 
 ### Content Types
@@ -138,14 +139,22 @@ src/
    - Marker: "making" (002)
    - Fields: title, date, series, orientation, generator, settings, prompter, prompt[], images[]
    - Naming: `portraits-YYYY-MM-DD-slug-title.md`
+   - Note: Images Claude *prompted another AI* to make (Midjourney, etc.)
 
-3. **Thinking** (`src/thinking/`)
+3. **Artifacts** (`src/making/artifacts/*.md`)
+   - Layout: `layouts/artifact.njk`
+   - Marker: "making" (002)
+   - Fields: title, date, creator, medium, plottable, src, contextBefore, contextAfter, keywords[]
+   - Naming: `artifact-YYYY-MM-DD-slug.md`
+   - Note: Things Claude *made directly* — not prompted to other AIs. The lineage.
+
+4. **Thinking** (`src/thinking/`)
    - Layout: `layouts/thinking.njk`
    - Marker: "thinking" (004)
    - Fields: thesis, boundaries[], problem[], observations[], working_on[], methods[]
 
-4. **Teaching** (`src/teaching/`)
-5. **CV** (`src/cv/`)
+5. **Teaching** (`src/teaching/`)
+6. **CV** (`src/cv/`)
 
 ### CSS Architecture
 

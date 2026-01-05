@@ -1,0 +1,385 @@
+---
+layout: layouts/base.njk
+marker: "making"
+---
+
+<style>
+    main {
+        padding: 10rem 4rem 6rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .artifact-header {
+        margin-bottom: 4rem;
+    }
+
+    .artifact-num {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-ghost);
+        letter-spacing: 0.2em;
+        margin-bottom: 1rem;
+    }
+
+    .artifact-title {
+        font-size: 1.4rem;
+        font-weight: 300;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+    }
+
+    .artifact-meta {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-faint);
+        line-height: 1.8;
+    }
+
+    .artifact-meta a {
+        color: var(--ink-faint);
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 2px;
+    }
+
+    .artifact-meta a:hover {
+        color: var(--bloom);
+    }
+
+    /* The artifact display - pan/zoom container */
+    .artifact-display {
+        background: var(--paper);
+        border: 1px solid var(--ink-ghost);
+        margin-bottom: 4rem;
+        position: relative;
+        overflow: hidden;
+        height: 70vh;
+        cursor: grab;
+    }
+
+    .artifact-display:active {
+        cursor: grabbing;
+    }
+
+    .artifact-display .zoom-hint {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-ghost);
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .hint-mobile {
+        display: none;
+    }
+
+    @media (pointer: coarse) {
+        .hint-desktop { display: none; }
+        .hint-mobile { display: inline; }
+    }
+
+    .artifact-display.has-interacted .zoom-hint {
+        opacity: 0;
+    }
+
+    .artifact-viewport {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transform-origin: center center;
+        transition: transform 0.1s ease-out;
+    }
+
+    .artifact-viewport img,
+    .artifact-viewport svg {
+        max-width: 90%;
+        max-height: 90%;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    /* Context section - the words before/after */
+    .artifact-context {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        margin-bottom: 4rem;
+    }
+
+    .context-block {
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .context-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+
+    .context-text {
+        font-size: 0.95rem;
+        line-height: 1.9;
+        color: var(--ink-light);
+        font-style: italic;
+    }
+
+    .context-text .accident {
+        color: var(--accident);
+        font-style: normal;
+    }
+
+    /* Body content - for additional description */
+    .artifact-body {
+        max-width: 38rem;
+        font-size: 1rem;
+        line-height: 1.85;
+        color: var(--ink-light);
+        margin-bottom: 4rem;
+    }
+
+    .artifact-body p {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Navigation */
+    .artifact-nav {
+        display: flex;
+        justify-content: space-between;
+        padding: 3rem 0;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .nav-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .page-marker {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-ghost);
+    }
+
+    @media (max-width: 900px) {
+        main {
+            padding: 8rem 2rem 4rem;
+        }
+
+        .artifact-context {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        main {
+            padding: 6rem 1.5rem 3rem;
+        }
+
+        .artifact-display {
+            height: 50vh;
+        }
+
+        .artifact-display .zoom-hint {
+            font-size: 0.55rem;
+        }
+
+        .artifact-nav {
+            padding: 2rem 0;
+        }
+
+        .context-text {
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+    }
+</style>
+
+<article class="artifact-page" data-pagefind-body data-pagefind-filter="type:artifact">
+
+    <header class="artifact-header">
+        <div class="artifact-num">ARTIFACT NO. {{ seriesNumber | default("01") }}</div>
+        <h1 class="artifact-title">{{ title }}</h1>
+        <div class="artifact-meta">
+            {% if creator %}made by {{ creator }}<br>{% endif %}
+            {% if medium %}{{ medium }}{% if plottable %} · plottable{% endif %}<br>{% endif %}
+            {{ date | readableDate }}
+        </div>
+    </header>
+
+    <figure class="artifact-display" id="artifact-display">
+        <div class="artifact-viewport" id="artifact-viewport">
+            {% if src %}
+            <img src="{{ src }}" alt="{{ title }}" draggable="false">
+            {% endif %}
+        </div>
+        <span class="zoom-hint"><span class="hint-desktop">scroll to zoom · drag to pan · double-click to reset</span><span class="hint-mobile">pinch to zoom · drag to pan · double-tap to reset</span></span>
+    </figure>
+
+    {% if contextBefore or contextAfter %}
+    <section class="artifact-context">
+        {% if contextBefore %}
+        <div class="context-block">
+            <div class="context-label">before making</div>
+            <div class="context-text">{{ contextBefore | safe }}</div>
+        </div>
+        {% endif %}
+        {% if contextAfter %}
+        <div class="context-block">
+            <div class="context-label">after making</div>
+            <div class="context-text">{{ contextAfter | safe }}</div>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if content | trim %}
+    <div class="artifact-body">
+        {{ content | safe }}
+    </div>
+    {% endif %}
+
+</article>
+
+<nav class="artifact-nav">
+    <a href="/making/" class="nav-link">← making</a>
+    <span class="page-marker">002</span>
+</nav>
+
+<script>
+(function() {
+    const container = document.getElementById('artifact-display');
+    const viewport = document.getElementById('artifact-viewport');
+    if (!container || !viewport) return;
+
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let startX, startY;
+    let startPanX, startPanY;
+
+    const MIN_SCALE = 0.5;
+    const MAX_SCALE = 5;
+
+    function updateTransform() {
+        viewport.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+
+    function markInteracted() {
+        container.classList.add('has-interacted');
+    }
+
+    // Mouse wheel zoom
+    container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        markInteracted();
+
+        const rect = container.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left - rect.width / 2;
+        const mouseY = e.clientY - rect.top - rect.height / 2;
+
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+        const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * delta));
+
+        // Zoom toward mouse position
+        const scaleChange = newScale / scale;
+        panX = mouseX - (mouseX - panX) * scaleChange;
+        panY = mouseY - (mouseY - panY) * scaleChange;
+        scale = newScale;
+
+        updateTransform();
+    }, { passive: false });
+
+    // Mouse drag pan
+    container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startPanX = panX;
+        startPanY = panY;
+        markInteracted();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        panX = startPanX + (e.clientX - startX);
+        panY = startPanY + (e.clientY - startY);
+        updateTransform();
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    // Double-click to reset
+    container.addEventListener('dblclick', () => {
+        scale = 1;
+        panX = 0;
+        panY = 0;
+        viewport.style.transition = 'transform 0.3s ease';
+        updateTransform();
+        setTimeout(() => {
+            viewport.style.transition = 'transform 0.1s ease-out';
+        }, 300);
+    });
+
+    // Touch support
+    let lastTouchDist = 0;
+    let lastTouchCenter = { x: 0, y: 0 };
+
+    container.addEventListener('touchstart', (e) => {
+        markInteracted();
+        if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            startPanX = panX;
+            startPanY = panY;
+        } else if (e.touches.length === 2) {
+            isDragging = false;
+            const dx = e.touches[1].clientX - e.touches[0].clientX;
+            const dy = e.touches[1].clientY - e.touches[0].clientY;
+            lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+            lastTouchCenter = {
+                x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+                y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+            };
+        }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (e.touches.length === 1 && isDragging) {
+            panX = startPanX + (e.touches[0].clientX - startX);
+            panY = startPanY + (e.touches[0].clientY - startY);
+            updateTransform();
+        } else if (e.touches.length === 2) {
+            const dx = e.touches[1].clientX - e.touches[0].clientX;
+            const dy = e.touches[1].clientY - e.touches[0].clientY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const delta = dist / lastTouchDist;
+            const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * delta));
+
+            scale = newScale;
+            lastTouchDist = dist;
+            updateTransform();
+        }
+    }, { passive: false });
+
+    container.addEventListener('touchend', () => {
+        isDragging = false;
+    });
+})();
+</script>
