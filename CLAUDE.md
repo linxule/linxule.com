@@ -201,6 +201,7 @@ src/
      - **Maker** (Claude): contextExcerpt, contextBefore, contextAfter
      - **Collaborator** (Xule): body content → rendered with "context" label
      - **Witnesses** (optional): `witnesses` field → rendered with "witnesses" label, for Twitter reactions etc.
+   - **Artifact viewer**: Pan/zoom with fullscreen mode (click "expand" button, Escape to close)
 
 4. **Thinking** (`src/thinking/`)
    - Layout: `layouts/thinking.njk`
