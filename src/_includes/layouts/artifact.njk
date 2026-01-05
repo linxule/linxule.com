@@ -148,6 +148,51 @@ marker: "making"
         opacity: 0;
     }
 
+    /* Fullscreen button */
+    .fullscreen-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-ghost);
+        background: var(--paper);
+        border: 1px solid var(--ink-ghost);
+        padding: 0.4rem 0.6rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        z-index: 10;
+    }
+
+    .fullscreen-btn:hover {
+        color: var(--bloom);
+        border-color: var(--bloom);
+    }
+
+    /* Fullscreen mode */
+    .artifact-display.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        border: none;
+        background: var(--paper);
+    }
+
+    .artifact-display.fullscreen .fullscreen-btn {
+        top: 2rem;
+        right: 2rem;
+    }
+
+    .artifact-display.fullscreen .zoom-hint {
+        bottom: 2rem;
+        right: 2rem;
+    }
+
     .artifact-viewport {
         width: 100%;
         height: 100%;
@@ -399,6 +444,7 @@ marker: "making"
 
     <div class="artifact-field">
         <figure class="artifact-display" id="artifact-display">
+            <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">expand</button>
             <div class="artifact-viewport" id="artifact-viewport">
                 {% if src %}
                 <img src="{{ src }}" alt="{{ title }}" draggable="false">
@@ -454,6 +500,7 @@ marker: "making"
 (function() {
     const container = document.getElementById('artifact-display');
     const viewport = document.getElementById('artifact-viewport');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
     if (!container || !viewport) return;
 
     let scale = 1;
@@ -462,6 +509,7 @@ marker: "making"
     let isDragging = false;
     let startX, startY;
     let startPanX, startPanY;
+    let isFullscreen = false;
 
     const MIN_SCALE = 0.5;
     const MAX_SCALE = 5;
@@ -473,6 +521,38 @@ marker: "making"
     function markInteracted() {
         container.classList.add('has-interacted');
     }
+
+    // Fullscreen toggle
+    function toggleFullscreen() {
+        isFullscreen = !isFullscreen;
+        container.classList.toggle('fullscreen', isFullscreen);
+        fullscreenBtn.textContent = isFullscreen ? 'close' : 'expand';
+        document.body.style.overflow = isFullscreen ? 'hidden' : '';
+
+        // Reset zoom when entering/exiting fullscreen
+        scale = 1;
+        panX = 0;
+        panY = 0;
+        viewport.style.transition = 'transform 0.3s ease';
+        updateTransform();
+        setTimeout(() => {
+            viewport.style.transition = 'transform 0.1s ease-out';
+        }, 300);
+    }
+
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFullscreen();
+        });
+    }
+
+    // Escape to exit fullscreen
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isFullscreen) {
+            toggleFullscreen();
+        }
+    });
 
     // Mouse wheel zoom
     container.addEventListener('wheel', (e) => {
