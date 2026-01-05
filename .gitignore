@@ -9,3 +9,4 @@ _site/
 
 # Local-only documentation (private workflows)
 LOCAL_MANUAL.md
+.claude/archive/
