@@ -42,6 +42,20 @@ module.exports = function(eleventyConfig) {
     return parts.slice(1).join(' ') || null;
   });
 
+  // Extract creator family (first word): "opus 4.5" → "opus"
+  eleventyConfig.addFilter("creatorFamily", (creator) => {
+    if (!creator) return null;
+    const parts = creator.split(' ');
+    return parts[0].toLowerCase();
+  });
+
+  // Extract creator model (everything after first word): "opus 4.5" → "4.5"
+  eleventyConfig.addFilter("creatorModel", (creator) => {
+    if (!creator) return null;
+    const parts = creator.split(' ');
+    return parts.slice(1).join(' ') || null;
+  });
+
   // Deterministic layout picker based on slug hash and orientation
   eleventyConfig.addFilter("layoutVariant", (slug, orientation) => {
     if (!slug) return 'drift';

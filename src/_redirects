@@ -1,0 +1,35 @@
+# Redirects for old Jekyll site URLs
+# Format: from  to  status
+
+# DAO resources (old paths)
+/curation-dao               /writing/dao-governance-resources/  301
+/curation-dao/              /writing/dao-governance-resources/  301
+/daogov/resource_list       /writing/dao-governance-resources/  301
+/daogov/resource_list/      /writing/dao-governance-resources/  301
+
+# Talks → CV presentations
+/talks                      /cv/#presentations                  301
+/talks/                     /cv/#presentations                  301
+/talks/*                    /cv/#presentations                  301
+
+# Markdown (old Jekyll content)
+/markdown                   /                                   301
+/markdown/                  /                                   301
+/writing/writing-in-markdown /                                  301
+
+# Publications → CV
+/publications               /cv/#publications                   301
+/publications/              /cv/#publications                   301
+/publication/*              /cv/#publications                   301
+
+# Old posts path
+/posts/*                    /writing/                           301
+
+# Sitemap
+/sitemap                    /sitemap.xml                        301
+
+# Case sensitivity fixes
+/cV                         /cv/                                301
+/CV                         /cv/                                301
+/Writing                    /writing/                           301
+/Making                     /making/                            301

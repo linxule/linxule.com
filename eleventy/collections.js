@@ -96,10 +96,82 @@ module.exports = function(eleventyConfig) {
   });
 
   // Artifacts collection - things Claude made directly (not prompted to other AIs)
+  // With series numbering (like portraits)
   eleventyConfig.addCollection("artifacts", function(collectionApi) {
-    return collectionApi.getFilteredByGlob("src/making/artifacts/**/*.md").sort((a, b) => {
-      return b.date - a.date;
+    const allArtifacts = collectionApi.getFilteredByGlob("src/making/artifacts/**/*.md");
+
+    // Group by series and sort by date (oldest first for numbering)
+    const bySeries = {};
+    allArtifacts.forEach(item => {
+      const series = item.data.series || 'artifacts';
+      if (!bySeries[series]) bySeries[series] = [];
+      bySeries[series].push(item);
     });
+
+    // Sort each series by date and assign seriesNumber
+    Object.keys(bySeries).forEach(series => {
+      bySeries[series].sort((a, b) => a.date - b.date); // oldest first
+      bySeries[series].forEach((item, idx) => {
+        item.data.seriesNumber = String(idx + 1).padStart(2, '0');
+        item.data.seriesTotal = bySeries[series].length;
+      });
+    });
+
+    // Return all artifacts sorted by date (newest first for display)
+    return allArtifacts.sort((a, b) => b.date - a.date);
+  });
+
+  // Artifacts grouped by creator for filtering
+  eleventyConfig.addCollection("artifactsByCreator", function(collectionApi) {
+    const allArtifacts = collectionApi.getFilteredByGlob("src/making/artifacts/**/*.md");
+    const byCreator = {};
+
+    allArtifacts.forEach(item => {
+      const creator = item.data.creator || 'unknown';
+      const slug = creator.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+      if (!byCreator[slug]) {
+        byCreator[slug] = {
+          name: creator,
+          slug: slug,
+          items: []
+        };
+      }
+      byCreator[slug].items.push(item);
+    });
+
+    // Sort items within each creator by date (newest first)
+    Object.values(byCreator).forEach(c => {
+      c.items.sort((a, b) => b.date - a.date);
+      c.count = c.items.length;
+    });
+
+    return Object.values(byCreator).sort((a, b) => a.name.localeCompare(b.name));
+  });
+
+  // Artifacts grouped by creator family (first word: opus, gpt, etc.)
+  eleventyConfig.addCollection("artifactsByCreatorFamily", function(collectionApi) {
+    const allArtifacts = collectionApi.getFilteredByGlob("src/making/artifacts/**/*.md");
+    const byFamily = {};
+
+    allArtifacts.forEach(item => {
+      const creator = item.data.creator || 'unknown';
+      const family = creator.split(' ')[0].toLowerCase();
+      if (!byFamily[family]) {
+        byFamily[family] = {
+          name: family,
+          slug: family,
+          items: []
+        };
+      }
+      byFamily[family].items.push(item);
+    });
+
+    Object.values(byFamily).forEach(f => {
+      f.items.sort((a, b) => b.date - a.date);
+      f.count = f.items.length;
+    });
+
+    return Object.values(byFamily).sort((a, b) => a.name.localeCompare(b.name));
   });
 
   // Writing grouped by series for filtering

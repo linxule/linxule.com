@@ -1,0 +1,368 @@
+---
+layout: layouts/base.njk
+marker: "making"
+pagination:
+  data: collections.artifactsByCreatorFamily
+  size: 1
+  alias: family
+permalink: /making/creator/{{ family.slug }}/
+eleventyComputed:
+  title: "{{ family.name }} · artifacts"
+---
+
+<style>
+    main {
+        padding: 0;
+        max-width: none;
+        margin: 0;
+    }
+
+    .artifact-book {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .artifact-book::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+    }
+
+    .artifact-spread {
+        height: 100vh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        padding: 8rem 4rem;
+        align-content: center;
+        box-sizing: border-box;
+    }
+
+    .artifact-spread.header-spread {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding-left: 8rem;
+    }
+
+    .header-spread .back-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-faint);
+        text-decoration: none;
+        margin-bottom: 2rem;
+        transition: color 0.2s ease;
+    }
+
+    .header-spread .back-link:hover {
+        color: var(--bloom);
+    }
+
+    .header-spread .creator-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+    }
+
+    .header-spread .page-title {
+        font-size: 1.8rem;
+        font-weight: 300;
+        font-style: italic;
+        margin-bottom: 1rem;
+    }
+
+    .header-spread .page-count {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        margin-bottom: 3rem;
+    }
+
+    .scroll-hint {
+        position: absolute;
+        bottom: 4rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-ghost);
+        text-align: center;
+        opacity: 1;
+        transition: opacity 0.5s ease;
+    }
+
+    .scroll-hint.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .spread-prompt {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .prompt-poem {
+        margin-bottom: 2rem;
+    }
+
+    .prompt-line {
+        display: block;
+        font-size: 1.1rem;
+        line-height: 2;
+        color: var(--ink-faint);
+        transition: color 0.3s ease;
+    }
+
+    .prompt-line:nth-child(1) { margin-left: 0; }
+    .prompt-line:nth-child(2) { margin-left: 1.5rem; }
+    .prompt-line:nth-child(3) { margin-left: 0.75rem; }
+    .prompt-line:nth-child(4) { margin-left: 2.25rem; }
+    .prompt-line:nth-child(5) { margin-left: 0.5rem; }
+    .prompt-line:nth-child(6) { margin-left: 1.75rem; }
+    .prompt-line:nth-child(7) { margin-left: 1rem; }
+    .prompt-line:nth-child(8) { margin-left: 2rem; }
+
+    .prompt-poem:hover .prompt-line {
+        color: var(--ink-light);
+    }
+
+    .prompt-line.accident {
+        color: var(--accident);
+    }
+
+    .spread-meta {
+        border-top: 1px solid var(--ink-ghost);
+        padding-top: 1.5rem;
+    }
+
+    .spread-title {
+        font-size: 0.95rem;
+        font-weight: 300;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+    }
+
+    .spread-title a {
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .spread-title a:hover {
+        color: var(--bloom);
+    }
+
+    .spread-info {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-faint);
+        line-height: 1.8;
+    }
+
+    .spread-specimens {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .specimen {
+        position: relative;
+        overflow: hidden;
+        background: var(--paper-dark);
+        cursor: pointer;
+        max-width: 400px;
+        max-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .specimen img {
+        max-width: 100%;
+        max-height: 60vh;
+        object-fit: contain;
+        display: block;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: all 0.5s ease;
+    }
+
+    .specimen:hover img {
+        filter: grayscale(0%);
+        opacity: 1;
+    }
+
+    .book-nav {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.5rem;
+        z-index: 100;
+    }
+
+    .book-nav-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ink-ghost);
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border: none;
+        padding: 0;
+    }
+
+    .book-nav-dot:hover {
+        background: var(--bloom);
+    }
+
+    .book-nav-dot.active {
+        background: var(--ink);
+    }
+
+    @media (max-width: 900px) {
+        .artifact-spread {
+            grid-template-columns: 1fr;
+            padding: 6rem 2rem;
+            gap: 2rem;
+        }
+
+        .artifact-spread.header-spread {
+            padding: 6rem 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .artifact-book {
+            scroll-snap-type: none;
+            height: auto;
+            overflow-y: visible;
+        }
+
+        .artifact-spread {
+            scroll-snap-align: none;
+            scroll-snap-stop: normal;
+            height: auto;
+            min-height: auto;
+            padding: 3rem 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .artifact-spread.header-spread {
+            padding: 4rem 1.5rem 3rem;
+        }
+
+        .book-nav {
+            display: none;
+        }
+
+        .scroll-hint {
+            display: none;
+        }
+
+        .prompt-line:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .specimen img,
+        .specimen:hover img {
+            filter: none;
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="artifact-book" id="artifact-book">
+
+    <!-- Header Spread -->
+    <section class="artifact-spread header-spread" data-spread="0">
+        <a href="/making/#artifacts" class="back-link">← all artifacts</a>
+        <div class="creator-label">made by</div>
+        <h1 class="page-title">{{ family.name }}</h1>
+        <p class="page-count">{{ family.count }} artifact{% if family.count != 1 %}s{% endif %}</p>
+
+        <div class="scroll-hint" id="scroll-hint">
+            ↓ scroll to explore
+        </div>
+    </section>
+
+    <!-- Artifact Spreads -->
+    {%- for artifact in family.items -%}
+    <section class="artifact-spread" data-spread="{{ loop.index }}">
+
+        <div class="spread-prompt">
+            <div class="prompt-poem">
+                {%- if artifact.data.contextExcerpt.length -%}
+                    {%- for line in artifact.data.contextExcerpt -%}
+                    <span class="prompt-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                    {%- endfor -%}
+                {%- else -%}
+                    <span class="prompt-line{% if artifact.data.contextExcerpt.accident %} accident{% endif %}">{{ artifact.data.contextExcerpt.text | default(artifact.data.contextExcerpt) }}</span>
+                {%- endif -%}
+            </div>
+
+            <div class="spread-meta">
+                <h2 class="spread-title"><a href="{{ artifact.url }}">{{ artifact.data.title }}</a></h2>
+                <div class="spread-info">
+                    {{ artifact.data.creator }}<br>
+                    {{ artifact.data.medium }}{% if artifact.data.plottable %} · plottable{% endif %}<br>
+                    {{ artifact.data.date | readableDate }}
+                </div>
+            </div>
+        </div>
+
+        <div class="spread-specimens">
+            <a href="{{ artifact.url }}" class="specimen">
+                <img src="{{ artifact.data.src }}" alt="{{ artifact.data.title }}">
+            </a>
+        </div>
+
+    </section>
+    {%- endfor -%}
+
+</div>
+
+<!-- Navigation Dots -->
+<nav class="book-nav" id="book-nav">
+    <button class="book-nav-dot active" data-target="0" aria-label="Go to introduction"></button>
+    {%- for artifact in family.items -%}
+    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ artifact.data.title }}"></button>
+    {%- endfor -%}
+</nav>
+
+<script>
+(function() {
+    const book = document.getElementById('artifact-book');
+    const dots = document.querySelectorAll('.book-nav-dot');
+    const spreads = document.querySelectorAll('.artifact-spread');
+    const scrollHint = document.getElementById('scroll-hint');
+
+    book.addEventListener('scroll', () => {
+        const scrollPos = book.scrollTop;
+        const spreadHeight = window.innerHeight;
+        const currentIndex = Math.round(scrollPos / spreadHeight);
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+        });
+
+        if (scrollPos > 50 && scrollHint) {
+            scrollHint.classList.add('hidden');
+        }
+    });
+
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            spreads[i].scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+})();
+</script>

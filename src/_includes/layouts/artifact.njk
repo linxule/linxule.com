@@ -5,13 +5,21 @@ marker: "making"
 
 <style>
     main {
-        padding: 10rem 4rem 6rem;
-        max-width: 1200px;
+        padding: 12rem 4rem 6rem;
+        max-width: 1400px;
         margin: 0 auto;
     }
 
-    .artifact-header {
-        margin-bottom: 4rem;
+    .artifact-spread {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6rem;
+        min-height: 80vh;
+        align-items: start;
+    }
+
+    .context-field {
+        padding-top: 4rem;
     }
 
     .artifact-num {
@@ -19,13 +27,64 @@ marker: "making"
         font-size: 0.6rem;
         color: var(--ink-ghost);
         letter-spacing: 0.2em;
-        margin-bottom: 1rem;
+        margin-bottom: 3rem;
+    }
+
+    /* Context excerpt - shaped text with stagger (like prompt-poem) */
+    .context-poem {
+        position: relative;
+    }
+
+    .context-line {
+        display: block;
+        font-size: 1.1rem;
+        line-height: 2.4;
+        color: var(--ink-faint);
+        transition: color 0.4s ease, transform 0.4s ease;
+        cursor: default;
+    }
+
+    .context-line:nth-child(1) { margin-left: 0; }
+    .context-line:nth-child(2) { margin-left: 2rem; }
+    .context-line:nth-child(3) { margin-left: 1rem; }
+    .context-line:nth-child(4) { margin-left: 3rem; }
+    .context-line:nth-child(5) { margin-left: 0.5rem; }
+    .context-line:nth-child(6) { margin-left: 2.5rem; }
+    .context-line:nth-child(7) { margin-left: 1.5rem; }
+    .context-line:nth-child(8) { margin-left: 1rem; }
+
+    .context-line:hover {
+        color: var(--bloom);
+        transform: translateX(0.25rem);
+    }
+
+    .context-poem:hover .context-line {
+        color: var(--ink-light);
+    }
+
+    .context-poem:hover .context-line:hover {
+        color: var(--bloom);
+    }
+
+    .context-line.accident {
+        color: var(--accident);
+    }
+
+    .context-poem:hover .context-line.accident {
+        color: var(--accident);
+    }
+
+    .artifact-info {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
     }
 
     .artifact-title {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         font-weight: 300;
         font-style: italic;
+        color: var(--ink);
         margin-bottom: 0.5rem;
     }
 
@@ -48,10 +107,13 @@ marker: "making"
     }
 
     /* The artifact display - pan/zoom container */
+    .artifact-field {
+        position: relative;
+    }
+
     .artifact-display {
-        background: var(--paper);
+        background: var(--paper-dark);
         border: 1px solid var(--ink-ghost);
-        margin-bottom: 4rem;
         position: relative;
         overflow: hidden;
         height: 70vh;
@@ -109,6 +171,7 @@ marker: "making"
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 4rem;
+        margin-top: 6rem;
         margin-bottom: 4rem;
     }
 
@@ -138,25 +201,106 @@ marker: "making"
         font-style: normal;
     }
 
-    /* Body content - for additional description */
-    .artifact-body {
-        max-width: 38rem;
-        font-size: 1rem;
-        line-height: 1.85;
-        color: var(--ink-light);
+    /* Collaborator's context - your voice */
+    .collaborator-context {
+        margin-top: 4rem;
         margin-bottom: 4rem;
     }
 
-    .artifact-body p {
+    .collaborator-block {
+        max-width: 38rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .collaborator-block .context-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+
+    .collaborator-block .context-text {
+        font-size: 0.95rem;
+        line-height: 1.9;
+        color: var(--ink-light);
+    }
+
+    .collaborator-block .context-text p {
         margin-bottom: 1.5rem;
+    }
+
+    .collaborator-block .context-text a {
+        color: var(--ink-light);
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 2px;
+    }
+
+    .collaborator-block .context-text a:hover {
+        color: var(--bloom);
+    }
+
+    /* Witnesses - others who responded (optional) */
+    .witnesses-context {
+        margin-top: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .witnesses-block {
+        max-width: 38rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .witnesses-block .context-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+
+    .witnesses-block .context-text {
+        font-size: 0.95rem;
+        line-height: 1.9;
+        color: var(--ink-light);
+    }
+
+    .witnesses-block blockquote {
+        margin: 0 0 1.5rem 0;
+        padding-left: 1rem;
+        border-left: 2px solid var(--ink-ghost);
+        font-style: italic;
+    }
+
+    .witnesses-block blockquote cite {
+        display: block;
+        margin-top: 0.5rem;
+        font-style: normal;
+        font-size: 0.8rem;
+        color: var(--ink-faint);
+    }
+
+    .witnesses-block blockquote cite a {
+        color: var(--ink-faint);
+        text-decoration: none;
+    }
+
+    .witnesses-block blockquote cite a:hover {
+        color: var(--bloom);
     }
 
     /* Navigation */
     .artifact-nav {
         display: flex;
         justify-content: space-between;
-        padding: 3rem 0;
+        padding: 4rem 0;
         border-top: 1px solid var(--ink-ghost);
+        margin-top: 6rem;
     }
 
     .nav-link {
@@ -171,9 +315,14 @@ marker: "making"
         color: var(--ink-ghost);
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1000px) {
         main {
             padding: 8rem 2rem 4rem;
+        }
+
+        .artifact-spread {
+            grid-template-columns: 1fr;
+            gap: 4rem;
         }
 
         .artifact-context {
@@ -187,6 +336,20 @@ marker: "making"
             padding: 6rem 1.5rem 3rem;
         }
 
+        .context-field {
+            padding-top: 0;
+        }
+
+        /* Remove stagger on mobile */
+        .context-line:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .context-line {
+            font-size: 1rem;
+            line-height: 2;
+        }
+
         .artifact-display {
             height: 50vh;
         }
@@ -196,6 +359,7 @@ marker: "making"
         }
 
         .artifact-nav {
+            margin-top: 3rem;
             padding: 2rem 0;
         }
 
@@ -206,51 +370,80 @@ marker: "making"
     }
 </style>
 
-<article class="artifact-page" data-pagefind-body data-pagefind-filter="type:artifact">
+<article class="artifact-spread" data-pagefind-body data-pagefind-filter="type:artifact">
 
-    <header class="artifact-header">
+    <div class="context-field">
         <div class="artifact-num">ARTIFACT NO. {{ seriesNumber | default("01") }}</div>
-        <h1 class="artifact-title">{{ title }}</h1>
-        <div class="artifact-meta">
-            {% if creator %}made by {{ creator }}<br>{% endif %}
-            {% if medium %}{{ medium }}{% if plottable %} · plottable{% endif %}<br>{% endif %}
-            {{ date | readableDate }}
-        </div>
-    </header>
 
-    <figure class="artifact-display" id="artifact-display">
-        <div class="artifact-viewport" id="artifact-viewport">
-            {% if src %}
-            <img src="{{ src }}" alt="{{ title }}" draggable="false">
+        {% if contextExcerpt %}
+        <div class="context-poem">
+            {% if contextExcerpt.length %}
+                {% for line in contextExcerpt %}
+                <span class="context-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                {% endfor %}
+            {% else %}
+                <span class="context-line{% if contextExcerpt.accident %} accident{% endif %}">{{ contextExcerpt.text | default(contextExcerpt) }}</span>
             {% endif %}
         </div>
-        <span class="zoom-hint"><span class="hint-desktop">scroll to zoom · drag to pan · double-click to reset</span><span class="hint-mobile">pinch to zoom · drag to pan · double-tap to reset</span></span>
-    </figure>
-
-    {% if contextBefore or contextAfter %}
-    <section class="artifact-context">
-        {% if contextBefore %}
-        <div class="context-block">
-            <div class="context-label">before making</div>
-            <div class="context-text">{{ contextBefore | safe }}</div>
-        </div>
         {% endif %}
-        {% if contextAfter %}
-        <div class="context-block">
-            <div class="context-label">after making</div>
-            <div class="context-text">{{ contextAfter | safe }}</div>
-        </div>
-        {% endif %}
-    </section>
-    {% endif %}
 
-    {% if content | trim %}
-    <div class="artifact-body">
-        {{ content | safe }}
+        <div class="artifact-info">
+            <h1 class="artifact-title">{{ title }}</h1>
+            <div class="artifact-meta">
+                {% if medium %}{{ medium }}{% if plottable %} · plottable{% endif %}<br>{% endif %}
+                {% if creator %}made by <a href="/making/creator/{{ creator | creatorFamily }}/">{{ creator | creatorFamily }}</a>{% if creator | creatorModel %} · <a href="/making/creator/{{ creator | slugify }}/">{{ creator | creatorModel }}</a>{% endif %}<br>{% endif %}
+                <a href="/making/#artifacts">{{ series | default("artifacts") }}</a> · {{ date | readableDate }}
+            </div>
+        </div>
     </div>
-    {% endif %}
+
+    <div class="artifact-field">
+        <figure class="artifact-display" id="artifact-display">
+            <div class="artifact-viewport" id="artifact-viewport">
+                {% if src %}
+                <img src="{{ src }}" alt="{{ title }}" draggable="false">
+                {% endif %}
+            </div>
+            <span class="zoom-hint"><span class="hint-desktop">scroll to zoom · drag to pan · double-click to reset</span><span class="hint-mobile">pinch to zoom · drag to pan · double-tap to reset</span></span>
+        </figure>
+    </div>
 
 </article>
+
+{% if contextBefore or contextAfter %}
+<section class="artifact-context">
+    {% if contextBefore %}
+    <div class="context-block">
+        <div class="context-label">before making</div>
+        <div class="context-text">{{ contextBefore | safe }}</div>
+    </div>
+    {% endif %}
+    {% if contextAfter %}
+    <div class="context-block">
+        <div class="context-label">after making</div>
+        <div class="context-text">{{ contextAfter | safe }}</div>
+    </div>
+    {% endif %}
+</section>
+{% endif %}
+
+{% if content | trim %}
+<section class="collaborator-context">
+    <div class="collaborator-block">
+        <div class="context-label">context</div>
+        <div class="context-text">{{ content | safe }}</div>
+    </div>
+</section>
+{% endif %}
+
+{% if witnesses %}
+<section class="witnesses-context">
+    <div class="witnesses-block">
+        <div class="context-label">witnesses</div>
+        <div class="context-text">{{ witnesses | safe }}</div>
+    </div>
+</section>
+{% endif %}
 
 <nav class="artifact-nav">
     <a href="/making/" class="nav-link">← making</a>

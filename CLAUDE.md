@@ -51,6 +51,55 @@ From Tschichold: running text stays consistent. Breathing happens at structural 
 
 Writing index uses a 7-entry wave: 0 → 2rem → 4rem → 5rem → 3rem → 1.5rem → 0.5rem. We chose 7 over 5 because 5 felt too mechanical. On mobile, stagger removed — scanning mode needs straight lines.
 
+### Text Shaping (CRITICAL FOR NEW CONTENT)
+
+Text is shaped, not just displayed. When adding new portraits, artifacts, or section introductions, apply these patterns:
+
+**Prompt/Context Lines (CSS stagger pattern):**
+```css
+.prompt-line:nth-child(1) { margin-left: 0; }
+.prompt-line:nth-child(2) { margin-left: 1.5rem; }
+.prompt-line:nth-child(3) { margin-left: 0.75rem; }
+.prompt-line:nth-child(4) { margin-left: 2.25rem; }
+.prompt-line:nth-child(5) { margin-left: 0.5rem; }
+.prompt-line:nth-child(6) { margin-left: 1.75rem; }
+.prompt-line:nth-child(7) { margin-left: 1rem; }
+.prompt-line:nth-child(8) { margin-left: 2rem; }
+```
+
+**Section Introduction Poems (CSS):**
+```css
+.poem-line:nth-child(1) { margin-left: 0; }
+.poem-line:nth-child(2) { margin-left: 2rem; }
+.poem-line:nth-child(3) { margin-left: 1rem; }
+.poem-line:nth-child(4) { margin-left: 3rem; }  /* Often the accident line */
+```
+
+**Array Format for Prompts/Excerpts (YAML):**
+```yaml
+prompt:   # or contextExcerpt for artifacts
+  - "First line of text"
+  - "Second line"
+  - "Third line"
+  - text: "The accident line"
+    accident: true
+  - "Fifth line"
+```
+
+The template handles both simple strings and object syntax:
+```njk
+{%- for line in artifact.data.contextExcerpt -%}
+<span class="context-line{% if line.accident %} accident{% endif %}">
+  {{ line.text | default(line) }}
+</span>
+{%- endfor -%}
+```
+
+**When adding new content**, always:
+1. Break text into multiple lines (4-8 lines ideal)
+2. Include ONE accident line (object syntax with `accident: true`)
+3. The template applies the stagger pattern automatically via CSS nth-child
+
 ### One Accident Per Page
 
 Not two. Not scattered. One deliberate wrongness, accepted. Cyan (`#4ee1d4`) — "the color that leaked through from somewhere else." The accident is still, not animated. It doesn't seek attention. If accidents were everywhere, they'd be decoration.
@@ -144,9 +193,14 @@ src/
 3. **Artifacts** (`src/making/artifacts/*.md`)
    - Layout: `layouts/artifact.njk`
    - Marker: "making" (002)
-   - Fields: title, date, creator, medium, plottable, src, contextBefore, contextAfter, keywords[]
+   - Fields: title, date, creator, medium, plottable, src, contextExcerpt[], contextBefore, contextAfter, witnesses, keywords[]
    - Naming: `artifact-YYYY-MM-DD-slug.md`
    - Note: Things Claude *made directly* — not prompted to other AIs. The lineage.
+   - **contextExcerpt**: Array of lines (like prompts) with stagger pattern, one line can have `accident: true`
+   - **Three voices on artifact pages:**
+     - **Maker** (Claude): contextExcerpt, contextBefore, contextAfter
+     - **Collaborator** (Xule): body content → rendered with "context" label
+     - **Witnesses** (optional): `witnesses` field → rendered with "witnesses" label, for Twitter reactions etc.
 
 4. **Thinking** (`src/thinking/`)
    - Layout: `layouts/thinking.njk`
@@ -209,6 +263,37 @@ images:
 ---
 ```
 
+### Artifact Frontmatter
+```yaml
+---
+layout: layouts/artifact.njk
+title: lowercase title
+date: 2026-01-04
+series: artifacts
+creator: opus 4.5              # First word = family (opus)
+medium: svg                    # svg, js, ascii, code, drawing, etc.
+plottable: true                # Optional - can be pen plotted
+src: /assets/images/artifacts/filename.svg
+keywords:
+  - keyword1
+contextExcerpt:                # Array with stagger pattern (like prompts)
+  - "First line of context"
+  - "Second line"
+  - text: "The accident line"
+    accident: true
+contextBefore: |               # Maker's voice - Claude before making
+  Text that appears before the artifact...
+contextAfter: |                # Maker's voice - Claude after making
+  Text that appears after...
+witnesses: |                   # Optional - others who responded (Twitter, etc.)
+  <blockquote>Someone's reaction...</blockquote>
+---
+
+Body content below the `---` is the **Collaborator's voice** (your framing).
+Rendered with "context" label. This is where you explain origins,
+link to inspiration, quote other Claudes, etc.
+```
+
 ### Footnotes as Marginalia
 
 Use standard markdown footnotes - they render as marginalia on desktop:
@@ -224,9 +309,12 @@ Defined in `eleventy/collections.js`:
 
 - `writing` - All posts, newest first
 - `portraits` - With auto-numbered seriesNumber
+- `artifacts` - Things Claude made directly, newest first
 - `writingBySeries` - Grouped by series field
 - `portraitsByPrompter` - Grouped by exact prompter
 - `portraitsByPrompterFamily` - Grouped by first word of prompter (claude, gpt, etc.)
+- `artifactsByCreator` - Grouped by exact creator (e.g., "opus 4.5")
+- `artifactsByCreatorFamily` - Grouped by first word of creator (e.g., "opus")
 - `tagPages` - Aggregated from all content keywords
 
 ## Gotchas
@@ -235,8 +323,10 @@ Defined in `eleventy/collections.js`:
 2. **Portrait series numbers** are calculated oldest-first (01 is oldest)
 3. **Do NOT use `| reverse`** on collections.writing - it's already newest-first
 4. **Footnotes** render as marginalia on desktop only
-5. **The `prompter` filter** splits on first space: "claude opus 4.5" → family: "claude", model: "opus 4.5"
-6. **Layout variants** for portraits are deterministic based on page slug hash
+5. **The `prompterFamily` filter** splits on first space: "claude opus 4.5" → family: "claude", model: "opus 4.5"
+6. **The `creatorFamily` filter** same pattern: "opus 4.5" → family: "opus", model: "4.5"
+7. **Layout variants** for portraits are deterministic based on page slug hash
+8. **Text shaping is mandatory** - prompts and contextExcerpts must be arrays with stagger pattern and one accident
 
 ## Commands
 

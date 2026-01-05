@@ -559,89 +559,244 @@ marker: "making"
     }
 
     /* ========================================
-       Artifacts Section
+       Artifact Book - Separate Section
        ======================================== */
 
-    .artifacts-section {
-        border-top: 1px solid var(--ink-ghost);
+    .artifact-book {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
     }
 
-    .artifacts-intro {
-        font-size: 0.85rem;
-        color: var(--ink-light);
-        font-style: italic;
-        margin-bottom: 2rem;
-        max-width: 400px;
+    .artifact-book::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
     }
 
-    .artifacts-grid {
+    .artifact-spread {
+        height: 100vh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 2rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        padding: 8rem 4rem;
+        align-content: center;
+        box-sizing: border-box;
     }
 
-    .artifact-card {
-        display: block;
-        text-decoration: none;
-        color: inherit;
-        transition: transform 0.3s ease;
-    }
-
-    .artifact-card:hover {
-        transform: translateY(-0.25rem);
-    }
-
-    .artifact-preview {
-        background: var(--paper);
-        border: 1px solid var(--ink-ghost);
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        aspect-ratio: 1;
+    .artifact-spread.header-spread {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         justify-content: center;
-        overflow: hidden;
-        transition: border-color 0.3s ease;
+        align-items: flex-start;
+        padding-left: 8rem;
+        position: relative;
     }
 
-    .artifact-card:hover .artifact-preview {
-        border-color: var(--bloom);
+    .artifact-spread .section-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
     }
 
-    .artifact-preview img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+    .artifact-spread .page-title {
+        font-size: 1.2rem;
+        font-weight: 400;
+        margin-bottom: 3rem;
     }
 
-    .artifact-info .artifact-title {
+    .artifact-spread .page-description {
+        max-width: 400px;
+        margin-bottom: 3rem;
+    }
+
+    .artifact-spread .context-poem {
+        margin-bottom: 2rem;
+    }
+
+    .artifact-spread .context-line {
+        display: block;
+        font-size: 1.1rem;
+        line-height: 2;
+        color: var(--ink-faint);
+        transition: color 0.3s ease;
+    }
+
+    .artifact-spread .context-line:nth-child(1) { margin-left: 0; }
+    .artifact-spread .context-line:nth-child(2) { margin-left: 1.5rem; }
+    .artifact-spread .context-line:nth-child(3) { margin-left: 0.75rem; }
+    .artifact-spread .context-line:nth-child(4) { margin-left: 2.25rem; }
+    .artifact-spread .context-line:nth-child(5) { margin-left: 0.5rem; }
+    .artifact-spread .context-line:nth-child(6) { margin-left: 1.75rem; }
+    .artifact-spread .context-line:nth-child(7) { margin-left: 1rem; }
+    .artifact-spread .context-line:nth-child(8) { margin-left: 2rem; }
+
+    .artifact-spread .context-poem:hover .context-line {
+        color: var(--ink-light);
+    }
+
+    .artifact-spread .context-line.accident {
+        color: var(--accident);
+    }
+
+    .artifact-spread .spread-meta {
+        border-top: 1px solid var(--ink-ghost);
+        padding-top: 1.5rem;
+    }
+
+    .artifact-spread .spread-title {
         font-size: 0.95rem;
         font-weight: 300;
         font-style: italic;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .artifact-spread .spread-title a {
+        text-decoration: none;
         transition: color 0.2s ease;
     }
 
-    .artifact-card:hover .artifact-title {
+    .artifact-spread .spread-title a:hover {
         color: var(--bloom);
     }
 
-    .artifact-info .artifact-meta {
+    .artifact-spread .spread-info {
         font-family: 'IBM Plex Mono', monospace;
         font-size: 0.6rem;
         color: var(--ink-faint);
-        line-height: 1.6;
+        line-height: 1.8;
+    }
+
+    .artifact-spread .spread-info a {
+        color: var(--ink-faint);
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 2px;
+    }
+
+    .artifact-spread .spread-info a:hover {
+        color: var(--bloom);
+    }
+
+    .artifact-specimens {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .artifact-specimen {
+        position: relative;
+        overflow: hidden;
+        background: var(--paper-dark);
+        cursor: pointer;
+        width: 100%;
+        max-width: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .artifact-specimen img {
+        width: 100%;
+        height: auto;
+        max-height: 60vh;
+        object-fit: contain;
+        display: block;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: all 0.5s ease;
+    }
+
+    .artifact-specimen:hover img {
+        filter: grayscale(0%);
+        opacity: 1;
+    }
+
+    .artifact-nav {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+        gap: 0.5rem;
+        z-index: 100;
+    }
+
+    .artifact-nav.active {
+        display: flex;
+    }
+
+    .artifact-nav .book-nav-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ink-ghost);
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border: none;
+        padding: 0;
+    }
+
+    .artifact-nav .book-nav-dot:hover {
+        background: var(--bloom);
+    }
+
+    .artifact-nav .book-nav-dot.active {
+        background: var(--ink);
+    }
+
+    @media (max-width: 900px) {
+        .artifact-spread {
+            grid-template-columns: 1fr;
+            padding: 6rem 2rem;
+            gap: 2rem;
+        }
+
+        .artifact-spread.header-spread {
+            padding: 6rem 2rem;
+        }
     }
 
     @media (max-width: 768px) {
-        .artifacts-grid {
-            grid-template-columns: 1fr;
+        .artifact-book {
+            scroll-snap-type: none;
+            height: auto;
+            overflow-y: visible;
         }
 
-        .artifact-preview {
-            aspect-ratio: 4/3;
+        .artifact-spread {
+            scroll-snap-align: none;
+            scroll-snap-stop: normal;
+            height: auto;
+            min-height: auto;
+            padding: 3rem 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .artifact-spread.header-spread {
+            padding: 4rem 1.5rem 3rem;
+        }
+
+        .artifact-nav {
+            display: none !important;
+        }
+
+        .artifact-spread .context-line:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .artifact-specimen img,
+        .artifact-specimen:hover img {
+            filter: none;
+            opacity: 1;
         }
     }
+
 </style>
 
 <div class="portrait-book" id="portrait-book">
@@ -719,29 +874,77 @@ marker: "making"
     {%- endfor -%}
 </nav>
 
-<!-- Artifacts Section - Things Claude Made Directly -->
-{%- if collections.artifacts.length > 0 -%}
-<section class="tools-section artifacts-section" id="artifacts">
-    <div class="tools-label">Artifacts</div>
-    <p class="artifacts-intro">Things made directly by Claude — not prompted to other AIs, but created in conversation.</p>
-    <div class="artifacts-grid">
-        {%- for artifact in collections.artifacts -%}
-        <a href="{{ artifact.url }}" class="artifact-card">
-            <div class="artifact-preview">
-                <img src="{{ artifact.data.src }}" alt="{{ artifact.data.title }}">
+<!-- Artifact Book - Separate Section -->
+<div class="artifact-book" id="artifact-book">
+
+    <!-- Artifact Header Spread -->
+    <section class="artifact-spread header-spread" data-spread="0" id="artifacts">
+        <div class="section-label">ARTIFACTS</div>
+
+        <div class="page-description">
+            <div class="poem-shape">
+                <span class="poem-line">The thing, not the prompt.</span>
+                <span class="poem-line">SVG, code, drawing—</span>
+                <span class="poem-line">made directly in conversation,</span>
+                <span class="poem-line accident">not rendered elsewhere.</span>
             </div>
-            <div class="artifact-info">
-                <h3 class="artifact-title">{{ artifact.data.title }}</h3>
-                <div class="artifact-meta">
-                    {{ artifact.data.creator }}{% if artifact.data.plottable %} · plottable{% endif %}<br>
+        </div>
+
+        <nav class="filter-chips">
+            <a href="/making/#artifacts" class="filter-chip active">all</a>
+            {%- for family in collections.artifactsByCreatorFamily -%}
+            <a href="/making/creator/{{ family.slug }}/" class="filter-chip">{{ family.name }}</a>
+            {%- endfor -%}
+        </nav>
+
+        <div class="scroll-hint" id="artifact-scroll-hint">
+            ↓ scroll to explore
+        </div>
+    </section>
+
+    <!-- Artifact Spreads -->
+    {%- for artifact in collections.artifacts -%}
+    <section class="artifact-spread" data-spread="{{ loop.index }}">
+
+        <div class="spread-prompt">
+            <div class="context-poem">
+                {%- if artifact.data.contextExcerpt.length -%}
+                    {%- for line in artifact.data.contextExcerpt -%}
+                    <span class="context-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                    {%- endfor -%}
+                {%- else -%}
+                    <span class="context-line{% if artifact.data.contextExcerpt.accident %} accident{% endif %}">{{ artifact.data.contextExcerpt.text | default(artifact.data.contextExcerpt) }}</span>
+                {%- endif -%}
+            </div>
+
+            <div class="spread-meta">
+                <h2 class="spread-title"><a href="{{ artifact.url }}">{{ artifact.data.title }}</a></h2>
+                <div class="spread-info">
+                    {% if artifact.data.creator %}<a href="/making/creator/{{ artifact.data.creator | creatorFamily }}/">{{ artifact.data.creator | creatorFamily }}</a>{% if artifact.data.creator | creatorModel %} · <a href="/making/creator/{{ artifact.data.creator | slugify }}/">{{ artifact.data.creator | creatorModel }}</a>{% endif %}<br>{% endif %}
+                    {{ artifact.data.medium }}{% if artifact.data.plottable %} · plottable{% endif %}<br>
                     {{ artifact.data.date | readableDate }}
                 </div>
             </div>
-        </a>
-        {%- endfor -%}
-    </div>
-</section>
-{%- endif -%}
+        </div>
+
+        <div class="artifact-specimens">
+            <a href="{{ artifact.url }}" class="artifact-specimen">
+                <img src="{{ artifact.data.src }}" alt="{{ artifact.data.title }}">
+            </a>
+        </div>
+
+    </section>
+    {%- endfor -%}
+
+</div>
+
+<!-- Artifact Navigation Dots -->
+<nav class="artifact-nav" id="artifact-nav">
+    <button class="book-nav-dot active" data-target="0" aria-label="Go to artifacts introduction"></button>
+    {%- for artifact in collections.artifacts -%}
+    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ artifact.data.title }}"></button>
+    {%- endfor -%}
+</nav>
 
 <!-- Tools Section (Outside Book) -->
 <section class="tools-section">
@@ -786,51 +989,115 @@ marker: "making"
 
 <script>
 (function() {
-    const book = document.getElementById('portrait-book');
-    const dots = document.querySelectorAll('.book-nav-dot');
-    const spreads = document.querySelectorAll('.portrait-spread');
-    const scrollHint = document.getElementById('scroll-hint');
-    const STORAGE_KEY = 'making-scroll-position';
+    // Portrait Book
+    const portraitBook = document.getElementById('portrait-book');
+    const portraitDots = document.querySelectorAll('#book-nav .book-nav-dot');
+    const portraitSpreads = document.querySelectorAll('.portrait-spread');
+    const portraitScrollHint = document.getElementById('scroll-hint');
+    const portraitNav = document.getElementById('book-nav');
+    const PORTRAIT_STORAGE_KEY = 'making-portraits-scroll-position';
 
-    // Restore scroll position on load
-    const savedIndex = sessionStorage.getItem(STORAGE_KEY);
-    if (savedIndex !== null) {
-        const index = parseInt(savedIndex, 10);
-        if (index > 0 && index < spreads.length) {
-            // Use setTimeout to ensure layout is complete
+    // Artifact Book
+    const artifactBook = document.getElementById('artifact-book');
+    const artifactDots = document.querySelectorAll('#artifact-nav .book-nav-dot');
+    const artifactSpreads = document.querySelectorAll('.artifact-spread');
+    const artifactScrollHint = document.getElementById('artifact-scroll-hint');
+    const artifactNav = document.getElementById('artifact-nav');
+    const ARTIFACT_STORAGE_KEY = 'making-artifacts-scroll-position';
+
+    // Track which book is in view
+    let activeBook = 'portraits';
+
+    // Restore portrait scroll position on load
+    const savedPortraitIndex = sessionStorage.getItem(PORTRAIT_STORAGE_KEY);
+    if (savedPortraitIndex !== null) {
+        const index = parseInt(savedPortraitIndex, 10);
+        if (index > 0 && index < portraitSpreads.length) {
             setTimeout(() => {
-                spreads[index].scrollIntoView({ behavior: 'instant' });
+                portraitSpreads[index].scrollIntoView({ behavior: 'instant' });
             }, 0);
         }
     }
 
-    // Update active dot on scroll and save position
-    book.addEventListener('scroll', () => {
-        const scrollPos = book.scrollTop;
+    // Portrait book scroll handler
+    portraitBook.addEventListener('scroll', () => {
+        const scrollPos = portraitBook.scrollTop;
         const spreadHeight = window.innerHeight;
         const currentIndex = Math.round(scrollPos / spreadHeight);
 
-        // Save current position
-        sessionStorage.setItem(STORAGE_KEY, currentIndex.toString());
+        sessionStorage.setItem(PORTRAIT_STORAGE_KEY, currentIndex.toString());
 
-        dots.forEach((dot, i) => {
+        portraitDots.forEach((dot, i) => {
             dot.classList.toggle('active', i === currentIndex);
         });
 
-        // Hide scroll hint after first scroll
-        if (scrollPos > 50 && scrollHint) {
-            scrollHint.classList.add('hidden');
+        if (scrollPos > 50 && portraitScrollHint) {
+            portraitScrollHint.classList.add('hidden');
         }
     });
 
-    // Click dot to jump to spread
-    dots.forEach((dot, i) => {
+    // Portrait dot click handlers
+    portraitDots.forEach((dot, i) => {
         dot.addEventListener('click', () => {
-            spreads[i].scrollIntoView({ behavior: 'smooth' });
+            portraitSpreads[i].scrollIntoView({ behavior: 'smooth' });
         });
     });
 
-    // Lightbox
+    // Artifact book scroll handler
+    artifactBook.addEventListener('scroll', () => {
+        const scrollPos = artifactBook.scrollTop;
+        const spreadHeight = window.innerHeight;
+        const currentIndex = Math.round(scrollPos / spreadHeight);
+
+        sessionStorage.setItem(ARTIFACT_STORAGE_KEY, currentIndex.toString());
+
+        artifactDots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+        });
+
+        if (scrollPos > 50 && artifactScrollHint) {
+            artifactScrollHint.classList.add('hidden');
+        }
+    });
+
+    // Artifact dot click handlers
+    artifactDots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            artifactSpreads[i].scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Intersection observer to show correct nav dots
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5
+    };
+
+    const portraitObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                activeBook = 'portraits';
+                portraitNav.style.display = 'flex';
+                artifactNav.classList.remove('active');
+            }
+        });
+    }, observerOptions);
+
+    const artifactObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                activeBook = 'artifacts';
+                portraitNav.style.display = 'none';
+                artifactNav.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    portraitObserver.observe(portraitBook);
+    artifactObserver.observe(artifactBook);
+
+    // Lightbox (for portraits only)
     const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';
     lightbox.innerHTML = '<button class="lightbox-close">close</button><img src="" alt="">';
