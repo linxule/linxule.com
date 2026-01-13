@@ -11,7 +11,6 @@ keywords:
   - SKEMA
   - organizational research
 date: 2026-01-13
-accident: true
 ---
 
 Somewhere in the middle of studying what new forms of organizing look like when humans incorporate algorithms into organizational life, I was prompted by Claude to ask: "Am I inside the experiment?"
