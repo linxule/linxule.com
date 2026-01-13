@@ -33,3 +33,10 @@
 /CV                         /cv/                                301
 /Writing                    /writing/                           301
 /Making                     /making/                            301
+
+# LLM.txt variants → canonical llms.txt
+/llm.txt                    /llms.txt                           301
+/llm                        /llms.txt                           301
+/llm/                       /llms.txt                           301
+/llms                       /llms.txt                           301
+/llms/                      /llms.txt                           301
