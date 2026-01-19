@@ -39,6 +39,12 @@
 /CV                         /cv/                                301
 /CV-zh                      /cv-zh/                             301
 /CV-ZH                      /cv-zh/                             301
+
+# Chinese character shortcuts
+/简历                        /cv-zh/                             301
+/简历/                       /cv-zh/                             301
+/履历                        /cv-zh/                             301
+/履历/                       /cv-zh/                             301
 /Writing                    /writing/                           301
 /Making                     /making/                            301
 
