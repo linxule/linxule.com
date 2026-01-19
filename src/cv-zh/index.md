@@ -14,19 +14,19 @@ title: 简历
 - 帝国理工商学院 (Imperial Business School)，英国伦敦，2019 – 2025
 	- 哲学博士，管理学与创业学
 	- 论文题目：_Rethinking Organizational Design: Token-Enabled Coordination and Governance Adaptation in Decentralized Autonomous Organizations (DAOs)_
-	- 论文委员会：Erkko Autio、谢莹莹 (Ying-Ying Hsieh)、柯文凯 (Kevin Corley)、何芳 (Viviana Fang He，伦敦大学学院 UCL)
+	- 论文委员会：Erkko Autio、Ying-Ying Hsieh、柯文凯 (Kevin Corley)、Viviana Fang He（伦敦大学学院 UCL）
 - <br/>芝加哥大学 (University of Chicago)，美国，2018 – 2019
-	- 访问研究生 (Graduate Student At-Large)
+	- 非学位研究生 (Graduate Student At-Large)
 - <br/>圣母大学 (University of Notre Dame)，美国，2011 – 2016
-	- 会计学硕士 (MSc in Accountancy) 与工商管理学士 (BBA in Accounting)
+	- 会计学硕士 (MSc in Accountancy) 与工商管理学士（会计方向）(BBA in Accounting)
 
 # 研究兴趣
 
-我致力于发展*算法时代*的组织理论，研究当人类与算法系统共同决定结果时，组织如何进行协调。我的研究问题包括：什么治理机制能够实现有效运作？<span class="accident">什么样的组织形式正在涌现？</span>在实证层面，我研究：(1) 去中心化自治组织 (DAOs) 中的代币治理 (token governance)，识别代币二元性 (token duality)、选择性中心化 (selective centralization) 和结构化透明度 (structured transparency) 等机制；(2) 组织环境中的人机协作 (human-AI collaboration)，揭示协调模式和新兴组织能力；(3) 传统手工艺组织作为历史对照。在方法论层面，我开创了SIGNA框架：一种人工智能增强的定性研究方法，在保持诠释深度的同时实现计算规模的分析，适用于组织研究和社会科学研究。
+我致力于发展"算法时代"的组织理论，研究当人类与算法系统共同决定结果时，组织如何进行协调。我的研究问题包括：什么治理机制能够实现有效运作？<span class="accident">什么样的组织形式正在涌现？</span>在实证层面，我研究：(1) 去中心化自治组织 (DAOs) 中的代币治理 (token governance)，识别代币二元性 (token duality)、选择性中心化 (selective centralization) 和结构化透明度 (structured transparency) 等机制；(2) 组织环境中的人机协作 (human-AI collaboration)，揭示协调模式和新兴组织能力；(3) 传统手工艺组织作为历史参照案例。在方法论层面，我开创了SIGNA框架：一种人工智能增强的定性研究方法，在保持诠释深度的同时实现计算规模的分析，适用于组织研究和社会科学研究。
 
 # 奖项与资助
 
-- [战略管理学会 (SMS) 年会博士论文奖](https://www.strategicmanagement.net/award/sms-annual-conference-phd-paper-prize/)，2024
+- [战略管理学会 (SMS) 年会博士生研究论文奖](https://www.strategicmanagement.net/award/sms-annual-conference-phd-paper-prize/)，2024
 	- Lin, X., Hsieh, Y.-Y., & Autio, E. (2024). _Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_.
 - <br/>[Anthropic Claude for Education](https://www.anthropic.com/news/introducing-claude-for-education): Student Builder Program，2025
 - <br/>[Cohere for AI Research Grant Program](https://cohere.com/blog/c4ai-research-grants?ref=cohere-ai.ghost.io): API额度，2024
@@ -49,11 +49,11 @@ title: 简历
 
 - **[求职市场论文]** Lin, X., Hsieh, Y.-Y., & Autio, E. (2025). _Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_. [撰写中]
 	- 识别了三种使混合人机组织协调成为可能的治理机制：代币二元性 (token duality)、选择性中心化 (selective centralization)、结构化透明度 (structured transparency)。基于MakerDAO、Synthetix和Compound的2490万字治理话语。
-	- 获得[战略管理学会 (SMS) 年会博士论文奖](https://www.strategicmanagement.net/award/sms-annual-conference-phd-paper-prize/)，2024
+	- 获得[战略管理学会 (SMS) 年会博士生研究论文奖](https://www.strategicmanagement.net/award/sms-annual-conference-phd-paper-prize/)，2024
 - <br/>Lin, X., Hsieh, Y.-Y., & Autio, E. _How Do Algorithmic and Social Governance Drive Governance Adaptations in Decentralized Organizations?_ [撰写中]
 	- 研究组织在整合算法决策系统时如何调整治理结构。揭示社会治理与算法治理如何互动以塑造组织适应模式。
 	- 战略管理学会 (SMS) 年会研究方法论文奖提名，2023
-	- 战略管理学会 (SMS) 年会博士论文奖提名，2023
+	- 战略管理学会 (SMS) 年会博士生研究论文奖提名，2023
 - <br/>Lin, X., & Corley, K. G. (2025). _Preserving Researcher Agency When Adding AI Tools to a Grounded Theory Study: Introducing Scalable Inductive Grounded NLP Approach (SIGNA)._ [撰写中]
 	- 研究基础设施，使社会科学领域的定性研究者能够分析大规模数据（2490万字，17.7万份提案），同时保持诠释严谨性。解决了在计算规模上研究组织现象而不失去理论深度的瓶颈。展示了可迁移性：已应用于组织战略（AMJ修改中）、DAO治理（博士论文）和创业过程。
 	- 获得OpenAI Researcher Access Program资助，2024
@@ -95,11 +95,11 @@ title: 简历
 - <br/>_Humans and Algorithms in Organizations: Navigating the Intersection of Blockchain and AI_
 	- 小组研讨会，管理学会年会 (AOM)，2024（伊利诺伊州芝加哥）
 	- 共同主席：Magnus van Haaren（鹿特丹管理学院）& Carlos Santana（挪威科技大学）
-	- 嘉宾：Oliver Baumann（南丹麦大学）、Robert Wayne Gregory（密歇根大学）、Hanna Halaburda（纽约大学斯特恩商学院）、何芳 (Vivianna Fang He，圣加仑大学)、Alex Murray（俄勒冈大学）
+	- 嘉宾：Oliver Baumann（南丹麦大学）、Robert Wayne Gregory（密歇根大学）、Hanna Halaburda（纽约大学斯特恩商学院）、Vivianna Fang He（圣加仑大学）、Alex Murray（俄勒冈大学）
 - <br/>_Web3 Decentralization: Blockchain Technologies' Impact on Modern Organizational Governance_
 	- 小组研讨会，管理学会年会 (AOM)，2023（马萨诸塞州波士顿）
 	- 共同主席：Magnus van Haaren（鹿特丹管理学院）& Wenqian Wang（香港浸会大学）
-	- 嘉宾：Ethan Bernstein（哈佛商学院）、Hanna Halaburda（纽约大学）、谢莹莹 (Ying-Ying Hsieh，帝国理工学院)、Alex Murray（俄勒冈大学）、Joana Pereira（利兹大学商学院）、Jean-Philippe Vergne（伦敦大学学院）
+	- 嘉宾：Ethan Bernstein（哈佛商学院）、Hanna Halaburda（纽约大学）、Ying-Ying Hsieh（帝国理工学院）、Alex Murray（俄勒冈大学）、Joana Pereira（利兹大学商学院）、Jean-Philippe Vergne（伦敦大学学院）
 
 # 学术报告
 
@@ -134,7 +134,7 @@ title: 简历
 	- 共同设计AI增强系统性文献综述课程；培训博士生进行战略性任务委派、输出验证和知识产权管理
 	- 课程材料记录于[Research Memex](https://research-memex.org)
 - 金融科技的管理、战略与创新 (Management, Strategy, and Innovation in FinTech)，帝国理工商学院，2022-2024
-	- 谢莹莹 (Ying-Ying Hsieh) 的助教
+	- Ying-Ying Hsieh 的助教
 	- 开发了教学案例，帮助学生理解集体管理和发展DAO的独特方面（[案例材料](https://makerdao.daogov.info/)）
 - 技术与创新管理 (Technology and Innovation Management)，帝国理工商学院，2023-2024
 	- Anne ter Wal的助教
@@ -222,7 +222,7 @@ title: 简历
 
 - **[Erkko Autio](https://www.imperial.ac.uk/people/erkko.autio)** FBA，技术创业讲席教授，帝国理工商学院
 	- 邮箱：[erkko.autio@imperial.ac.uk](mailto:erkko.autio@imperial.ac.uk)
-- <br/>**[谢莹莹 (Ying-Ying Hsieh)](https://www.imperial.ac.uk/people/y.hsieh)**，创新与创业助理教授，帝国理工商学院
+- <br/>**[Ying-Ying Hsieh](https://www.imperial.ac.uk/people/y.hsieh)**，创新与创业助理教授，帝国理工商学院
 	- 邮箱：[y.hsieh@imperial.ac.uk](mailto:y.hsieh@imperial.ac.uk)
 - <br/>**[柯文凯 (Kevin Corley)](https://www.imperial.ac.uk/people/k.corley)**，管理与创业系主任，帝国理工商学院
 	- 邮箱：[k.corley@imperial.ac.uk](mailto:k.corley@imperial.ac.uk)
