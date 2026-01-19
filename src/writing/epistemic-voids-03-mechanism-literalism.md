@@ -4,6 +4,7 @@ series: "Epistemic Voids"
 title: "Epistemic Voids #3: Mechanism Literalism"
 accident: true
 subtitle: "Why 'Just Next-Token Prediction' Is the New 'Just Price Signals'"
+description: "The word 'just' performs something akin to mistaking mechanism for phenomenon. Trained via next-token prediction is compatible with developed internal world models."
 authors:
   - "Xule Lin"
   - "Claude"

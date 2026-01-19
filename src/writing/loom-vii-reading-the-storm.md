@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · VII"
 title: "LOOM VII: Reading the Storm"
 subtitle: "Between Mirrors and Meaning in an AI-Mediated World"
+description: "AI systems often act as amplifiers of our existing perspectives—a hall of mirrors where every response is shaped by our choices and design decisions."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

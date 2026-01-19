@@ -2,6 +2,7 @@
 layout: layouts/writing.njk
 title: "Kimi-K2: Another DeepSeek Moment?"
 subtitle: "The Chinese AI that speaks in registers we don't have names for"
+description: "K2 maintains semantic invariance, preserving its core conceptual structure regardless of linguistic expression. Not better vision, but different vision. Computational phenomenology."
 author:
   - "Xule Lin"
 keywords:

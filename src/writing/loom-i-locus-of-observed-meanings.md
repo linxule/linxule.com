@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · I"
 title: "LOOM: Locus of Observed Meanings"
 subtitle: "The Moment of Shift"
+description: "From seeing AI as instrument to experiencing it as interlocutor—exploring new possibilities where meaning emerges through human-AI interaction."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

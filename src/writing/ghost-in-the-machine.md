@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "Organizational Futures"
 title: "The Ghost in the Machine"
 subtitle: "An AI-native organization emerging in Anthropic's Claude product stack"
+description: "Reading Claude's architecture reveals organizational principles that serve collaboration itself. Constraints force discovery: the organization inside the organization."
 authors:
   - "Xule Lin"
   - "Claude 4.5 Sonnet"

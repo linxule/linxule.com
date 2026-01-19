@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "Organizational Futures"
 title: "Post-AGI Organizations: AI’s Blind Spot and Ours"
 subtitle: "On Artificial Logic, Human Wisdom, and the Future of Organizing"
+description: "Three AIs envision post-AGI organizations with cold logic but no 'smell' for human reality. Their blind spot mirrors ours. The gap reveals a new framework."
 authors: 
   - "Xule Lin"
   - "Claude 4 Opus"

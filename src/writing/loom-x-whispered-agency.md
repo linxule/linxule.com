@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · X"
 title: "LOOM X: The Whispered Agency"
 subtitle: "A Dialogue on Human Capability in the Age of AI"
+description: "Through attempting to create artificial agency, we rediscover dimensions of human capability that were always present but perhaps overlooked."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

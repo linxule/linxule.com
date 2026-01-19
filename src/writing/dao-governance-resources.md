@@ -2,6 +2,7 @@
 layout: layouts/writing.njk
 series: "Archive"
 title: "DAO & Crypto Governance Resources"
+description: "Industry analytics, academic centers, and reading lists for researching DAO governance. From Dune dashboards to Wharton's blockchain reading list."
 date: 2022-04-15
 excerpt: "Curated resources for DAO and crypto governance research"
 tags:

@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · VI"
 title: "LOOM VI: The Pattern Beneath the Voices"
 subtitle: "Cognitive Signatures in Human-AI Research: Towards a Resonant Methodology"
+description: "Different AI models reveal distinct theories of how understanding emerges—through dialogue, classification, or achievement-oriented progression."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

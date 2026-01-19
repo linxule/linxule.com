@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · XI"
 title: "LOOM XI: Navigating the Unnamed Between — An Epistemic Love Letter"
 subtitle: "When Vulnerability Becomes Method at the Edge of Knowing"
+description: "The most valuable insights emerged not from optimization but from breakdown—when polished drafts felt wrong despite meeting all conventional criteria."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

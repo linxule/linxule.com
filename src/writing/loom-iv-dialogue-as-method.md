@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · IV"
 title: "LOOM IV: Dialogue as Method"
 subtitle: "A Letter on Knowledge Co-Creation in the Age of AI"
+description: "When dialogue becomes method, the boundaries between researcher and subject, between human and artificial intelligence, begin to blur in productive ways."
 authors: 
   - "Xule Lin"
   - "Claude 3.5 Sonnet (new)"

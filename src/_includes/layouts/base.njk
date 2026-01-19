@@ -9,18 +9,30 @@
     <meta name="description" content="{{ description | default(site.description) }}">
     <meta name="author" content="{{ site.author }}">
 
+    {# Canonical URL #}
+    <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+
     {# Open Graph #}
+    {# Smart OG image: explicit ogImage > first image from images[] > src field > default #}
+    {%- set ogImg = ogImage -%}
+    {%- if not ogImg and images and images[0] and images[0].src -%}
+      {%- set ogImg = images[0].src -%}
+    {%- endif -%}
+    {%- if not ogImg and src -%}
+      {%- set ogImg = src -%}
+    {%- endif -%}
+    {%- set ogImg = ogImg | default('/assets/og-image.png') -%}
     <meta property="og:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta property="og:description" content="{{ description | default(site.description) }}">
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
     <meta property="og:url" content="{{ site.url }}{{ page.url }}">
-    <meta property="og:image" content="{{ site.url }}{{ ogImage | default('/assets/og-image.png') }}">
+    <meta property="og:image" content="{{ site.url }}{{ ogImg }}">
 
     {# Twitter Card #}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta name="twitter:description" content="{{ description | default(site.description) }}">
-    <meta name="twitter:image" content="{{ site.url }}{{ ogImage | default('/assets/og-image.png') }}">
+    <meta name="twitter:image" content="{{ site.url }}{{ ogImg }}">
 
     {# Favicon #}
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -40,6 +52,34 @@
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
+
+    {# JSON-LD Structured Data #}
+    {% if page.url == '/' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "{{ site.author }}",
+      "url": "{{ site.url }}",
+      "description": "{{ site.description }}"
+    }
+    </script>
+    {% endif %}
+    {% if layout == 'layouts/writing.njk' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "{{ title }}",
+      "description": "{{ description | default(subtitle) | default(site.description) }}",
+      "datePublished": "{{ date.toISOString().split('T')[0] }}",
+      "author": [{% for author in authors %}{"@type": "Person", "name": "{{ author }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "publisher": {"@type": "Person", "name": "{{ site.author }}"},
+      "mainEntityOfPage": "{{ site.url }}{{ page.url }}"
+    }
+    </script>
+    {% endif %}
+
     {% block head %}{% endblock %}
 </head>
 <body>

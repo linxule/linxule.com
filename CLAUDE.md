@@ -230,6 +230,7 @@ layout: layouts/writing.njk
 series: "LOOM · IV"           # Optional, groups posts
 title: "Post Title"
 subtitle: "Optional subtitle"  # Italicized below title
+description: "150-160 char SEO description for search results and social previews"
 authors:                       # Array, not string
   - "Xule Lin"
   - "Claude 3.5 Sonnet"
@@ -238,6 +239,7 @@ keywords:                      # For tags and search
   - keyword2
 date: 2025-01-24              # ISO format
 link: https://...              # Optional external link (shows button)
+ogImage: /writing/attachments/image.png  # Optional, for social preview
 accident: true                 # Optional, highlights title in cyan
 ---
 ```

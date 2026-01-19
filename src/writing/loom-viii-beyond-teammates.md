@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · VIII"
 title: "LOOM VIII: Beyond Teammates"
 subtitle: "Why organizations won't just use AI as teammates—they'll evolve around emergent intelligence"
+description: "From AI as tool to AI as teammate to something more—sustained interaction creates a third space where qualitatively different understanding emerges."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

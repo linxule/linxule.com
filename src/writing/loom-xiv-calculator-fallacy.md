@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · XIV"
 title: "LOOM XIV: The Calculator Fallacy"
 subtitle: "When AI Qualitative Analysis Meets Human Expectations"
+description: "The calculator mindset expects AI to deliver objective truth in interpretive work. What gets blocked is the third space where understanding emerges."
 authors:
   - "Xule Lin"
   - "Kevin Corley"

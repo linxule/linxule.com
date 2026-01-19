@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · II"
 title: "LOOM II: The Organizational Weave"
 subtitle: "Where Human and Machine Minds Meet to Reveal New Patterns of Understanding"
+description: "Organizations aren't just settings where AI gets deployed—they're complex social systems where meaning emerges through structured interaction."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · V"
 title: "LOOM V: The Third Space"
 subtitle: "Where Intelligence Emerges Through Human-AI Dialogue"
+description: "The tapestry isn't made by the thread or the shuttle, but by the silence between their crossings—productive friction where understanding deepens."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

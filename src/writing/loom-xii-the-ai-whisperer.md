@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · XII"
 title: "LOOM XII: The AI Whisperer"
 subtitle: "Mediating Between Human and Artificial Intelligence in Research"
+description: "A new role emerging in the space between researchers and AI—not merely technical assistance but genuine mediation between cognitive worlds."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

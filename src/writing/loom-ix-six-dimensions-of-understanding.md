@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · IX"
 title: "LOOM IX: The Six Dimensions of Understanding"
 subtitle: "Mapping Human-AI Collaborative Intelligence"
+description: "Six dimensions where human and artificial intelligence create understanding neither could achieve alone—from temporal navigation to purpose alignment."
 authors: 
   - "Xule Lin"
   - "Kevin Corley"

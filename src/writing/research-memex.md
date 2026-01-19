@@ -2,6 +2,7 @@
 layout: layouts/writing.njk
 title: "Research Memex: Working at the AI Research Frontier"
 subtitle: "One approach to human-AI research collaboration, demonstrated through systematic reviews"
+description: "The seahorse represents the hippocampus. It doesn't exist, and AIs hallucinate that it does. Working honestly with gaps requires seeing the hallucination and building with it anyway."
 authors:
   - "Xule Lin"
   - "Claude 4.5 Sonnet"

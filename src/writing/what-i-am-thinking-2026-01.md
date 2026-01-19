@@ -2,6 +2,7 @@
 layout: layouts/writing.njk
 series: "Thinking"
 title: "What I'm Thinking, January 2026"
+description: "Am I inside the experiment? The line between studying algorithmic organizing and doing it had moved. What does governance look like when participants include systems that learn and adapt?"
 authors:
   - "Xule Lin"
 keywords:

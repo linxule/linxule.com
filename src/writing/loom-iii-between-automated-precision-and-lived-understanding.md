@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · III"
 title: "LOOM III: Between Automated Precision and Lived Understanding"
 subtitle: "A Dialogue on the Future of Social Science Research"
+description: "What remains is the unique resonance of human interpretation—the ability to provide insight into data that software can't, grounded in lived experience."
 authors: 
   - "Xule Lin"
   - "ChatGPT o1 pro"

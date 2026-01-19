@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · XV"
 title: "LOOM XV: Theorizing by Building"
 subtitle: "How Do You Become Someone Who Knows?"
+description: "The invitation is not 'here are tools that embody our ideas' but 'watch us work, try it yourself, refine your own practice.' Two open source tools."
 authors:
   - "Xule Lin"
   - "Kevin Corley"

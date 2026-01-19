@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "Epistemic Voids"
 title: "Epistemic Voids #1: Citation Theater"
 subtitle: "When papers become props"
+description: "A viral thesis workflow inverts the sequence that produces understanding: AI-generated claims first, papers retrofitted as evidence. All the surface markers of rigor, none of the depth."
 authors:
   - "Xule Lin"
   - "Claude"

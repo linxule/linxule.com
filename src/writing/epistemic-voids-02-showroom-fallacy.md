@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "Epistemic Voids"
 title: "Epistemic Voids #2: Showroom Fallacy"
 subtitle: "Confusing curation for capacity"
+description: "Testing a chat window or one-click button doesn't reveal which layer produced what we observed. The showroom fallacy: mistaking product constraints for model limits."
 authors:
   - "Xule Lin"
   - "Claude"

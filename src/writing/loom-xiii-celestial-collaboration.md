@@ -3,6 +3,7 @@ layout: layouts/writing.njk
 series: "LOOM · XIII"
 title: "LOOM XIII: Celestial Collaboration"
 subtitle: "Mapping Human-AI Research Relationships Through Astronomical Metaphors"
+description: "From Mercury-Sun tool use to Binary Star partnership—how gravitational metaphors reveal patterns of influence in human-AI collaboration."
 authors:
   - "Xule Lin"
   - "Kevin Corley"
