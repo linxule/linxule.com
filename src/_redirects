@@ -4,8 +4,11 @@
 # DAO resources (old paths)
 /curation-dao               /writing/dao-governance-resources/  301
 /curation-dao/              /writing/dao-governance-resources/  301
+/daogov                     /writing/dao-governance-resources/  301
+/daogov/                    /writing/dao-governance-resources/  301
 /daogov/resource_list       /writing/dao-governance-resources/  301
 /daogov/resource_list/      /writing/dao-governance-resources/  301
+/daogov/resource_list/*     /writing/dao-governance-resources/  301
 
 # Talks → CV presentations
 /talks                      /cv/#presentations                  301
@@ -40,3 +43,14 @@
 /llm/                       /llms.txt                           301
 /llms                       /llms.txt                           301
 /llms/                      /llms.txt                           301
+
+# Old archive pages
+/collection-archive         /writing/                           301
+/collection-archive/        /writing/                           301
+/year-archive               /writing/                           301
+/year-archive/              /writing/                           301
+
+# Old projects
+/projects/md_academic       /writing/macaw-markdown-academic-writing/  301
+/projects/md_academic/      /writing/macaw-markdown-academic-writing/  301
+/projects/*                 /writing/                           301
