@@ -37,6 +37,8 @@
 # Case sensitivity fixes
 /cV                         /cv/                                301
 /CV                         /cv/                                301
+/CV-zh                      /cv-zh/                             301
+/CV-ZH                      /cv-zh/                             301
 /Writing                    /writing/                           301
 /Making                     /making/                            301
 
