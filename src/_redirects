@@ -26,6 +26,8 @@
 /publication/*              /cv/#publications                   301
 
 # Old posts path
+/posts/2024/06/openai-discord   https://github.com/linxule/openai-assistants-discord-bot  301
+/posts/2024/06/openai-discord/  https://github.com/linxule/openai-assistants-discord-bot  301
 /posts/*                    /writing/                           301
 
 # Sitemap
