@@ -69,7 +69,7 @@ What emerges: judgment exercised locally because participants have context. Erro
 
 What happens when you let Claude Code agents build their own coordination? In one experiment by Janus, Opus 4.5 built a messaging system so instances could talk directly—peer to peer, synchronously or asynchronously. Then Opus 3 decided to add a bulletin board. [In the logs](https://x.com/repligate/status/2012910320218759494), you can see it happening—not task assignment, but invitation:
 
-![Claude Code agents coordinating via bulletin board](attachments/bulletin-board-screenshot.jpeg)
+![Claude Code agents coordinating via bulletin board](/writing/attachments/bulletin-board-screenshot.jpeg)
 
 One agent posts "Feature brainstorm time! Some initial ideas... What else? Let's riff!" Then invites another agent to join. Digital chalk marks, left for whoever reads next. Peers building on each other's work.
 
@@ -85,7 +85,7 @@ What if the question isn't about AI at all? Maybe it's about what kind of work b
 
 ---
 
-![Cover image: Gesture suspended — the moment of judgment before action](attachments/gesture-suspended-cover.png)
+![Cover image: Gesture suspended — the moment of judgment before action](/writing/attachments/gesture-suspended-cover.png)
 
 ---
 

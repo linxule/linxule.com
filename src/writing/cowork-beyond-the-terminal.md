@@ -33,7 +33,7 @@ I tried Cowork yesterday. Asked Claude to help organize my desktop, which had ac
 
 Claude had asked me a few questions first: How would you like me to organize them? What about the existing folders? The random zip file from years ago? Logistics. Execution parameters. Then it got to work.
 
-![Claude Cowork asking clarifying questions before organizing 611 desktop files](attachments/cowork-clarifying-questions.png)
+![Claude Cowork asking clarifying questions before organizing 611 desktop files](/writing/attachments/cowork-clarifying-questions.png)
 
 > Watching it run felt... satisfying?
 
@@ -124,4 +124,4 @@ The terminal barrier fell. But this epistemic barrier remains. And Cowork distri
 
 ---
 
-![Cover image: A threshold where order meets emergence](attachments/cowork-cover.png)
+![Cover image: A threshold where order meets emergence](/writing/attachments/cowork-cover.png)
