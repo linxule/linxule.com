@@ -3,10 +3,10 @@
   <rect width="1200" height="630" fill="#f4f1eb"/>
 
   <!-- The accident: floating cyan dot -->
-  <circle cx="180" cy="180" r="12" fill="#4ee1d4"/>
+  <circle cx="360" cy="180" r="12" fill="#4ee1d4"/>
 
   <!-- Title: XULE LIN -->
-  <text x="120" y="280"
+  <text x="300" y="280"
         font-family="Cormorant Garamond, Georgia, serif"
         font-size="72"
         font-weight="600"
@@ -14,7 +14,7 @@
         fill="#1a1a1a">XULE LIN</text>
 
   <!-- Staggered statement - line 1 -->
-  <text x="120" y="380"
+  <text x="300" y="380"
         font-family="Cormorant Garamond, Georgia, serif"
         font-size="32"
         font-style="italic"
@@ -27,9 +27,9 @@
         font-size="32"
         font-style="italic"
         font-weight="400">
-    <tspan x="160" fill="#666666">shift from tools</tspan><tspan dx="8" fill="#4ee1d4">to participants.</tspan>
+    <tspan x="340" fill="#666666">shift from tools</tspan><tspan dx="8" fill="#4ee1d4">to participants.</tspan>
   </text>
 
   <!-- Subtle rule -->
-  <line x1="120" y1="520" x2="400" y2="520" stroke="#cccccc" stroke-width="1"/>
+  <line x1="300" y1="520" x2="580" y2="520" stroke="#cccccc" stroke-width="1"/>
 </svg>
