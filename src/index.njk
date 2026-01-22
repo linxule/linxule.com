@@ -179,7 +179,14 @@ layout: layouts/base.njk
     .closing-links a:hover {
         color: var(--bloom);
     }
-    
+
+    .cv-group {
+        white-space: nowrap;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
     .correspondence-group {
         display: flex;
         gap: 0.75rem;
@@ -283,7 +290,7 @@ layout: layouts/base.njk
     </div>
     <div class="closing-links">
         <a href="/llms.txt">for AI readers: llms.txt</a>
-        <a href="/cv/">cv</a> / <a href="/cv-zh/">简历</a>
+        <span class="cv-group"><a href="/cv/">cv</a> / <a href="/cv-zh/">简历</a></span>
         <a href="https://github.com/linxule">github</a>
         <a href="https://threadcounts.substack.com">thread counts</a>
         <a href="https://xhslink.com/m/5411hXmoy5T">xiaohongshu 小红书</a>
