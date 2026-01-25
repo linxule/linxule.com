@@ -355,6 +355,7 @@ Defined in `eleventy/collections.js`:
 8. **Text shaping is mandatory** - prompts and contextExcerpts must be arrays with stagger pattern and one accident
 9. **Image alt text** - portraits should have detailed `alt` (what you see) and `interpretation` (what it means) for each image
 10. **Meta descriptions** - portraits/artifacts auto-generate from first image alt or first prompt/context line if no explicit `description` field
+11. **Trailing slashes** - `vercel.json` has `trailingSlash: false`; sitemap.xml.njk strips trailing slashes to match. Keep these in sync or Google Search Console will show canonical mismatches
 
 ## Commands
 
