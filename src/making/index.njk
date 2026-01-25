@@ -254,6 +254,19 @@ marker: "making"
         color: var(--bloom);
     }
 
+    /* Visually hidden but accessible to screen readers and LLMs */
+    .spread-description {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
     /* ========================================
        Specimen Grid (Right Side)
        ======================================== */
@@ -849,6 +862,10 @@ marker: "making"
                     {% if portrait.data.prompter %}prompted by <a href="/making/prompter/{{ portrait.data.prompter | prompterFamily }}/">{{ portrait.data.prompter | prompterFamily }}</a>{% if portrait.data.prompter | prompterModel %} · <a href="/making/prompter/{{ portrait.data.prompter | slugify }}/">{{ portrait.data.prompter | prompterModel }}</a>{% endif %}<br>{% endif %}
                     {{ portrait.data.date | readableDate }}
                 </div>
+                {%- set firstPromptLine = portrait.data.prompt[0].text | default(portrait.data.prompt[0]) -%}
+                {%- if portrait.data.description or firstPromptLine -%}
+                <p class="spread-description">{{ portrait.data.description | default(firstPromptLine) | truncate(100) }}</p>
+                {%- endif -%}
             </div>
         </div>
 
@@ -924,6 +941,10 @@ marker: "making"
                     {{ artifact.data.medium }}{% if artifact.data.plottable %} · plottable{% endif %}<br>
                     {{ artifact.data.date | readableDate }}
                 </div>
+                {%- set firstContextLine = artifact.data.contextExcerpt[0].text | default(artifact.data.contextExcerpt[0]) if artifact.data.contextExcerpt else '' -%}
+                {%- if artifact.data.description or firstContextLine -%}
+                <p class="spread-description">{{ artifact.data.description | default(firstContextLine) | truncate(100) }}</p>
+                {%- endif -%}
             </div>
         </div>
 

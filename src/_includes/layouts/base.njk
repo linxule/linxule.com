@@ -5,8 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if title %}{{ title }} · {% endif %}{{ site.title }}</title>
 
-    {# Meta Description #}
-    <meta name="description" content="{{ description | default(site.description) }}">
+    {# Meta Description - with portrait/artifact fallbacks #}
+    {%- set metaDescription = description -%}
+    {%- if not metaDescription and layout == 'layouts/portrait.njk' -%}
+      {%- if images and images[0] and images[0].alt -%}
+        {%- set metaDescription = images[0].alt -%}
+      {%- elif prompt and prompt[0] -%}
+        {%- set metaDescription = prompt[0].text | default(prompt[0]) -%}
+      {%- endif -%}
+    {%- endif -%}
+    {%- if not metaDescription and layout == 'layouts/artifact.njk' -%}
+      {%- if contextExcerpt and contextExcerpt[0] -%}
+        {%- set metaDescription = contextExcerpt[0].text | default(contextExcerpt[0]) -%}
+      {%- endif -%}
+    {%- endif -%}
+    <meta name="description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     <meta name="author" content="{{ site.author }}">
 
     {# Canonical URL #}
@@ -23,7 +36,7 @@
     {%- endif -%}
     {%- set ogImg = ogImg | default('/assets/og-image.png') -%}
     <meta property="og:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
-    <meta property="og:description" content="{{ description | default(site.description) }}">
+    <meta property="og:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
     <meta property="og:url" content="{{ site.url }}{{ page.url }}">
     <meta property="og:image" content="{{ site.url }}{{ ogImg }}">
@@ -31,7 +44,7 @@
     {# Twitter Card #}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
-    <meta name="twitter:description" content="{{ description | default(site.description) }}">
+    <meta name="twitter:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     <meta name="twitter:image" content="{{ site.url }}{{ ogImg }}">
 
     {# Favicon #}
@@ -76,6 +89,37 @@
       "author": [{% for author in authors %}{"@type": "Person", "name": "{{ author }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
       "publisher": {"@type": "Person", "name": "{{ site.author }}"},
       "mainEntityOfPage": "{{ site.url }}{{ page.url }}"
+    }
+    </script>
+    {% endif %}
+    {% if layout == 'layouts/portrait.njk' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ImageGallery",
+      "name": "{{ title }}",
+      "description": "{{ metaDescription | default(site.description) }}",
+      "datePublished": "{{ date.toISOString().split('T')[0] }}",
+      "creator": {"@type": "Person", "name": "{{ prompter | default(site.author) }}"},
+      "publisher": {"@type": "Person", "name": "{{ site.author }}"},
+      "mainEntityOfPage": "{{ site.url }}{{ page.url }}"{% if images %},
+      "image": [{% for image in images %}"{{ site.url }}{{ image.src }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
+    }
+    </script>
+    {% endif %}
+    {% if layout == 'layouts/artifact.njk' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      "name": "{{ title }}",
+      "description": "{{ metaDescription | default(site.description) }}",
+      "datePublished": "{{ date.toISOString().split('T')[0] }}",
+      "creator": {"@type": "SoftwareApplication", "name": "{{ creator | default('Claude') }}"},
+      "publisher": {"@type": "Person", "name": "{{ site.author }}"},
+      "mainEntityOfPage": "{{ site.url }}{{ page.url }}"{% if src %},
+      "image": "{{ site.url }}{{ src }}"{% endif %}{% if medium %},
+      "artMedium": "{{ medium }}"{% endif %}
     }
     </script>
     {% endif %}

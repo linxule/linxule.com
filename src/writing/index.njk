@@ -128,6 +128,19 @@ marker: "writing"
         color: var(--ink-light);
     }
 
+    /* Visually hidden but accessible to screen readers and LLMs */
+    .entry-description {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
     /* Stagger entries - 7-entry repeating wave */
     .entry:nth-child(7n+1) { padding-left: 0; }
     .entry:nth-child(7n+2) { padding-left: 2rem; }
@@ -235,6 +248,9 @@ marker: "writing"
             <span class="entry-date">{{ post.date | readableDate }}</span>
             {%- if post.data.subtitle -%}
             <span class="entry-subtitle">{{ post.data.subtitle }}</span>
+            {%- endif -%}
+            {%- if post.data.description -%}
+            <span class="entry-description">{{ post.data.description | truncate(120) }}</span>
             {%- endif -%}
         </a>
     </div>

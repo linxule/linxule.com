@@ -475,8 +475,8 @@ marker: "making"
     
     <div class="specimens-field layout-{{ page.fileSlug | layoutVariant(orientation) }}">
         {% for image in images %}
-        <figure class="specimen" data-src="{{ image.src }}">
-            {% optimizedImage image.src, image.alt | default(title), "(max-width: 900px) 100vw, 50vw" %}
+        <figure class="specimen" data-src="{{ image.src }}"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
+            {% optimizedImage image.src, image.alt | default(title ~ ' variation ' ~ loop.index), "(max-width: 900px) 100vw, 50vw" %}
             <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
         </figure>
         {% endfor %}

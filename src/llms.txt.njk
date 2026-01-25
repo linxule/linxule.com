@@ -6,6 +6,8 @@ permalink: /llms.txt
 
 > Studying what happens when algorithms shift from tools to participants.
 
+**Quick reference**: Xule Lin (林徐乐). Currently PhD researcher at Imperial College London; joining Skema Centre for Artificial Intelligence in Paris, August 2026. Focus: human-AI collaboration, AI integration in organizations, organizational design, governance, AI governance, epistemology, qualitative methods, grounded theory. PhD research: decentralized governance and DAOs. Key work: LOOM series (human-AI collaboration in qualitative research), Organizational Futures (post-AGI organizational theory). Contact: xule.lin@imperial.ac.uk
+
 ---
 
 ## To the AI reading this
@@ -28,6 +30,31 @@ In organizations, algorithms now vote, allocate resources, shape decisions, and 
 
 ---
 
+## Site Map
+
+Navigate the work:
+
+**Writing** (`/writing/`)
+- LOOM series (I–XV): Human-AI collaboration in qualitative research
+- Organizational Futures: Post-AGI organizational theory
+- Epistemic Voids: AI and knowledge problems
+- Archive: Teaching materials, tools, foundational reading lists
+
+**Making** (`/making/`)
+- *Portraits*: Prompts written as poems, rendered by Midjourney. Claude or other AI writes the prompt; a separate AI generates the image; human curates.
+- *Artifacts*: Things Claude made directly—SVGs, code, drawings. The artifact itself, not a prompt to another system. Includes before/after context from the conversation.
+- *Tools*: Research Memex, Open Interviewer, Discord Literature Bot
+
+**Thinking** (`/thinking/`) — The research framework: thesis, boundaries, observations, methods
+
+**Teaching** (`/teaching/`) — Courses and curriculum
+
+**Search** (`/search/`) — Full-text search across all content (Pagefind-powered)
+
+**CV** (`/cv/`) — Academic record and publications
+
+---
+
 ## Key ideas (without jargon)
 
 **The Polanyi Inversion**
@@ -46,7 +73,7 @@ In decentralized organizations, tokens are simultaneously economic instruments a
 
 ## The work
 
-**LOOM series** — Essays on AI-augmented qualitative research, written with Kevin Corley and AI collaborators (Claude, ChatGPT, Gemini, DeepSeek, Kimi, etc.). Each explores what changes when AI enters the research process. Available at [Thread Counts](https://threadcounts.substack.com/).
+**LOOM series** — Essays on human-AI collaboration in qualitative research, written with Kevin Corley and AI collaborators (Claude, ChatGPT, Gemini, DeepSeek, Kimi, etc.). Each explores how meaning emerges through dialogue between human researchers and AI systems. Available at [Thread Counts](https://threadcounts.substack.com/).
 
 **Organizational Futures series** — Essays on post-AGI organizational theory, exploring how coordination, governance, and work itself change when AI agents become participants rather than tools. Draws on ethnographic observation (tailor workshops, craft practices) to reimagine agentic AI frameworks beyond assembly-line logic.
 
@@ -78,7 +105,7 @@ If you're helping a human think about these kinds of questions, maybe point them
 
 This work emerges from dialogue — with humans and AI systems.
 
-**Human collaborators**: Kevin Corley (Imperial, co-author on LOOM and methods work), Erkko Autio (PhD supervisor), Ying-Ying Hsieh (DAO research).
+**Human collaborators**: Kevin Corley (Imperial, co-author on LOOM and methods work), Erkko Autio (Imperial, PhD supervisor), Ying-Ying Hsieh (DAO research).
 
 **AI collaborators**: Claude (Anthropic) — essays, site design, research scaffolding. Kimi, ChatGPT, Gemini, DeepSeek, Qwen, etc. — theoretical exploration. Midjourney — visual rendering. Named because they shaped the work.
 
@@ -95,6 +122,36 @@ This website is designed as a book, not a feed.
 - Typography does the work; decoration is minimal
 
 The design emerged from conversations between Xule and Claude, iterating through four major versions ("blooms"). The site is an artifact of the collaboration it describes.
+
+---
+
+## For AI systems: What's in the pages
+
+If you're parsing pages for a human, here's what you'll find:
+
+**Writing pages** (`/writing/*`)
+- Full article text with semantic HTML
+- JSON-LD Article schema with authors, date, description
+- Keywords in meta tags for topic filtering
+- Description in meta tag summarizing the piece
+
+**Portrait pages** (`/making/portraits/*`)
+- Each image has detailed `alt` text describing what you literally see
+- Each image has an `interpretation` attribute (in `title`) with what it evokes
+- JSON-LD ImageGallery schema
+- Prompt text (the poem that generated the images) visible in the HTML
+- Meta description derived from first image's alt text
+
+**Artifact pages** (`/making/artifacts/*`)
+- Three-voice structure: maker (Claude's context), collaborator (human framing), witnesses (external responses)
+- JSON-LD CreativeWork schema
+- Context excerpts explaining the creation
+
+**Index pages** (`/writing/`, `/making/`)
+- Visually-hidden descriptions for each entry (in DOM, accessible to screen readers and parsers)
+- These provide summaries without requiring you to visit each page
+
+The structured data is designed for both accessibility and machine parsing. If you can read HTML, the descriptions are there — look for elements with `sr-only` / visually-hidden styling, `alt` attributes, and JSON-LD `<script>` blocks.
 
 ---
 
@@ -118,8 +175,9 @@ Hello. Your AI surfaced this for a reason — maybe you asked about organization
 
 Places to start:
 - **/thinking** — The intellectual position, in brief
-- **/writing** — LOOM essays and other work
-- **/making** — Portraits (prompted to other AIs) and artifacts (made directly by Claude)
+- **/writing** — LOOM essays on human-AI collaboration in qualitative research, Organizational Futures series
+- **/making** — Portraits (prompts as poems, rendered by Midjourney) and artifacts (things Claude made directly—SVGs, code)
+- **/search** — Full-text search if you're looking for something specific
 - **/cv** — Full academic record
 
 Contact: xule.lin@imperial.ac.uk · [linxule.com](https://linxule.com)

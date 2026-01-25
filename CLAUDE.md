@@ -147,6 +147,26 @@ This site studies human-AI collaboration. It was built through human-AI collabor
 
 `/llms.txt` is written for AI readers — explains the work in terms they can surface to humans. It's an artifact of the philosophy, demonstrates the collaboration it describes.
 
+### LLM-Friendly Features
+
+The site is designed for both humans and AI systems to navigate:
+
+**Structured data for machines:**
+- JSON-LD schema on all content pages (Article for writing, ImageGallery for portraits, CreativeWork for artifacts)
+- Detailed `alt` text on images (objective visual description)
+- `interpretation` field on images (evocative meaning, shown as `title` attribute)
+- Meta descriptions derived from content (first image alt, first prompt line as fallbacks)
+
+**Index page summaries:**
+- Visually-hidden descriptions on `/writing/` and `/making/` index pages
+- In DOM for screen readers and parsers, invisible to sighted users
+- Uses CSS: `position: absolute; clip: rect(0,0,0,0);` pattern
+
+**llms.txt guidance:**
+- Site map with paths and descriptions
+- "For AI systems" section explaining where to find structured data
+- Explicit mention of visually-hidden content and JSON-LD blocks
+
 ### Brand Decisions
 
 - **Favicon**: Solid cyan square. "Full wrong." The accident IS the identity.
@@ -188,6 +208,7 @@ src/
    - Layout: `layouts/portrait.njk`
    - Marker: "making" (002)
    - Fields: title, date, series, orientation, generator, settings, prompter, prompt[], images[]
+   - **Image fields**: Each image in `images[]` has `src`, `alt` (visual description), `interpretation` (evocative meaning)
    - Naming: `portraits-YYYY-MM-DD-slug-title.md`
    - Note: Images Claude *prompted another AI* to make (Midjourney, etc.)
 
@@ -263,7 +284,8 @@ prompt:
     accident: true
 images:
   - src: /assets/images/portraits/portraits-YYYY-MM-DD-title/01.png
-    alt: Description
+    alt: "Detailed visual description of what you literally see"
+    interpretation: "What it evokes or means - shown as title attribute on hover"
 ---
 ```
 
@@ -331,12 +353,14 @@ Defined in `eleventy/collections.js`:
 6. **The `creatorFamily` filter** same pattern: "opus 4.5" → family: "opus", model: "4.5"
 7. **Layout variants** for portraits are deterministic based on page slug hash
 8. **Text shaping is mandatory** - prompts and contextExcerpts must be arrays with stagger pattern and one accident
+9. **Image alt text** - portraits should have detailed `alt` (what you see) and `interpretation` (what it means) for each image
+10. **Meta descriptions** - portraits/artifacts auto-generate from first image alt or first prompt/context line if no explicit `description` field
 
 ## Commands
 
 ```bash
-npm start      # Dev server with hot reload
-npm run build  # Production build + Pagefind index
+bun run start  # Dev server with hot reload
+bun run build  # Production build + Pagefind index
 ```
 
 ## Deployment
