@@ -165,7 +165,7 @@ The calculator wanted certainty. The thinking partner invites exploration. Which
 
 ### **Xule Lin**
 
-Xule is a researcher studying how human & machine intelligences shape the future of organizing [(Personal Website)](http://www.linxule.com/).
+Xule is a researcher studying how human & machine intelligences shape the future of organizing [(Personal Website)](https://linxule.com/).
 
 ### **Kevin Corley**
 

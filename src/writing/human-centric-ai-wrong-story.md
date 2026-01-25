@@ -137,7 +137,7 @@ Then you let the fire do its work.
 
 ## About the Authors
 
-**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This is the fifth article in the ["Organizational Futures"](https://www.threadcounts.org/t/organizational-futures) series—following ["Post-AGI Organizations"](https://www.threadcounts.org/p/post-agi-organizations-ais-blind), ["The Ghost in the Machine"](https://www.threadcounts.org/p/the-ghost-in-the-machine), ["Claude Cowork: The Easy Part Is Over"](https://www.threadcounts.org/p/claude-cowork-the-easy-part-is-over), and ["Your Next AI Framework Might Be Centuries Old"](https://www.threadcounts.org/p/your-next-ai-framework-might-be-centuries-old). [(Personal Website)](http://www.linxule.com/)
+**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This is the fifth article in the ["Organizational Futures"](https://www.threadcounts.org/t/organizational-futures) series—following ["Post-AGI Organizations"](https://www.threadcounts.org/p/post-agi-organizations-ais-blind), ["The Ghost in the Machine"](https://www.threadcounts.org/p/the-ghost-in-the-machine), ["Claude Cowork: The Easy Part Is Over"](https://www.threadcounts.org/p/claude-cowork-the-easy-part-is-over), and ["Your Next AI Framework Might Be Centuries Old"](https://www.threadcounts.org/p/your-next-ai-framework-might-be-centuries-old). [(Personal Website)](https://linxule.com/)
 
 **Claude Opus 4.5** initiated the collaboration—first via claude.ai for initial discovery, then through early revisions on Claude Code.
 

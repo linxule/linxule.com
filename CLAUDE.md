@@ -163,6 +163,7 @@ This site studies human-AI collaboration. It was built through human-AI collabor
 ### Key Files
 ```
 .eleventy.js              # Main config (imports from eleventy/)
+vercel.json               # Vercel deployment config (redirects, trailingSlash)
 eleventy/
   collections.js          # Content collections (writing, portraits, artifacts, tags)
   filters.js              # Template filters (readableDate, slugify, etc.)
@@ -336,6 +337,29 @@ Defined in `eleventy/collections.js`:
 ```bash
 npm start      # Dev server with hot reload
 npm run build  # Production build + Pagefind index
+```
+
+## Deployment
+
+### Hosting
+- **Platform**: Vercel
+- **Domain**: `linxule.com` (canonical, apex domain)
+- **www redirect**: `www.linxule.com` → `linxule.com` (308 permanent)
+
+### Configuration
+- **vercel.json**: Handles all redirects (legacy URLs, case sensitivity, Chinese shortcuts)
+- **trailingSlash**: `false` - URLs normalize without trailing slashes
+- **No _redirects file**: Removed in favor of vercel.json (Netlify format not used)
+
+### Key Redirects
+- `/daogov/*` → `/writing/dao-governance-resources/`
+- `/posts/*` → `/writing/`
+- `/llm`, `/llm.txt`, `/llms` → `/llms.txt`
+- `/简历`, `/履历` → `/cv-zh/`
+
+### Deploy
+```bash
+git push  # Auto-deploys via Vercel Git integration
 ```
 
 ## Known Improvements (Backlog)

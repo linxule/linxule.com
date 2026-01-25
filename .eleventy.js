@@ -37,7 +37,6 @@ module.exports = function(eleventyConfig) {
   // Passthrough copy
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy("src/writing/attachments");
-  eleventyConfig.addPassthroughCopy("src/_redirects");
 
   // Register modular configuration
   collections(eleventyConfig);

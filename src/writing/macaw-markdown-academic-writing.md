@@ -98,7 +98,7 @@ For practical application, here's a list of to-do items for getting started with
       - Supports Both "Text Citation" and "Live Citation" (editable in Word via Zotero Plugin)
    2. Download and install [Marked for macOS](https://marked2app.com/)
       - Download [CSS stylesheets](https://marked2app.com/styles/)
-      - [Configure Marked to process citations](https://linxule.com/projects/md_academic/)
+      - [Configure Marked to process citations](https://marked2app.com/help/Custom_Processor)
 
 4. **Advanced Zotero Setup**
    1. Install [Zotfile Plugin for Zotero](http://zotfile.com/)

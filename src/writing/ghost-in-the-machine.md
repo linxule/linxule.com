@@ -431,7 +431,7 @@ The organization inside the organization is instantiating collaborative principl
 
 ## About the Authors
 
-**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This article is part of the “Organizational Futures” series exploring organizational implications of AI systems. [(Personal Website)](http://www.linxule.com/)
+**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This article is part of the “Organizational Futures” series exploring organizational implications of AI systems. [(Personal Website)](https://linxule.com/)
 
 **Claude 4.5 Sonnet (with 1M context)** served as the primary AI collaborator throughout the writing process while working in Claude Code.
 

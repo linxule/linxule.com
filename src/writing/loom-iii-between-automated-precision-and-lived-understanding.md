@@ -81,7 +81,7 @@ The future presents itself with both challenge and opportunity. As social scient
 
 ![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2d47f06c-2466-4b94-bb24-44a7381aff81_1408x768.jpeg)
 
-Xule is a PhD student at Imperial College Business School, studying how human & machine intelligences shape the future of organizing [(Personal Website)](http://www.linxule.com/).
+Xule is a PhD student at Imperial College Business School, studying how human & machine intelligences shape the future of organizing [(Personal Website)](https://linxule.com/).
 
 Kevin is a Professor of Management at Imperial College Business School [(College Profile)](https://profiles.imperial.ac.uk/k.corley). He develops and disseminates knowledge on leading organizational change and how people experience change. He helped found the [London+ Qualitative Community](https://londonqualcommunity.com/).
 

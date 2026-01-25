@@ -1,0 +1,161 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/curation-dao/:path*",
+      "destination": "/writing/dao-governance-resources/",
+      "statusCode": 301
+    },
+    {
+      "source": "/curation-dao",
+      "destination": "/writing/dao-governance-resources/",
+      "statusCode": 301
+    },
+    {
+      "source": "/daogov/:path*",
+      "destination": "/writing/dao-governance-resources/",
+      "statusCode": 301
+    },
+    {
+      "source": "/daogov",
+      "destination": "/writing/dao-governance-resources/",
+      "statusCode": 301
+    },
+    {
+      "source": "/talks/:path*",
+      "destination": "/cv/#presentations",
+      "statusCode": 301
+    },
+    {
+      "source": "/talks",
+      "destination": "/cv/#presentations",
+      "statusCode": 301
+    },
+    {
+      "source": "/markdown",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/writing/writing-in-markdown",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/publications/:path*",
+      "destination": "/cv/#publications",
+      "statusCode": 301
+    },
+    {
+      "source": "/publications",
+      "destination": "/cv/#publications",
+      "statusCode": 301
+    },
+    {
+      "source": "/publication/:path*",
+      "destination": "/cv/#publications",
+      "statusCode": 301
+    },
+    {
+      "source": "/posts/2024/06/openai-discord",
+      "destination": "https://github.com/linxule/openai-assistants-discord-bot",
+      "statusCode": 301
+    },
+    {
+      "source": "/posts/2020/06/resources-for-dao-research/:path*",
+      "destination": "/writing/dao-governance-resources/",
+      "statusCode": 301
+    },
+    {
+      "source": "/posts/:path*",
+      "destination": "/writing/",
+      "statusCode": 301
+    },
+    {
+      "source": "/sitemap",
+      "destination": "/sitemap.xml",
+      "statusCode": 301
+    },
+    {
+      "source": "/cV",
+      "destination": "/cv/",
+      "statusCode": 301
+    },
+    {
+      "source": "/CV",
+      "destination": "/cv/",
+      "statusCode": 301
+    },
+    {
+      "source": "/CV-zh",
+      "destination": "/cv-zh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/CV-ZH",
+      "destination": "/cv-zh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/简历",
+      "destination": "/cv-zh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/履历",
+      "destination": "/cv-zh/",
+      "statusCode": 301
+    },
+    {
+      "source": "/Writing",
+      "destination": "/writing/",
+      "statusCode": 301
+    },
+    {
+      "source": "/Making",
+      "destination": "/making/",
+      "statusCode": 301
+    },
+    {
+      "source": "/llm.txt",
+      "destination": "/llms.txt",
+      "statusCode": 301
+    },
+    {
+      "source": "/llm",
+      "destination": "/llms.txt",
+      "statusCode": 301
+    },
+    {
+      "source": "/llms",
+      "destination": "/llms.txt",
+      "statusCode": 301
+    },
+    {
+      "source": "/collection-archive",
+      "destination": "/writing/",
+      "statusCode": 301
+    },
+    {
+      "source": "/year-archive",
+      "destination": "/writing/",
+      "statusCode": 301
+    },
+    {
+      "source": "/page-archive",
+      "destination": "/writing/",
+      "statusCode": 301
+    },
+    {
+      "source": "/projects/md_academic",
+      "destination": "/writing/macaw-markdown-academic-writing/",
+      "statusCode": 301
+    },
+    {
+      "source": "/projects/:path*",
+      "destination": "/writing/",
+      "statusCode": 301
+    }
+  ]
+}

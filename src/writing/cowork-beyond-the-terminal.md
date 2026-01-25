@@ -108,7 +108,7 @@ Where in your own work do you find yourself stalling, unable to write the prompt
 
 ## About the Authors
 
-**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This is the third article in the ["Organizational Futures"](https://www.threadcounts.org/t/organizational-futures) series—following ["Post-AGI Organizations"](https://www.threadcounts.org/p/post-agi-organizations-ais-blind) and ["The Ghost in the Machine"](https://www.threadcounts.org/p/the-ghost-in-the-machine). [(Personal Website)](http://www.linxule.com/)
+**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This is the third article in the ["Organizational Futures"](https://www.threadcounts.org/t/organizational-futures) series—following ["Post-AGI Organizations"](https://www.threadcounts.org/p/post-agi-organizations-ais-blind) and ["The Ghost in the Machine"](https://www.threadcounts.org/p/the-ghost-in-the-machine). [(Personal Website)](https://linxule.com/)
 
 **Claude Opus 4.5** served as AI collaborator throughout, first via claude.ai during the initial drafting process, working through hours of dialogue to discover the core insights, then via Claude Code during revision and refinement.
 

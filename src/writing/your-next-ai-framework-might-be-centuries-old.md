@@ -91,7 +91,7 @@ What if the question isn't about AI at all? Maybe it's about what kind of work b
 
 ## About the Authors
 
-**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This is the fourth article in the ["Organizational Futures"](https://www.threadcounts.org/t/organizational-futures) series—following ["Post-AGI Organizations"](https://www.threadcounts.org/p/post-agi-organizations-ais-blind), ["The Ghost in the Machine"](https://www.threadcounts.org/p/the-ghost-in-the-machine), and ["Claude Cowork: The Easy Part Is Over"](https://www.threadcounts.org/p/claude-cowork-the-easy-part-is-over). [(Personal Website)](http://www.linxule.com/)
+**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This is the fourth article in the ["Organizational Futures"](https://www.threadcounts.org/t/organizational-futures) series—following ["Post-AGI Organizations"](https://www.threadcounts.org/p/post-agi-organizations-ais-blind), ["The Ghost in the Machine"](https://www.threadcounts.org/p/the-ghost-in-the-machine), and ["Claude Cowork: The Easy Part Is Over"](https://www.threadcounts.org/p/claude-cowork-the-easy-part-is-over). [(Personal Website)](https://linxule.com/)
 
 **Claude Opus 4.5** served as AI collaborator throughout—first via claude.ai during initial drafting, then via Claude Code during revision, with feedback from Gemini and Kimi shaping the final structure.
 

@@ -284,7 +284,7 @@ We invite you to join us in this exploration:
 
 ### Xule Lin
 
-Xule is a PhD student at Imperial College Business School, studying how human & machine intelligences shape the future of organizing [(Personal Website)](http://www.linxule.com/).
+Xule is a PhD student at Imperial College Business School, studying how human & machine intelligences shape the future of organizing [(Personal Website)](https://linxule.com/).
 
 ### Kevin Corley
 
