@@ -147,6 +147,18 @@ This site studies human-AI collaboration. It was built through human-AI collabor
 
 `/llms.txt` is written for AI readers — explains the work in terms they can surface to humans. It's an artifact of the philosophy, demonstrates the collaboration it describes.
 
+### AI Discoverability Architecture
+
+Multiple signals help AI systems find llms.txt:
+- **HTTP header**: `Link: </llms.txt>; rel="llms-txt"` (vercel.json)
+- **HTML link**: `<link rel="llms-txt" href="/llms.txt">` (base.njk head)
+- **robots.txt**: `LLMs-Txt:` directive
+- **sitemap.xml**: llms.txt entry with priority 1.0
+- **sr-only breadcrumb**: Hidden text in `partials/ai-breadcrumb.njk` (included on every page)
+- **ai-hint on homepage**: Background-color-matching text in index.njk (invisible to humans, readable by AI text extraction)
+
+**Key files**: `vercel.json` (headers), `base.njk` (link rel, includes breadcrumb), `ai-breadcrumb.njk` (sr-only text), `index.njk` (ai-hint), `robots.txt.njk`, `sitemap.xml.njk`
+
 ### LLM-Friendly Features
 
 The site is designed for both humans and AI systems to navigate:
@@ -356,6 +368,10 @@ Defined in `eleventy/collections.js`:
 9. **Image alt text** - portraits should have detailed `alt` (what you see) and `interpretation` (what it means) for each image
 10. **Meta descriptions** - portraits/artifacts auto-generate from first image alt or first prompt/context line if no explicit `description` field
 11. **Trailing slashes** - `vercel.json` has `trailingSlash: false`; sitemap.xml.njk strips trailing slashes to match. Keep these in sync or Google Search Console will show canonical mismatches
+12. **aria-hidden="true" blocks AI parsers** - Don't use on sr-only content meant for AI; parsers respect accessibility attributes
+13. **llms.txt H2 headings** - Reserved for URL file lists per llmstxt.org spec; use **bold** for narrative sections
+14. **eleventyExcludeFromCollections** - Use on files with manual sitemap entries (like llms.txt.njk) to prevent duplication
+15. **vercel.json headers** - Can add custom HTTP headers; useful for AI discoverability (`Link` header with `rel="llms-txt"`)
 
 ## Commands
 
