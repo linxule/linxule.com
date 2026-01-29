@@ -1,6 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "</llms.txt>; rel=\"llms-txt\""
+        }
+      ]
+    }
+  ],
   "redirects": [
     {
       "source": "/curation-dao/:path*",
