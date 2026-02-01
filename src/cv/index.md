@@ -103,7 +103,11 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Presentations
 
-- _"Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes"_
+- _"Rethinking Human-AI Collaboration in Interpretive Research"_
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0), Online, 2026 ([Video](https://www.youtube.com/watch?v=fPoVMFEh6TM))
+	- With Kevin Corley
+	- Introduced celestial metaphors for human-AI collaboration and examined epistemic responsibility in AI-augmented qualitative research
+- <br/>_"Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes"_
 	- Strategic Management Society (SMS) Annual Meeting, Istanbul, 2024
 - <br/>_"Rethinking Organizational Design: Governance of Decentralized Autonomous Organizations (DAOs)"_
 	- CCC Doctoral Conference, Olin School of Business, Washington University in St. Louis, St. Louis, 2024
