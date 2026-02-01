@@ -92,8 +92,16 @@ permalink: /talks/
         transition: color 0.2s ease;
     }
 
+    .entry-title.accident {
+        color: var(--accident);
+    }
+
     .entry-link:hover .entry-title {
         color: var(--bloom);
+    }
+
+    .entry-link:hover .entry-title.accident {
+        color: var(--accident);
     }
 
     .entry-date {
@@ -180,7 +188,7 @@ permalink: /talks/
             {%- if talk.data.event -%}
             <span class="entry-event">{{ talk.data.event }}</span>
             {%- endif -%}
-            <span class="entry-title">{{ talk.data.title }}</span>
+            <span class="entry-title{% if talk.data.accident %} accident{% endif %}">{{ talk.data.title }}</span>
             <span class="entry-date">{{ talk.date | readableDate }}</span>
             {%- if talk.data.speakers -%}
             <span class="entry-speakers">with {{ talk.data.speakers | join(", ") }}</span>

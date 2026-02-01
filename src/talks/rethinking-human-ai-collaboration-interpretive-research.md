@@ -12,11 +12,12 @@ keywords:
   - qualitative methods
   - epistemology
   - grounded theory
+accident: true
 ---
 
 What happens to meaning-making when AI enters interpretive research?
 
-We introduce three celestial metaphors for human-AI collaboration: **Sun-Mercury** (AI as tool, full human control), **Earth-Moon** (AI as ally, bi-directional but asymmetric influence), and **Mizar-Alcor** (AI as partner, shared epistemic center). Each represents a different configuration of epistemic responsibility.
+We introduce three celestial metaphors for human-AI collaboration: **Sun-Mercury** (AI as tool, full human control), **Earth-Moon** (AI as ally, bi-directional but asymmetric influence), and **Mizar-Alcor** (AI as partner, <span class="accident">shared epistemic center</span>). Each represents a different configuration of epistemic responsibility.
 
 We argue against both *abdication* (uncritically accepting AI outputs) and *abnegation* (refusing to engage). The middle ground requires being a deliberate integrator—knowing your level, being mindful of use, and taking responsibility for the insights produced.
 
