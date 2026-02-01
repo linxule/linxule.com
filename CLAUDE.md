@@ -244,6 +244,11 @@ src/
 
 5. **Teaching** (`src/teaching/`)
 6. **CV** (`src/cv/`)
+7. **Talks** (`src/talks/*.md`)
+   - Layout: `layouts/talk.njk`
+   - Marker: "talks" (005)
+   - Fields: title, date, event, speakers[], youtube, keywords[], accident
+   - Note: Conference presentations and public lectures with video embeds
 
 ### CSS Architecture
 
@@ -332,6 +337,25 @@ Rendered with "context" label. This is where you explain origins,
 link to inspiration, quote other Claudes, etc.
 ```
 
+### Talk Frontmatter
+```yaml
+---
+layout: layouts/talk.njk
+title: lowercase title
+date: 2026-01-28
+event: New Scholars · Generative AI Series
+speakers:
+  - Kevin Corley
+  - Xule Lin
+youtube: fPoVMFEh6TM           # Just the video ID, not full URL
+keywords:
+  - human-AI collaboration
+accident: true                 # Optional, cyan title on index
+---
+
+Body content is the talk description. Use `<span class="accident">phrase</span>` for inline accidents.
+```
+
 ### Footnotes as Marginalia
 
 Use standard markdown footnotes - they render as marginalia on desktop:
@@ -353,7 +377,8 @@ Defined in `eleventy/collections.js`:
 - `portraitsByPrompterFamily` - Grouped by first word of prompter (claude, gpt, etc.)
 - `artifactsByCreator` - Grouped by exact creator (e.g., "opus 4.5")
 - `artifactsByCreatorFamily` - Grouped by first word of creator (e.g., "opus")
-- `tagPages` - Aggregated from all content keywords
+- `talks` - Public presentations, with auto-numbered seriesNumber
+- `tagPages` - Aggregated from all content keywords (includes talks)
 
 ## Gotchas
 
@@ -372,6 +397,7 @@ Defined in `eleventy/collections.js`:
 13. **llms.txt H2 headings** - Reserved for URL file lists per llmstxt.org spec; use **bold** for narrative sections
 14. **eleventyExcludeFromCollections** - Use on files with manual sitemap entries (like llms.txt.njk) to prevent duplication
 15. **vercel.json headers** - Can add custom HTTP headers; useful for AI discoverability (`Link` header with `rel="llms-txt"`)
+16. **New content type checklist** - When adding a section (like talks), update: `collections.js`, homepage nav in `index.njk`, `llms.txt.njk`, `tag.njk` (add territory support)
 
 ## Commands
 
@@ -412,6 +438,16 @@ The making/portraits index uses scroll-snap spreads, but scroll restoration uses
 
 ## Design Tokens
 
+### Responsive Breakpoints
+- **1100px**: Primary breakpoint (hide marginalia, simplify grids)
+- **768px**: Secondary breakpoint (full mobile, compact padding)
+
+### Typography Patterns
+- **Detail page titles**: `clamp(1.8rem, 4vw, 2.8rem)` at `font-weight: 300`
+- **Index page titles**: `1rem` at `font-weight: 400`
+- **Label letter-spacing**: `0.15em` (all uppercase IBM Plex Mono labels)
+
+### Colors
 ```css
 --paper: #f4f1eb;         /* Background */
 --paper-dark: #e8e4dc;    /* Cards, hover states */
