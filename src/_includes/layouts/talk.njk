@@ -1,0 +1,243 @@
+---
+layout: layouts/base.njk
+marker: "talks"
+---
+
+<style>
+    .talk-container {
+        display: grid;
+        grid-template-columns: 1fr minmax(auto, 800px) 1fr;
+        gap: 0 2rem;
+        padding: 10rem 2rem 6rem;
+    }
+
+    .talk-content {
+        grid-column: 2;
+    }
+
+    .talk-header {
+        margin-bottom: 3rem;
+    }
+
+    .talk-num {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-ghost);
+        letter-spacing: 0.2em;
+        margin-bottom: 1.5rem;
+    }
+
+    .talk-title {
+        font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+        font-weight: 300;
+        line-height: 1.3;
+        margin-bottom: 1rem;
+    }
+
+    .talk-meta {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .meta-label {
+        color: var(--ink-ghost);
+    }
+
+    .talk-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    /* Video embed */
+    .video-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        margin: 3rem 0;
+        background: var(--paper-dark);
+        border: 1px solid var(--ink-ghost);
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .video-container .video-placeholder {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    /* Description/body content */
+    .talk-body {
+        line-height: 1.8;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .talk-body p {
+        margin-bottom: 1.5rem;
+    }
+
+    .talk-body a {
+        color: var(--ink);
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 2px;
+    }
+
+    .talk-body a:hover {
+        color: var(--bloom);
+    }
+
+    /* External link button */
+    .external-link {
+        display: inline-block;
+        margin-top: 2rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--ink-light);
+        text-decoration: none;
+        padding: 0.75rem 1.25rem;
+        border: 1px solid var(--ink-ghost);
+        transition: all 0.2s ease;
+    }
+
+    .external-link:hover {
+        border-color: var(--bloom);
+        color: var(--bloom);
+    }
+
+    .talk-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .nav-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .page-marker {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-ghost);
+    }
+
+    @media (max-width: 900px) {
+        .talk-container {
+            grid-template-columns: 1fr;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .talk-content {
+            grid-column: 1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .talk-container {
+            padding: 6rem 1.5rem 3rem;
+        }
+
+        .talk-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+</style>
+
+<div class="talk-container">
+
+    <article class="talk-content" data-pagefind-body data-pagefind-filter="type:talk">
+
+        <header class="talk-header">
+            <div class="talk-num">TALK NO. {{ seriesNumber | default("01") }}</div>
+            <h1 class="talk-title">{{ title }}</h1>
+            <div class="talk-meta">
+                {% if speakers %}
+                <span class="meta-item">
+                    <span class="meta-label">with</span>
+                    <span>{{ speakers | join(", ") }}</span>
+                </span>
+                {% endif %}
+                {% if event %}
+                <span class="meta-item">
+                    <span class="meta-label">at</span>
+                    <span>{{ event }}</span>
+                </span>
+                {% endif %}
+                <span class="meta-item">
+                    <span class="meta-label">date</span>
+                    <span>{{ date | readableDate }}</span>
+                </span>
+            </div>
+            {% if keywords %}
+            <div class="talk-tags">
+                {% for keyword in keywords %}
+                <a href="/tag/{{ keyword | slugify }}/" class="tag">{{ keyword }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </header>
+
+        {% if youtube %}
+        <div class="video-container">
+            <iframe
+                src="https://www.youtube.com/embed/{{ youtube }}"
+                title="{{ title }}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy">
+            </iframe>
+        </div>
+        {% elif video %}
+        <div class="video-container">
+            <iframe
+                src="{{ video }}"
+                title="{{ title }}"
+                allowfullscreen
+                loading="lazy">
+            </iframe>
+        </div>
+        {% endif %}
+
+        {% if content | trim %}
+        <div class="talk-body">
+            {{ content | safe }}
+        </div>
+        {% endif %}
+
+        {% if link %}
+        <a href="{{ link }}" class="external-link">Watch on YouTube →</a>
+        {% endif %}
+
+        <footer class="talk-footer">
+            <a href="/talks/" class="nav-link">← all talks</a>
+            <span class="page-marker">005</span>
+        </footer>
+
+    </article>
+
+</div>

@@ -47,6 +47,76 @@ marker: tag
         color: var(--ink-faint);
         margin-bottom: 2rem;
     }
+
+    /* Talks section within tag page */
+    .tag-talks {
+        padding: 4rem;
+        max-width: 800px;
+    }
+
+    .tag-talks-header {
+        margin-bottom: 2rem;
+    }
+
+    .tag-talks .tag-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+
+    .tag-talks .tag-name {
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: var(--ink);
+    }
+
+    .talks-list {
+        margin-top: 2rem;
+    }
+
+    .talk-entry {
+        margin-bottom: 1.5rem;
+    }
+
+    .talk-entry-link {
+        display: block;
+        text-decoration: none;
+        transition: transform 0.2s ease;
+    }
+
+    .talk-entry-link:hover {
+        transform: translateX(0.5rem);
+    }
+
+    .talk-entry-event {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-faint);
+        letter-spacing: 0.1em;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .talk-entry-title {
+        font-size: 1.1rem;
+        font-weight: 400;
+        color: var(--ink-light);
+        transition: color 0.2s ease;
+    }
+
+    .talk-entry-link:hover .talk-entry-title {
+        color: var(--bloom);
+    }
+
+    .talk-entry-date {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-ghost);
+        margin-left: 1rem;
+    }
 </style>
 
 {% if tag.writing.length >= 1 %}
@@ -57,14 +127,37 @@ marker: tag
 {% set backLink = "/writing/" %}
 {% include "components/writing-book.njk" %}
 
+{% elif tag.talks.length >= 1 %}
+{# Talks list when no writing but has talks #}
+<div class="tag-talks">
+    <header class="tag-talks-header">
+        <div class="tag-label">tagged</div>
+        <h1 class="tag-name">{{ tag.name }}</h1>
+    </header>
+    <div class="talks-list">
+        {%- for talk in tag.talks -%}
+        <div class="talk-entry">
+            <a href="{{ talk.url }}" class="talk-entry-link">
+                {%- if talk.data.event -%}
+                <span class="talk-entry-event">{{ talk.data.event }}</span>
+                {%- endif -%}
+                <span class="talk-entry-title">{{ talk.data.title }}</span>
+                <span class="talk-entry-date">{{ talk.date | readableDate }}</span>
+            </a>
+        </div>
+        {%- endfor -%}
+    </div>
+    <a href="/talks/" class="back-link" style="margin-top: 2rem; display: inline-block;">← all talks</a>
+</div>
+
 {% else %}
-{# No writing posts - empty state #}
+{# No content - empty state #}
 <div class="empty-tag">
     <header class="tag-header">
         <div class="tag-label">tagged</div>
         <h1 class="tag-name">{{ tag.name }}</h1>
     </header>
-    <p>No essays found with this tag.</p>
+    <p>No content found with this tag.</p>
     <a href="/writing/" class="back-link">← all writing</a>
 </div>
 {% endif %}

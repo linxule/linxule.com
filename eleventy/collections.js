@@ -95,6 +95,21 @@ module.exports = function(eleventyConfig) {
     return collectionApi.getFilteredByGlob("src/thinking/**/*.md");
   });
 
+  // Talks collection - public presentations, lectures, etc.
+  eleventyConfig.addCollection("talks", function(collectionApi) {
+    const allTalks = collectionApi.getFilteredByGlob("src/talks/**/*.md");
+
+    // Sort by date (oldest first for numbering)
+    const sorted = [...allTalks].sort((a, b) => a.date - b.date);
+    sorted.forEach((item, idx) => {
+      item.data.seriesNumber = String(idx + 1).padStart(2, '0');
+      item.data.seriesTotal = sorted.length;
+    });
+
+    // Return sorted newest first for display
+    return allTalks.sort((a, b) => b.date - a.date);
+  });
+
   // Artifacts collection - things Claude made directly (not prompted to other AIs)
   // With series numbering (like portraits)
   eleventyConfig.addCollection("artifacts", function(collectionApi) {
@@ -232,7 +247,8 @@ module.exports = function(eleventyConfig) {
           slug: slug,
           writing: [],
           portraits: [],
-          thinking: []
+          thinking: [],
+          talks: []
         };
       }
       if (!tagMap[slug][territory].some(i => i.url === item.url)) {
@@ -270,12 +286,23 @@ module.exports = function(eleventyConfig) {
       }
     });
 
+    // Process talks
+    collectionApi.getFilteredByGlob("src/talks/**/*.md").forEach(item => {
+      if (item.data.keywords) {
+        item.data.keywords.forEach(kw => addToTag(kw, item, 'talks'));
+      }
+      if (item.data.tags) {
+        item.data.tags.forEach(tag => addToTag(tag, item, 'talks'));
+      }
+    });
+
     // Sort items within each territory by date
     Object.values(tagMap).forEach(tag => {
       tag.writing.sort((a, b) => b.date - a.date);
       tag.portraits.sort((a, b) => b.date - a.date);
       tag.thinking.sort((a, b) => b.date - a.date);
-      tag.total = tag.writing.length + tag.portraits.length + tag.thinking.length;
+      tag.talks.sort((a, b) => b.date - a.date);
+      tag.total = tag.writing.length + tag.portraits.length + tag.thinking.length + tag.talks.length;
     });
 
     return Object.values(tagMap).sort((a, b) => a.name.localeCompare(b.name));
