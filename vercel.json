@@ -34,16 +34,6 @@
       "statusCode": 301
     },
     {
-      "source": "/talks/:path*",
-      "destination": "/cv/#presentations",
-      "statusCode": 301
-    },
-    {
-      "source": "/talks",
-      "destination": "/cv/#presentations",
-      "statusCode": 301
-    },
-    {
       "source": "/markdown",
       "destination": "/",
       "statusCode": 301
