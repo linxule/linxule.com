@@ -1,0 +1,65 @@
+---
+permalink: /site-index.json
+eleventyExcludeFromCollections: true
+---
+{
+  "version": "{{ "" | isoDate }}",
+  "site": {
+    "title": "{{ site.title }}",
+    "url": "{{ site.url }}",
+    "author": "{{ site.author }}",
+    "description": "{{ site.description }}"
+  },
+  "pages": [
+{%- for post in collections.writing %}
+    {
+      "url": "{{ post.url | replace(r/\/$/, "") }}",
+      "url_md": "/writing/{{ post.fileSlug }}.md",
+      "title": "{{ post.data.title | replace('"', '\\"') }}",
+      "section": "writing",
+      "date": "{{ post.date.toISOString().split('T')[0] }}",
+      "authors": [{% for author in post.data.authors %}"{{ author }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "keywords": [{% for kw in post.data.keywords %}"{{ kw }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "summary": "{{ (post.data.description or post.data.subtitle or '') | truncate(160) | replace('"', '\\"') | replace('\n', ' ') }}"
+    }{% if not loop.last or collections.portraits.length or collections.artifacts.length or collections.talks.length %},{% endif %}
+{%- endfor %}
+{%- for portrait in collections.portraits %}
+    {
+      "url": "{{ portrait.url | replace(r/\/$/, "") }}",
+      "url_md": "/making/portraits/{{ portrait.fileSlug }}.md",
+      "title": "{{ portrait.data.title | replace('"', '\\"') }}",
+      "section": "portraits",
+      "date": "{{ portrait.date.toISOString().split('T')[0] }}",
+      "prompter": "{{ portrait.data.prompter or '' }}",
+      "generator": "{{ portrait.data.generator or '' }}",
+      "summary": "{% if portrait.data.prompt and portrait.data.prompt[0] %}{{ (portrait.data.prompt[0].text or portrait.data.prompt[0]) | truncate(160) | replace('"', '\\"') | replace('\n', ' ') }}{% endif %}"
+    }{% if not loop.last or collections.artifacts.length or collections.talks.length %},{% endif %}
+{%- endfor %}
+{%- for artifact in collections.artifacts %}
+    {
+      "url": "{{ artifact.url | replace(r/\/$/, "") }}",
+      "url_md": "/making/artifacts/{{ artifact.fileSlug }}.md",
+      "title": "{{ artifact.data.title | replace('"', '\\"') }}",
+      "section": "artifacts",
+      "date": "{{ artifact.date.toISOString().split('T')[0] }}",
+      "creator": "{{ artifact.data.creator or '' }}",
+      "medium": "{{ artifact.data.medium or '' }}",
+      "keywords": [{% for kw in artifact.data.keywords %}"{{ kw }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "summary": "{% if artifact.data.contextExcerpt and artifact.data.contextExcerpt[0] %}{{ (artifact.data.contextExcerpt[0].text or artifact.data.contextExcerpt[0]) | truncate(160) | replace('"', '\\"') | replace('\n', ' ') }}{% endif %}"
+    }{% if not loop.last or collections.talks.length %},{% endif %}
+{%- endfor %}
+{%- for talk in collections.talks %}
+    {
+      "url": "{{ talk.url | replace(r/\/$/, "") }}",
+      "url_md": "/talks/{{ talk.fileSlug }}.md",
+      "title": "{{ talk.data.title | replace('"', '\\"') }}",
+      "section": "talks",
+      "date": "{{ talk.date.toISOString().split('T')[0] }}",
+      "event": "{{ talk.data.event or '' | replace('"', '\\"') }}",
+      "speakers": [{% for speaker in talk.data.speakers %}"{{ speaker }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "keywords": [{% for kw in talk.data.keywords %}"{{ kw }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "youtube": "{{ talk.data.youtube or '' }}"
+    }{% if not loop.last %},{% endif %}
+{%- endfor %}
+  ]
+}

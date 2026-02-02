@@ -13,6 +13,12 @@ module.exports = function(eleventyConfig) {
     });
   });
 
+  // ISO date format (YYYY-MM-DD)
+  eleventyConfig.addFilter("isoDate", (dateObj) => {
+    const date = dateObj ? new Date(dateObj) : new Date();
+    return date.toISOString().split('T')[0];
+  });
+
   // URL-safe slug generation
   eleventyConfig.addFilter("slugify", (str) => {
     return str.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
@@ -95,5 +101,20 @@ module.exports = function(eleventyConfig) {
       .replace(/<br\s*\/?>/gi, '\n\n')  // Convert <br> to newlines
       .replace(/<[^>]+>/g, '')           // Strip remaining HTML tags
       .trim();
+  });
+
+  // Combine and sort multiple arrays by date (newest first)
+  eleventyConfig.addFilter("combineByDate", (...arrays) => {
+    const combined = arrays.flat().filter(item => item && item.date);
+    return combined.sort((a, b) => new Date(b.date) - new Date(a.date));
+  });
+
+  // Get content type from page URL for feed entries
+  eleventyConfig.addFilter("contentType", (url) => {
+    if (url.startsWith('/writing/')) return 'writing';
+    if (url.startsWith('/making/portraits/')) return 'portrait';
+    if (url.startsWith('/making/artifacts/')) return 'artifact';
+    if (url.startsWith('/talks/')) return 'talk';
+    return 'page';
   });
 };

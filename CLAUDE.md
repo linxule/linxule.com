@@ -157,8 +157,10 @@ Multiple signals help AI systems find llms.txt:
 - **sr-only breadcrumb**: Hidden text in `partials/ai-breadcrumb.njk` (included on every page)
 - **ai-hint on homepage**: Background-color-matching text in index.njk (invisible to humans, readable by AI text extraction)
 - **Markdown versions**: Every content page has `.md` version (templates in `src/md-outputs/`)
+- **Content index**: `/site-index.json` - JSON manifest of all pages with metadata
+- **AI redirects**: `/ai` and `/for-ai` redirect to `/llms.txt` (vercel.json)
 
-**Key files**: `vercel.json` (headers, rewrites), `base.njk` (link rel, includes breadcrumb), `ai-breadcrumb.njk` (sr-only text), `index.njk` (ai-hint), `robots.txt.njk`, `sitemap.xml.njk`, `src/md-outputs/*.njk` (markdown templates)
+**Key files**: `vercel.json` (headers, redirects), `base.njk` (link rel, JSON-LD Person schema), `ai-breadcrumb.njk` (sr-only text), `robots.txt.njk`, `sitemap.xml.njk`, `site-index.json.njk`, `feed.njk` (site-wide Atom), `src/md-outputs/*.njk` (markdown templates)
 
 ### LLM-Friendly Features
 
@@ -414,6 +416,9 @@ Defined in `eleventy/collections.js`:
 15. **vercel.json headers** - Can add custom HTTP headers; useful for AI discoverability (`Link` header with `rel="llms-txt"`)
 16. **New content type checklist** - When adding a section (like talks), update: `collections.js`, homepage nav in `index.njk`, `llms.txt.njk`, `tag.njk` (add territory support)
 17. **Nunjucks regex in replace** - Use `| replace(r/\/$/, "")` for regex patterns, not `| replace("/", "")` which replaces ALL occurrences
+18. **Custom filters for array operations** - Nunjucks can't natively merge and sort arrays; use custom filters like `combineByDate` in `eleventy/filters.js`
+19. **isoDate filter** - Use `{{ "" | isoDate }}` for YYYY-MM-DD format (no argument = current date); defined in `eleventy/filters.js`
+20. **JSON output escaping** - Nunjucks auto-escapes quotes in JSON templates; use `| safe` carefully or accept HTML entities
 
 ## Commands
 

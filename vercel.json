@@ -148,6 +148,16 @@
       "statusCode": 301
     },
     {
+      "source": "/ai",
+      "destination": "/llms.txt",
+      "statusCode": 301
+    },
+    {
+      "source": "/for-ai",
+      "destination": "/llms.txt",
+      "statusCode": 301
+    },
+    {
       "source": "/collection-archive",
       "destination": "/writing/",
       "statusCode": 301

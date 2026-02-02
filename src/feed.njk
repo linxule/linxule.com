@@ -2,30 +2,39 @@
 permalink: /feed.xml
 eleventyExcludeFromCollections: true
 ---
+{%- set allContent = collections.writing | combineByDate(collections.portraits, collections.artifacts, collections.talks) -%}
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <title>{{ site.title }} - Writing</title>
+    <title>{{ site.title }}</title>
     <subtitle>{{ site.description }}</subtitle>
     <link href="{{ site.url }}/feed.xml" rel="self" type="application/atom+xml"/>
     <link href="{{ site.url }}/" rel="alternate" type="text/html"/>
-    <updated>{{ collections.writing[0].date.toISOString() }}</updated>
+    <updated>{{ allContent[0].date.toISOString() }}</updated>
     <id>{{ site.url }}/</id>
     <author>
         <name>{{ site.author }}</name>
     </author>
-    {%- for post in collections.writing.slice(0, 20) %}
+    {%- for item in allContent.slice(0, 20) %}
+    {%- set itemType = item.url | contentType %}
     <entry>
-        <title>{{ post.data.title }}</title>
-        <link href="{{ site.url }}{{ post.url }}" rel="alternate" type="text/html"/>
-        <id>{{ site.url }}{{ post.url }}</id>
-        <published>{{ post.date.toISOString() }}</published>
-        <updated>{{ post.date.toISOString() }}</updated>
-        {%- if post.data.subtitle %}
-        <summary>{{ post.data.subtitle }}</summary>
+        <title>{{ item.data.title }}</title>
+        <link href="{{ site.url }}{{ item.url }}" rel="alternate" type="text/html"/>
+        <id>{{ site.url }}{{ item.url }}</id>
+        <published>{{ item.date.toISOString() }}</published>
+        <updated>{{ item.date.toISOString() }}</updated>
+        {%- if itemType == 'writing' and item.data.subtitle %}
+        <summary>{{ item.data.subtitle }}</summary>
+        {%- elif itemType == 'portrait' and item.data.prompt and item.data.prompt[0] %}
+        <summary>{{ item.data.prompt[0].text | default(item.data.prompt[0]) | truncate(200) }}</summary>
+        {%- elif itemType == 'artifact' and item.data.contextExcerpt and item.data.contextExcerpt[0] %}
+        <summary>{{ item.data.contextExcerpt[0].text | default(item.data.contextExcerpt[0]) | truncate(200) }}</summary>
+        {%- elif itemType == 'talk' and item.data.event %}
+        <summary>{{ item.data.event }}{% if item.data.speakers %} — {{ item.data.speakers | join(", ") }}{% endif %}</summary>
         {%- endif %}
         <author>
             <name>{{ site.author }}</name>
         </author>
+        <category term="{{ itemType }}"/>
     </entry>
     {%- endfor %}
 </feed>

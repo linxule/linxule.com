@@ -5,6 +5,8 @@ eleventyExcludeFromCollections: true
 
 # Xule Lin
 
+> Last updated: {{ "" | isoDate }}
+
 > Studying what happens when algorithms shift from tools to participants.
 
 **Quick reference**: Xule Lin (林徐乐). Currently PhD researcher at Imperial College London; joining Skema Centre for Artificial Intelligence in Paris, August 2026. Focus: human-AI collaboration, AI integration in organizations, organizational design, governance, AI governance, epistemology, qualitative methods, grounded theory. PhD research: decentralized governance and DAOs. Key work: LOOM series (human-AI collaboration in qualitative research), Organizational Futures (post-AGI organizational theory). Contact: xule.lin@imperial.ac.uk
@@ -79,6 +81,23 @@ Every content page has a parallel `.md` version optimized for LLM consumption.
 - Full article content without HTML/CSS/JavaScript
 - Image paths (absolute) for reference
 - ~10x fewer tokens than parsing HTML
+
+---
+
+## Machine-Readable Endpoints
+
+**Content Index** (`/site-index.json`)
+JSON manifest of all content pages with metadata:
+- URL (HTML and markdown versions)
+- Title, date, section
+- Authors/prompter/creator
+- Keywords
+- Summary (first 160 characters)
+
+Useful for programmatic access, filtering, and RAG pipelines.
+
+**RSS Feed** (`/feed.xml`)
+Atom feed of the 20 most recent items across all content types (writing, portraits, artifacts, talks), sorted by date.
 
 ---
 
