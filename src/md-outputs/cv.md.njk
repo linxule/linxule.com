@@ -1,0 +1,11 @@
+---
+permalink: /cv.md
+eleventyExcludeFromCollections: true
+---
+{%- for page in collections.all -%}
+{%- if page.url == "/cv/" or page.url == "/cv" -%}
+# {{ page.data.title }}
+
+{{ page.template.frontMatter.content }}
+{%- endif -%}
+{%- endfor -%}

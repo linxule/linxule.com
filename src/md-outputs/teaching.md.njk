@@ -1,0 +1,25 @@
+---
+permalink: /teaching.md
+eleventyExcludeFromCollections: true
+---
+{%- for page in collections.all -%}
+{%- if page.url == "/teaching/" or page.url == "/teaching" -%}
+# {{ page.data.title }}
+
+{{ page.data.description }} {{ page.data.accident }}
+
+{% if page.data.items %}
+## Materials
+
+{% for item in page.data.items %}
+### {{ item.title }}
+
+- **Type**: {{ item.label }}
+- **URL**: [{{ item.url }}]({{ item.url }})
+
+{{ item.description }}
+
+{% endfor %}
+{% endif %}
+{%- endif -%}
+{%- endfor -%}

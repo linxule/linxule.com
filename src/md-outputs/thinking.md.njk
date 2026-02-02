@@ -1,0 +1,39 @@
+---
+permalink: /thinking.md
+eleventyExcludeFromCollections: true
+---
+{%- set thinking = collections.thinking[0] -%}
+# {{ thinking.data.title }}
+
+**Thesis**: {{ thinking.data.thesis }}
+
+## Boundaries
+
+{% for boundary in thinking.data.boundaries %}- {{ boundary.left }} ↔ {{ boundary.right }}
+{% endfor %}
+
+## Problem
+
+{% for statement in thinking.data.problem %}- {{ statement }}
+{% endfor %}
+
+## Observations
+
+{{ thinking.data.observations_intro }}
+
+{% for observation in thinking.data.observations %}
+### {{ observation.title }}
+
+{% for fragment in observation.fragments %}- {{ fragment.text | default(fragment) }}{% if fragment.accident %} *(accident)*{% endif %}
+{% endfor %}
+{% endfor %}
+
+## Working On
+
+{% for item in thinking.data.working_on %}- {{ item }}
+{% endfor %}
+
+## Methods
+
+{% for method in thinking.data.methods %}- {{ method }}
+{% endfor %}

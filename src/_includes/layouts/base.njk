@@ -64,6 +64,12 @@
     <link rel="llms-txt" href="/llms.txt" type="text/plain">
     <meta name="llms-txt" content="/llms.txt">
 
+    {# Markdown alternate for content pages - helps AI systems discover clean markdown versions #}
+    {%- if page.url and (page.url.startsWith('/writing/') or page.url.startsWith('/making/portraits/') or page.url.startsWith('/making/artifacts/') or page.url.startsWith('/talks/')) and page.url != '/writing/' and page.url != '/talks/' and page.url != '/making/portraits/' and page.url != '/making/artifacts/' %}
+    {%- set mdUrl = page.url | replace(r/\/$/, "") + ".md" %}
+    <link rel="alternate" type="text/markdown" href="{{ mdUrl }}">
+    {%- endif %}
+
     {# Vercel Analytics #}
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };

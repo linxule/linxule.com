@@ -1,0 +1,11 @@
+---
+permalink: /cv-zh.md
+eleventyExcludeFromCollections: true
+---
+{%- for page in collections.all -%}
+{%- if page.url == "/cv-zh/" or page.url == "/cv-zh" -%}
+# {{ page.data.title }}
+
+{{ page.template.frontMatter.content }}
+{%- endif -%}
+{%- endfor -%}

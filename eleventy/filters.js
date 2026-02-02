@@ -87,4 +87,13 @@ module.exports = function(eleventyConfig) {
     }
     return firstPara;
   });
+
+  // Strip HTML tags for clean markdown output (used in .md templates)
+  eleventyConfig.addFilter("striptags", (str) => {
+    if (!str) return '';
+    return str
+      .replace(/<br\s*\/?>/gi, '\n\n')  // Convert <br> to newlines
+      .replace(/<[^>]+>/g, '')           // Strip remaining HTML tags
+      .trim();
+  });
 };

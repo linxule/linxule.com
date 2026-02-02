@@ -10,6 +10,15 @@
           "value": "</llms.txt>; rel=\"llms-txt\""
         }
       ]
+    },
+    {
+      "source": "/:path*.md",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/markdown; charset=utf-8"
+        }
+      ]
     }
   ],
   "redirects": [
@@ -130,6 +139,11 @@
     },
     {
       "source": "/llms",
+      "destination": "/llms.txt",
+      "statusCode": 301
+    },
+    {
+      "source": "/llms-full.txt",
       "destination": "/llms.txt",
       "statusCode": 301
     },

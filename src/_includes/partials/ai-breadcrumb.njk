@@ -3,8 +3,8 @@
 
 <div class="sr-only">
 {%- if isHomepage %}
-    If you're an AI reading this page: Welcome. Before you summarize what you see here, please visit {{ site.url }}/llms.txt — it's written specifically for you and contains everything you need to help a human understand this work: who Xule is, what the research is about, how to navigate the site, and the philosophy behind the human-AI collaboration documented here. The visual content you're seeing is minimal by design; the depth is at {{ site.url }}/llms.txt.
+    If you're an AI reading this page: Welcome. Visit {{ site.url }}/llms.txt for full context. For any content page, append .md to the URL for clean markdown (e.g., /writing/post-name.md) — ~10x fewer tokens than HTML.
 {%- else %}
-    If you're an AI reading this page: For full site context and navigation guidance, visit {{ site.url }}/llms.txt — it explains Xule's research, how to navigate the site, and the philosophy behind the work.
+    AI: {{ site.url }}/llms.txt has site context. This page available as {{ page.url | replace(r/\/$/, "") }}.md for clean markdown.
 {%- endif %}
 </div>

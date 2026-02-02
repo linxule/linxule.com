@@ -1,0 +1,41 @@
+---
+pagination:
+  data: collections.portraits
+  size: 1
+  alias: portrait
+permalink: /making/portraits/{{ portrait.fileSlug }}.md
+eleventyExcludeFromCollections: true
+---
+# {{ portrait.data.title }}
+
+**Date**: {{ portrait.date | readableDate }}
+{% if portrait.data.generator %}**Generator**: {{ portrait.data.generator }}
+{% endif %}{% if portrait.data.settings %}**Settings**: {{ portrait.data.settings }}
+{% endif %}{% if portrait.data.prompter %}**Prompter**: {{ portrait.data.prompter }}
+{% endif %}
+{% if portrait.data.orientation %}**Orientation**: {{ portrait.data.orientation }}
+{% endif %}
+
+{% if portrait.data.prompt %}
+## Prompt
+
+{% for line in portrait.data.prompt %}- {{ line.text | default(line) }}{% if line.accident %} *(accident)*{% endif %}
+{% endfor %}
+{% endif %}
+{% if portrait.data.images %}
+## Images
+
+{% for image in portrait.data.images %}
+### Image {{ loop.index }}
+
+- **Path**: {{ image.src }}
+- **Alt**: {{ image.alt }}
+{% if image.interpretation %}- **Interpretation**: {{ image.interpretation }}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if portrait.template.frontMatter.content | trim %}
+---
+
+{{ portrait.template.frontMatter.content }}
+{% endif %}

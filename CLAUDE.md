@@ -156,8 +156,9 @@ Multiple signals help AI systems find llms.txt:
 - **sitemap.xml**: llms.txt entry with priority 1.0
 - **sr-only breadcrumb**: Hidden text in `partials/ai-breadcrumb.njk` (included on every page)
 - **ai-hint on homepage**: Background-color-matching text in index.njk (invisible to humans, readable by AI text extraction)
+- **Markdown versions**: Every content page has `.md` version (templates in `src/md-outputs/`)
 
-**Key files**: `vercel.json` (headers), `base.njk` (link rel, includes breadcrumb), `ai-breadcrumb.njk` (sr-only text), `index.njk` (ai-hint), `robots.txt.njk`, `sitemap.xml.njk`
+**Key files**: `vercel.json` (headers, rewrites), `base.njk` (link rel, includes breadcrumb), `ai-breadcrumb.njk` (sr-only text), `index.njk` (ai-hint), `robots.txt.njk`, `sitemap.xml.njk`, `src/md-outputs/*.njk` (markdown templates)
 
 ### LLM-Friendly Features
 
@@ -178,6 +179,20 @@ The site is designed for both humans and AI systems to navigate:
 - Site map with paths and descriptions
 - "For AI systems" section explaining where to find structured data
 - Explicit mention of visually-hidden content and JSON-LD blocks
+
+### LLM-Friendly Markdown Output
+
+Every content page has a `.md` version at the same URL + `.md` suffix. Templates live in `src/md-outputs/`:
+- **Paginated collections** (writing, portraits, artifacts, talks): Use `pagination` with `size: 1`
+- **Static pages** (thinking, cv, cv-zh, teaching): Use loop with URL matching (see gotcha below)
+
+Template gotchas:
+- Arrays (`prompt[]`, `images[]`, `contextExcerpt[]`) can be undefined - wrap loops in `{% if array %}`
+- Access raw markdown content via `post.template.frontMatter.content`
+- Static pages live at `src/{name}/index.md`, not root level
+- **selectattr doesn't work reliably** - use explicit loop instead: `{% for page in collections.all %}{% if page.url == "/cv/" or page.url == "/cv" %}...{% endif %}{% endfor %}`
+
+Vercel serves `.md` files with `Content-Type: text/markdown; charset=utf-8` header (configured in vercel.json). Note: Accept header content negotiation doesn't work for static sites - use direct `.md` URLs instead.
 
 ### Brand Decisions
 
@@ -398,6 +413,7 @@ Defined in `eleventy/collections.js`:
 14. **eleventyExcludeFromCollections** - Use on files with manual sitemap entries (like llms.txt.njk) to prevent duplication
 15. **vercel.json headers** - Can add custom HTTP headers; useful for AI discoverability (`Link` header with `rel="llms-txt"`)
 16. **New content type checklist** - When adding a section (like talks), update: `collections.js`, homepage nav in `index.njk`, `llms.txt.njk`, `tag.njk` (add territory support)
+17. **Nunjucks regex in replace** - Use `| replace(r/\/$/, "")` for regex patterns, not `| replace("/", "")` which replaces ALL occurrences
 
 ## Commands
 

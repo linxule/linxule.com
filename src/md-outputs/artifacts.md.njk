@@ -1,0 +1,50 @@
+---
+pagination:
+  data: collections.artifacts
+  size: 1
+  alias: artifact
+permalink: /making/artifacts/{{ artifact.fileSlug }}.md
+eleventyExcludeFromCollections: true
+---
+# {{ artifact.data.title }}
+
+**Date**: {{ artifact.date | readableDate }}
+{% if artifact.data.creator %}**Creator**: {{ artifact.data.creator }}
+{% endif %}{% if artifact.data.medium %}**Medium**: {{ artifact.data.medium }}
+{% endif %}
+{% if artifact.data.plottable %}**Plottable**: Yes
+{% endif %}**Image**: {{ artifact.data.src }}
+{% if artifact.data.keywords %}**Keywords**: {{ artifact.data.keywords | join(", ") }}
+{% endif %}
+
+{% if artifact.data.contextExcerpt %}
+## Context
+
+{% for line in artifact.data.contextExcerpt %}> {{ line.text | default(line) }}{% if line.accident %} *(accident)*{% endif %}
+{% endfor %}
+{% endif %}
+{% if artifact.data.contextBefore %}
+### Before Making
+
+{{ artifact.data.contextBefore | striptags }}
+{% endif %}
+
+{% if artifact.data.contextAfter %}
+### After Making
+
+{{ artifact.data.contextAfter | striptags }}
+{% endif %}
+
+{% if artifact.template.frontMatter.content | trim %}
+---
+
+{{ artifact.template.frontMatter.content }}
+{% endif %}
+
+{% if artifact.data.witnesses %}
+---
+
+## Witnesses
+
+{{ artifact.data.witnesses | striptags }}
+{% endif %}

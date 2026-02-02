@@ -1,0 +1,31 @@
+---
+pagination:
+  data: collections.writing
+  size: 1
+  alias: post
+permalink: /writing/{{ post.fileSlug }}.md
+eleventyExcludeFromCollections: true
+---
+# {{ post.data.title }}
+{% if post.data.subtitle %}
+*{{ post.data.subtitle }}*
+{% endif %}
+
+{% if post.data.series %}**Series**: {{ post.data.series }}
+{% endif %}**Date**: {{ post.date | readableDate }}
+{% if post.data.authors %}**Authors**: {{ post.data.authors | join(", ") }}
+{% endif %}{% if post.data.keywords %}**Keywords**: {{ post.data.keywords | join(", ") }}
+{% endif %}
+{% if post.data.description %}
+> {{ post.data.description }}
+{% endif %}
+
+---
+
+{{ post.template.frontMatter.content }}
+{% if post.data.link %}
+
+---
+
+*Originally published at [{{ post.data.link }}]({{ post.data.link }})*
+{% endif %}

@@ -20,4 +20,50 @@ eleventyExcludeFromCollections: true
     </url>
 {%- endif %}
 {%- endfor %}
+    {# Markdown versions for AI systems #}
+{%- for post in collections.writing %}
+    <url>
+        <loc>{{ site.url }}/writing/{{ post.fileSlug }}.md</loc>
+        {%- if post.date %}
+        <lastmod>{{ post.date.toISOString().split('T')[0] }}</lastmod>
+        {%- endif %}
+    </url>
+{%- endfor %}
+{%- for portrait in collections.portraits %}
+    <url>
+        <loc>{{ site.url }}/making/portraits/{{ portrait.fileSlug }}.md</loc>
+        {%- if portrait.date %}
+        <lastmod>{{ portrait.date.toISOString().split('T')[0] }}</lastmod>
+        {%- endif %}
+    </url>
+{%- endfor %}
+{%- for artifact in collections.artifacts %}
+    <url>
+        <loc>{{ site.url }}/making/artifacts/{{ artifact.fileSlug }}.md</loc>
+        {%- if artifact.date %}
+        <lastmod>{{ artifact.date.toISOString().split('T')[0] }}</lastmod>
+        {%- endif %}
+    </url>
+{%- endfor %}
+{%- for talk in collections.talks %}
+    <url>
+        <loc>{{ site.url }}/talks/{{ talk.fileSlug }}.md</loc>
+        {%- if talk.date %}
+        <lastmod>{{ talk.date.toISOString().split('T')[0] }}</lastmod>
+        {%- endif %}
+    </url>
+{%- endfor %}
+    {# Static page markdown versions #}
+    <url>
+        <loc>{{ site.url }}/thinking.md</loc>
+    </url>
+    <url>
+        <loc>{{ site.url }}/cv.md</loc>
+    </url>
+    <url>
+        <loc>{{ site.url }}/cv-zh.md</loc>
+    </url>
+    <url>
+        <loc>{{ site.url }}/teaching.md</loc>
+    </url>
 </urlset>
