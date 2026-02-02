@@ -419,6 +419,8 @@ Defined in `eleventy/collections.js`:
 18. **Custom filters for array operations** - Nunjucks can't natively merge and sort arrays; use custom filters like `combineByDate` in `eleventy/filters.js`
 19. **isoDate filter** - Use `{{ "" | isoDate }}` for YYYY-MM-DD format (no argument = current date); defined in `eleventy/filters.js`
 20. **JSON output in Nunjucks** - Use `| dump | safe` for proper JSON string escaping. The `dump` filter converts to JSON (handles quotes, newlines), `safe` prevents HTML entity encoding. Example: `"title": {{ post.data.title | dump | safe }}`
+21. **Verifying AI-friendliness** - Test new endpoints with `curl` and `python3 -m json.tool` locally. AI chatbots may report false positives due to caching or access restrictions. Kimi agent mode tends to be most accurate for live verification.
+22. **Site-wide feed pattern** - Use `collections.writing | combineByDate(collections.portraits, collections.artifacts, collections.talks)` to merge collections by date. Filter defined in `eleventy/filters.js`. Each entry gets `<category term="writing"/>` etc. for content type.
 
 ## Commands
 
