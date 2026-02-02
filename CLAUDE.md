@@ -421,6 +421,7 @@ Defined in `eleventy/collections.js`:
 20. **JSON output in Nunjucks** - Use `| dump | safe` for proper JSON string escaping. The `dump` filter converts to JSON (handles quotes, newlines), `safe` prevents HTML entity encoding. Example: `"title": {{ post.data.title | dump | safe }}`
 21. **Verifying AI-friendliness** - Test new endpoints with `curl` and `python3 -m json.tool` locally. AI chatbots may report false positives due to caching or access restrictions. Kimi agent mode tends to be most accurate for live verification.
 22. **Site-wide feed pattern** - Use `collections.writing | combineByDate(collections.portraits, collections.artifacts, collections.talks)` to merge collections by date. Filter defined in `eleventy/filters.js`. Each entry gets `<category term="writing"/>` etc. for content type.
+23. **Content-Type headers in vercel.json** - `.md` files get `text/markdown`, but other text files like `/llms.txt` need explicit headers added separately (e.g., `text/plain; charset=utf-8`)
 
 ## Commands
 
