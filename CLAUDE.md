@@ -418,7 +418,7 @@ Defined in `eleventy/collections.js`:
 17. **Nunjucks regex in replace** - Use `| replace(r/\/$/, "")` for regex patterns, not `| replace("/", "")` which replaces ALL occurrences
 18. **Custom filters for array operations** - Nunjucks can't natively merge and sort arrays; use custom filters like `combineByDate` in `eleventy/filters.js`
 19. **isoDate filter** - Use `{{ "" | isoDate }}` for YYYY-MM-DD format (no argument = current date); defined in `eleventy/filters.js`
-20. **JSON output escaping** - Nunjucks auto-escapes quotes in JSON templates; use `| safe` carefully or accept HTML entities
+20. **JSON output in Nunjucks** - Use `| dump | safe` for proper JSON string escaping. The `dump` filter converts to JSON (handles quotes, newlines), `safe` prevents HTML entity encoding. Example: `"title": {{ post.data.title | dump | safe }}`
 
 ## Commands
 
