@@ -145,7 +145,7 @@ This site studies human-AI collaboration. It was built through human-AI collabor
 
 ### llms.txt
 
-`/llms.txt` is written for AI readers — explains the work in terms they can surface to humans. It's an artifact of the philosophy, demonstrates the collaboration it describes.
+`/llms.txt` is written for AI readers — explains the work in terms they can surface to humans. It's an artifact of the philosophy, demonstrates the collaboration it describes. The "Markdown Versions" section dynamically lists all `.md` URLs from Eleventy collections (writing, portraits, artifacts, talks) plus static pages — auto-updating as content is added.
 
 ### AI Discoverability Architecture
 
@@ -261,6 +261,8 @@ src/
      - Iframes use `sandbox="allow-scripts allow-same-origin"` for CDN library access (e.g., p5.js)
      - `isHTMLFile` filter in `eleventy/filters.js` detects `.html`/`.htm` extensions
      - HTML files go in `/assets/artifacts/{slug}/` (not `/assets/images/artifacts/`)
+     - **Gallery mode**: When `images[]` has multiple entries, renders a 2x2 grid (single column on mobile). Click any item → fullscreen iframe. Escape to close. Works with both HTML and image sources.
+     - **HTML artifact styling rule**: Files must NOT have standalone styling (dark body backgrounds, `border-radius`, `box-shadow`). They're embedded as iframes in the site's paper aesthetic — standalone decoration clashes, especially on narrow screens.
 
 4. **Thinking** (`src/thinking/`)
    - Layout: `layouts/thinking.njk`
@@ -343,6 +345,13 @@ medium: svg                    # svg, js, ascii, code, drawing, etc.  (use "html
 plottable: true                # Optional - can be pen plotted
 src: /assets/images/artifacts/filename.svg  # or /assets/artifacts/slug/file.html for interactive
 thumbnail: /assets/images/artifacts/thumb.png  # Optional - static image for index page instead of iframe
+images:                        # Optional — multi-piece gallery (replaces src, renders 2x2 grid)
+  - src: /assets/artifacts/slug/piece-01.html
+    alt: "Visual description"
+    interpretation: "What it means"
+  - src: /assets/artifacts/slug/piece-02.html
+    alt: "Visual description"
+    interpretation: "What it means"
 keywords:
   - keyword1
 contextExcerpt:                # Array with stagger pattern (like prompts)
@@ -432,6 +441,8 @@ Defined in `eleventy/collections.js`:
 22. **Site-wide feed pattern** - Use `collections.writing | combineByDate(collections.portraits, collections.artifacts, collections.talks)` to merge collections by date. Filter defined in `eleventy/filters.js`. Each entry gets `<category term="writing"/>` etc. for content type.
 23. **Content-Type headers in vercel.json** - `.md` files get `text/markdown`, but other text files like `/llms.txt` need explicit headers added separately (e.g., `text/plain; charset=utf-8`)
 24. **Interactive artifact iframes on index** - Iframes capture pointer events; use `pointer-events: none` on the iframe + a transparent `<span class="artifact-specimen-overlay">` so the wrapping `<a>` stays clickable
+25. **HTML artifact files — no standalone styling** - Don't add dark `body` backgrounds, `border-radius`, or `box-shadow` to HTML files in `/assets/artifacts/`. They embed as iframes in the paper aesthetic; standalone decoration clashes on narrow screens. Keep `body { margin: 0; overflow: hidden; }` only.
+26. **Gallery vs single artifact** - If an artifact has multiple pieces, use `images[]` array in frontmatter (renders 2x2 grid). Single pieces use `src` field only. Don't mix both.
 
 ## Commands
 
