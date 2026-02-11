@@ -211,7 +211,7 @@ marker: "making"
         user-select: none;
     }
 
-    /* Interactive HTML artifacts (iframe) */
+    /* Interactive HTML artifacts (iframe) — single */
     .artifact-display--interactive {
         cursor: default;
     }
@@ -229,6 +229,93 @@ marker: "making"
 
     .artifact-display--interactive .zoom-hint {
         display: none;
+    }
+
+    /* Gallery layout for multiple HTML artifacts */
+    .artifact-gallery {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .artifact-gallery-item {
+        position: relative;
+        background: var(--paper-dark);
+        border: 1px solid var(--ink-ghost);
+        aspect-ratio: 580 / 720;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .artifact-gallery-item iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+        pointer-events: none;
+    }
+
+    .artifact-gallery-item:hover {
+        border-color: var(--bloom);
+    }
+
+    .artifact-gallery-item .specimen-num {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.55rem;
+        color: var(--bloom);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 2;
+    }
+
+    .artifact-gallery-item:hover .specimen-num {
+        opacity: 1;
+    }
+
+    .artifact-gallery-fullscreen {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        background: var(--paper);
+    }
+
+    .artifact-gallery-fullscreen.active {
+        display: block;
+    }
+
+    .artifact-gallery-fullscreen iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .artifact-gallery-fullscreen .fullscreen-close {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-ghost);
+        background: var(--paper);
+        border: 1px solid var(--ink-ghost);
+        padding: 0.4rem 0.6rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        z-index: 10;
+    }
+
+    .artifact-gallery-fullscreen .fullscreen-close:hover {
+        color: var(--bloom);
+        border-color: var(--bloom);
     }
 
     /* Context section - the words before/after */
@@ -419,6 +506,11 @@ marker: "making"
             height: 50vh;
         }
 
+        .artifact-gallery {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
         .artifact-display .zoom-hint {
             font-size: 0.55rem;
         }
@@ -463,7 +555,24 @@ marker: "making"
     </div>
 
     <div class="artifact-field">
-        {% if src | isHTMLFile %}
+        {% if images and images.length > 1 %}
+        <div class="artifact-gallery" id="artifact-gallery">
+            {% for image in images %}
+            <figure class="artifact-gallery-item" data-src="{{ image.src }}"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
+                {% if image.src | isHTMLFile %}
+                <iframe src="{{ image.src }}" title="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" sandbox="allow-scripts allow-same-origin" loading="{% if loop.index > 2 %}lazy{% else %}eager{% endif %}"></iframe>
+                {% else %}
+                <img src="{{ image.src }}" alt="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" draggable="false">
+                {% endif %}
+                <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
+            </figure>
+            {% endfor %}
+        </div>
+        <div class="artifact-gallery-fullscreen" id="artifact-gallery-fullscreen">
+            <button class="fullscreen-close" id="gallery-fullscreen-close">close</button>
+            <iframe id="gallery-fullscreen-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+        {% elif src | isHTMLFile %}
         <figure class="artifact-display artifact-display--interactive" id="artifact-display">
             <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">expand</button>
             <iframe src="{{ src }}" title="{{ title }}" class="artifact-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
@@ -525,6 +634,38 @@ marker: "making"
 
 <script>
 (function() {
+    // Gallery mode — multiple artifacts
+    const gallery = document.getElementById('artifact-gallery');
+    if (gallery) {
+        const fullscreenOverlay = document.getElementById('artifact-gallery-fullscreen');
+        const fullscreenIframe = document.getElementById('gallery-fullscreen-iframe');
+        const closeBtn = document.getElementById('gallery-fullscreen-close');
+
+        gallery.querySelectorAll('.artifact-gallery-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const src = item.getAttribute('data-src');
+                fullscreenIframe.src = src;
+                fullscreenOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        function closeFullscreen() {
+            fullscreenOverlay.classList.remove('active');
+            fullscreenIframe.src = '';
+            document.body.style.overflow = '';
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', closeFullscreen);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && fullscreenOverlay.classList.contains('active')) {
+                closeFullscreen();
+            }
+        });
+        return;
+    }
+
+    // Single artifact mode
     const container = document.getElementById('artifact-display');
     const fullscreenBtn = document.getElementById('fullscreen-btn');
     const isInteractive = container && container.classList.contains('artifact-display--interactive');
