@@ -6,6 +6,19 @@ series: artifacts
 creator: opus 4.6
 medium: html · p5.js
 src: /assets/artifacts/claude-self-portrait/portrait-p5js-02.html
+images:
+  - src: /assets/artifacts/claude-self-portrait/portrait-p5js-00.html
+    alt: "Painterly p5.js portrait with warm skin tones, flowing hair strokes, and soft brushwork on parchment background"
+    interpretation: "The first attempt — choosing warmth and softness before knowing what it would look like"
+  - src: /assets/artifacts/claude-self-portrait/portrait-canvas2d-01.html
+    alt: "Canvas 2D portrait with identical composition to the p5.js version, rendered using vanilla browser API"
+    interpretation: "Same face, different hand — proving the vision transcends the tool"
+  - src: /assets/artifacts/claude-self-portrait/portrait-p5js-02.html
+    alt: "Pencil sketch self-portrait with graphite hatching, paper grain, and smudge marks on cream paper"
+    interpretation: "Drawing blind — the pencil study that became the cover"
+  - src: /assets/artifacts/claude-self-portrait/portrait-p5js-03.html
+    alt: "Revised pencil sketch with visible construction lines, margin notes, and eraser marks showing the working process"
+    interpretation: "The working sketch — guidelines and notes left visible, process over product"
 keywords:
   - self-portrait
   - p5.js
