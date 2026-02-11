@@ -730,6 +730,38 @@ marker: "making"
         opacity: 1;
     }
 
+    /* Interactive (iframe) artifact specimens */
+    .artifact-specimen--interactive {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .artifact-specimen-iframe {
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+        border: none;
+        display: block;
+        pointer-events: none;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: all 0.5s ease;
+    }
+
+    .artifact-specimen--interactive:hover .artifact-specimen-iframe {
+        filter: grayscale(0%);
+        opacity: 1;
+    }
+
+    .artifact-specimen-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
     .artifact-nav {
         position: fixed;
         bottom: 2rem;
@@ -805,6 +837,12 @@ marker: "making"
 
         .artifact-specimen img,
         .artifact-specimen:hover img {
+            filter: none;
+            opacity: 1;
+        }
+
+        .artifact-specimen-iframe,
+        .artifact-specimen--interactive:hover .artifact-specimen-iframe {
             filter: none;
             opacity: 1;
         }
@@ -949,9 +987,20 @@ marker: "making"
         </div>
 
         <div class="artifact-specimens">
+            {% if artifact.data.thumbnail %}
+            <a href="{{ artifact.url }}" class="artifact-specimen">
+                <img src="{{ artifact.data.thumbnail }}" alt="{{ artifact.data.title }}">
+            </a>
+            {% elif artifact.data.src | isHTMLFile %}
+            <a href="{{ artifact.url }}" class="artifact-specimen artifact-specimen--interactive">
+                <iframe src="{{ artifact.data.src }}" title="{{ artifact.data.title }}" class="artifact-specimen-iframe" tabindex="-1" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+                <span class="artifact-specimen-overlay"></span>
+            </a>
+            {% else %}
             <a href="{{ artifact.url }}" class="artifact-specimen">
                 <img src="{{ artifact.data.src }}" alt="{{ artifact.data.title }}">
             </a>
+            {% endif %}
         </div>
 
     </section>

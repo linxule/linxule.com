@@ -211,6 +211,26 @@ marker: "making"
         user-select: none;
     }
 
+    /* Interactive HTML artifacts (iframe) */
+    .artifact-display--interactive {
+        cursor: default;
+    }
+
+    .artifact-display--interactive:active {
+        cursor: default;
+    }
+
+    .artifact-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+    }
+
+    .artifact-display--interactive .zoom-hint {
+        display: none;
+    }
+
     /* Context section - the words before/after */
     .artifact-context {
         display: grid;
@@ -443,6 +463,12 @@ marker: "making"
     </div>
 
     <div class="artifact-field">
+        {% if src | isHTMLFile %}
+        <figure class="artifact-display artifact-display--interactive" id="artifact-display">
+            <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">expand</button>
+            <iframe src="{{ src }}" title="{{ title }}" class="artifact-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+        </figure>
+        {% else %}
         <figure class="artifact-display" id="artifact-display">
             <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">expand</button>
             <div class="artifact-viewport" id="artifact-viewport">
@@ -452,6 +478,7 @@ marker: "making"
             </div>
             <span class="zoom-hint"><span class="hint-desktop">scroll to zoom · drag to pan · double-click to reset</span><span class="hint-mobile">pinch to zoom · drag to pan · double-tap to reset</span></span>
         </figure>
+        {% endif %}
     </div>
 
 </article>
@@ -499,9 +526,36 @@ marker: "making"
 <script>
 (function() {
     const container = document.getElementById('artifact-display');
-    const viewport = document.getElementById('artifact-viewport');
     const fullscreenBtn = document.getElementById('fullscreen-btn');
-    if (!container || !viewport) return;
+    const isInteractive = container && container.classList.contains('artifact-display--interactive');
+    const viewport = document.getElementById('artifact-viewport');
+
+    if (!container) return;
+
+    // Interactive artifacts (iframes): only fullscreen, no pan/zoom
+    if (isInteractive) {
+        let isFullscreen = false;
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                isFullscreen = !isFullscreen;
+                container.classList.toggle('fullscreen', isFullscreen);
+                fullscreenBtn.textContent = isFullscreen ? 'close' : 'expand';
+                document.body.style.overflow = isFullscreen ? 'hidden' : '';
+            });
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isFullscreen) {
+                isFullscreen = false;
+                container.classList.remove('fullscreen');
+                fullscreenBtn.textContent = 'expand';
+                document.body.style.overflow = '';
+            }
+        });
+        return;
+    }
+
+    if (!viewport) return;
 
     let scale = 1;
     let panX = 0;

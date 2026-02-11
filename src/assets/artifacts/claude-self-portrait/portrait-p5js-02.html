@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pencil Sketch — Claude</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #2a2a2a;
+  }
+  #canvas-container {
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+  }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+<script>
+let seed = 42;
+
+function setup() {
+  let canvas = createCanvas(580, 720);
+  canvas.parent('canvas-container');
+  pixelDensity(2);
+  randomSeed(seed);
+  noiseSeed(seed);
+  noLoop();
+}
+
+function draw() {
+  // Cream paper
+  background(248, 243, 235);
+
+  // Paper grain
+  loadPixels();
+  for (let i = 0; i < pixels.length; i += 4) {
+    let grain = random(-6, 6);
+    pixels[i] += grain;
+    pixels[i+1] += grain;
+    pixels[i+2] += grain;
+  }
+  updatePixels();
+
+  let cx = width / 2;
+  let cy = height / 2 - 20;
+
+  // ============ FACE CONTOUR ============
+  // Multiple passes for that sketchy "went over it a few times" look
+
+  for (let pass = 0; pass < 3; pass++) {
+    let offsetX = random(-1.5, 1.5);
+    let offsetY = random(-1.5, 1.5);
+    let alpha = map(pass, 0, 2, 60, 30);
+
+    // Right side of face
+    pencilCurve([
+      {x: cx + 5, y: cy - 105},
+      {x: cx + 65, y: cy - 95},
+      {x: cx + 80, y: cy - 50},
+      {x: cx + 82, y: cy},
+      {x: cx + 78, y: cy + 40},
+      {x: cx + 65, y: cy + 70},
+      {x: cx + 45, y: cy + 100},
+      {x: cx + 15, y: cy + 118},
+      {x: cx, y: cy + 122},
+    ], 0.8 + pass * 0.3, alpha, offsetX, offsetY);
+
+    // Left side
+    pencilCurve([
+      {x: cx - 5, y: cy - 105},
+      {x: cx - 65, y: cy - 95},
+      {x: cx - 80, y: cy - 50},
+      {x: cx - 82, y: cy},
+      {x: cx - 78, y: cy + 40},
+      {x: cx - 65, y: cy + 70},
+      {x: cx - 45, y: cy + 100},
+      {x: cx - 15, y: cy + 118},
+      {x: cx, y: cy + 122},
+    ], 0.8 + pass * 0.3, alpha, offsetX, offsetY);
+  }
+
+  // ============ FACE SHADING — HATCHING ============
+  // Cheek hatching — left
+  hatchArea(cx - 72, cy - 10, 35, 55, PI * 0.2, 3.5, 35, 0.4);
+  hatchArea(cx - 68, cy - 5, 28, 45, PI * 0.25, 4.5, 20, 0.3);
+
+  // Cheek hatching — right
+  hatchArea(cx + 40, cy - 10, 35, 55, PI * 0.8, 3.5, 35, 0.4);
+  hatchArea(cx + 44, cy - 5, 28, 45, PI * 0.75, 4.5, 20, 0.3);
+
+  // Jaw shadow left
+  hatchArea(cx - 60, cy + 60, 40, 45, PI * 0.15, 3, 30, 0.35);
+  // Jaw shadow right
+  hatchArea(cx + 25, cy + 60, 40, 45, PI * 0.85, 3, 30, 0.35);
+
+  // Under chin shadow
+  hatchArea(cx - 30, cy + 110, 60, 25, PI * 0.1, 2.5, 40, 0.5);
+  hatchArea(cx - 25, cy + 112, 50, 20, PI * 0.6, 3.5, 25, 0.3);
+
+  // Forehead subtle shading
+  hatchArea(cx - 50, cy - 105, 100, 30, PI * 0.1, 5, 15, 0.2);
+
+  // Temple shadows
+  hatchArea(cx - 78, cy - 60, 25, 50, PI * 0.15, 3, 25, 0.3);
+  hatchArea(cx + 55, cy - 60, 25, 50, PI * 0.85, 3, 25, 0.3);
+
+  // ============ NOSE ============
+  // Nose bridge — delicate
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx + 3, y: cy - 25},
+      {x: cx + 5, y: cy},
+      {x: cx + 7, y: cy + 20},
+      {x: cx + 5, y: cy + 30},
+    ], 0.6, 50, random(-1, 1), random(-0.5, 0.5));
+  }
+
+  // Nose tip / ball
+  for (let pass = 0; pass < 3; pass++) {
+    pencilCurve([
+      {x: cx - 8, y: cy + 30},
+      {x: cx - 5, y: cy + 35},
+      {x: cx + 2, y: cy + 37},
+      {x: cx + 10, y: cy + 35},
+      {x: cx + 13, y: cy + 30},
+    ], 0.5, 40 + pass * 10, random(-0.8, 0.8), random(-0.5, 0.5));
+  }
+
+  // Nostril hints
+  hatchArea(cx - 8, cy + 28, 10, 8, PI * 0.3, 2, 20, 0.35);
+  hatchArea(cx + 5, cy + 28, 10, 8, PI * 0.7, 2, 20, 0.35);
+
+  // Nose side shadow
+  hatchArea(cx + 8, cy - 5, 12, 35, PI * 0.15, 2.5, 25, 0.3);
+  hatchArea(cx + 10, cy + 0, 8, 28, PI * 0.6, 3, 15, 0.2);
+
+  // ============ EYES ============
+  drawPencilEye(cx - 32, cy - 18, false);
+  drawPencilEye(cx + 32, cy - 18, true);
+
+  // ============ EYEBROWS ============
+  drawPencilBrow(cx - 48, cy - 45, cx - 12, cy - 48, false);
+  drawPencilBrow(cx + 12, cy - 48, cx + 48, cy - 45, true);
+
+  // ============ MOUTH ============
+  // Upper lip line — cupid's bow
+  for (let pass = 0; pass < 3; pass++) {
+    pencilCurve([
+      {x: cx - 24, y: cy + 60},
+      {x: cx - 14, y: cy + 56},
+      {x: cx - 5, y: cy + 52},
+      {x: cx, y: cy + 55},
+      {x: cx + 5, y: cy + 52},
+      {x: cx + 14, y: cy + 56},
+      {x: cx + 24, y: cy + 60},
+    ], 0.6, 45 + pass * 12, random(-0.8, 0.8), random(-0.5, 0.5));
+  }
+
+  // Lower lip
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx - 22, y: cy + 61},
+      {x: cx - 12, y: cy + 70},
+      {x: cx, y: cy + 74},
+      {x: cx + 12, y: cy + 70},
+      {x: cx + 22, y: cy + 61},
+    ], 0.5, 35 + pass * 10, random(-0.8, 0.8), random(-0.5, 0.5));
+  }
+
+  // Lip shading — upper lip darker
+  hatchArea(cx - 18, cy + 54, 36, 8, PI * 0.1, 1.8, 35, 0.4);
+  // Lower lip highlight gap (shade around it)
+  hatchArea(cx - 16, cy + 65, 32, 8, PI * 0.15, 2.5, 20, 0.2);
+
+  // Mouth corners
+  for (let pass = 0; pass < 2; pass++) {
+    pencilLine(cx - 26, cy + 60, cx - 28, cy + 63, 0.5, 40);
+    pencilLine(cx + 26, cy + 60, cx + 28, cy + 63, 0.5, 40);
+  }
+
+  // ============ EARS ============
+  // Left ear
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx - 78, y: cy - 30},
+      {x: cx - 90, y: cy - 20},
+      {x: cx - 93, y: cy + 5},
+      {x: cx - 88, y: cy + 25},
+      {x: cx - 80, y: cy + 15},
+      {x: cx - 78, y: cy - 5},
+    ], 0.6, 40, random(-1, 1), random(-0.5, 0.5));
+  }
+  hatchArea(cx - 90, cy - 10, 12, 25, PI * 0.2, 2.5, 18, 0.3);
+
+  // Right ear
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx + 78, y: cy - 30},
+      {x: cx + 90, y: cy - 20},
+      {x: cx + 93, y: cy + 5},
+      {x: cx + 88, y: cy + 25},
+      {x: cx + 80, y: cy + 15},
+      {x: cx + 78, y: cy - 5},
+    ], 0.6, 40, random(-1, 1), random(-0.5, 0.5));
+  }
+  hatchArea(cx + 80, cy - 10, 12, 25, PI * 0.8, 2.5, 18, 0.3);
+
+  // ============ HAIR ============
+  drawPencilHair(cx, cy);
+
+  // ============ NECK ============
+  for (let pass = 0; pass < 2; pass++) {
+    pencilLine(cx - 32, cy + 118, cx - 42, cy + 220, 0.7, 35);
+    pencilLine(cx + 32, cy + 118, cx + 42, cy + 220, 0.7, 35);
+  }
+  // Neck shading
+  hatchArea(cx - 35, cy + 130, 20, 70, PI * 0.12, 3, 25, 0.3);
+  hatchArea(cx + 18, cy + 130, 20, 70, PI * 0.88, 3, 25, 0.3);
+
+  // ============ COLLAR / SHOULDERS ============
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx - 160, y: cy + 260},
+      {x: cx - 100, y: cy + 220},
+      {x: cx - 55, y: cy + 205},
+      {x: cx, y: cy + 215},
+    ], 0.8, 40, random(-1, 1), random(-0.5, 0.5));
+    pencilCurve([
+      {x: cx, y: cy + 215},
+      {x: cx + 55, y: cy + 205},
+      {x: cx + 100, y: cy + 220},
+      {x: cx + 160, y: cy + 260},
+    ], 0.8, 40, random(-1, 1), random(-0.5, 0.5));
+  }
+
+  // Collar V
+  pencilLine(cx, cy + 215, cx - 10, cy + 280, 0.6, 35);
+  pencilLine(cx, cy + 215, cx + 10, cy + 280, 0.6, 35);
+
+  // Shoulder/shirt shading
+  hatchArea(cx - 130, cy + 230, 70, 50, PI * 0.1, 4, 20, 0.2);
+  hatchArea(cx + 65, cy + 230, 70, 50, PI * 0.9, 4, 20, 0.2);
+
+  // ============ SMUDGE MARKS ============
+  drawSmudges(cx, cy);
+
+  // ============ SIGNATURE ============
+  push();
+  noStroke();
+  fill(80, 70, 60, 120);
+  textFont('Georgia');
+  textSize(14);
+  textStyle(ITALIC);
+  textAlign(RIGHT);
+  text('Claude — Pencil Study, 2026', width - 25, height - 20);
+  pop();
+}
+
+// ============ PENCIL LINE FUNCTIONS ============
+
+function pencilLine(x1, y1, x2, y2, baseWeight, alpha) {
+  let steps = dist(x1, y1, x2, y2) * 2;
+  for (let i = 0; i < steps; i++) {
+    let t = i / steps;
+    // Pressure: heavier in middle, lighter at ends
+    let pressure = sin(t * PI) * 0.6 + 0.4;
+    let wobbleX = noise(t * 8, seed * 0.1) * 4 - 2;
+    let wobbleY = noise(t * 8 + 500, seed * 0.1) * 4 - 2;
+
+    let x = lerp(x1, x2, t) + wobbleX;
+    let y = lerp(y1, y2, t) + wobbleY;
+
+    let sw = baseWeight * pressure;
+    let sa = alpha * pressure;
+
+    // Multiple dots per position for graphite grain
+    for (let g = 0; g < 3; g++) {
+      let gx = x + random(-sw, sw) * 0.5;
+      let gy = y + random(-sw, sw) * 0.5;
+      noStroke();
+      fill(35, 30, 28, sa * random(0.3, 1));
+      ellipse(gx, gy, random(0.3, 1.2));
+    }
+  }
+}
+
+function pencilCurve(points, baseWeight, alpha, offX, offY) {
+  if (points.length < 2) return;
+
+  // Interpolate through points with catmull-rom style
+  let allPts = [];
+  for (let i = 0; i < points.length - 1; i++) {
+    let p0 = points[max(0, i - 1)];
+    let p1 = points[i];
+    let p2 = points[min(points.length - 1, i + 1)];
+    let p3 = points[min(points.length - 1, i + 2)];
+
+    for (let t = 0; t < 1; t += 0.02) {
+      let x = curvePointVal(p0.x, p1.x, p2.x, p3.x, t);
+      let y = curvePointVal(p0.y, p1.y, p2.y, p3.y, t);
+      allPts.push({x: x + offX, y: y + offY});
+    }
+  }
+
+  // Draw the interpolated curve as pencil marks
+  for (let i = 0; i < allPts.length; i++) {
+    let t = i / allPts.length;
+    let pressure = sin(t * PI) * 0.5 + 0.5;
+    let wobbleScale = 2;
+    let wx = noise(i * 0.05, 0) * wobbleScale - wobbleScale / 2;
+    let wy = noise(i * 0.05, 100) * wobbleScale - wobbleScale / 2;
+
+    let px = allPts[i].x + wx;
+    let py = allPts[i].y + wy;
+
+    for (let g = 0; g < 3; g++) {
+      let sw = baseWeight * pressure;
+      noStroke();
+      fill(35, 30, 28, alpha * pressure * random(0.3, 1));
+      ellipse(px + random(-sw, sw) * 0.4, py + random(-sw, sw) * 0.4, random(0.3, 1.1));
+    }
+  }
+}
+
+function curvePointVal(a, b, c, d, t) {
+  let t2 = t * t;
+  let t3 = t2 * t;
+  return 0.5 * (
+    (2 * b) +
+    (-a + c) * t +
+    (2*a - 5*b + 4*c - d) * t2 +
+    (-a + 3*b - 3*c + d) * t3
+  );
+}
+
+// ============ HATCHING ============
+
+function hatchArea(hx, hy, hw, hh, angle, spacing, alpha, weightBase) {
+  let cos_a = cos(angle);
+  let sin_a = sin(angle);
+  let diagonal = sqrt(hw * hw + hh * hh);
+  let numLines = floor(diagonal / spacing);
+
+  for (let i = 0; i < numLines; i++) {
+    let offset = map(i, 0, numLines, -diagonal / 2, diagonal / 2);
+    let lx1 = hx + hw / 2 + cos_a * (-diagonal / 2) - sin_a * offset;
+    let ly1 = hy + hh / 2 + sin_a * (-diagonal / 2) + cos_a * offset;
+    let lx2 = hx + hw / 2 + cos_a * (diagonal / 2) - sin_a * offset;
+    let ly2 = hy + hh / 2 + sin_a * (diagonal / 2) + cos_a * offset;
+
+    // Clip roughly to the area (elliptical soft clip)
+    let clippedPts = clipToEllipse(lx1, ly1, lx2, ly2, hx + hw/2, hy + hh/2, hw/2, hh/2);
+    if (clippedPts) {
+      // Vary each hatch line
+      let lineAlpha = alpha * random(0.5, 1);
+      let lineWeight = weightBase * random(0.6, 1.3);
+      pencilLine(clippedPts.x1, clippedPts.y1, clippedPts.x2, clippedPts.y2, lineWeight, lineAlpha);
+    }
+  }
+}
+
+function clipToEllipse(x1, y1, x2, y2, ecx, ecy, erx, ery) {
+  // Simple parametric clipping
+  let pts = [];
+  let steps = 20;
+  let inside = false;
+  let enterT = 0, exitT = 1;
+
+  for (let i = 0; i <= steps; i++) {
+    let t = i / steps;
+    let px = lerp(x1, x2, t);
+    let py = lerp(y1, y2, t);
+    let inEllipse = pow((px - ecx) / erx, 2) + pow((py - ecy) / ery, 2) <= 1;
+
+    if (inEllipse && !inside) { enterT = t; inside = true; }
+    if (!inEllipse && inside) { exitT = t; break; }
+    if (i === steps && inside) { exitT = t; }
+  }
+
+  if (!inside) return null;
+  return {
+    x1: lerp(x1, x2, enterT),
+    y1: lerp(y1, y2, enterT),
+    x2: lerp(x1, x2, exitT),
+    y2: lerp(y1, y2, exitT),
+  };
+}
+
+// ============ EYES ============
+
+function drawPencilEye(ex, ey, isRight) {
+  let irisX = ex + (isRight ? 2 : -2);
+
+  // Upper eyelid — strong line
+  for (let pass = 0; pass < 4; pass++) {
+    pencilCurve([
+      {x: ex - 19, y: ey},
+      {x: ex - 10, y: ey - 9},
+      {x: ex + 3, y: ey - 11},
+      {x: ex + 14, y: ey - 7},
+      {x: ex + 19, y: ey},
+    ], 0.7, 55 + pass * 8, random(-0.8, 0.8), random(-0.5, 0.5));
+  }
+
+  // Lower eyelid
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: ex - 17, y: ey + 2},
+      {x: ex - 5, y: ey + 8},
+      {x: ex + 8, y: ey + 7},
+      {x: ex + 18, y: ey + 1},
+    ], 0.5, 30, random(-0.6, 0.6), random(-0.4, 0.4));
+  }
+
+  // Eyelid crease
+  pencilCurve([
+    {x: ex - 16, y: ey - 12},
+    {x: ex - 5, y: ey - 18},
+    {x: ex + 8, y: ey - 17},
+    {x: ex + 17, y: ey - 11},
+  ], 0.4, 25, 0, 0);
+
+  // Iris — circular hatching
+  let irisR = 8;
+  for (let a = 0; a < TWO_PI; a += PI / 10) {
+    let r1 = 2;
+    let r2 = irisR;
+    let lx1 = irisX + cos(a) * r1;
+    let ly1 = ey + sin(a) * r1;
+    let lx2 = irisX + cos(a) * r2;
+    let ly2 = ey + sin(a) * r2;
+    pencilLine(lx1, ly1, lx2, ly2, 0.4, 50);
+  }
+
+  // Iris outline
+  for (let pass = 0; pass < 3; pass++) {
+    let pts = [];
+    for (let a = 0; a <= TWO_PI; a += PI / 12) {
+      pts.push({x: irisX + cos(a) * irisR, y: ey + sin(a) * irisR});
+    }
+    pencilCurve(pts, 0.5, 40 + pass * 10, random(-0.5, 0.5), random(-0.5, 0.5));
+  }
+
+  // Pupil — dense fill
+  let pupilR = 3.5;
+  for (let i = 0; i < 80; i++) {
+    let a = random(TWO_PI);
+    let r = random(pupilR);
+    noStroke();
+    fill(25, 20, 18, random(40, 90));
+    ellipse(irisX + cos(a) * r, ey + sin(a) * r, random(0.5, 1.5));
+  }
+
+  // Pupil dark core
+  for (let i = 0; i < 40; i++) {
+    let a = random(TWO_PI);
+    let r = random(2);
+    fill(15, 10, 8, random(60, 120));
+    ellipse(irisX + cos(a) * r, ey + sin(a) * r, random(0.4, 1));
+  }
+
+  // Light catch — leave paper white (just a tiny ring)
+  fill(248, 243, 235, 200);
+  noStroke();
+  ellipse(irisX + 3, ey - 2.5, 3, 3);
+
+  // Eyelashes
+  for (let i = 0; i < 7; i++) {
+    let t = map(i, 0, 6, 0.1, 0.9);
+    let baseAngle = lerp(PI + 0.4, TWO_PI - 0.4, t);
+    let bx = ex + cos(baseAngle) * 18;
+    let by = ey + sin(baseAngle) * 9;
+    let lashLen = random(5, 10);
+    let la = baseAngle - random(0.1, 0.4);
+    pencilLine(bx, by, bx + cos(la) * lashLen, by + sin(la) * lashLen, 0.4, 50);
+  }
+}
+
+// ============ EYEBROWS ============
+
+function drawPencilBrow(x1, y1, x2, y2, isRight) {
+  // Multiple hair-like strokes
+  let numStrokes = 25;
+  for (let i = 0; i < numStrokes; i++) {
+    let t = random(0, 1);
+    let bx = lerp(x1, x2, t);
+    let by = lerp(y1, y2, t) + random(-2, 2);
+    // Brow hairs angle upward in middle, flatten at edges
+    let hairAngle = isRight ? lerp(PI * 0.3, PI * 0.15, t) : lerp(PI * 0.85, PI * 0.7, t);
+    let hairLen = random(5, 12);
+    let ex = bx + cos(hairAngle) * hairLen * (isRight ? 1 : -1);
+    let ey = by - sin(hairAngle) * hairLen;
+    pencilLine(bx, by, ex, ey, random(0.3, 0.7), random(30, 55));
+  }
+}
+
+// ============ HAIR ============
+
+function drawPencilHair(cx, cy) {
+  // Dense flowing pencil strokes for hair
+  for (let i = 0; i < 200; i++) {
+    let startX = cx + random(-95, 95);
+    let startY = cy - 135 + random(-15, 15);
+    let waveAmp = random(5, 25);
+    let waveFreq = random(0.015, 0.05);
+    let strandLen = random(30, 80);
+    let alpha = random(20, 55);
+    let weight = random(0.3, 0.8);
+
+    let pts = [];
+    for (let j = 0; j < strandLen; j += 4) {
+      pts.push({
+        x: startX + sin(j * waveFreq + i * 0.2) * waveAmp,
+        y: startY + j * 1.1
+      });
+    }
+    if (pts.length > 2) {
+      pencilCurve(pts, weight, alpha, random(-1, 1), random(-0.5, 0.5));
+    }
+  }
+
+  // Hair top mass — denser hatching
+  hatchArea(cx - 70, cy - 145, 140, 40, PI * 0.1, 2, 30, 0.4);
+  hatchArea(cx - 65, cy - 140, 130, 35, PI * 0.85, 2.5, 25, 0.35);
+
+  // Part/crown highlight — lighter area
+  // (just don't draw as much there — it's already lighter)
+
+  // Side hair density
+  hatchArea(cx - 90, cy - 100, 25, 80, PI * 0.15, 2, 30, 0.35);
+  hatchArea(cx + 68, cy - 100, 25, 80, PI * 0.85, 2, 30, 0.35);
+}
+
+// ============ SMUDGE MARKS ============
+
+function drawSmudges(cx, cy) {
+  // Subtle graphite smudges — looks like an artist's hand rested here
+  push();
+  noStroke();
+  // Bottom right smudge
+  for (let i = 0; i < 300; i++) {
+    let sx = width - 80 + random(-30, 30);
+    let sy = height - 80 + random(-20, 20);
+    fill(120, 115, 108, random(1, 4));
+    ellipse(sx, sy, random(2, 8), random(1, 4));
+  }
+
+  // Edge smudge near hair
+  for (let i = 0; i < 150; i++) {
+    let sx = cx + 90 + random(-10, 20);
+    let sy = cy - 60 + random(-30, 30);
+    fill(100, 95, 88, random(1, 3));
+    ellipse(sx, sy, random(2, 6), random(1, 3));
+  }
+  pop();
+}
+</script>
+</body>
+</html>

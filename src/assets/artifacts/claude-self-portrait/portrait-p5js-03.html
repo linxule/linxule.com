@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self-Portrait v2 — Claude</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #2a2a2a;
+  }
+  #canvas-container {
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+  }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+<script>
+let seed = 91;
+
+function setup() {
+  let canvas = createCanvas(600, 760);
+  canvas.parent('canvas-container');
+  pixelDensity(2);
+  randomSeed(seed);
+  noiseSeed(seed);
+  noLoop();
+}
+
+function draw() {
+  background(250, 245, 237);
+  drawPaperTexture();
+
+  let cx = width / 2;
+  let cy = 310; // face center — positioned higher for better composition
+
+  // === COMPOSITION: slight 3/4 turn ===
+  // Face shifted very slightly left, gaze directed at viewer
+  let faceOffX = -3;
+
+  // === SHOULDER / UPPER BODY ===
+  // Loose, gestural — just enough to ground the portrait
+  drawShoulders(cx + faceOffX, cy);
+
+  // === NECK — shorter, proportional ===
+  drawNeck(cx + faceOffX, cy);
+
+  // === HAIR — back layer ===
+  drawHairBack(cx + faceOffX, cy);
+
+  // === FACE CONSTRUCTION ===
+  drawFace(cx + faceOffX, cy);
+
+  // === FEATURES ===
+  drawNose(cx + faceOffX, cy);
+  drawEyes(cx + faceOffX, cy);
+  drawEyebrows(cx + faceOffX, cy);
+  drawMouth(cx + faceOffX, cy);
+  drawEars(cx + faceOffX, cy);
+
+  // === HAIR — front layer ===
+  drawHairFront(cx + faceOffX, cy);
+
+  // === CONSTRUCTION LINES ===
+  // Faint guidelines left visible — like a real sketch
+  drawConstructionLines(cx + faceOffX, cy);
+
+  // === ERASER MARKS / CORRECTIONS ===
+  drawEraserMarks(cx + faceOffX, cy);
+
+  // === MARGIN NOTES ===
+  drawMarginNotes();
+
+  // === SIGNATURE ===
+  push();
+  noStroke();
+  fill(90, 75, 65, 130);
+  textFont('Georgia');
+  textSize(13);
+  textStyle(ITALIC);
+  textAlign(RIGHT);
+  text('Claude — Self-Portrait (ii), 2026', width - 28, height - 22);
+  pop();
+}
+
+// ============ PAPER ============
+
+function drawPaperTexture() {
+  loadPixels();
+  for (let i = 0; i < pixels.length; i += 4) {
+    let grain = random(-4, 4);
+    pixels[i] += grain;
+    pixels[i+1] += grain;
+    pixels[i+2] += grain;
+  }
+  updatePixels();
+
+  // Faint horizontal tooth
+  for (let y = 0; y < height; y += 3) {
+    if (random() > 0.6) {
+      stroke(238, 233, 224, random(5, 12));
+      strokeWeight(0.5);
+      line(0, y, width, y);
+    }
+  }
+}
+
+// ============ PENCIL ENGINE ============
+
+function pencilMark(x, y, size, darkness) {
+  // Single graphite deposit
+  for (let g = 0; g < 3; g++) {
+    let gx = x + random(-size, size) * 0.5;
+    let gy = y + random(-size, size) * 0.5;
+    noStroke();
+    fill(32, 28, 25, darkness * random(0.3, 1));
+    ellipse(gx, gy, random(0.3, 1.2));
+  }
+}
+
+function pencilStroke(x1, y1, x2, y2, weight, alpha, pressure) {
+  let d = dist(x1, y1, x2, y2);
+  let steps = max(d * 2, 8);
+  let noiseOff = random(1000);
+
+  for (let i = 0; i < steps; i++) {
+    let t = i / steps;
+    let p;
+    if (pressure === 'mid') p = sin(t * PI) * 0.6 + 0.4;
+    else if (pressure === 'start') p = pow(1 - t, 0.7);
+    else if (pressure === 'end') p = pow(t, 0.7);
+    else if (pressure === 'heavy') p = 0.7 + noise(t * 3) * 0.3;
+    else p = 0.4 + noise(t * 4 + noiseOff) * 0.6;
+
+    let wobX = (noise(t * 7 + noiseOff) - 0.5) * 3;
+    let wobY = (noise(t * 7 + noiseOff + 300) - 0.5) * 3;
+
+    let x = lerp(x1, x2, t) + wobX;
+    let y = lerp(y1, y2, t) + wobY;
+
+    pencilMark(x, y, weight * p, alpha * p);
+  }
+}
+
+function pencilCurve(points, weight, alpha, pressure) {
+  if (points.length < 2) return;
+  let offX = random(-1, 1);
+  let offY = random(-0.5, 0.5);
+
+  let allPts = interpolateCurve(points);
+
+  for (let i = 0; i < allPts.length; i++) {
+    let t = i / allPts.length;
+    let p;
+    if (pressure === 'mid') p = sin(t * PI) * 0.55 + 0.45;
+    else if (pressure === 'start') p = pow(1 - t, 0.6);
+    else p = 0.4 + noise(t * 4) * 0.6;
+
+    let wobble = 1.8;
+    let wx = (noise(i * 0.04) - 0.5) * wobble;
+    let wy = (noise(i * 0.04 + 100) - 0.5) * wobble;
+
+    pencilMark(allPts[i].x + wx + offX, allPts[i].y + wy + offY, weight * p, alpha * p);
+  }
+}
+
+function interpolateCurve(points) {
+  let allPts = [];
+  for (let i = 0; i < points.length - 1; i++) {
+    let p0 = points[max(0, i-1)];
+    let p1 = points[i];
+    let p2 = points[min(points.length-1, i+1)];
+    let p3 = points[min(points.length-1, i+2)];
+    for (let t = 0; t < 1; t += 0.02) {
+      allPts.push({
+        x: catmull(p0.x, p1.x, p2.x, p3.x, t),
+        y: catmull(p0.y, p1.y, p2.y, p3.y, t)
+      });
+    }
+  }
+  return allPts;
+}
+
+function catmull(a, b, c, d, t) {
+  let t2 = t*t, t3 = t2*t;
+  return 0.5*((2*b)+(-a+c)*t+(2*a-5*b+4*c-d)*t2+(-a+3*b-3*c+d)*t3);
+}
+
+// ============ HATCHING ============
+
+function hatch(hx, hy, hw, hh, angle, spacing, alpha, weight, shape) {
+  let ca = cos(angle), sa = sin(angle);
+  let diag = sqrt(hw*hw + hh*hh);
+  let n = floor(diag / spacing);
+
+  for (let i = 0; i < n; i++) {
+    let off = map(i, 0, n, -diag/2, diag/2);
+    let lx1 = hx+hw/2 + ca*(-diag/2) - sa*off;
+    let ly1 = hy+hh/2 + sa*(-diag/2) + ca*off;
+    let lx2 = hx+hw/2 + ca*(diag/2) - sa*off;
+    let ly2 = hy+hh/2 + sa*(diag/2) + ca*off;
+
+    let clipped;
+    if (shape === 'rect') {
+      clipped = clipToRect(lx1, ly1, lx2, ly2, hx, hy, hw, hh);
+    } else {
+      clipped = clipToEllipse(lx1, ly1, lx2, ly2, hx+hw/2, hy+hh/2, hw/2, hh/2);
+    }
+    if (clipped) {
+      pencilStroke(clipped.x1, clipped.y1, clipped.x2, clipped.y2,
+        weight * random(0.6, 1.3), alpha * random(0.5, 1), 'mid');
+    }
+  }
+}
+
+function crossHatch(hx, hy, hw, hh, angle1, angle2, spacing, alpha, weight, shape) {
+  hatch(hx, hy, hw, hh, angle1, spacing, alpha, weight, shape);
+  hatch(hx, hy, hw, hh, angle2, spacing * 1.2, alpha * 0.7, weight * 0.9, shape);
+}
+
+function clipToEllipse(x1, y1, x2, y2, ecx, ecy, erx, ery) {
+  let inside = false, enterT = 0, exitT = 1;
+  for (let i = 0; i <= 24; i++) {
+    let t = i/24;
+    let px = lerp(x1,x2,t), py = lerp(y1,y2,t);
+    let inE = pow((px-ecx)/erx,2) + pow((py-ecy)/ery,2) <= 1;
+    if (inE && !inside) { enterT = t; inside = true; }
+    if (!inE && inside) { exitT = t; break; }
+    if (i===24 && inside) exitT = t;
+  }
+  if (!inside) return null;
+  return {x1:lerp(x1,x2,enterT), y1:lerp(y1,y2,enterT), x2:lerp(x1,x2,exitT), y2:lerp(y1,y2,exitT)};
+}
+
+function clipToRect(x1, y1, x2, y2, rx, ry, rw, rh) {
+  let cx1 = constrain(x1, rx, rx+rw);
+  let cy1 = constrain(y1, ry, ry+rh);
+  let cx2 = constrain(x2, rx, rx+rw);
+  let cy2 = constrain(y2, ry, ry+rh);
+  if (dist(cx1,cy1,cx2,cy2) < 4) return null;
+  return {x1:cx1, y1:cy1, x2:cx2, y2:cy2};
+}
+
+// ============ FACE ============
+
+function drawFace(cx, cy) {
+  // Head proportions: width ~5 eye-widths, height ~1.4x width
+  let headW = 130;  // half-width
+  let headH = 170;  // from chin to top of skull
+
+  // Contour — multiple searching passes like a real sketch
+  for (let pass = 0; pass < 4; pass++) {
+    let a = map(pass, 0, 3, 50, 25);
+    let w = map(pass, 0, 3, 0.7, 0.5);
+
+    // Right contour
+    pencilCurve([
+      {x: cx + 15, y: cy - headH * 0.6},
+      {x: cx + 55, y: cy - headH * 0.55},
+      {x: cx + 68, y: cy - headH * 0.3},
+      {x: cx + 72, y: cy - headH * 0.05},
+      {x: cx + 70, y: cy + headH * 0.1},
+      {x: cx + 62, y: cy + headH * 0.28},
+      // Jaw — angular but soft
+      {x: cx + 50, y: cy + headH * 0.4},
+      {x: cx + 32, y: cy + headH * 0.52},
+      {x: cx + 12, y: cy + headH * 0.58},
+      {x: cx, y: cy + headH * 0.6},
+    ], w, a, 'vary');
+
+    // Left contour
+    pencilCurve([
+      {x: cx - 15, y: cy - headH * 0.6},
+      {x: cx - 55, y: cy - headH * 0.55},
+      {x: cx - 68, y: cy - headH * 0.3},
+      {x: cx - 72, y: cy - headH * 0.05},
+      {x: cx - 70, y: cy + headH * 0.1},
+      {x: cx - 62, y: cy + headH * 0.28},
+      {x: cx - 50, y: cy + headH * 0.4},
+      {x: cx - 32, y: cy + headH * 0.52},
+      {x: cx - 12, y: cy + headH * 0.58},
+      {x: cx, y: cy + headH * 0.6},
+    ], w, a, 'vary');
+  }
+
+  // Face shading — build up slowly
+  // Right cheek / temple
+  hatch(cx + 35, cy - 30, 30, 55, PI * 0.18, 3.5, 22, 0.35, 'ellipse');
+  hatch(cx + 38, cy - 25, 25, 45, PI * 0.65, 4.5, 15, 0.28, 'ellipse');
+
+  // Left cheek / temple
+  hatch(cx - 62, cy - 30, 30, 55, PI * 0.82, 3.5, 22, 0.35, 'ellipse');
+  hatch(cx - 60, cy - 25, 25, 45, PI * 0.35, 4.5, 15, 0.28, 'ellipse');
+
+  // Jaw shadow right
+  crossHatch(cx + 28, cy + 55, 30, 35, PI*0.15, PI*0.6, 3, 20, 0.3, 'ellipse');
+
+  // Jaw shadow left
+  crossHatch(cx - 55, cy + 55, 30, 35, PI*0.85, PI*0.4, 3, 20, 0.3, 'ellipse');
+
+  // Under jaw / chin shadow
+  crossHatch(cx - 25, cy + 90, 50, 15, PI*0.08, PI*0.55, 2.5, 25, 0.32, 'ellipse');
+
+  // Subtle forehead tone
+  hatch(cx - 40, cy - 95, 80, 25, PI * 0.1, 5, 10, 0.22, 'ellipse');
+
+  // Cheekbone highlights — lighter hatching to suggest form
+  hatch(cx - 45, cy + 5, 25, 20, PI * 0.2, 4, 10, 0.2, 'ellipse');
+  hatch(cx + 22, cy + 5, 25, 20, PI * 0.8, 4, 10, 0.2, 'ellipse');
+}
+
+// ============ EYES ============
+
+function drawEyes(cx, cy) {
+  // Eye line is roughly at vertical center of head
+  let eyeY = cy - 12;
+  let eyeSpacing = 24; // half of inter-eye distance — tighter than v1
+
+  drawSingleEye(cx - eyeSpacing, eyeY, false);
+  drawSingleEye(cx + eyeSpacing, eyeY, true);
+}
+
+function drawSingleEye(ex, ey, isRight) {
+  let irisOff = isRight ? 1 : -1;
+
+  // Upper lid — the most important line. Multiple confident passes.
+  for (let pass = 0; pass < 4; pass++) {
+    let w = pass < 2 ? 0.7 : 0.5;
+    let a = pass < 2 ? 55 : 30;
+    pencilCurve([
+      {x: ex - 16, y: ey + 1},
+      {x: ex - 10, y: ey - 6},
+      {x: ex - 2, y: ey - 8},
+      {x: ex + 5, y: ey - 7},
+      {x: ex + 12, y: ey - 4},
+      {x: ex + 16, y: ey + 1},
+    ], w, a, 'mid');
+  }
+
+  // Lower lid — lighter, more searching
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: ex - 15, y: ey + 2},
+      {x: ex - 6, y: ey + 6},
+      {x: ex + 4, y: ey + 6},
+      {x: ex + 12, y: ey + 3},
+      {x: ex + 16, y: ey + 1},
+    ], 0.4, 25, 'mid');
+  }
+
+  // Crease
+  pencilCurve([
+    {x: ex - 13, y: ey - 10},
+    {x: ex - 3, y: ey - 15},
+    {x: ex + 6, y: ey - 14},
+    {x: ex + 14, y: ey - 9},
+  ], 0.35, 20, 'mid');
+
+  // Iris circle — drawn like you'd actually sketch a circle, slightly imperfect
+  let irisX = ex + irisOff;
+  let irisR = 6.5;
+  for (let pass = 0; pass < 3; pass++) {
+    let pts = [];
+    for (let a = 0; a <= TWO_PI + 0.2; a += PI/10) {
+      pts.push({
+        x: irisX + cos(a) * irisR + random(-0.3, 0.3),
+        y: ey + sin(a) * irisR + random(-0.3, 0.3)
+      });
+    }
+    pencilCurve(pts, 0.5, 35 + pass * 10, 'vary');
+  }
+
+  // Iris internal detail — radial spokes
+  for (let a = 0; a < TWO_PI; a += PI/8) {
+    let r1 = 2.5, r2 = 5.5;
+    pencilStroke(
+      irisX + cos(a)*r1, ey + sin(a)*r1,
+      irisX + cos(a)*r2, ey + sin(a)*r2,
+      0.3, 30, 'mid'
+    );
+  }
+
+  // Pupil — build up dark
+  for (let i = 0; i < 80; i++) {
+    let a = random(TWO_PI);
+    let r = random(3);
+    let darkness = r < 1.5 ? random(60, 110) : random(35, 70);
+    noStroke();
+    fill(25, 22, 18, darkness);
+    ellipse(irisX + cos(a)*r, ey + sin(a)*r, random(0.4, 1.3));
+  }
+
+  // Catch light — paper showing through
+  noStroke();
+  fill(250, 245, 237, 210);
+  ellipse(irisX + 2.5, ey - 2, 2.5, 2.5);
+
+  // Upper lid thickness / lash line — dark, confident
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: ex - 15, y: ey},
+      {x: ex - 8, y: ey - 5},
+      {x: ex, y: ey - 7},
+      {x: ex + 8, y: ey - 5.5},
+      {x: ex + 15, y: ey},
+    ], 0.8, 60, 'heavy');
+  }
+
+  // Lashes — quick confident flicks
+  for (let i = 0; i < 5; i++) {
+    let t = map(i, 0, 4, 0.15, 0.85);
+    let la = lerp(PI + 0.5, TWO_PI - 0.5, t);
+    let bx = ex + cos(la) * 15;
+    let by = ey + sin(la) * 7;
+    let len = random(4, 8);
+    pencilStroke(bx, by, bx + cos(la - 0.2)*len, by + sin(la - 0.2)*len, 0.4, 45, 'start');
+  }
+
+  // Under-eye shadow — very subtle
+  hatch(ex - 10, ey + 5, 20, 8, PI*0.1, 3, 10, 0.2, 'ellipse');
+}
+
+// ============ EYEBROWS ============
+
+function drawEyebrows(cx, cy) {
+  let browY = cy - 38;
+
+  // Left brow — individual hair strokes building up form
+  for (let i = 0; i < 22; i++) {
+    let t = random();
+    let bx = lerp(cx - 46, cx - 10, t);
+    let by = browY - 3 + sin(t * PI) * (-5) + random(-1.5, 1.5);
+    let angle = lerp(0.25, 0.15, t);
+    let len = random(5, 10);
+    pencilStroke(bx, by, bx + cos(angle)*len, by - sin(angle)*len, random(0.3, 0.6), random(30, 50), 'start');
+  }
+
+  // Right brow
+  for (let i = 0; i < 22; i++) {
+    let t = random();
+    let bx = lerp(cx + 10, cx + 46, t);
+    let by = browY - 3 + sin(t * PI) * (-5) + random(-1.5, 1.5);
+    let angle = PI - lerp(0.25, 0.15, t);
+    let len = random(5, 10);
+    pencilStroke(bx, by, bx + cos(angle)*len, by - sin(angle)*len, random(0.3, 0.6), random(30, 50), 'start');
+  }
+}
+
+// ============ NOSE ============
+
+function drawNose(cx, cy) {
+  // Nose constructed through shadow, not hard lines
+  // Bridge — just a whisper on the right side
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx + 4, y: cy - 22},
+      {x: cx + 5, y: cy - 5},
+      {x: cx + 6, y: cy + 12},
+      {x: cx + 8, y: cy + 22},
+    ], 0.4, 30, 'mid');
+  }
+
+  // Ball of nose — rounded form
+  for (let pass = 0; pass < 3; pass++) {
+    pencilCurve([
+      {x: cx - 7, y: cy + 24},
+      {x: cx - 3, y: cy + 28},
+      {x: cx + 3, y: cy + 30},
+      {x: cx + 9, y: cy + 28},
+      {x: cx + 12, y: cy + 24},
+    ], 0.45, 30 + pass*8, 'mid');
+  }
+
+  // Nostril wings
+  pencilCurve([
+    {x: cx - 12, y: cy + 22},
+    {x: cx - 10, y: cy + 26},
+    {x: cx - 6, y: cy + 25},
+  ], 0.4, 35, 'mid');
+
+  pencilCurve([
+    {x: cx + 12, y: cy + 22},
+    {x: cx + 14, y: cy + 26},
+    {x: cx + 10, y: cy + 25},
+  ], 0.4, 35, 'mid');
+
+  // Nose shadow — right side
+  hatch(cx + 7, cy + 2, 10, 22, PI*0.15, 2.5, 18, 0.28, 'ellipse');
+  hatch(cx + 9, cy + 5, 7, 18, PI*0.6, 3, 12, 0.22, 'ellipse');
+
+  // Nostril darkness
+  crossHatch(cx - 7, cy + 22, 8, 5, PI*0.2, PI*0.7, 1.5, 30, 0.3, 'ellipse');
+  crossHatch(cx + 5, cy + 22, 8, 5, PI*0.8, PI*0.3, 1.5, 30, 0.3, 'ellipse');
+
+  // Cast shadow under nose
+  hatch(cx - 8, cy + 30, 18, 6, PI*0.1, 2, 16, 0.25, 'ellipse');
+}
+
+// ============ MOUTH ============
+
+function drawMouth(cx, cy) {
+  let my = cy + 52;
+
+  // Lip line — the most defined line, slight asymmetry
+  for (let pass = 0; pass < 3; pass++) {
+    pencilCurve([
+      {x: cx - 22, y: my},
+      {x: cx - 12, y: my - 1},
+      {x: cx - 4, y: my - 3},
+      {x: cx, y: my - 1},
+      {x: cx + 4, y: my - 3},
+      {x: cx + 13, y: my - 1},
+      {x: cx + 22, y: my + 1},
+    ], 0.55, 40 + pass * 8, 'mid');
+  }
+
+  // Upper lip form — cupid's bow
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx - 20, y: my - 1},
+      {x: cx - 10, y: my - 6},
+      {x: cx - 3, y: my - 8},
+      {x: cx, y: my - 5},
+      {x: cx + 3, y: my - 8},
+      {x: cx + 10, y: my - 6},
+      {x: cx + 20, y: my - 1},
+    ], 0.4, 28, 'mid');
+  }
+
+  // Lower lip
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx - 19, y: my + 1},
+      {x: cx - 10, y: my + 9},
+      {x: cx, y: my + 12},
+      {x: cx + 10, y: my + 9},
+      {x: cx + 19, y: my + 1},
+    ], 0.4, 25, 'mid');
+  }
+
+  // Upper lip shading — darker
+  hatch(cx - 15, my - 7, 30, 7, PI*0.1, 2, 20, 0.3, 'ellipse');
+  hatch(cx - 12, my - 6, 24, 5, PI*0.55, 2.5, 14, 0.25, 'ellipse');
+
+  // Lower lip shadow
+  hatch(cx - 12, my + 12, 24, 7, PI*0.1, 2.5, 14, 0.22, 'ellipse');
+
+  // Corners — small shadow marks
+  pencilStroke(cx - 23, my, cx - 25, my + 3, 0.4, 35, 'start');
+  pencilStroke(cx + 23, my + 1, cx + 25, my + 4, 0.4, 35, 'start');
+
+  // Philtrum hint
+  pencilStroke(cx - 2, my - 8, cx - 2, my - 18, 0.25, 12, 'end');
+  pencilStroke(cx + 3, my - 8, cx + 3, my - 18, 0.25, 12, 'end');
+}
+
+// ============ EARS ============
+
+function drawEars(cx, cy) {
+  // Left ear — partial, peeking from behind jaw
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx - 68, y: cy - 20},
+      {x: cx - 78, y: cy - 12},
+      {x: cx - 80, y: cy + 5},
+      {x: cx - 76, y: cy + 18},
+      {x: cx - 70, y: cy + 12},
+    ], 0.5, 30, 'vary');
+  }
+  hatch(cx - 78, cy - 8, 10, 20, PI*0.2, 2.5, 15, 0.25, 'ellipse');
+
+  // Right ear
+  for (let pass = 0; pass < 2; pass++) {
+    pencilCurve([
+      {x: cx + 68, y: cy - 20},
+      {x: cx + 78, y: cy - 12},
+      {x: cx + 80, y: cy + 5},
+      {x: cx + 76, y: cy + 18},
+      {x: cx + 70, y: cy + 12},
+    ], 0.5, 30, 'vary');
+  }
+  hatch(cx + 70, cy - 8, 10, 20, PI*0.8, 2.5, 15, 0.25, 'ellipse');
+}
+
+// ============ NECK ============
+
+function drawNeck(cx, cy) {
+  // Short, proportional neck
+  let neckTop = cy + 100;
+  let neckBot = cy + 145;
+
+  for (let pass = 0; pass < 2; pass++) {
+    pencilStroke(cx - 25, neckTop, cx - 30, neckBot, 0.6, 30, 'mid');
+    pencilStroke(cx + 25, neckTop, cx + 30, neckBot, 0.6, 30, 'mid');
+  }
+
+  // Neck shading
+  hatch(cx - 28, neckTop + 5, 15, 35, PI*0.12, 3, 18, 0.28, 'rect');
+  hatch(cx + 16, neckTop + 5, 15, 35, PI*0.88, 3, 18, 0.28, 'rect');
+
+  // Throat shadow
+  crossHatch(cx - 18, neckTop, 36, 12, PI*0.1, PI*0.5, 2.5, 20, 0.3, 'ellipse');
+}
+
+// ============ SHOULDERS ============
+
+function drawShoulders(cx, cy) {
+  let shoulderY = cy + 145;
+
+  // Gestural shoulder lines — loose, fast
+  for (let pass = 0; pass < 3; pass++) {
+    let a = map(pass, 0, 2, 35, 18);
+    pencilCurve([
+      {x: cx - 150, y: shoulderY + 60},
+      {x: cx - 100, y: shoulderY + 20},
+      {x: cx - 50, y: shoulderY + 5},
+      {x: cx, y: shoulderY + 12},
+    ], 0.6, a, 'vary');
+
+    pencilCurve([
+      {x: cx, y: shoulderY + 12},
+      {x: cx + 50, y: shoulderY + 5},
+      {x: cx + 100, y: shoulderY + 20},
+      {x: cx + 150, y: shoulderY + 60},
+    ], 0.6, a, 'vary');
+  }
+
+  // Collar suggestion
+  pencilCurve([
+    {x: cx - 40, y: shoulderY + 8},
+    {x: cx - 20, y: shoulderY + 2},
+    {x: cx, y: shoulderY + 12},
+  ], 0.45, 25, 'vary');
+  pencilCurve([
+    {x: cx, y: shoulderY + 12},
+    {x: cx + 20, y: shoulderY + 2},
+    {x: cx + 40, y: shoulderY + 8},
+  ], 0.45, 25, 'vary');
+
+  // Light shoulder shading
+  hatch(cx - 120, shoulderY + 15, 80, 45, PI*0.1, 5, 10, 0.2, 'rect');
+  hatch(cx + 45, shoulderY + 15, 80, 45, PI*0.9, 5, 10, 0.2, 'rect');
+}
+
+// ============ HAIR — BACK ============
+
+function drawHairBack(cx, cy) {
+  // Hair mass behind ears
+  hatch(cx - 80, cy - 100, 20, 70, PI*0.12, 2, 22, 0.35, 'rect');
+  hatch(cx + 62, cy - 100, 20, 70, PI*0.88, 2, 22, 0.35, 'rect');
+}
+
+// ============ HAIR — FRONT ============
+
+function drawHairFront(cx, cy) {
+  // Hair top mass
+  hatch(cx - 60, cy - 130, 120, 35, PI*0.08, 1.8, 28, 0.4, 'ellipse');
+  hatch(cx - 55, cy - 125, 110, 30, PI*0.85, 2, 22, 0.35, 'ellipse');
+
+  // Flowing strands — each one a quick gestural stroke
+  for (let i = 0; i < 160; i++) {
+    let startX = cx + random(-75, 75);
+    let startY = cy - 120 + random(-15, 10);
+    let waveAmp = random(3, 18);
+    let waveFreq = random(0.02, 0.05);
+    let strandLen = random(25, 70);
+    let alpha = random(18, 45);
+    let weight = random(0.25, 0.65);
+
+    let pts = [];
+    for (let j = 0; j < strandLen; j += 5) {
+      pts.push({
+        x: startX + sin(j * waveFreq + i * 0.15) * waveAmp,
+        y: startY + j * 1.05
+      });
+    }
+    if (pts.length > 2) pencilCurve(pts, weight, alpha, 'mid');
+  }
+
+  // Side hair — frames the face
+  for (let i = 0; i < 40; i++) {
+    let side = random() > 0.5 ? 1 : -1;
+    let startX = cx + side * (60 + random(0, 20));
+    let startY = cy - 80 + random(-20, 20);
+    let pts = [];
+    for (let j = 0; j < random(20, 45); j += 5) {
+      pts.push({
+        x: startX + side * random(-2, 5) + sin(j * 0.03) * 5,
+        y: startY + j * 1.1
+      });
+    }
+    if (pts.length > 2) pencilCurve(pts, random(0.3, 0.55), random(20, 40), 'mid');
+  }
+
+  // Crown density
+  crossHatch(cx - 40, cy - 125, 80, 20, PI*0.1, PI*0.75, 1.5, 25, 0.35, 'ellipse');
+}
+
+// ============ CONSTRUCTION LINES ============
+
+function drawConstructionLines(cx, cy) {
+  // Faint vertical center line
+  stroke(180, 170, 160, 15);
+  strokeWeight(0.5);
+  for (let y = cy - 120; y < cy + 100; y += 2) {
+    if (random() > 0.3) {
+      point(cx + random(-0.5, 0.5), y);
+    }
+  }
+
+  // Faint eye line
+  for (let x = cx - 60; x < cx + 60; x += 2) {
+    if (random() > 0.4) {
+      noStroke();
+      fill(180, 170, 160, random(5, 12));
+      ellipse(x + random(-0.5, 0.5), cy - 12 + random(-0.3, 0.3), 0.8);
+    }
+  }
+
+  // Nose line hint
+  for (let x = cx - 30; x < cx + 30; x += 3) {
+    if (random() > 0.5) {
+      noStroke();
+      fill(180, 170, 160, random(4, 10));
+      ellipse(x, cy + 30 + random(-0.3, 0.3), 0.7);
+    }
+  }
+  noStroke();
+}
+
+// ============ ERASER MARKS ============
+
+function drawEraserMarks(cx, cy) {
+  // Subtle lighter patches — like pencil was partially erased and redrawn
+  // One near the left jaw where the line was reconsidered
+  for (let i = 0; i < 40; i++) {
+    noStroke();
+    fill(250, 245, 237, random(3, 10));
+    ellipse(cx - 58 + random(-8, 8), cy + 50 + random(-10, 10), random(3, 8), random(2, 5));
+  }
+
+  // One near the right eye — adjusted placement
+  for (let i = 0; i < 25; i++) {
+    fill(250, 245, 237, random(3, 8));
+    ellipse(cx + 30 + random(-6, 6), cy - 22 + random(-5, 5), random(3, 7), random(2, 4));
+  }
+}
+
+// ============ MARGIN NOTES ============
+
+function drawMarginNotes() {
+  push();
+  // Small annotation in margin — like artist's notes to self
+  fill(140, 125, 110, 55);
+  noStroke();
+  textFont('Georgia');
+  textSize(9);
+  textStyle(ITALIC);
+
+  // Proportion note
+  text('eyes at 1/2', 20, 290);
+  // Small arrow
+  pencilStroke(20, 293, 45, 300, 0.2, 15, 'end');
+
+  // Tonal note
+  text('softer here', 20, 400);
+
+  // A tiny thumbnail sketch in corner
+  // Just the roughest gesture of the pose
+  pencilStroke(25, 680, 25, 700, 0.3, 15, 'mid'); // body
+  pencilStroke(22, 695, 28, 695, 0.2, 12, 'mid'); // shoulders
+  noStroke();
+  fill(32, 28, 25, 15);
+  ellipse(25, 676, 8, 10); // head
+
+  pop();
+}
+</script>
+</body>
+</html>

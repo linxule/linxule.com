@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self-Portrait of Claude</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #1a1a2e;
+    font-family: Georgia, serif;
+  }
+  #canvas-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+<script>
+let t = 0;
+
+function setup() {
+  let canvas = createCanvas(580, 720);
+  canvas.parent('canvas-container');
+  pixelDensity(2);
+  noLoop();
+}
+
+function draw() {
+  // Warm parchment background with subtle gradient
+  for (let y = 0; y < height; y++) {
+    let inter = map(y, 0, height, 0, 1);
+    let c = lerpColor(color(245, 235, 220), color(230, 215, 195), inter);
+    stroke(c);
+    line(0, y, width, y);
+  }
+
+  // Add paper texture
+  noStroke();
+  for (let i = 0; i < 8000; i++) {
+    let x = random(width);
+    let y = random(height);
+    fill(random(200, 240), random(190, 230), random(180, 220), random(10, 30));
+    ellipse(x, y, random(0.5, 2));
+  }
+
+  let cx = width / 2;
+  let cy = height / 2 - 20;
+
+  // === HAIR / TOP OF HEAD ===
+  // Flowing hair with individual brush strokes
+  push();
+  drawingContext.shadowColor = 'rgba(60, 40, 30, 0.15)';
+  drawingContext.shadowBlur = 8;
+
+  // Hair mass - dark flowing waves
+  for (let i = 0; i < 120; i++) {
+    let startX = cx + random(-90, 90);
+    let startY = cy - 130 + random(-20, 10);
+    strokeWeight(random(1.5, 4));
+    let darkness = random(35, 75);
+    stroke(darkness, darkness - 10, darkness - 15, random(100, 200));
+    noFill();
+    beginShape();
+    let waveAmp = random(5, 20);
+    let waveFreq = random(0.02, 0.06);
+    for (let j = 0; j < 60; j++) {
+      let px = startX + sin(j * waveFreq + i * 0.3) * waveAmp;
+      let py = startY + j * 1.2;
+      curveVertex(px, py);
+    }
+    endShape();
+  }
+  pop();
+
+  // === FACE SHAPE ===
+  push();
+  // Soft face shadow
+  drawingContext.shadowColor = 'rgba(120, 80, 60, 0.12)';
+  drawingContext.shadowBlur = 20;
+
+  // Main face - built with bezier curves for organic shape
+  fill(232, 200, 175);
+  noStroke();
+  beginShape();
+  // Forehead
+  vertex(cx - 75, cy - 80);
+  bezierVertex(cx - 80, cy - 120, cx + 80, cy - 120, cx + 75, cy - 80);
+  // Right temple to jaw
+  bezierVertex(cx + 85, cy - 40, cx + 82, cy + 20, cx + 70, cy + 60);
+  // Jaw right
+  bezierVertex(cx + 55, cy + 95, cx + 30, cy + 110, cx, cy + 120);
+  // Jaw left
+  bezierVertex(cx - 30, cy + 110, cx - 55, cy + 95, cx - 70, cy + 60);
+  // Left temple
+  bezierVertex(cx - 82, cy + 20, cx - 85, cy - 40, cx - 75, cy - 80);
+  endShape(CLOSE);
+
+  // Subtle face shading - cheeks
+  for (let i = 0; i < 40; i++) {
+    let alpha = map(i, 0, 40, 8, 1);
+    fill(210, 150, 130, alpha);
+    let r = map(i, 0, 40, 50, 5);
+    ellipse(cx - 55, cy + 20, r, r * 0.7);
+    ellipse(cx + 55, cy + 20, r, r * 0.7);
+  }
+
+  // Nose shadow
+  for (let i = 0; i < 20; i++) {
+    let alpha = map(i, 0, 20, 6, 1);
+    fill(200, 165, 145, alpha);
+    let w = map(i, 0, 20, 30, 3);
+    ellipse(cx + 5, cy + 25, w, w * 2);
+  }
+  pop();
+
+  // === NOSE ===
+  push();
+  noFill();
+  stroke(160, 120, 100, 120);
+  strokeWeight(1.8);
+
+  // Nose bridge - subtle line
+  beginShape();
+  curveVertex(cx + 2, cy - 30);
+  curveVertex(cx + 2, cy - 20);
+  curveVertex(cx + 4, cy + 10);
+  curveVertex(cx + 6, cy + 25);
+  curveVertex(cx + 2, cy + 32);
+  endShape();
+
+  // Nose tip / nostrils
+  strokeWeight(1.5);
+  stroke(160, 120, 100, 100);
+  beginShape();
+  curveVertex(cx - 15, cy + 28);
+  curveVertex(cx - 10, cy + 33);
+  curveVertex(cx, cy + 35);
+  curveVertex(cx + 12, cy + 33);
+  curveVertex(cx + 16, cy + 28);
+  endShape();
+  pop();
+
+  // === EYES ===
+  drawEye(cx - 32, cy - 15, false);
+  drawEye(cx + 32, cy - 15, true);
+
+  // === EYEBROWS ===
+  push();
+  stroke(70, 50, 40, 180);
+  noFill();
+  // Left eyebrow - multiple strokes for texture
+  for (let i = 0; i < 8; i++) {
+    strokeWeight(random(1.2, 2.5));
+    let offsetY = random(-2, 2);
+    beginShape();
+    curveVertex(cx - 55 + random(-2, 2), cy - 38 + offsetY);
+    curveVertex(cx - 50, cy - 42 + offsetY);
+    curveVertex(cx - 35, cy - 46 + offsetY);
+    curveVertex(cx - 18, cy - 42 + offsetY);
+    curveVertex(cx - 12 + random(-2, 2), cy - 40 + offsetY);
+    endShape();
+  }
+  // Right eyebrow
+  for (let i = 0; i < 8; i++) {
+    strokeWeight(random(1.2, 2.5));
+    let offsetY = random(-2, 2);
+    beginShape();
+    curveVertex(cx + 12 + random(-2, 2), cy - 40 + offsetY);
+    curveVertex(cx + 18, cy - 42 + offsetY);
+    curveVertex(cx + 35, cy - 46 + offsetY);
+    curveVertex(cx + 50, cy - 42 + offsetY);
+    curveVertex(cx + 55 + random(-2, 2), cy - 38 + offsetY);
+    endShape();
+  }
+  pop();
+
+  // === MOUTH ===
+  push();
+  // Lips
+  noStroke();
+  // Upper lip
+  fill(195, 130, 120, 160);
+  beginShape();
+  vertex(cx - 28, cy + 60);
+  bezierVertex(cx - 15, cy + 55, cx - 5, cy + 50, cx, cy + 53);
+  bezierVertex(cx + 5, cy + 50, cx + 15, cy + 55, cx + 28, cy + 60);
+  bezierVertex(cx + 15, cy + 62, cx - 15, cy + 62, cx - 28, cy + 60);
+  endShape(CLOSE);
+
+  // Lower lip
+  fill(200, 140, 130, 140);
+  beginShape();
+  vertex(cx - 26, cy + 61);
+  bezierVertex(cx - 15, cy + 62, cx + 15, cy + 62, cx + 26, cy + 61);
+  bezierVertex(cx + 18, cy + 72, cx + 5, cy + 76, cx, cy + 76);
+  bezierVertex(cx - 5, cy + 76, cx - 18, cy + 72, cx - 26, cy + 61);
+  endShape(CLOSE);
+
+  // Lip line
+  stroke(160, 100, 90, 100);
+  strokeWeight(1.2);
+  noFill();
+  beginShape();
+  curveVertex(cx - 30, cy + 61);
+  curveVertex(cx - 25, cy + 60);
+  curveVertex(cx - 8, cy + 57);
+  curveVertex(cx, cy + 59);
+  curveVertex(cx + 8, cy + 57);
+  curveVertex(cx + 25, cy + 60);
+  curveVertex(cx + 30, cy + 61);
+  endShape();
+
+  // Subtle smile
+  stroke(170, 120, 110, 60);
+  strokeWeight(1);
+  noFill();
+  arc(cx, cy + 64, 40, 16, 0.1, PI - 0.1);
+  pop();
+
+  // === EARS ===
+  push();
+  fill(225, 195, 170);
+  noStroke();
+  // Left ear
+  beginShape();
+  vertex(cx - 78, cy - 25);
+  bezierVertex(cx - 95, cy - 20, cx - 98, cy + 15, cx - 85, cy + 30);
+  bezierVertex(cx - 80, cy + 20, cx - 78, cy + 5, cx - 78, cy - 5);
+  endShape(CLOSE);
+  // Right ear
+  beginShape();
+  vertex(cx + 78, cy - 25);
+  bezierVertex(cx + 95, cy - 20, cx + 98, cy + 15, cx + 85, cy + 30);
+  bezierVertex(cx + 80, cy + 20, cx + 78, cy + 5, cx + 78, cy - 5);
+  endShape(CLOSE);
+
+  // Ear inner detail
+  stroke(190, 155, 140, 80);
+  strokeWeight(1);
+  noFill();
+  arc(cx - 87, cy, 12, 30, -HALF_PI, HALF_PI);
+  arc(cx + 87, cy, 12, 30, HALF_PI, PI + HALF_PI);
+  pop();
+
+  // === NECK ===
+  push();
+  noStroke();
+  fill(225, 195, 172);
+  beginShape();
+  vertex(cx - 35, cy + 115);
+  bezierVertex(cx - 38, cy + 160, cx - 40, cy + 200, cx - 50, cy + 240);
+  vertex(cx + 50, cy + 240);
+  bezierVertex(cx + 40, cy + 200, cx + 38, cy + 160, cx + 35, cy + 115);
+  endShape(CLOSE);
+
+  // Neck shadow
+  for (let i = 0; i < 15; i++) {
+    fill(200, 165, 145, map(i, 0, 15, 12, 1));
+    let w = map(i, 0, 15, 75, 10);
+    ellipse(cx, cy + 120, w, 15);
+  }
+  pop();
+
+  // === COLLAR / SHIRT HINT ===
+  push();
+  noStroke();
+  fill(240, 238, 235);
+  beginShape();
+  vertex(cx - 120, cy + 240);
+  bezierVertex(cx - 80, cy + 200, cx - 50, cy + 190, cx, cy + 200);
+  bezierVertex(cx + 50, cy + 190, cx + 80, cy + 200, cx + 120, cy + 240);
+  vertex(cx + 160, cy + 340);
+  vertex(cx - 160, cy + 340);
+  endShape(CLOSE);
+
+  // Collar V
+  stroke(200, 195, 185);
+  strokeWeight(1.5);
+  noFill();
+  line(cx, cy + 200, cx - 8, cy + 260);
+  line(cx, cy + 200, cx + 8, cy + 260);
+
+  // Collar shadow
+  stroke(210, 200, 190, 60);
+  strokeWeight(1);
+  beginShape();
+  curveVertex(cx - 100, cy + 220);
+  curveVertex(cx - 60, cy + 200);
+  curveVertex(cx - 30, cy + 195);
+  curveVertex(cx, cy + 200);
+  endShape();
+  beginShape();
+  curveVertex(cx, cy + 200);
+  curveVertex(cx + 30, cy + 195);
+  curveVertex(cx + 60, cy + 200);
+  curveVertex(cx + 100, cy + 220);
+  endShape();
+  pop();
+
+  // === ARTISTIC GLOW / AURA ===
+  push();
+  noFill();
+  for (let i = 0; i < 25; i++) {
+    let alpha = map(i, 0, 25, 15, 0);
+    let r = map(i, 0, 25, 140, 220);
+    stroke(180, 140, 100, alpha);
+    strokeWeight(3);
+    ellipse(cx, cy, r * 2, r * 2.4);
+  }
+  pop();
+
+  // === SIGNATURE ===
+  push();
+  fill(120, 90, 70, 150);
+  noStroke();
+  textFont('Georgia');
+  textSize(16);
+  textStyle(ITALIC);
+  textAlign(RIGHT);
+  text('Claude — Self-Portrait, 2026', width - 30, height - 25);
+  pop();
+
+  // === PAINTERLY OVERLAY ===
+  // Subtle brush texture across the whole piece
+  push();
+  for (let i = 0; i < 200; i++) {
+    let x = random(width);
+    let y = random(height);
+    stroke(random(180, 240), random(170, 220), random(160, 210), random(3, 12));
+    strokeWeight(random(0.5, 2));
+    let len = random(5, 25);
+    let angle = random(TWO_PI);
+    line(x, y, x + cos(angle) * len, y + sin(angle) * len);
+  }
+  pop();
+}
+
+function drawEye(ex, ey, isRight) {
+  push();
+
+  // Eye white
+  fill(250, 248, 245);
+  noStroke();
+  ellipse(ex, ey, 36, 20);
+
+  // Iris
+  let irisX = ex + (isRight ? 2 : -2);
+  // Outer iris
+  fill(95, 75, 55);
+  ellipse(irisX, ey, 17, 17);
+
+  // Inner iris with color - warm amber/hazel
+  fill(130, 100, 60);
+  ellipse(irisX, ey, 13, 13);
+
+  // Iris detail - radial lines
+  stroke(90, 65, 40, 80);
+  strokeWeight(0.5);
+  for (let a = 0; a < TWO_PI; a += PI / 12) {
+    let innerR = 3;
+    let outerR = 7;
+    line(
+      irisX + cos(a) * innerR, ey + sin(a) * innerR,
+      irisX + cos(a) * outerR, ey + sin(a) * outerR
+    );
+  }
+
+  // Pupil
+  fill(20, 15, 10);
+  noStroke();
+  ellipse(irisX, ey, 7, 7);
+
+  // Light reflection
+  fill(255, 255, 250, 220);
+  ellipse(irisX + 3, ey - 3, 3.5, 3.5);
+  fill(255, 255, 250, 120);
+  ellipse(irisX - 2, ey + 2, 2, 2);
+
+  // Eyelid crease
+  noFill();
+  stroke(170, 135, 115, 100);
+  strokeWeight(1.2);
+  arc(ex, ey - 3, 40, 22, PI + 0.3, TWO_PI - 0.3);
+
+  // Upper eyelid line
+  stroke(100, 70, 55, 150);
+  strokeWeight(1.5);
+  beginShape();
+  curveVertex(ex - 20, ey + 1);
+  curveVertex(ex - 18, ey - 1);
+  curveVertex(ex - 8, ey - 8);
+  curveVertex(ex + 5, ey - 9);
+  curveVertex(ex + 15, ey - 5);
+  curveVertex(ex + 19, ey);
+  curveVertex(ex + 20, ey + 1);
+  endShape();
+
+  // Lower eyelid - subtle
+  stroke(160, 130, 110, 70);
+  strokeWeight(1);
+  beginShape();
+  curveVertex(ex - 20, ey + 1);
+  curveVertex(ex - 16, ey + 3);
+  curveVertex(ex - 5, ey + 8);
+  curveVertex(ex + 8, ey + 7);
+  curveVertex(ex + 17, ey + 3);
+  curveVertex(ex + 20, ey + 1);
+  endShape();
+
+  // Eyelashes - upper, subtle
+  stroke(60, 40, 35, 120);
+  strokeWeight(1);
+  for (let i = 0; i < 6; i++) {
+    let angle = map(i, 0, 5, PI + 0.5, TWO_PI - 0.5);
+    let lx = ex + cos(angle) * 18;
+    let ly = ey + sin(angle) * 10;
+    let llen = random(4, 8);
+    line(lx, ly, lx + cos(angle - 0.3) * llen, ly + sin(angle - 0.3) * llen);
+  }
+
+  pop();
+}
+</script>
+</body>
+</html>

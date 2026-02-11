@@ -109,6 +109,12 @@ module.exports = function(eleventyConfig) {
     return combined.sort((a, b) => new Date(b.date) - new Date(a.date));
   });
 
+  // Check if a source path is an HTML file (for iframe embedding)
+  eleventyConfig.addFilter("isHTMLFile", (src) => {
+    if (!src) return false;
+    return src.toLowerCase().endsWith('.html') || src.toLowerCase().endsWith('.htm');
+  });
+
   // Get content type from page URL for feed entries
   eleventyConfig.addFilter("contentType", (url) => {
     if (url.startsWith('/writing/')) return 'writing';

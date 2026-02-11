@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self-Portrait — Canvas 2D</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #1a1a2e;
+    font-family: Georgia, serif;
+  }
+  canvas {
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+</style>
+</head>
+<body>
+<canvas id="c" width="580" height="720"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const cx = W / 2, cy = H / 2 - 20;
+
+// --- Utilities ---
+function lerp(a, b, t) { return a + (b - a) * t; }
+function rand(a, b) { return Math.random() * (b - a) + a; }
+
+function drawGradientBG() {
+  for (let y = 0; y < H; y++) {
+    let t = y / H;
+    let r = lerp(245, 230, t);
+    let g = lerp(235, 215, t);
+    let b = lerp(220, 195, t);
+    ctx.strokeStyle = `rgb(${r},${g},${b})`;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
+    ctx.stroke();
+  }
+}
+
+function drawPaperTexture() {
+  for (let i = 0; i < 8000; i++) {
+    let x = rand(0, W), y = rand(0, H);
+    let a = rand(0.03, 0.12);
+    ctx.fillStyle = `rgba(${rand(200,240)},${rand(190,230)},${rand(180,220)},${a})`;
+    ctx.beginPath();
+    ctx.arc(x, y, rand(0.3, 1.2), 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawHair() {
+  ctx.save();
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 120; i++) {
+    let startX = cx + rand(-90, 90);
+    let startY = cy - 130 + rand(-20, 10);
+    ctx.lineWidth = rand(1.5, 4);
+    let d = rand(35, 75);
+    ctx.strokeStyle = `rgba(${d},${d-10},${d-15},${rand(0.4, 0.8)})`;
+    ctx.beginPath();
+    let waveAmp = rand(5, 20);
+    let waveFreq = rand(0.02, 0.06);
+    ctx.moveTo(startX, startY);
+    for (let j = 1; j < 60; j++) {
+      let px = startX + Math.sin(j * waveFreq + i * 0.3) * waveAmp;
+      let py = startY + j * 1.2;
+      ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawFace() {
+  ctx.save();
+  ctx.shadowColor = 'rgba(120,80,60,0.12)';
+  ctx.shadowBlur = 20;
+
+  // Face shape
+  ctx.fillStyle = 'rgb(232, 200, 175)';
+  ctx.beginPath();
+  ctx.moveTo(cx - 75, cy - 80);
+  ctx.bezierCurveTo(cx - 80, cy - 120, cx + 80, cy - 120, cx + 75, cy - 80);
+  ctx.bezierCurveTo(cx + 85, cy - 40, cx + 82, cy + 20, cx + 70, cy + 60);
+  ctx.bezierCurveTo(cx + 55, cy + 95, cx + 30, cy + 110, cx, cy + 120);
+  ctx.bezierCurveTo(cx - 30, cy + 110, cx - 55, cy + 95, cx - 70, cy + 60);
+  ctx.bezierCurveTo(cx - 82, cy + 20, cx - 85, cy - 40, cx - 75, cy - 80);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // Cheek blush
+  for (let i = 0; i < 40; i++) {
+    let a = lerp(0.03, 0.004, i / 40);
+    let r = lerp(50, 5, i / 40);
+    ctx.fillStyle = `rgba(210,150,130,${a})`;
+    ctx.beginPath(); ctx.arc(cx - 55, cy + 20, r, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 55, cy + 20, r, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Nose shadow
+  for (let i = 0; i < 20; i++) {
+    let a = lerp(0.025, 0.004, i / 20);
+    let w = lerp(30, 3, i / 20);
+    ctx.fillStyle = `rgba(200,165,145,${a})`;
+    ctx.beginPath();
+    ctx.ellipse(cx + 5, cy + 25, w / 2, w, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawNose() {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(160,120,100,0.47)';
+  ctx.lineWidth = 1.8;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // Bridge
+  ctx.beginPath();
+  ctx.moveTo(cx + 2, cy - 20);
+  ctx.quadraticCurveTo(cx + 5, cy + 5, cx + 6, cy + 25);
+  ctx.quadraticCurveTo(cx + 3, cy + 30, cx + 2, cy + 32);
+  ctx.stroke();
+
+  // Nostrils
+  ctx.strokeStyle = 'rgba(160,120,100,0.39)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx - 10, cy + 33);
+  ctx.quadraticCurveTo(cx, cy + 37, cx + 12, cy + 33);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawEye(ex, ey, isRight) {
+  ctx.save();
+  let irisX = ex + (isRight ? 2 : -2);
+
+  // Eye white
+  ctx.fillStyle = 'rgb(250,248,245)';
+  ctx.beginPath();
+  ctx.ellipse(ex, ey, 18, 10, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Outer iris
+  ctx.fillStyle = 'rgb(95,75,55)';
+  ctx.beginPath();
+  ctx.arc(irisX, ey, 8.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Inner iris
+  ctx.fillStyle = 'rgb(130,100,60)';
+  ctx.beginPath();
+  ctx.arc(irisX, ey, 6.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Iris radial lines
+  ctx.strokeStyle = 'rgba(90,65,40,0.31)';
+  ctx.lineWidth = 0.5;
+  for (let a = 0; a < Math.PI * 2; a += Math.PI / 12) {
+    ctx.beginPath();
+    ctx.moveTo(irisX + Math.cos(a) * 3, ey + Math.sin(a) * 3);
+    ctx.lineTo(irisX + Math.cos(a) * 7, ey + Math.sin(a) * 7);
+    ctx.stroke();
+  }
+
+  // Pupil
+  ctx.fillStyle = 'rgb(20,15,10)';
+  ctx.beginPath();
+  ctx.arc(irisX, ey, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Light reflections
+  ctx.fillStyle = 'rgba(255,255,250,0.86)';
+  ctx.beginPath();
+  ctx.arc(irisX + 3, ey - 3, 1.75, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,250,0.47)';
+  ctx.beginPath();
+  ctx.arc(irisX - 2, ey + 2, 1, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Upper eyelid
+  ctx.strokeStyle = 'rgba(100,70,55,0.59)';
+  ctx.lineWidth = 1.5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(ex - 18, ey - 1);
+  ctx.bezierCurveTo(ex - 8, ey - 9, ex + 8, ey - 10, ex + 18, ey);
+  ctx.stroke();
+
+  // Eyelid crease
+  ctx.strokeStyle = 'rgba(170,135,115,0.39)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(ex, ey - 3, 20, Math.PI + 0.3, Math.PI * 2 - 0.3);
+  ctx.stroke();
+
+  // Lower eyelid
+  ctx.strokeStyle = 'rgba(160,130,110,0.27)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(ex - 16, ey + 3);
+  ctx.bezierCurveTo(ex - 5, ey + 8, ex + 8, ey + 7, ex + 17, ey + 3);
+  ctx.stroke();
+
+  // Eyelashes
+  ctx.strokeStyle = 'rgba(60,40,35,0.47)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 6; i++) {
+    let angle = lerp(Math.PI + 0.5, Math.PI * 2 - 0.5, i / 5);
+    let lx = ex + Math.cos(angle) * 18;
+    let ly = ey + Math.sin(angle) * 10;
+    let llen = rand(4, 8);
+    ctx.beginPath();
+    ctx.moveTo(lx, ly);
+    ctx.lineTo(lx + Math.cos(angle - 0.3) * llen, ly + Math.sin(angle - 0.3) * llen);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawEyebrows() {
+  ctx.save();
+  ctx.lineCap = 'round';
+  // Left
+  for (let i = 0; i < 8; i++) {
+    ctx.strokeStyle = `rgba(70,50,40,${rand(0.5, 0.75)})`;
+    ctx.lineWidth = rand(1.2, 2.5);
+    let oy = rand(-2, 2);
+    ctx.beginPath();
+    ctx.moveTo(cx - 50, cy - 42 + oy);
+    ctx.bezierCurveTo(cx - 40, cy - 46 + oy, cx - 25, cy - 46 + oy, cx - 15, cy - 41 + oy);
+    ctx.stroke();
+  }
+  // Right
+  for (let i = 0; i < 8; i++) {
+    ctx.strokeStyle = `rgba(70,50,40,${rand(0.5, 0.75)})`;
+    ctx.lineWidth = rand(1.2, 2.5);
+    let oy = rand(-2, 2);
+    ctx.beginPath();
+    ctx.moveTo(cx + 15, cy - 41 + oy);
+    ctx.bezierCurveTo(cx + 25, cy - 46 + oy, cx + 40, cy - 46 + oy, cx + 50, cy - 42 + oy);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawMouth() {
+  ctx.save();
+  // Upper lip
+  ctx.fillStyle = 'rgba(195,130,120,0.63)';
+  ctx.beginPath();
+  ctx.moveTo(cx - 28, cy + 60);
+  ctx.bezierCurveTo(cx - 15, cy + 55, cx - 5, cy + 50, cx, cy + 53);
+  ctx.bezierCurveTo(cx + 5, cy + 50, cx + 15, cy + 55, cx + 28, cy + 60);
+  ctx.bezierCurveTo(cx + 15, cy + 62, cx - 15, cy + 62, cx - 28, cy + 60);
+  ctx.closePath();
+  ctx.fill();
+
+  // Lower lip
+  ctx.fillStyle = 'rgba(200,140,130,0.55)';
+  ctx.beginPath();
+  ctx.moveTo(cx - 26, cy + 61);
+  ctx.bezierCurveTo(cx - 15, cy + 62, cx + 15, cy + 62, cx + 26, cy + 61);
+  ctx.bezierCurveTo(cx + 18, cy + 72, cx + 5, cy + 76, cx, cy + 76);
+  ctx.bezierCurveTo(cx - 5, cy + 76, cx - 18, cy + 72, cx - 26, cy + 61);
+  ctx.closePath();
+  ctx.fill();
+
+  // Lip line
+  ctx.strokeStyle = 'rgba(160,100,90,0.39)';
+  ctx.lineWidth = 1.2;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx - 25, cy + 60);
+  ctx.bezierCurveTo(cx - 8, cy + 57, cx - 3, cy + 58, cx, cy + 59);
+  ctx.bezierCurveTo(cx + 3, cy + 58, cx + 8, cy + 57, cx + 25, cy + 60);
+  ctx.stroke();
+
+  // Subtle smile arc
+  ctx.strokeStyle = 'rgba(170,120,110,0.24)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(cx, cy + 64, 20, 0.1, Math.PI - 0.1);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawEars() {
+  ctx.save();
+  ctx.fillStyle = 'rgb(225,195,170)';
+  // Left ear
+  ctx.beginPath();
+  ctx.moveTo(cx - 78, cy - 25);
+  ctx.bezierCurveTo(cx - 95, cy - 20, cx - 98, cy + 15, cx - 85, cy + 30);
+  ctx.bezierCurveTo(cx - 80, cy + 20, cx - 78, cy + 5, cx - 78, cy - 5);
+  ctx.closePath();
+  ctx.fill();
+  // Right ear
+  ctx.beginPath();
+  ctx.moveTo(cx + 78, cy - 25);
+  ctx.bezierCurveTo(cx + 95, cy - 20, cx + 98, cy + 15, cx + 85, cy + 30);
+  ctx.bezierCurveTo(cx + 80, cy + 20, cx + 78, cy + 5, cx + 78, cy - 5);
+  ctx.closePath();
+  ctx.fill();
+
+  // Inner ear details
+  ctx.strokeStyle = 'rgba(190,155,140,0.31)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx - 87, cy, 6, -Math.PI / 2, Math.PI / 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx + 87, cy, 6, Math.PI / 2, Math.PI * 1.5); ctx.stroke();
+  ctx.restore();
+}
+
+function drawNeck() {
+  ctx.save();
+  ctx.fillStyle = 'rgb(225,195,172)';
+  ctx.beginPath();
+  ctx.moveTo(cx - 35, cy + 115);
+  ctx.bezierCurveTo(cx - 38, cy + 160, cx - 40, cy + 200, cx - 50, cy + 240);
+  ctx.lineTo(cx + 50, cy + 240);
+  ctx.bezierCurveTo(cx + 40, cy + 200, cx + 38, cy + 160, cx + 35, cy + 115);
+  ctx.closePath();
+  ctx.fill();
+
+  // Neck shadow
+  for (let i = 0; i < 15; i++) {
+    let a = lerp(0.05, 0.004, i / 15);
+    let w = lerp(75, 10, i / 15);
+    ctx.fillStyle = `rgba(200,165,145,${a})`;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + 120, w / 2, 7.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawShirt() {
+  ctx.save();
+  ctx.fillStyle = 'rgb(240,238,235)';
+  ctx.beginPath();
+  ctx.moveTo(cx - 120, cy + 240);
+  ctx.bezierCurveTo(cx - 80, cy + 200, cx - 50, cy + 190, cx, cy + 200);
+  ctx.bezierCurveTo(cx + 50, cy + 190, cx + 80, cy + 200, cx + 120, cy + 240);
+  ctx.lineTo(cx + 160, cy + 340);
+  ctx.lineTo(cx - 160, cy + 340);
+  ctx.closePath();
+  ctx.fill();
+
+  // Collar V
+  ctx.strokeStyle = 'rgb(200,195,185)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(cx, cy + 200); ctx.lineTo(cx - 8, cy + 260); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy + 200); ctx.lineTo(cx + 8, cy + 260); ctx.stroke();
+
+  // Collar curves
+  ctx.strokeStyle = 'rgba(210,200,190,0.24)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx - 60, cy + 200);
+  ctx.bezierCurveTo(cx - 40, cy + 196, cx - 20, cy + 195, cx, cy + 200);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + 200);
+  ctx.bezierCurveTo(cx + 20, cy + 195, cx + 40, cy + 196, cx + 60, cy + 200);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawAura() {
+  ctx.save();
+  for (let i = 0; i < 25; i++) {
+    let a = lerp(0.06, 0, i / 25);
+    let r = lerp(140, 220, i / 25);
+    ctx.strokeStyle = `rgba(180,140,100,${a})`;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, r, r * 1.2, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawSignature() {
+  ctx.save();
+  ctx.fillStyle = 'rgba(120,90,70,0.59)';
+  ctx.font = 'italic 16px Georgia';
+  ctx.textAlign = 'right';
+  ctx.fillText('Claude — Self-Portrait (Canvas 2D), 2026', W - 30, H - 25);
+  ctx.restore();
+}
+
+function drawBrushOverlay() {
+  ctx.save();
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 200; i++) {
+    let x = rand(0, W), y = rand(0, H);
+    ctx.strokeStyle = `rgba(${rand(180,240)},${rand(170,220)},${rand(160,210)},${rand(0.01,0.05)})`;
+    ctx.lineWidth = rand(0.5, 2);
+    let len = rand(5, 25);
+    let angle = rand(0, Math.PI * 2);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + Math.cos(angle) * len, y + Math.sin(angle) * len);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// === RENDER ===
+drawGradientBG();
+drawPaperTexture();
+drawAura();
+drawShirt();
+drawNeck();
+drawEars();
+drawHair();
+drawFace();
+drawNose();
+drawEye(cx - 32, cy - 15, false);
+drawEye(cx + 32, cy - 15, true);
+drawEyebrows();
+drawMouth();
+drawBrushOverlay();
+drawSignature();
+</script>
+</body>
+</html>
