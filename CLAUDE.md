@@ -253,6 +253,14 @@ src/
      - **Collaborator** (Xule): body content → rendered with "context" label
      - **Witnesses** (optional): `witnesses` field → rendered with "witnesses" label, for Twitter reactions etc.
    - **Artifact viewer**: Pan/zoom with fullscreen mode (click "expand" button, Escape to close)
+   - **HTML / Interactive Artifacts**:
+     - Artifacts with `src` ending in `.html` render as `<iframe>` instead of `<img>`
+     - Detail page: iframe in same `70vh` container, fullscreen toggle, no pan/zoom
+     - Index page: iframe with `pointer-events: none` + overlay (clicks go to detail page)
+     - Optional `thumbnail` field: if set, index page uses static image instead of iframe
+     - Iframes use `sandbox="allow-scripts allow-same-origin"` for CDN library access (e.g., p5.js)
+     - `isHTMLFile` filter in `eleventy/filters.js` detects `.html`/`.htm` extensions
+     - HTML files go in `/assets/artifacts/{slug}/` (not `/assets/images/artifacts/`)
 
 4. **Thinking** (`src/thinking/`)
    - Layout: `layouts/thinking.njk`
@@ -331,9 +339,10 @@ title: lowercase title
 date: 2026-01-04
 series: artifacts
 creator: opus 4.5              # First word = family (opus)
-medium: svg                    # svg, js, ascii, code, drawing, etc.
+medium: svg                    # svg, js, ascii, code, drawing, etc.  (use "html · p5.js" for interactive)
 plottable: true                # Optional - can be pen plotted
-src: /assets/images/artifacts/filename.svg
+src: /assets/images/artifacts/filename.svg  # or /assets/artifacts/slug/file.html for interactive
+thumbnail: /assets/images/artifacts/thumb.png  # Optional - static image for index page instead of iframe
 keywords:
   - keyword1
 contextExcerpt:                # Array with stagger pattern (like prompts)
@@ -422,6 +431,7 @@ Defined in `eleventy/collections.js`:
 21. **Verifying AI-friendliness** - Test new endpoints with `curl` and `python3 -m json.tool` locally. AI chatbots may report false positives due to caching or access restrictions. Kimi agent mode tends to be most accurate for live verification.
 22. **Site-wide feed pattern** - Use `collections.writing | combineByDate(collections.portraits, collections.artifacts, collections.talks)` to merge collections by date. Filter defined in `eleventy/filters.js`. Each entry gets `<category term="writing"/>` etc. for content type.
 23. **Content-Type headers in vercel.json** - `.md` files get `text/markdown`, but other text files like `/llms.txt` need explicit headers added separately (e.g., `text/plain; charset=utf-8`)
+24. **Interactive artifact iframes on index** - Iframes capture pointer events; use `pointer-events: none` on the iframe + a transparent `<span class="artifact-specimen-overlay">` so the wrapping `<a>` stays clickable
 
 ## Commands
 
