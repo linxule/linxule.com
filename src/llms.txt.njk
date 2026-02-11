@@ -62,25 +62,38 @@ Navigate the work:
 
 ## Markdown Versions (For AI Systems)
 
-Every content page has a parallel `.md` version optimized for LLM consumption.
+Every content page has a parallel `.md` version optimized for LLM consumption. Append `.md` to the URL path.
 
-**How to access:** Append `.md` to any content URL:
-- `/writing/human-centric-ai-wrong-story` → `/writing/human-centric-ai-wrong-story.md`
-- `/making/portraits/portraits-2025-12-24-synaptic-bloom` → `/making/portraits/portraits-2025-12-24-synaptic-bloom.md`
-- `/making/artifacts/artifact-2026-01-04-response-to-lineage` → `/making/artifacts/artifact-2026-01-04-response-to-lineage.md`
-- `/talks/rethinking-human-ai-collaboration-interpretive-research` → `/talks/rethinking-human-ai-collaboration-interpretive-research.md`
+**What you get:** Clean markdown with metadata header (title, date, authors, keywords), full content without HTML/CSS/JS, image paths for reference, ~10x fewer tokens than parsing HTML.
 
-**Static pages also available:**
-- `/thinking` → `/thinking.md` (research framework)
-- `/cv` → `/cv.md` (full academic CV)
-- `/cv-zh` → `/cv-zh.md` (Chinese CV)
-- `/teaching` → `/teaching.md` (teaching materials)
+**Pattern:** `{url}.md` — e.g. `/writing/some-post` → `/writing/some-post.md`
 
-**What you get:**
-- Clean markdown with metadata header (title, date, authors, keywords)
-- Full article content without HTML/CSS/JavaScript
-- Image paths (absolute) for reference
-- ~10x fewer tokens than parsing HTML
+### Writing
+{% for post in collections.writing %}
+- [{{ post.data.title | safe }}](https://linxule.com/writing/{{ post.fileSlug }}.md)
+{%- endfor %}
+
+### Portraits
+{% for portrait in collections.portraits %}
+- [{{ portrait.data.title | safe }}](https://linxule.com/making/portraits/{{ portrait.fileSlug }}.md)
+{%- endfor %}
+
+### Artifacts
+{% for artifact in collections.artifacts %}
+- [{{ artifact.data.title | safe }}](https://linxule.com/making/artifacts/{{ artifact.fileSlug }}.md)
+{%- endfor %}
+
+### Talks
+{% for talk in collections.talks %}
+- [{{ talk.data.title | safe }}](https://linxule.com/talks/{{ talk.fileSlug }}.md)
+{%- endfor %}
+
+### Static Pages
+
+- [Thinking](https://linxule.com/thinking.md): Research framework — thesis, boundaries, observations, methods
+- [CV](https://linxule.com/cv.md): Full academic CV in English
+- [CV (Chinese)](https://linxule.com/cv-zh.md): 中文简历
+- [Teaching](https://linxule.com/teaching.md): Courses and curriculum materials
 
 ---
 
