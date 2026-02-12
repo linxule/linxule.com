@@ -432,7 +432,7 @@ Defined in `eleventy/collections.js`:
 13. **llms.txt H2 headings** - Reserved for URL file lists per llmstxt.org spec; use **bold** for narrative sections
 14. **eleventyExcludeFromCollections** - Use on files with manual sitemap entries (like llms.txt.njk) to prevent duplication
 15. **vercel.json headers** - Can add custom HTTP headers; useful for AI discoverability (`Link` header with `rel="llms-txt"`)
-16. **New content type checklist** - When adding a section (like talks), update: `collections.js`, homepage nav in `index.njk`, `llms.txt.njk`, `tag.njk` (add territory support)
+16. **New content type checklist** - When adding a section (like talks), update: `collections.js`, homepage nav in `index.njk`, `llms.txt.njk`, `tag.njk` (add territory support). Also ensure: grayscale(30%) hover-reveal on both index and detail pages, mobile override at 768px disabling the effect
 17. **Nunjucks regex in replace** - Use `| replace(r/\/$/, "")` for regex patterns, not `| replace("/", "")` which replaces ALL occurrences
 18. **Custom filters for array operations** - Nunjucks can't natively merge and sort arrays; use custom filters like `combineByDate` in `eleventy/filters.js`
 19. **isoDate filter** - Use `{{ "" | isoDate }}` for YYYY-MM-DD format (no argument = current date); defined in `eleventy/filters.js`
@@ -443,6 +443,7 @@ Defined in `eleventy/collections.js`:
 24. **Interactive artifact iframes on index** - Iframes capture pointer events; use `pointer-events: none` on the iframe + a transparent `<span class="artifact-specimen-overlay">` so the wrapping `<a>` stays clickable
 25. **HTML artifact files — no standalone styling** - Don't add dark `body` backgrounds, `border-radius`, or `box-shadow` to HTML files in `/assets/artifacts/`. They embed as iframes in the paper aesthetic; standalone decoration clashes on narrow screens. Keep `body { margin: 0; overflow: hidden; }` only.
 26. **Gallery vs single artifact** - If an artifact has multiple pieces, use `images[]` array in frontmatter (renders 2x2 grid). Single pieces use `src` field only. Don't mix both.
+27. **Grayscale reveal transitions** - Use `transition: filter 0.5s ease, opacity 0.5s ease` (not `all 0.5s ease`) on pages with JS-driven transforms (pan/zoom). `all` would accidentally animate transform properties.
 
 ## Commands
 
