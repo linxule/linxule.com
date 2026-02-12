@@ -22,6 +22,7 @@ marker: "making"
         scroll-snap-type: y mandatory;
         scroll-behavior: smooth;
         overscroll-behavior: contain;
+        scrollbar-width: none; /* Firefox */
     }
 
     /* Hide scrollbar but keep functionality */
@@ -322,6 +323,7 @@ marker: "making"
         /* Reset main.css .specimen container-level filter so only img-level applies */
         filter: none;
         opacity: 1;
+        transition: none; /* Override main.css transition: all */
     }
 
     .specimen img {
@@ -605,6 +607,11 @@ marker: "making"
         }
     }
 
+    @media (prefers-reduced-motion: reduce) {
+        .making-book {
+            scroll-behavior: auto;
+        }
+    }
 
 </style>
 
@@ -851,24 +858,23 @@ marker: "making"
         tools: document.getElementById('tools')
     };
 
-    // Restore scroll position on load
-    const savedIndex = sessionStorage.getItem(STORAGE_KEY);
-    if (savedIndex !== null) {
-        const index = parseInt(savedIndex, 10);
-        if (index > 0 && index < allSpreads.length) {
-            setTimeout(() => {
-                allSpreads[index].scrollIntoView({ behavior: 'instant' });
-            }, 0);
-        }
-    }
-
-    // Handle hash navigation (e.g. /making/#artifacts)
+    // Hash navigation takes priority over scroll restore
     if (window.location.hash) {
         const target = sectionTargets[window.location.hash.slice(1)];
         if (target) {
             setTimeout(() => {
                 target.scrollIntoView({ behavior: 'instant' });
-            }, 50);
+            }, 0);
+        }
+    } else {
+        const savedIndex = sessionStorage.getItem(STORAGE_KEY);
+        if (savedIndex !== null) {
+            const index = parseInt(savedIndex, 10);
+            if (index > 0 && index < allSpreads.length) {
+                setTimeout(() => {
+                    allSpreads[index].scrollIntoView({ behavior: 'instant' });
+                }, 0);
+            }
         }
     }
 
@@ -898,11 +904,12 @@ marker: "making"
     });
 
     // Section dot click handlers
+    const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
     dots.forEach(dot => {
         dot.addEventListener('click', () => {
             const target = sectionTargets[dot.dataset.section];
             if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
+                target.scrollIntoView({ behavior: scrollBehavior });
             }
         });
     });

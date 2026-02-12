@@ -24,6 +24,7 @@ eleventyComputed:
         scroll-snap-type: y mandatory;
         scroll-behavior: smooth;
         overscroll-behavior: contain;
+        scrollbar-width: none; /* Firefox */
     }
 
     .spread-book::-webkit-scrollbar {
@@ -211,6 +212,7 @@ eleventyComputed:
         /* Reset main.css .specimen container-level filter (Gotcha #29) */
         filter: none;
         opacity: 1;
+        transition: none; /* Override main.css transition: all */
     }
 
     .specimen img {
@@ -335,6 +337,12 @@ eleventyComputed:
             opacity: 1;
         }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+        .spread-book {
+            scroll-behavior: auto;
+        }
+    }
 </style>
 
 <div class="spread-book" id="spread-book">
@@ -415,9 +423,10 @@ eleventyComputed:
         }
     });
 
+    const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
     dots.forEach((dot, i) => {
         dot.addEventListener('click', () => {
-            spreads[i].scrollIntoView({ behavior: 'smooth' });
+            spreads[i].scrollIntoView({ behavior: scrollBehavior });
         });
     });
 

@@ -28,7 +28,7 @@
 
     const lightboxImg = lightbox.querySelector('img');
     const closeBtn = lightbox.querySelector('.lightbox-close');
-    const specimens = document.querySelectorAll('.specimen:not(.specimen--interactive)');
+    const specimens = document.querySelectorAll('.specimen[data-src]');
 
     let triggerElement = null; // Track which element opened the lightbox
 

@@ -57,14 +57,14 @@ Text is shaped, not just displayed. When adding new portraits, artifacts, or sec
 
 **Prompt/Context Lines (CSS stagger pattern):**
 ```css
-.prompt-line:nth-child(1) { margin-left: 0; }
-.prompt-line:nth-child(2) { margin-left: 1.5rem; }
-.prompt-line:nth-child(3) { margin-left: 0.75rem; }
-.prompt-line:nth-child(4) { margin-left: 2.25rem; }
-.prompt-line:nth-child(5) { margin-left: 0.5rem; }
-.prompt-line:nth-child(6) { margin-left: 1.75rem; }
-.prompt-line:nth-child(7) { margin-left: 1rem; }
-.prompt-line:nth-child(8) { margin-left: 2rem; }
+.spread-line:nth-child(1) { margin-left: 0; }
+.spread-line:nth-child(2) { margin-left: 1.5rem; }
+.spread-line:nth-child(3) { margin-left: 0.75rem; }
+.spread-line:nth-child(4) { margin-left: 2.25rem; }
+.spread-line:nth-child(5) { margin-left: 0.5rem; }
+.spread-line:nth-child(6) { margin-left: 1.75rem; }
+.spread-line:nth-child(7) { margin-left: 1rem; }
+.spread-line:nth-child(8) { margin-left: 2rem; }
 ```
 
 **Section Introduction Poems (CSS):**
@@ -89,7 +89,7 @@ prompt:   # or contextExcerpt for artifacts
 The template handles both simple strings and object syntax:
 ```njk
 {%- for line in artifact.data.contextExcerpt -%}
-<span class="context-line{% if line.accident %} accident{% endif %}">
+<span class="spread-line{% if line.accident %} accident{% endif %}">
   {{ line.text | default(line) }}
 </span>
 {%- endfor -%}
@@ -303,8 +303,12 @@ The `/making/` page uses a single `.making-book` scroll-snap container holding b
 - `.specimen` (individual image/iframe), `.specimen--interactive` (iframe variant with overlay)
 - `data-type="portrait"` / `data-type="artifact"` on spreads for type identification
 - Artifacts with `images[]` render the same 2x2 grid as portraits; single `src` artifacts get `.single` variant
-- All pages use `{% include "components/lightbox.njk" %}` for accessible image zoom (not inline JS)
-- All pages use scoped `transition: filter 0.5s ease, opacity 0.5s ease` (not `all`)
+- All 6 pages use `{% include "components/lightbox.njk" %}` targeting `.specimen[data-src]` (Gotcha #31)
+- All pages use scoped `transition: filter 0.5s ease, opacity 0.5s ease` (not `all`) (Gotcha #27)
+- All pages reset `.specimen { filter: none; opacity: 1; transition: none }` (Gotcha #29)
+- All scroll containers have `scrollbar-width: none` for Firefox (Gotcha #33)
+- All pages have `@media (prefers-reduced-motion: reduce)` for scoped scroll-behavior (Gotcha #34)
+- Index page uses if/else for hash vs scroll restore priority (Gotcha #35)
 
 Key CSS: `overscroll-behavior: contain` on all scroll containers prevents scrolling past the book into empty space.
 
@@ -466,10 +470,13 @@ Defined in `eleventy/collections.js`:
 26. **Gallery vs single artifact** - If an artifact has multiple pieces, use `images[]` array in frontmatter (renders 2x2 grid). Single pieces use `src` field only. Don't mix both.
 27. **Grayscale reveal transitions** - Use `transition: filter 0.5s ease, opacity 0.5s ease` (not `all 0.5s ease`) everywhere. `all` animates unintended properties (dimensions during image load, transforms during pan/zoom). All making pages now use scoped transitions.
 28. **`overscroll-behavior: contain` traps outer content** — When a scroll-snap container has this property, content OUTSIDE the container becomes unreachable. Tools section, footer, etc. must be INSIDE the container (as `.back-matter` spread).
-29. **main.css `.specimen` has container-level grayscale** — Global `.specimen { opacity: 0.5; filter: grayscale(100%) }` compounds with img-level overrides. When overriding grayscale on `.specimen img`, also reset the container: `.specimen { filter: none; opacity: 1; }`. All making pages (index + 4 filter pages) do this; portrait detail page handles it differently.
+29. **main.css `.specimen` has container-level grayscale** — Global `.specimen { opacity: 0.5; filter: grayscale(100%); transition: all 0.5s ease }` compounds with img-level overrides. When overriding grayscale on `.specimen img`, also reset the container: `.specimen { filter: none; opacity: 1; transition: none; }`. The `transition: none` prevents a flash on page load where the global `transition: all` animates the reset. All making pages (index + 4 filter pages) do this; portrait detail page handles it differently.
 30. **CSS Grid stagger + `align-items: stretch`** — Using `margin-top` on even grid items for visual stagger causes odd items to stretch (default `align-items: stretch`), exposing background below images. Fix: `align-items: start` on the grid container.
-31. **Shared lightbox component** — Use `{% include "components/lightbox.njk" %}` instead of inline lightbox JS. The shared component has ARIA attributes, focus trap, keyboard nav (Enter/Space to open, Escape to close), and focus return. All making pages now use it. The component excludes `.specimen--interactive` elements automatically.
+31. **Shared lightbox component** — Use `{% include "components/lightbox.njk" %}` instead of inline lightbox JS. The shared component has ARIA attributes, focus trap, keyboard nav (Enter/Space to open, Escape to close), and focus return. All 6 making pages use it (index + 4 filter pages). Targets `.specimen[data-src]` — only `<figure>` elements with explicit `data-src` get lightbox treatment, naturally excluding `<a>` navigation links and `.specimen--interactive` iframes.
 32. **Guard undefined arrays in templates** — `contextExcerpt`, `prompt`, `images` can be undefined. Wrap in `{% if array %}` before accessing `.length` or iterating. Nunjucks won't crash but renders empty elements that create layout gaps.
+33. **Firefox scrollbar hiding** — `::-webkit-scrollbar { width: 0 }` only works in Chromium/Safari. Add `scrollbar-width: none` on scroll-snap containers (`.making-book`, `.spread-book`) for Firefox.
+34. **`prefers-reduced-motion` on scoped containers** — Global `html { scroll-behavior: auto }` in a reduced-motion media query does NOT override scoped `scroll-behavior: smooth` on `.making-book`/`.spread-book`. Each container needs its own `@media (prefers-reduced-motion: reduce) { .container { scroll-behavior: auto; } }`. Also use `const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'` for JS `scrollIntoView` calls.
+35. **Hash navigation vs scroll restore** — When a page has both hash navigation (`#artifacts`) and sessionStorage scroll restore, use `if/else` (hash first). Sequential checks cause a double-scroll flash where scroll restore fires then hash overrides it.
 
 ## Commands
 
@@ -507,7 +514,7 @@ git push  # Auto-deploys via Vercel Git integration
 The making page saves spread index to sessionStorage (`making-scroll-position`). Works for the single `.making-book` container. Hash navigation (`#artifacts`, `#tools`) also supported for direct section access.
 
 ### Template Unification (Done)
-Making pages unified to single `.spread` system. Old class names (`.portrait-spread`, `.artifact-spread`, `.prompt-line`, `.context-line`, `.artifact-specimen`, `.portrait-book`, `.artifact-book`) replaced with unified names (`.spread`, `.spread-line`, `.specimen`, `.spread-book`). Artifacts with `images[]` now render the same 2x2 grid as portraits on the index page. All pages share: accessible lightbox via `components/lightbox.njk`, scoped transitions (Gotcha #27), `overscroll-behavior: contain` (Gotcha #28), container-level specimen reset (Gotcha #29), `contextExcerpt` undefined guards (Gotcha #32), and consistent mobile overrides (768px: no grayscale, no stagger, `.spread-poem` at 0.95rem). Creator filter pages support HTML artifacts via `isHTMLFile` conditional.
+Making pages unified to single `.spread` system. Old class names (`.portrait-spread`, `.artifact-spread`, `.prompt-line`, `.context-line`, `.artifact-specimen`, `.portrait-book`, `.artifact-book`) replaced with unified names (`.spread`, `.spread-line`, `.specimen`, `.spread-book`). Artifacts with `images[]` now render the same 2x2 grid as portraits on the index page. All 6 pages share: accessible lightbox via `components/lightbox.njk` targeting `[data-src]` (Gotcha #31), scoped transitions (Gotcha #27), `overscroll-behavior: contain` (Gotcha #28), container-level specimen reset with `transition: none` (Gotcha #29), Firefox scrollbar hiding (Gotcha #33), `prefers-reduced-motion` for scoped scroll-behavior (Gotcha #34), `contextExcerpt` undefined guards (Gotcha #32), and consistent mobile overrides (768px: no grayscale, no stagger, `.spread-poem` at 0.95rem). Creator filter pages support multi-image artifacts (`images[]`, `thumbnail`, `isHTMLFile` conditional chain) matching the index page.
 
 ## Design Tokens
 
