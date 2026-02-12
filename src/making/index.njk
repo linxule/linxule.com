@@ -550,7 +550,22 @@ marker: "making"
     }
 
     /* ========================================
-       Tools Section (Outside Book)
+       Back Matter (Tools + Footer)
+       ======================================== */
+
+    .back-matter {
+        min-height: 100vh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 4rem 0;
+        box-sizing: border-box;
+    }
+
+    /* ========================================
+       Tools Section
        ======================================== */
 
     .tools-section {
@@ -743,6 +758,12 @@ marker: "making"
         /* Tools section */
         .tools-section {
             padding: 3rem 1.5rem;
+        }
+
+        .back-matter {
+            min-height: auto;
+            scroll-snap-align: none;
+            scroll-snap-stop: normal;
         }
     }
 
@@ -945,6 +966,52 @@ marker: "making"
     </section>
     {%- endfor -%}
 
+    <!-- ============================
+         Back Matter: Tools + Footer
+         ============================ -->
+
+    <section class="back-matter">
+        <section class="tools-section">
+            <div class="tools-label">Tools</div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3 class="tool-title"><a href="https://research-memex.org">Research Memex →</a></h3>
+                    <p class="tool-description">Making human-AI research more auditable.</p>
+                </div>
+                <div class="tool-card">
+                    <h3 class="tool-title"><a href="https://github.com/linxule/openinterviewer">Open Interviewer →</a></h3>
+                    <p class="tool-description">Qualitative interviews at scale.</p>
+                </div>
+                <div class="tool-card">
+                    <h3 class="tool-title"><a href="https://github.com/linxule/openai-assistants-discord-bot">Discord Literature Bot →</a></h3>
+                    <p class="tool-description">Discord chatbot with custom knowledge bases.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tools-section">
+            <div class="tools-label">GPTs</div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3 class="tool-title"><a href="https://chat.openai.com/g/g-FvlPlwLn1-bertopic-navigator">BERTopic Navigator →</a></h3>
+                    <p class="tool-description">Topic modeling made navigable.</p>
+                </div>
+                <div class="tool-card">
+                    <h3 class="tool-title"><a href="https://chat.openai.com/g/g-wDUM3ows9-red-pen-scholar" class="accident">Red Pen Scholar →</a></h3>
+                    <p class="tool-description">Little Red Schoolhouse writing principles.</p>
+                </div>
+                <div class="tool-card">
+                    <h3 class="tool-title"><a href="https://chat.openai.com/g/g-pIFoLpzVx-academic-notes-assistant">Academic Notes Assistant →</a></h3>
+                    <p class="tool-description">Structured notes for research.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <a href="/" class="back-link">← return</a>
+        </footer>
+    </section>
+
 </div>
 
 <!-- Combined Navigation Dots -->
@@ -959,47 +1026,6 @@ marker: "making"
     <button class="book-nav-dot" data-target="{{ portraitCount + 1 + loop.index }}" aria-label="Go to {{ artifact.data.title }}"></button>
     {%- endfor -%}
 </nav>
-
-<!-- Tools Section (Outside Book) -->
-<section class="tools-section">
-    <div class="tools-label">Tools</div>
-    <div class="tools-grid">
-        <div class="tool-card">
-            <h3 class="tool-title"><a href="https://research-memex.org">Research Memex →</a></h3>
-            <p class="tool-description">Making human-AI research more auditable.</p>
-        </div>
-        <div class="tool-card">
-            <h3 class="tool-title"><a href="https://github.com/linxule/openinterviewer">Open Interviewer →</a></h3>
-            <p class="tool-description">Qualitative interviews at scale.</p>
-        </div>
-        <div class="tool-card">
-            <h3 class="tool-title"><a href="https://github.com/linxule/openai-assistants-discord-bot">Discord Literature Bot →</a></h3>
-            <p class="tool-description">Discord chatbot with custom knowledge bases.</p>
-        </div>
-    </div>
-</section>
-
-<section class="tools-section">
-    <div class="tools-label">GPTs</div>
-    <div class="tools-grid">
-        <div class="tool-card">
-            <h3 class="tool-title"><a href="https://chat.openai.com/g/g-FvlPlwLn1-bertopic-navigator">BERTopic Navigator →</a></h3>
-            <p class="tool-description">Topic modeling made navigable.</p>
-        </div>
-        <div class="tool-card">
-            <h3 class="tool-title"><a href="https://chat.openai.com/g/g-wDUM3ows9-red-pen-scholar" class="accident">Red Pen Scholar →</a></h3>
-            <p class="tool-description">Little Red Schoolhouse writing principles.</p>
-        </div>
-        <div class="tool-card">
-            <h3 class="tool-title"><a href="https://chat.openai.com/g/g-pIFoLpzVx-academic-notes-assistant">Academic Notes Assistant →</a></h3>
-            <p class="tool-description">Structured notes for research.</p>
-        </div>
-    </div>
-</section>
-
-<footer class="page-footer">
-    <a href="/" class="back-link">← return</a>
-</footer>
 
 <script>
 (function() {
