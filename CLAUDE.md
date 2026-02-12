@@ -287,6 +287,18 @@ src/
 
 Global styles live in `src/assets/css/main.css`.
 
+### Making Page Architecture
+
+The `/making/` page uses a single `.making-book` scroll-snap container holding both portrait and artifact sections (merged from separate containers). Structure:
+- **Chapter 1**: Portrait header spread + portrait spreads
+- **Chapter 2**: Artifact header spread (chapter divider) + artifact spreads
+- **Back matter**: `.back-matter` spread containing tools sections + footer (must be inside the book — see gotcha #28)
+- **Section nav**: 3 dots (Portraits · Artifacts · Tools) using `data-section` + element IDs, not per-item dots. Scales to any collection size.
+- **Mobile (768px)**: scroll-snap disabled, everything stacks, nav dots hidden
+- **Filter pages** (`/making/prompter/*`, `/making/creator/*`) still use independent `.portrait-book` / `.artifact-book` containers (single-type pages)
+
+Key CSS: `overscroll-behavior: contain` prevents scrolling past the book into empty space.
+
 ## Content Patterns
 
 ### Writing Post Frontmatter
@@ -444,6 +456,9 @@ Defined in `eleventy/collections.js`:
 25. **HTML artifact files — no standalone styling** - Don't add dark `body` backgrounds, `border-radius`, or `box-shadow` to HTML files in `/assets/artifacts/`. They embed as iframes in the paper aesthetic; standalone decoration clashes on narrow screens. Keep `body { margin: 0; overflow: hidden; }` only.
 26. **Gallery vs single artifact** - If an artifact has multiple pieces, use `images[]` array in frontmatter (renders 2x2 grid). Single pieces use `src` field only. Don't mix both.
 27. **Grayscale reveal transitions** - Use `transition: filter 0.5s ease, opacity 0.5s ease` (not `all 0.5s ease`) on pages with JS-driven transforms (pan/zoom). `all` would accidentally animate transform properties.
+28. **`overscroll-behavior: contain` traps outer content** — When a scroll-snap container has this property, content OUTSIDE the container becomes unreachable. Tools section, footer, etc. must be INSIDE the container (as `.back-matter` spread).
+29. **main.css `.specimen` has container-level grayscale** — Global `.specimen { opacity: 0.5; filter: grayscale(100%) }` compounds with img-level overrides. When overriding grayscale on `.specimen img`, also reset the container: `.specimen { filter: none; opacity: 1; }`. The making index page does this; portrait detail page handles it differently.
+30. **CSS Grid stagger + `align-items: stretch`** — Using `margin-top` on even grid items for visual stagger causes odd items to stretch (default `align-items: stretch`), exposing background below images. Fix: `align-items: start` on the grid container.
 
 ## Commands
 
@@ -477,10 +492,11 @@ git push  # Auto-deploys via Vercel Git integration
 
 ## Known Improvements (Backlog)
 
-### Portrait Book Spread Memory
-The making/portraits index uses scroll-snap spreads, but scroll restoration uses pixel positions. When returning from a portrait detail page, the spread restoration may be imprecise.
+### Making Page Scroll Memory
+The making page saves spread index to sessionStorage (`making-scroll-position`). Works for the single `.making-book` container. Hash navigation (`#artifacts`, `#tools`) also supported for direct section access.
 
-**Future fix**: Save spread index (0, 1, 2...) instead of pixel position for the making section. Implement when/if users report navigation issues.
+### Template Unification (Planned)
+Portraits and artifacts on the making index page use separate spread templates (`.portrait-spread`, `.artifact-spread`) with duplicated CSS. A unified spread component could simplify the code — both types show text (prompt/context) on the left and specimens on the right. The artifact index currently shows only one image per spread; portraits show a 2x2 grid from `images[]`.
 
 ## Design Tokens
 

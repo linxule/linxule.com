@@ -302,6 +302,9 @@ marker: "making"
         display: flex;
         align-items: center;
         justify-content: center;
+        /* Reset main.css .specimen container-level filter so only img-level applies */
+        filter: none;
+        opacity: 1;
     }
 
     .specimen img {
@@ -968,7 +971,7 @@ marker: "making"
          Back Matter: Tools + Footer
          ============================ -->
 
-    <section class="back-matter">
+    <section class="back-matter" id="tools">
         <section class="tools-section">
             <div class="tools-label">Tools</div>
             <div class="tools-grid">
@@ -1012,17 +1015,13 @@ marker: "making"
 
 </div>
 
-<!-- Combined Navigation Dots -->
+<!-- Section Navigation -->
 <nav class="book-nav" id="book-nav">
-    <button class="book-nav-dot active" data-target="0" aria-label="Go to portraits introduction"></button>
-    {%- for portrait in collections.portraits -%}
-    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ portrait.data.title }}"></button>
-    {%- endfor -%}
+    <button class="book-nav-dot active" data-section="portraits" aria-label="Portraits"></button>
     <span class="book-nav-separator"></span>
-    <button class="book-nav-dot" data-target="{{ portraitCount + 1 }}" aria-label="Go to artifacts introduction"></button>
-    {%- for artifact in collections.artifacts -%}
-    <button class="book-nav-dot" data-target="{{ portraitCount + 1 + loop.index }}" aria-label="Go to {{ artifact.data.title }}"></button>
-    {%- endfor -%}
+    <button class="book-nav-dot" data-section="artifacts" aria-label="Artifacts"></button>
+    <span class="book-nav-separator"></span>
+    <button class="book-nav-dot" data-section="tools" aria-label="Tools"></button>
 </nav>
 
 <script>
@@ -1032,6 +1031,18 @@ marker: "making"
     const dots = document.querySelectorAll('#book-nav .book-nav-dot');
     const scrollHint = document.getElementById('scroll-hint');
     const STORAGE_KEY = 'making-scroll-position';
+
+    // Section boundaries
+    const portraitCount = book.querySelectorAll('.portrait-spread').length;
+    const artifactCount = book.querySelectorAll('.artifact-spread').length;
+    const totalSpreads = portraitCount + artifactCount;
+
+    // Section targets for dot clicks
+    const sectionTargets = {
+        portraits: document.getElementById('portraits'),
+        artifacts: document.getElementById('artifacts'),
+        tools: document.getElementById('tools')
+    };
 
     // Restore scroll position on load
     const savedIndex = sessionStorage.getItem(STORAGE_KEY);
@@ -1045,13 +1056,20 @@ marker: "making"
     }
 
     // Handle hash navigation (e.g. /making/#artifacts)
-    if (window.location.hash === '#artifacts') {
-        const artifactHeader = book.querySelector('.artifact-spread.header-spread');
-        if (artifactHeader) {
+    if (window.location.hash) {
+        const target = sectionTargets[window.location.hash.slice(1)];
+        if (target) {
             setTimeout(() => {
-                artifactHeader.scrollIntoView({ behavior: 'instant' });
+                target.scrollIntoView({ behavior: 'instant' });
             }, 50);
         }
+    }
+
+    // Determine active section from scroll position
+    function getActiveSection(currentIndex) {
+        if (currentIndex < portraitCount) return 'portraits';
+        if (currentIndex < totalSpreads) return 'artifacts';
+        return 'tools';
     }
 
     // Scroll handler
@@ -1062,8 +1080,9 @@ marker: "making"
 
         sessionStorage.setItem(STORAGE_KEY, currentIndex.toString());
 
-        dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentIndex);
+        const activeSection = getActiveSection(currentIndex);
+        dots.forEach(dot => {
+            dot.classList.toggle('active', dot.dataset.section === activeSection);
         });
 
         if (scrollPos > 50 && scrollHint) {
@@ -1071,11 +1090,12 @@ marker: "making"
         }
     });
 
-    // Dot click handlers
-    dots.forEach((dot, i) => {
+    // Section dot click handlers
+    dots.forEach(dot => {
         dot.addEventListener('click', () => {
-            if (i < allSpreads.length) {
-                allSpreads[i].scrollIntoView({ behavior: 'smooth' });
+            const target = sectionTargets[dot.dataset.section];
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
