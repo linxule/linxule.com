@@ -209,6 +209,17 @@ marker: "making"
         max-height: 90%;
         pointer-events: none;
         user-select: none;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: filter 0.5s ease, opacity 0.5s ease;
+    }
+
+    .artifact-display:hover .artifact-viewport img,
+    .artifact-display:hover .artifact-viewport svg,
+    .artifact-display.fullscreen .artifact-viewport img,
+    .artifact-display.fullscreen .artifact-viewport svg {
+        filter: grayscale(0%);
+        opacity: 1;
     }
 
     /* Interactive HTML artifacts (iframe) — single */
@@ -225,6 +236,15 @@ marker: "making"
         height: 100%;
         border: none;
         display: block;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: filter 0.5s ease, opacity 0.5s ease;
+    }
+
+    .artifact-display--interactive:hover .artifact-iframe,
+    .artifact-display--interactive.fullscreen .artifact-iframe {
+        filter: grayscale(0%);
+        opacity: 1;
     }
 
     .artifact-display--interactive .zoom-hint {
@@ -253,10 +273,18 @@ marker: "making"
         border: none;
         display: block;
         pointer-events: none;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: filter 0.5s ease, opacity 0.5s ease;
     }
 
     .artifact-gallery-item:hover {
         border-color: var(--bloom);
+    }
+
+    .artifact-gallery-item:hover iframe {
+        filter: grayscale(0%);
+        opacity: 1;
     }
 
     .artifact-gallery-item .specimen-num {
@@ -504,6 +532,14 @@ marker: "making"
 
         .artifact-display {
             height: 50vh;
+        }
+
+        .artifact-viewport img,
+        .artifact-viewport svg,
+        .artifact-iframe,
+        .artifact-gallery-item iframe {
+            filter: none;
+            opacity: 1;
         }
 
         .artifact-gallery {
