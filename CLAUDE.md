@@ -157,10 +157,11 @@ Multiple signals help AI systems find llms.txt:
 - **sr-only breadcrumb**: Hidden text in `partials/ai-breadcrumb.njk` (included on every page)
 - **ai-hint on homepage**: Background-color-matching text in index.njk (invisible to humans, readable by AI text extraction)
 - **Markdown versions**: Every content page has `.md` version (templates in `src/md-outputs/`)
+- **Content negotiation**: `Accept: text/markdown` header → Vercel middleware rewrites to `.md` version (`middleware.ts`)
 - **Content index**: `/site-index.json` - JSON manifest of all pages with metadata
 - **AI redirects**: `/ai` and `/for-ai` redirect to `/llms.txt` (vercel.json)
 
-**Key files**: `vercel.json` (headers, redirects), `base.njk` (link rel, JSON-LD Person schema), `ai-breadcrumb.njk` (sr-only text), `robots.txt.njk`, `sitemap.xml.njk`, `site-index.json.njk`, `feed.njk` (site-wide Atom), `src/md-outputs/*.njk` (markdown templates)
+**Key files**: `vercel.json` (headers, redirects), `middleware.ts` (Accept header content negotiation), `base.njk` (link rel, JSON-LD Person schema), `ai-breadcrumb.njk` (sr-only text), `robots.txt.njk`, `sitemap.xml.njk`, `site-index.json.njk`, `feed.njk` (site-wide Atom), `src/md-outputs/*.njk` (markdown templates)
 
 ### LLM-Friendly Features
 
@@ -478,6 +479,9 @@ Defined in `eleventy/collections.js`:
 33. **Firefox scrollbar hiding** — `::-webkit-scrollbar { width: 0 }` only works in Chromium/Safari. Add `scrollbar-width: none` on scroll-snap containers (`.making-book`, `.spread-book`) for Firefox.
 34. **`prefers-reduced-motion` on scoped containers** — Global `html { scroll-behavior: auto }` in a reduced-motion media query does NOT override scoped `scroll-behavior: smooth` on `.making-book`/`.spread-book`. Each container needs its own `@media (prefers-reduced-motion: reduce) { .container { scroll-behavior: auto; } }`. Also use `const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'` for JS `scrollIntoView` calls.
 35. **Hash navigation vs scroll restore** — When a page has both hash navigation (`#artifacts`) and sessionStorage scroll restore, use `if/else` (hash first). Sequential checks cause a double-scroll flash where scroll restore fires then hash overrides it.
+36. **Vercel middleware + Eleventy CommonJS** — `middleware.ts` uses ESM (`import`/`export`), but `.eleventy.js` uses CommonJS (`require`/`module.exports`). Do NOT add `"type": "module"` to `package.json` — it would break the Eleventy build. Vercel's edge runtime handles `.ts` files natively regardless of module type.
+37. **Accept header parsing** — Use proper media type extraction (`split(',')` then `split(';')[0].trim()`) for exact match, not `includes('text/markdown')` which is a substring check that false-positives on `text/markdown-extended` etc.
+38. **Vercel matcher `:path` vs `:path*`** — Use `:path` (exactly one required segment) not `:path*` (zero or more). `:path*` triggers middleware on index pages like `/writing/` that don't have `.md` counterparts, wasting edge function invocations.
 
 ## Commands
 
@@ -495,6 +499,7 @@ bun run build  # Production build + Pagefind index
 
 ### Configuration
 - **vercel.json**: Handles all redirects (legacy URLs, case sensitivity, Chinese shortcuts)
+- **middleware.ts**: Vercel Edge Middleware for `Accept: text/markdown` content negotiation (rewrites to `.md` files)
 - **trailingSlash**: `false` - URLs normalize without trailing slashes
 - **No _redirects file**: Removed in favor of vercel.json (Netlify format not used)
 
