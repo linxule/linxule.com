@@ -194,7 +194,7 @@ Template gotchas:
 - Static pages live at `src/{name}/index.md`, not root level
 - **selectattr doesn't work reliably** - use explicit loop instead: `{% for page in collections.all %}{% if page.url == "/cv/" or page.url == "/cv" %}...{% endif %}{% endfor %}`
 
-Vercel serves `.md` files with `Content-Type: text/markdown; charset=utf-8` header (configured in vercel.json). Note: Accept header content negotiation doesn't work for static sites - use direct `.md` URLs instead.
+Vercel serves `.md` files with `Content-Type: text/markdown; charset=utf-8` header (configured in vercel.json). `Accept: text/markdown` content negotiation works via `middleware.ts` — agents requesting markdown get transparently rewritten to the `.md` version (e.g. `/writing/some-post` → `/writing/some-post.md`). Direct `.md` URLs also still work.
 
 ### Brand Decisions
 
@@ -212,6 +212,7 @@ Vercel serves `.md` files with `Content-Type: text/markdown; charset=utf-8` head
 ### Key Files
 ```
 .eleventy.js              # Main config (imports from eleventy/)
+middleware.ts             # Vercel Edge Middleware (Accept: text/markdown → .md rewrite)
 vercel.json               # Vercel deployment config (redirects, trailingSlash)
 eleventy/
   collections.js          # Content collections (writing, portraits, artifacts, tags)
