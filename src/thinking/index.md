@@ -15,7 +15,7 @@ boundaries:
     right: network
 
 problem:
-  - "Organizational theory assumes humans are the only actors. But algorithms are increasingly part of decision-making, and our frameworks weren't built for that."
+  - "Organizational theory assumes human actors. Algorithms are part of decision-making now, and the frameworks were built when algorithms are simple immovable objects."
   - "They assume stable actors in defined roles. When tools start behaving more like participants, the theories stop helping."
 
 observations_intro: "These observations share a common source—each points to a boundary that no longer holds the way it once did."
@@ -35,17 +35,17 @@ observations:
       - text: "We can articulate things we can't actually understand"
         accident: true
 
-  - title: "The interesting dynamics emerge from interaction"
+  - title: "What emerges from collaboration resists attribution"
     fragments:
-      - "From the back-and-forth between humans and AI"
-      - "Where neither operates alone"
+      - "Human-AI work produces things neither would reach alone"
+      - "The output belongs to the interaction, not to either side"
 
   - title: "Old coordination patterns keep showing up"
     fragments:
       - "London tailors coordinate through shared understanding, not formal structure"
       - "Their patterns may matter more as algorithmic participants make hierarchy less stable"
 
-  - title: "Decentralization and hierarchy have a complex relationship"
+  - title: "Decentralization reconstructs hierarchy through algorithms"
     fragments:
       - "Effective decentralization often means"
       - "making hierarchy transparent and bounded"
@@ -53,6 +53,7 @@ observations:
 working_on:
   - "How AI and organizations form feedback loops that create emergent forms of agency."
   - "DAOs as sites where I develop and test theory — code as constitution, tokens as coordination."
+  - "Two sites for one question — formalize an organizational function, discover what the formalization misses."
   - "Coordination through craft and shared understanding — the London tailoring study."
   - "Governance when agency emerges from dynamics, rather than residing in any single actor."
 
