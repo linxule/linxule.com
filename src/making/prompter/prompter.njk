@@ -11,35 +11,26 @@ eleventyComputed:
 ---
 
 <style>
-    /* Override base layout for full-bleed book */
     main {
         padding: 0;
         max-width: none;
         margin: 0;
     }
 
-    /* ========================================
-       Portrait Book - Scroll Snap Container
-       ======================================== */
-
-    .portrait-book {
+    .spread-book {
         height: 100vh;
         overflow-y: scroll;
         scroll-snap-type: y mandatory;
         scroll-behavior: smooth;
+        overscroll-behavior: contain;
     }
 
-    /* Hide scrollbar but keep functionality */
-    .portrait-book::-webkit-scrollbar {
+    .spread-book::-webkit-scrollbar {
         width: 0;
         background: transparent;
     }
 
-    /* ========================================
-       Individual Spread
-       ======================================== */
-
-    .portrait-spread {
+    .spread {
         height: 100vh;
         scroll-snap-align: start;
         scroll-snap-stop: always;
@@ -51,11 +42,7 @@ eleventyComputed:
         box-sizing: border-box;
     }
 
-    /* ========================================
-       Header Spread (First Page)
-       ======================================== */
-
-    .portrait-spread.header-spread {
+    .spread.header-spread {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -99,7 +86,6 @@ eleventyComputed:
         margin-bottom: 3rem;
     }
 
-    /* Scroll hint */
     .scroll-hint {
         position: absolute;
         bottom: 4rem;
@@ -118,21 +104,17 @@ eleventyComputed:
         pointer-events: none;
     }
 
-    /* ========================================
-       Portrait Spread Layout
-       ======================================== */
-
-    .spread-prompt {
+    .spread-text {
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
 
-    .prompt-poem {
+    .spread-poem {
         margin-bottom: 2rem;
     }
 
-    .prompt-line {
+    .spread-line {
         display: block;
         font-size: 1.1rem;
         line-height: 2;
@@ -140,20 +122,20 @@ eleventyComputed:
         transition: color 0.3s ease;
     }
 
-    .prompt-line:nth-child(1) { margin-left: 0; }
-    .prompt-line:nth-child(2) { margin-left: 1.5rem; }
-    .prompt-line:nth-child(3) { margin-left: 0.75rem; }
-    .prompt-line:nth-child(4) { margin-left: 2.25rem; }
-    .prompt-line:nth-child(5) { margin-left: 0.5rem; }
-    .prompt-line:nth-child(6) { margin-left: 1.75rem; }
-    .prompt-line:nth-child(7) { margin-left: 1rem; }
-    .prompt-line:nth-child(8) { margin-left: 2rem; }
+    .spread-line:nth-child(1) { margin-left: 0; }
+    .spread-line:nth-child(2) { margin-left: 1.5rem; }
+    .spread-line:nth-child(3) { margin-left: 0.75rem; }
+    .spread-line:nth-child(4) { margin-left: 2.25rem; }
+    .spread-line:nth-child(5) { margin-left: 0.5rem; }
+    .spread-line:nth-child(6) { margin-left: 1.75rem; }
+    .spread-line:nth-child(7) { margin-left: 1rem; }
+    .spread-line:nth-child(8) { margin-left: 2rem; }
 
-    .prompt-poem:hover .prompt-line {
+    .spread-poem:hover .spread-line {
         color: var(--ink-light);
     }
 
-    .prompt-line.accident {
+    .spread-line.accident {
         color: var(--accident);
     }
 
@@ -196,10 +178,6 @@ eleventyComputed:
         color: var(--bloom);
     }
 
-    /* ========================================
-       Specimen Grid (Right Side)
-       ======================================== */
-
     .spread-specimens {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -207,14 +185,13 @@ eleventyComputed:
         align-self: center;
     }
 
-    /* Portrait orientation: constrained height */
-    .portrait-spread[data-orientation="portrait"] .spread-specimens {
+    .spread[data-orientation="portrait"] .spread-specimens {
         grid-template-columns: 1fr 1fr;
         max-height: 65vh;
         overflow: hidden;
     }
 
-    .portrait-spread[data-orientation="portrait"] .specimen img {
+    .spread[data-orientation="portrait"] .specimen img {
         max-height: 30vh;
         width: auto;
         max-width: 100%;
@@ -230,6 +207,9 @@ eleventyComputed:
         display: flex;
         align-items: center;
         justify-content: center;
+        /* Reset main.css .specimen container-level filter (Gotcha #29) */
+        filter: none;
+        opacity: 1;
     }
 
     .specimen img {
@@ -238,7 +218,7 @@ eleventyComputed:
         display: block;
         filter: grayscale(30%);
         opacity: 0.8;
-        transition: all 0.5s ease;
+        transition: filter 0.5s ease, opacity 0.5s ease;
     }
 
     .specimen:hover img {
@@ -260,10 +240,6 @@ eleventyComputed:
     .specimen:hover .specimen-num {
         opacity: 1;
     }
-
-    /* ========================================
-       Position Indicator (Nav Dots)
-       ======================================== */
 
     .book-nav {
         position: fixed;
@@ -294,18 +270,14 @@ eleventyComputed:
         background: var(--ink);
     }
 
-    /* ========================================
-       Responsive
-       ======================================== */
-
     @media (max-width: 900px) {
-        .portrait-spread {
+        .spread {
             grid-template-columns: 1fr;
             padding: 6rem 2rem;
             gap: 2rem;
         }
 
-        .portrait-spread.header-spread {
+        .spread.header-spread {
             padding: 6rem 2rem;
         }
 
@@ -314,18 +286,14 @@ eleventyComputed:
         }
     }
 
-    /* ========================================
-       Mobile: Remove scroll-snap, simplify layout
-       ======================================== */
-
     @media (max-width: 768px) {
-        .portrait-book {
+        .spread-book {
             scroll-snap-type: none;
             height: auto;
             overflow-y: visible;
         }
 
-        .portrait-spread {
+        .spread {
             scroll-snap-align: none;
             scroll-snap-stop: normal;
             height: auto;
@@ -334,7 +302,7 @@ eleventyComputed:
             gap: 1.5rem;
         }
 
-        .portrait-spread.header-spread {
+        .spread.header-spread {
             padding: 4rem 1.5rem 3rem;
         }
 
@@ -346,71 +314,32 @@ eleventyComputed:
             display: none;
         }
 
-        .prompt-line:nth-child(n) {
+        .spread-line:nth-child(n) {
             margin-left: 0;
         }
 
-        /* Images full color on mobile (no hover to earn) */
+        .spread-poem {
+            font-size: 0.95rem;
+        }
+
         .specimen img,
         .specimen:hover img {
             filter: none;
             opacity: 1;
         }
-    }
 
-    /* ========================================
-       Lightbox
-       ======================================== */
-
-    .lightbox {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(26, 26, 26, 0.95);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-        cursor: zoom-out;
-    }
-
-    .lightbox.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .lightbox img {
-        max-width: 90vw;
-        max-height: 90vh;
-        object-fit: contain;
-    }
-
-    .lightbox-close {
-        position: absolute;
-        top: 2rem;
-        right: 2rem;
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        color: var(--ink-faint);
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-
-    .lightbox-close:hover {
-        color: var(--paper);
+        .specimen-iframe,
+        .specimen--interactive:hover .specimen-iframe {
+            filter: none;
+            opacity: 1;
+        }
     }
 </style>
 
-<div class="portrait-book" id="portrait-book">
+<div class="spread-book" id="spread-book">
 
     <!-- Header Spread -->
-    <section class="portrait-spread header-spread" data-spread="0">
+    <section class="spread header-spread" data-spread="0">
         <a href="/making/prompter/{{ prompter.name | prompterFamily }}/" class="back-link">← {{ prompter.name | prompterFamily }} models</a>
         <div class="prompter-label">prompted by</div>
         <h1 class="page-title">{{ prompter.name }}</h1>
@@ -423,12 +352,12 @@ eleventyComputed:
 
     <!-- Portrait Spreads -->
     {%- for portrait in prompter.items -%}
-    <section class="portrait-spread" data-spread="{{ loop.index }}" data-orientation="{{ portrait.data.orientation | default('landscape') }}">
+    <section class="spread" data-spread="{{ loop.index }}" data-orientation="{{ portrait.data.orientation | default('landscape') }}">
 
-        <div class="spread-prompt">
-            <div class="prompt-poem">
+        <div class="spread-text">
+            <div class="spread-poem">
                 {%- for line in portrait.data.prompt -%}
-                <span class="prompt-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                <span class="spread-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
                 {%- endfor -%}
             </div>
 
@@ -465,12 +394,11 @@ eleventyComputed:
 
 <script>
 (function() {
-    const book = document.getElementById('portrait-book');
+    const book = document.getElementById('spread-book');
     const dots = document.querySelectorAll('.book-nav-dot');
-    const spreads = document.querySelectorAll('.portrait-spread');
+    const spreads = document.querySelectorAll('.spread');
     const scrollHint = document.getElementById('scroll-hint');
 
-    // Update active dot on scroll
     book.addEventListener('scroll', () => {
         const scrollPos = book.scrollTop;
         const spreadHeight = window.innerHeight;
@@ -480,13 +408,11 @@ eleventyComputed:
             dot.classList.toggle('active', i === currentIndex);
         });
 
-        // Hide scroll hint after first scroll
         if (scrollPos > 50 && scrollHint) {
             scrollHint.classList.add('hidden');
         }
     });
 
-    // Click dot to jump to spread
     dots.forEach((dot, i) => {
         dot.addEventListener('click', () => {
             spreads[i].scrollIntoView({ behavior: 'smooth' });

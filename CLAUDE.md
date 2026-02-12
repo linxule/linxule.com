@@ -289,15 +289,24 @@ Global styles live in `src/assets/css/main.css`.
 
 ### Making Page Architecture
 
-The `/making/` page uses a single `.making-book` scroll-snap container holding both portrait and artifact sections (merged from separate containers). Structure:
+The `/making/` page uses a single `.making-book` scroll-snap container holding both portrait and artifact sections. Structure:
 - **Chapter 1**: Portrait header spread + portrait spreads
 - **Chapter 2**: Artifact header spread (chapter divider) + artifact spreads
 - **Back matter**: `.back-matter` spread containing tools sections + footer (must be inside the book — see gotcha #28)
 - **Section nav**: 3 dots (Portraits · Artifacts · Tools) using `data-section` + element IDs, not per-item dots. Scales to any collection size.
 - **Mobile (768px)**: scroll-snap disabled, everything stacks, nav dots hidden
-- **Filter pages** (`/making/prompter/*`, `/making/creator/*`) still use independent `.portrait-book` / `.artifact-book` containers (single-type pages)
+- **Filter pages** (`/making/prompter/*`, `/making/creator/*`) use `.spread-book` containers (single-type pages)
 
-Key CSS: `overscroll-behavior: contain` prevents scrolling past the book into empty space.
+**Unified spread system** — all making pages use the same class names:
+- `.spread` (container), `.spread-text` (left side), `.spread-poem` + `.spread-line` (staggered text)
+- `.spread-specimens` (right side, 2x2 grid), `.spread-specimens.single` (centered single item)
+- `.specimen` (individual image/iframe), `.specimen--interactive` (iframe variant with overlay)
+- `data-type="portrait"` / `data-type="artifact"` on spreads for type identification
+- Artifacts with `images[]` render the same 2x2 grid as portraits; single `src` artifacts get `.single` variant
+- All pages use `{% include "components/lightbox.njk" %}` for accessible image zoom (not inline JS)
+- All pages use scoped `transition: filter 0.5s ease, opacity 0.5s ease` (not `all`)
+
+Key CSS: `overscroll-behavior: contain` on all scroll containers prevents scrolling past the book into empty space.
 
 ## Content Patterns
 
@@ -452,13 +461,15 @@ Defined in `eleventy/collections.js`:
 21. **Verifying AI-friendliness** - Test new endpoints with `curl` and `python3 -m json.tool` locally. AI chatbots may report false positives due to caching or access restrictions. Kimi agent mode tends to be most accurate for live verification.
 22. **Site-wide feed pattern** - Use `collections.writing | combineByDate(collections.portraits, collections.artifacts, collections.talks)` to merge collections by date. Filter defined in `eleventy/filters.js`. Each entry gets `<category term="writing"/>` etc. for content type.
 23. **Content-Type headers in vercel.json** - `.md` files get `text/markdown`, but other text files like `/llms.txt` need explicit headers added separately (e.g., `text/plain; charset=utf-8`)
-24. **Interactive artifact iframes on index** - Iframes capture pointer events; use `pointer-events: none` on the iframe + a transparent `<span class="artifact-specimen-overlay">` so the wrapping `<a>` stays clickable
+24. **Interactive artifact iframes on index** - Iframes capture pointer events; use `pointer-events: none` on the iframe + a transparent `<span class="specimen-overlay">` so the wrapping `<a>` stays clickable
 25. **HTML artifact files — no standalone styling** - Don't add dark `body` backgrounds, `border-radius`, or `box-shadow` to HTML files in `/assets/artifacts/`. They embed as iframes in the paper aesthetic; standalone decoration clashes on narrow screens. Keep `body { margin: 0; overflow: hidden; }` only.
 26. **Gallery vs single artifact** - If an artifact has multiple pieces, use `images[]` array in frontmatter (renders 2x2 grid). Single pieces use `src` field only. Don't mix both.
-27. **Grayscale reveal transitions** - Use `transition: filter 0.5s ease, opacity 0.5s ease` (not `all 0.5s ease`) on pages with JS-driven transforms (pan/zoom). `all` would accidentally animate transform properties.
+27. **Grayscale reveal transitions** - Use `transition: filter 0.5s ease, opacity 0.5s ease` (not `all 0.5s ease`) everywhere. `all` animates unintended properties (dimensions during image load, transforms during pan/zoom). All making pages now use scoped transitions.
 28. **`overscroll-behavior: contain` traps outer content** — When a scroll-snap container has this property, content OUTSIDE the container becomes unreachable. Tools section, footer, etc. must be INSIDE the container (as `.back-matter` spread).
-29. **main.css `.specimen` has container-level grayscale** — Global `.specimen { opacity: 0.5; filter: grayscale(100%) }` compounds with img-level overrides. When overriding grayscale on `.specimen img`, also reset the container: `.specimen { filter: none; opacity: 1; }`. The making index page does this; portrait detail page handles it differently.
+29. **main.css `.specimen` has container-level grayscale** — Global `.specimen { opacity: 0.5; filter: grayscale(100%) }` compounds with img-level overrides. When overriding grayscale on `.specimen img`, also reset the container: `.specimen { filter: none; opacity: 1; }`. All making pages (index + 4 filter pages) do this; portrait detail page handles it differently.
 30. **CSS Grid stagger + `align-items: stretch`** — Using `margin-top` on even grid items for visual stagger causes odd items to stretch (default `align-items: stretch`), exposing background below images. Fix: `align-items: start` on the grid container.
+31. **Shared lightbox component** — Use `{% include "components/lightbox.njk" %}` instead of inline lightbox JS. The shared component has ARIA attributes, focus trap, keyboard nav (Enter/Space to open, Escape to close), and focus return. All making pages now use it. The component excludes `.specimen--interactive` elements automatically.
+32. **Guard undefined arrays in templates** — `contextExcerpt`, `prompt`, `images` can be undefined. Wrap in `{% if array %}` before accessing `.length` or iterating. Nunjucks won't crash but renders empty elements that create layout gaps.
 
 ## Commands
 
@@ -495,8 +506,8 @@ git push  # Auto-deploys via Vercel Git integration
 ### Making Page Scroll Memory
 The making page saves spread index to sessionStorage (`making-scroll-position`). Works for the single `.making-book` container. Hash navigation (`#artifacts`, `#tools`) also supported for direct section access.
 
-### Template Unification (Planned)
-Portraits and artifacts on the making index page use separate spread templates (`.portrait-spread`, `.artifact-spread`) with duplicated CSS. A unified spread component could simplify the code — both types show text (prompt/context) on the left and specimens on the right. The artifact index currently shows only one image per spread; portraits show a 2x2 grid from `images[]`.
+### Template Unification (Done)
+Making pages unified to single `.spread` system. Old class names (`.portrait-spread`, `.artifact-spread`, `.prompt-line`, `.context-line`, `.artifact-specimen`, `.portrait-book`, `.artifact-book`) replaced with unified names (`.spread`, `.spread-line`, `.specimen`, `.spread-book`). Artifacts with `images[]` now render the same 2x2 grid as portraits on the index page. All pages share: accessible lightbox via `components/lightbox.njk`, scoped transitions (Gotcha #27), `overscroll-behavior: contain` (Gotcha #28), container-level specimen reset (Gotcha #29), `contextExcerpt` undefined guards (Gotcha #32), and consistent mobile overrides (768px: no grayscale, no stagger, `.spread-poem` at 0.95rem). Creator filter pages support HTML artifacts via `isHTMLFile` conditional.
 
 ## Design Tokens
 

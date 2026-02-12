@@ -31,10 +31,10 @@ marker: "making"
     }
 
     /* ========================================
-       Individual Spread
+       Spread (Unified)
        ======================================== */
 
-    .portrait-spread {
+    .spread {
         height: 100vh;
         scroll-snap-align: start;
         scroll-snap-stop: always;
@@ -47,10 +47,10 @@ marker: "making"
     }
 
     /* ========================================
-       Header Spread (First Page)
+       Header Spread (Chapter Openers)
        ======================================== */
 
-    .portrait-spread.header-spread {
+    .spread.header-spread {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -90,7 +90,7 @@ marker: "making"
     .header-spread .section-label {
         font-family: 'IBM Plex Mono', monospace;
         font-size: 0.6rem;
-        letter-spacing: 0.2em;
+        letter-spacing: 0.15em;
         color: var(--ink-ghost);
         text-transform: uppercase;
         margin-bottom: 1.5rem;
@@ -178,20 +178,20 @@ marker: "making"
     }
 
     /* ========================================
-       Portrait Spread Layout
+       Spread Content (Left Side)
        ======================================== */
 
-    .spread-prompt {
+    .spread-text {
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
 
-    .prompt-poem {
+    .spread-poem {
         margin-bottom: 2rem;
     }
 
-    .prompt-line {
+    .spread-line {
         display: block;
         font-size: 1.1rem;
         line-height: 2;
@@ -199,20 +199,20 @@ marker: "making"
         transition: color 0.3s ease;
     }
 
-    .prompt-line:nth-child(1) { margin-left: 0; }
-    .prompt-line:nth-child(2) { margin-left: 1.5rem; }
-    .prompt-line:nth-child(3) { margin-left: 0.75rem; }
-    .prompt-line:nth-child(4) { margin-left: 2.25rem; }
-    .prompt-line:nth-child(5) { margin-left: 0.5rem; }
-    .prompt-line:nth-child(6) { margin-left: 1.75rem; }
-    .prompt-line:nth-child(7) { margin-left: 1rem; }
-    .prompt-line:nth-child(8) { margin-left: 2rem; }
+    .spread-line:nth-child(1) { margin-left: 0; }
+    .spread-line:nth-child(2) { margin-left: 1.5rem; }
+    .spread-line:nth-child(3) { margin-left: 0.75rem; }
+    .spread-line:nth-child(4) { margin-left: 2.25rem; }
+    .spread-line:nth-child(5) { margin-left: 0.5rem; }
+    .spread-line:nth-child(6) { margin-left: 1.75rem; }
+    .spread-line:nth-child(7) { margin-left: 1rem; }
+    .spread-line:nth-child(8) { margin-left: 2rem; }
 
-    .prompt-poem:hover .prompt-line {
+    .spread-poem:hover .spread-line {
         color: var(--ink-light);
     }
 
-    .prompt-line.accident {
+    .spread-line.accident {
         color: var(--accident);
     }
 
@@ -279,14 +279,31 @@ marker: "making"
         align-self: center;
     }
 
-    /* Portrait orientation: single column, constrained height */
-    .portrait-spread[data-orientation="portrait"] .spread-specimens {
+    /* Single specimen: centered, constrained */
+    .spread-specimens.single {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .spread-specimens.single .specimen {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .spread-specimens.single .specimen img {
+        max-height: 60vh;
+        object-fit: contain;
+    }
+
+    /* Portrait orientation: constrained height */
+    .spread[data-orientation="portrait"] .spread-specimens {
         grid-template-columns: 1fr 1fr;
         max-height: 65vh;
         overflow: hidden;
     }
 
-    .portrait-spread[data-orientation="portrait"] .specimen img {
+    .spread[data-orientation="portrait"] .specimen img {
         max-height: 30vh;
         width: auto;
         max-width: 100%;
@@ -313,7 +330,7 @@ marker: "making"
         display: block;
         filter: grayscale(30%);
         opacity: 0.8;
-        transition: all 0.5s ease;
+        transition: filter 0.5s ease, opacity 0.5s ease;
     }
 
     .specimen:hover img {
@@ -334,6 +351,38 @@ marker: "making"
 
     .specimen:hover .specimen-num {
         opacity: 1;
+    }
+
+    /* Interactive (iframe) specimens */
+    .specimen--interactive {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .specimen-iframe {
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+        border: none;
+        display: block;
+        pointer-events: none;
+        filter: grayscale(30%);
+        opacity: 0.8;
+        transition: filter 0.5s ease, opacity 0.5s ease;
+    }
+
+    .specimen--interactive:hover .specimen-iframe {
+        filter: grayscale(0%);
+        opacity: 1;
+    }
+
+    .specimen-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
     }
 
     /* ========================================
@@ -371,185 +420,6 @@ marker: "making"
 
     .book-nav-separator {
         width: 12px;
-    }
-
-    /* ========================================
-       Artifact Spreads (Chapter 2)
-       ======================================== */
-
-    .artifact-spread {
-        height: 100vh;
-        scroll-snap-align: start;
-        scroll-snap-stop: always;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        padding: 8rem 4rem;
-        align-content: center;
-        box-sizing: border-box;
-    }
-
-    .artifact-spread.header-spread {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-        padding-left: 8rem;
-        position: relative;
-    }
-
-    .artifact-spread .section-label {
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.6rem;
-        letter-spacing: 0.2em;
-        color: var(--ink-ghost);
-        text-transform: uppercase;
-        margin-bottom: 1.5rem;
-    }
-
-    .artifact-spread .page-title {
-        font-size: 1.2rem;
-        font-weight: 400;
-        margin-bottom: 3rem;
-    }
-
-    .artifact-spread .page-description {
-        max-width: 400px;
-        margin-bottom: 3rem;
-    }
-
-    .artifact-spread .context-poem {
-        margin-bottom: 2rem;
-    }
-
-    .artifact-spread .context-line {
-        display: block;
-        font-size: 1.1rem;
-        line-height: 2;
-        color: var(--ink-faint);
-        transition: color 0.3s ease;
-    }
-
-    .artifact-spread .context-line:nth-child(1) { margin-left: 0; }
-    .artifact-spread .context-line:nth-child(2) { margin-left: 1.5rem; }
-    .artifact-spread .context-line:nth-child(3) { margin-left: 0.75rem; }
-    .artifact-spread .context-line:nth-child(4) { margin-left: 2.25rem; }
-    .artifact-spread .context-line:nth-child(5) { margin-left: 0.5rem; }
-    .artifact-spread .context-line:nth-child(6) { margin-left: 1.75rem; }
-    .artifact-spread .context-line:nth-child(7) { margin-left: 1rem; }
-    .artifact-spread .context-line:nth-child(8) { margin-left: 2rem; }
-
-    .artifact-spread .context-poem:hover .context-line {
-        color: var(--ink-light);
-    }
-
-    .artifact-spread .context-line.accident {
-        color: var(--accident);
-    }
-
-    .artifact-spread .spread-meta {
-        border-top: 1px solid var(--ink-ghost);
-        padding-top: 1.5rem;
-    }
-
-    .artifact-spread .spread-title {
-        font-size: 0.95rem;
-        font-weight: 300;
-        font-style: italic;
-        margin-bottom: 0.5rem;
-    }
-
-    .artifact-spread .spread-title a {
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    .artifact-spread .spread-title a:hover {
-        color: var(--bloom);
-    }
-
-    .artifact-spread .spread-info {
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.6rem;
-        color: var(--ink-faint);
-        line-height: 1.8;
-    }
-
-    .artifact-spread .spread-info a {
-        color: var(--ink-faint);
-        text-decoration: underline;
-        text-decoration-color: var(--ink-ghost);
-        text-underline-offset: 2px;
-    }
-
-    .artifact-spread .spread-info a:hover {
-        color: var(--bloom);
-    }
-
-    .artifact-specimens {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .artifact-specimen {
-        position: relative;
-        overflow: hidden;
-        background: var(--paper-dark);
-        cursor: pointer;
-        width: 100%;
-        max-width: 400px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .artifact-specimen img {
-        width: 100%;
-        height: auto;
-        max-height: 60vh;
-        object-fit: contain;
-        display: block;
-        filter: grayscale(30%);
-        opacity: 0.8;
-        transition: all 0.5s ease;
-    }
-
-    .artifact-specimen:hover img {
-        filter: grayscale(0%);
-        opacity: 1;
-    }
-
-    /* Interactive (iframe) artifact specimens */
-    .artifact-specimen--interactive {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .artifact-specimen-iframe {
-        width: 100%;
-        height: 100%;
-        min-height: 400px;
-        border: none;
-        display: block;
-        pointer-events: none;
-        filter: grayscale(30%);
-        opacity: 0.8;
-        transition: all 0.5s ease;
-    }
-
-    .artifact-specimen--interactive:hover .artifact-specimen-iframe {
-        filter: grayscale(0%);
-        opacity: 1;
-    }
-
-    .artifact-specimen-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
     }
 
     /* ========================================
@@ -633,28 +503,18 @@ marker: "making"
        ======================================== */
 
     @media (max-width: 900px) {
-        .portrait-spread {
+        .spread {
             grid-template-columns: 1fr;
             padding: 6rem 2rem;
             gap: 2rem;
         }
 
-        .portrait-spread.header-spread {
+        .spread.header-spread {
             padding: 6rem 2rem;
         }
 
         .spread-specimens {
             max-width: 300px;
-        }
-
-        .artifact-spread {
-            grid-template-columns: 1fr;
-            padding: 6rem 2rem;
-            gap: 2rem;
-        }
-
-        .artifact-spread.header-spread {
-            padding: 6rem 2rem;
         }
 
         .tools-section {
@@ -683,7 +543,7 @@ marker: "making"
             overflow-y: visible;
         }
 
-        .portrait-spread {
+        .spread {
             scroll-snap-align: none;
             scroll-snap-stop: normal;
             height: auto;
@@ -692,26 +552,13 @@ marker: "making"
             gap: 1.5rem;
         }
 
-        .portrait-spread.header-spread {
+        .spread.header-spread {
             padding: 4rem 1.5rem 3rem;
         }
 
         .header-spread .header-links {
             top: 4rem;
             right: 1.5rem;
-        }
-
-        .artifact-spread {
-            scroll-snap-align: none;
-            scroll-snap-stop: normal;
-            height: auto;
-            min-height: auto;
-            padding: 3rem 1.5rem;
-            gap: 1.5rem;
-        }
-
-        .artifact-spread.header-spread {
-            padding: 4rem 1.5rem 3rem;
         }
 
         /* Hide nav dots (no function without scroll-snap) */
@@ -724,16 +571,12 @@ marker: "making"
             display: none;
         }
 
-        /* Prompt stagger removed for mobile scanning */
-        .prompt-line:nth-child(n) {
+        /* Stagger removed for mobile scanning */
+        .spread-line:nth-child(n) {
             margin-left: 0;
         }
 
-        .artifact-spread .context-line:nth-child(n) {
-            margin-left: 0;
-        }
-
-        .prompt-poem {
+        .spread-poem {
             font-size: 0.95rem;
         }
 
@@ -744,14 +587,8 @@ marker: "making"
             opacity: 1;
         }
 
-        .artifact-specimen img,
-        .artifact-specimen:hover img {
-            filter: none;
-            opacity: 1;
-        }
-
-        .artifact-specimen-iframe,
-        .artifact-specimen--interactive:hover .artifact-specimen-iframe {
+        .specimen-iframe,
+        .specimen--interactive:hover .specimen-iframe {
             filter: none;
             opacity: 1;
         }
@@ -768,53 +605,6 @@ marker: "making"
         }
     }
 
-    /* ========================================
-       Lightbox
-       ======================================== */
-
-    .lightbox {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(26, 26, 26, 0.95);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-        cursor: zoom-out;
-    }
-
-    .lightbox.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .lightbox img {
-        max-width: 90vw;
-        max-height: 90vh;
-        object-fit: contain;
-    }
-
-    .lightbox-close {
-        position: absolute;
-        top: 2rem;
-        right: 2rem;
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        color: var(--ink-faint);
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-
-    .lightbox-close:hover {
-        color: var(--paper);
-    }
 
 </style>
 
@@ -827,7 +617,7 @@ marker: "making"
          ============================ -->
 
     <!-- Header Spread -->
-    <section class="portrait-spread header-spread" data-spread="0" id="portraits">
+    <section class="spread header-spread" data-spread="0" data-type="portrait" id="portraits">
         <div class="header-links">
             <a href="/search/" class="search-link">search</a>
             <span class="page-marker">002</span>
@@ -858,12 +648,12 @@ marker: "making"
 
     <!-- Portrait Spreads -->
     {%- for portrait in collections.portraits -%}
-    <section class="portrait-spread" data-spread="{{ loop.index }}" data-orientation="{{ portrait.data.orientation | default('landscape') }}">
+    <section class="spread" data-spread="{{ loop.index }}" data-type="portrait" data-orientation="{{ portrait.data.orientation | default('landscape') }}">
 
-        <div class="spread-prompt">
-            <div class="prompt-poem">
+        <div class="spread-text">
+            <div class="spread-poem">
                 {%- for line in portrait.data.prompt -%}
-                <span class="prompt-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                <span class="spread-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
                 {%- endfor -%}
             </div>
 
@@ -898,7 +688,7 @@ marker: "making"
          ============================ -->
 
     <!-- Artifact Header Spread -->
-    <section class="artifact-spread header-spread" data-spread="{{ portraitCount + 1 }}" id="artifacts">
+    <section class="spread header-spread" data-spread="{{ portraitCount + 1 }}" data-type="artifact" id="artifacts">
         <div class="section-label">ARTIFACTS</div>
 
         <div class="page-description">
@@ -920,18 +710,20 @@ marker: "making"
 
     <!-- Artifact Spreads -->
     {%- for artifact in collections.artifacts -%}
-    <section class="artifact-spread" data-spread="{{ portraitCount + 1 + loop.index }}">
+    <section class="spread" data-spread="{{ portraitCount + 1 + loop.index }}" data-type="artifact">
 
-        <div class="spread-prompt">
-            <div class="context-poem">
+        <div class="spread-text">
+            {%- if artifact.data.contextExcerpt -%}
+            <div class="spread-poem">
                 {%- if artifact.data.contextExcerpt.length -%}
                     {%- for line in artifact.data.contextExcerpt -%}
-                    <span class="context-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                    <span class="spread-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
                     {%- endfor -%}
                 {%- else -%}
-                    <span class="context-line{% if artifact.data.contextExcerpt.accident %} accident{% endif %}">{{ artifact.data.contextExcerpt.text | default(artifact.data.contextExcerpt) }}</span>
+                    <span class="spread-line{% if artifact.data.contextExcerpt.accident %} accident{% endif %}">{{ artifact.data.contextExcerpt.text | default(artifact.data.contextExcerpt) }}</span>
                 {%- endif -%}
             </div>
+            {%- endif -%}
 
             <div class="spread-meta">
                 <h2 class="spread-title"><a href="{{ artifact.url }}">{{ artifact.data.title }}</a></h2>
@@ -947,18 +739,33 @@ marker: "making"
             </div>
         </div>
 
-        <div class="artifact-specimens">
-            {% if artifact.data.thumbnail %}
-            <a href="{{ artifact.url }}" class="artifact-specimen">
+        <div class="spread-specimens{% if not artifact.data.images %} single{% endif %}">
+            {% if artifact.data.images %}
+            {%- for image in artifact.data.images -%}
+            {% if image.src | isHTMLFile %}
+            <a href="{{ artifact.url }}" class="specimen specimen--interactive">
+                <iframe src="{{ image.src }}" title="{{ image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index) }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+                <span class="specimen-overlay"></span>
+                <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
+            </a>
+            {% else %}
+            <figure class="specimen" data-src="{{ image.src }}">
+                <img src="{{ image.src }}" alt="{{ image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index) }}">
+                <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
+            </figure>
+            {% endif %}
+            {%- endfor -%}
+            {% elif artifact.data.thumbnail %}
+            <a href="{{ artifact.url }}" class="specimen">
                 <img src="{{ artifact.data.thumbnail }}" alt="{{ artifact.data.title }}">
             </a>
             {% elif artifact.data.src | isHTMLFile %}
-            <a href="{{ artifact.url }}" class="artifact-specimen artifact-specimen--interactive">
-                <iframe src="{{ artifact.data.src }}" title="{{ artifact.data.title }}" class="artifact-specimen-iframe" tabindex="-1" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
-                <span class="artifact-specimen-overlay"></span>
+            <a href="{{ artifact.url }}" class="specimen specimen--interactive">
+                <iframe src="{{ artifact.data.src }}" title="{{ artifact.data.title }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+                <span class="specimen-overlay"></span>
             </a>
             {% else %}
-            <a href="{{ artifact.url }}" class="artifact-specimen">
+            <a href="{{ artifact.url }}" class="specimen">
                 <img src="{{ artifact.data.src }}" alt="{{ artifact.data.title }}">
             </a>
             {% endif %}
@@ -1027,14 +834,14 @@ marker: "making"
 <script>
 (function() {
     const book = document.getElementById('making-book');
-    const allSpreads = book.querySelectorAll('.portrait-spread, .artifact-spread');
+    const allSpreads = book.querySelectorAll('.spread');
     const dots = document.querySelectorAll('#book-nav .book-nav-dot');
     const scrollHint = document.getElementById('scroll-hint');
     const STORAGE_KEY = 'making-scroll-position';
 
     // Section boundaries
-    const portraitCount = book.querySelectorAll('.portrait-spread').length;
-    const artifactCount = book.querySelectorAll('.artifact-spread').length;
+    const portraitCount = book.querySelectorAll('.spread[data-type="portrait"]').length;
+    const artifactCount = book.querySelectorAll('.spread[data-type="artifact"]').length;
     const totalSpreads = portraitCount + artifactCount;
 
     // Section targets for dot clicks
@@ -1100,34 +907,7 @@ marker: "making"
         });
     });
 
-    // Lightbox (for portrait specimens)
-    const lightbox = document.createElement('div');
-    lightbox.className = 'lightbox';
-    lightbox.innerHTML = '<button class="lightbox-close">close</button><img src="" alt="">';
-    document.body.appendChild(lightbox);
-
-    const lightboxImg = lightbox.querySelector('img');
-    const specimens = document.querySelectorAll('.specimen');
-
-    specimens.forEach(specimen => {
-        specimen.addEventListener('click', () => {
-            const src = specimen.dataset.src || specimen.querySelector('img').src;
-            lightboxImg.src = src;
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-    });
-
-    lightbox.addEventListener('click', () => {
-        lightbox.classList.remove('active');
-        document.body.style.overflow = '';
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-            lightbox.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
 })();
 </script>
+
+{% include "components/lightbox.njk" %}
