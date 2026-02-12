@@ -13,18 +13,19 @@ marker: "making"
     }
 
     /* ========================================
-       Portrait Book - Scroll Snap Container
+       Making Book - Single Scroll Snap Container
        ======================================== */
 
-    .portrait-book {
+    .making-book {
         height: 100vh;
         overflow-y: scroll;
         scroll-snap-type: y mandatory;
         scroll-behavior: smooth;
+        overscroll-behavior: contain;
     }
 
     /* Hide scrollbar but keep functionality */
-    .portrait-book::-webkit-scrollbar {
+    .making-book::-webkit-scrollbar {
         width: 0;
         background: transparent;
     }
@@ -365,227 +366,13 @@ marker: "making"
         background: var(--ink);
     }
 
-    /* ========================================
-       Tools Section (Outside Book)
-       ======================================== */
-
-    .tools-section {
-        padding: 6rem 4rem;
-        max-width: 1200px;
-        margin: 0 auto;
-        border-top: 1px solid var(--ink-ghost);
-    }
-
-    .tools-label {
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.6rem;
-        letter-spacing: 0.2em;
-        color: var(--ink-ghost);
-        text-transform: uppercase;
-        margin-bottom: 2rem;
-    }
-
-    .tools-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
-    }
-
-    .tool-card {
-        padding-top: 1rem;
-        border-top: 1px solid var(--ink-ghost);
-    }
-
-    .tool-title {
-        font-size: 0.9rem;
-        font-weight: 400;
-        margin-bottom: 0.5rem;
-    }
-
-    .tool-title a {
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    .tool-title a:hover {
-        color: var(--bloom);
-    }
-
-    .tool-title a.accident {
-        color: var(--accident);
-    }
-
-    .tool-description {
-        font-size: 0.75rem;
-        color: var(--ink-light);
-        line-height: 1.6;
-    }
-
-    .page-footer {
-        padding: 3rem 4rem;
-        border-top: 1px solid var(--ink-ghost);
-        max-width: 1200px;
-        margin: 0 auto;
+    .book-nav-separator {
+        width: 12px;
     }
 
     /* ========================================
-       Responsive
+       Artifact Spreads (Chapter 2)
        ======================================== */
-
-    @media (max-width: 900px) {
-        .portrait-spread {
-            grid-template-columns: 1fr;
-            padding: 6rem 2rem;
-            gap: 2rem;
-        }
-
-        .portrait-spread.header-spread {
-            padding: 6rem 2rem;
-        }
-
-        .spread-specimens {
-            max-width: 300px;
-        }
-
-        .tools-section {
-            padding: 4rem 2rem;
-        }
-
-        .tools-grid {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        .page-footer {
-            padding: 2rem;
-        }
-    }
-
-    /* ========================================
-       Mobile: Remove scroll-snap, simplify layout
-       ======================================== */
-
-    @media (max-width: 768px) {
-        /* Remove scroll-snap behavior */
-        .portrait-book {
-            scroll-snap-type: none;
-            height: auto;
-            overflow-y: visible;
-        }
-
-        .portrait-spread {
-            scroll-snap-align: none;
-            scroll-snap-stop: normal;
-            height: auto;
-            min-height: auto;
-            padding: 3rem 1.5rem;
-            gap: 1.5rem;
-        }
-
-        .portrait-spread.header-spread {
-            padding: 4rem 1.5rem 3rem;
-        }
-
-        .header-spread .header-links {
-            top: 4rem;
-            right: 1.5rem;
-        }
-
-        /* Hide nav dots (no function without scroll-snap) */
-        .book-nav {
-            display: none;
-        }
-
-        /* Hide scroll hint */
-        .scroll-hint {
-            display: none;
-        }
-
-        /* Prompt stagger removed for mobile scanning */
-        .prompt-line:nth-child(n) {
-            margin-left: 0;
-        }
-
-        .prompt-poem {
-            font-size: 0.95rem;
-        }
-
-        /* Images full color on mobile (no hover to earn) */
-        .specimen img,
-        .specimen:hover img {
-            filter: none;
-            opacity: 1;
-        }
-
-        /* Tools section */
-        .tools-section {
-            padding: 3rem 1.5rem;
-        }
-    }
-
-    /* ========================================
-       Lightbox
-       ======================================== */
-
-    .lightbox {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(26, 26, 26, 0.95);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-        cursor: zoom-out;
-    }
-
-    .lightbox.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .lightbox img {
-        max-width: 90vw;
-        max-height: 90vh;
-        object-fit: contain;
-    }
-
-    .lightbox-close {
-        position: absolute;
-        top: 2rem;
-        right: 2rem;
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        color: var(--ink-faint);
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-
-    .lightbox-close:hover {
-        color: var(--paper);
-    }
-
-    /* ========================================
-       Artifact Book - Separate Section
-       ======================================== */
-
-    .artifact-book {
-        height: 100vh;
-        overflow-y: scroll;
-        scroll-snap-type: y mandatory;
-        scroll-behavior: smooth;
-    }
-
-    .artifact-book::-webkit-scrollbar {
-        width: 0;
-        background: transparent;
-    }
 
     .artifact-spread {
         height: 100vh;
@@ -762,40 +549,88 @@ marker: "making"
         z-index: 1;
     }
 
-    .artifact-nav {
-        position: fixed;
-        bottom: 2rem;
-        left: 50%;
-        transform: translateX(-50%);
-        display: none;
-        gap: 0.5rem;
-        z-index: 100;
+    /* ========================================
+       Tools Section (Outside Book)
+       ======================================== */
+
+    .tools-section {
+        padding: 6rem 4rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        border-top: 1px solid var(--ink-ghost);
     }
 
-    .artifact-nav.active {
-        display: flex;
+    .tools-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        margin-bottom: 2rem;
     }
 
-    .artifact-nav .book-nav-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--ink-ghost);
-        cursor: pointer;
-        transition: background 0.2s ease;
-        border: none;
-        padding: 0;
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
     }
 
-    .artifact-nav .book-nav-dot:hover {
-        background: var(--bloom);
+    .tool-card {
+        padding-top: 1rem;
+        border-top: 1px solid var(--ink-ghost);
     }
 
-    .artifact-nav .book-nav-dot.active {
-        background: var(--ink);
+    .tool-title {
+        font-size: 0.9rem;
+        font-weight: 400;
+        margin-bottom: 0.5rem;
     }
+
+    .tool-title a {
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .tool-title a:hover {
+        color: var(--bloom);
+    }
+
+    .tool-title a.accident {
+        color: var(--accident);
+    }
+
+    .tool-description {
+        font-size: 0.75rem;
+        color: var(--ink-light);
+        line-height: 1.6;
+    }
+
+    .page-footer {
+        padding: 3rem 4rem;
+        border-top: 1px solid var(--ink-ghost);
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* ========================================
+       Responsive
+       ======================================== */
 
     @media (max-width: 900px) {
+        .portrait-spread {
+            grid-template-columns: 1fr;
+            padding: 6rem 2rem;
+            gap: 2rem;
+        }
+
+        .portrait-spread.header-spread {
+            padding: 6rem 2rem;
+        }
+
+        .spread-specimens {
+            max-width: 300px;
+        }
+
         .artifact-spread {
             grid-template-columns: 1fr;
             padding: 6rem 2rem;
@@ -805,13 +640,49 @@ marker: "making"
         .artifact-spread.header-spread {
             padding: 6rem 2rem;
         }
+
+        .tools-section {
+            padding: 4rem 2rem;
+        }
+
+        .tools-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .page-footer {
+            padding: 2rem;
+        }
     }
 
+    /* ========================================
+       Mobile: Remove scroll-snap, simplify layout
+       ======================================== */
+
     @media (max-width: 768px) {
-        .artifact-book {
+        /* Remove scroll-snap behavior */
+        .making-book {
             scroll-snap-type: none;
             height: auto;
             overflow-y: visible;
+        }
+
+        .portrait-spread {
+            scroll-snap-align: none;
+            scroll-snap-stop: normal;
+            height: auto;
+            min-height: auto;
+            padding: 3rem 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .portrait-spread.header-spread {
+            padding: 4rem 1.5rem 3rem;
+        }
+
+        .header-spread .header-links {
+            top: 4rem;
+            right: 1.5rem;
         }
 
         .artifact-spread {
@@ -827,12 +698,34 @@ marker: "making"
             padding: 4rem 1.5rem 3rem;
         }
 
-        .artifact-nav {
-            display: none !important;
+        /* Hide nav dots (no function without scroll-snap) */
+        .book-nav {
+            display: none;
+        }
+
+        /* Hide scroll hint */
+        .scroll-hint {
+            display: none;
+        }
+
+        /* Prompt stagger removed for mobile scanning */
+        .prompt-line:nth-child(n) {
+            margin-left: 0;
         }
 
         .artifact-spread .context-line:nth-child(n) {
             margin-left: 0;
+        }
+
+        .prompt-poem {
+            font-size: 0.95rem;
+        }
+
+        /* Images full color on mobile (no hover to earn) */
+        .specimen img,
+        .specimen:hover img {
+            filter: none;
+            opacity: 1;
         }
 
         .artifact-specimen img,
@@ -846,11 +739,70 @@ marker: "making"
             filter: none;
             opacity: 1;
         }
+
+        /* Tools section */
+        .tools-section {
+            padding: 3rem 1.5rem;
+        }
+    }
+
+    /* ========================================
+       Lightbox
+       ======================================== */
+
+    .lightbox {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(26, 26, 26, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        cursor: zoom-out;
+    }
+
+    .lightbox.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .lightbox img {
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .lightbox-close:hover {
+        color: var(--paper);
     }
 
 </style>
 
-<div class="portrait-book" id="portrait-book">
+{%- set portraitCount = collections.portraits.length -%}
+
+<div class="making-book" id="making-book">
+
+    <!-- ============================
+         Chapter 1: Portraits
+         ============================ -->
 
     <!-- Header Spread -->
     <section class="portrait-spread header-spread" data-spread="0" id="portraits">
@@ -897,7 +849,7 @@ marker: "making"
                 <h2 class="spread-title"><a href="{{ portrait.url }}">{{ portrait.data.title }}</a></h2>
                 <div class="spread-info">
                     {{ portrait.data.generator }}{% if portrait.data.settings %} · {{ portrait.data.settings }}{% endif %}<br>
-                    {% if portrait.data.prompter %}prompted by <a href="/making/prompter/{{ portrait.data.prompter | prompterFamily }}/">{{ portrait.data.prompter | prompterFamily }}</a>{% if portrait.data.prompter | prompterModel %} · <a href="/making/prompter/{{ portrait.data.prompter | slugify }}/">{{ portrait.data.prompter | prompterModel }}</a>{% endif %}<br>{% endif %}
+                    {% if portrait.data.prompter %}prompted by <a href="/making/prompter/{{ portrait.data.prompter | prompterFamily }}/">{{ portrait.data.prompter | prompterFamily }}</a>{% if portrait.data.prompter | prompterModel %} · <a href="/making/prompter/{{ portrait.data.prompter | prompterModel }}/">{{ portrait.data.prompter | prompterModel }}</a>{% endif %}<br>{% endif %}
                     {{ portrait.data.date | readableDate }}
                 </div>
                 {%- set firstPromptLine = portrait.data.prompt[0].text | default(portrait.data.prompt[0]) -%}
@@ -919,21 +871,12 @@ marker: "making"
     </section>
     {%- endfor -%}
 
-</div>
-
-<!-- Navigation Dots -->
-<nav class="book-nav" id="book-nav">
-    <button class="book-nav-dot active" data-target="0" aria-label="Go to introduction"></button>
-    {%- for portrait in collections.portraits -%}
-    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ portrait.data.title }}"></button>
-    {%- endfor -%}
-</nav>
-
-<!-- Artifact Book - Separate Section -->
-<div class="artifact-book" id="artifact-book">
+    <!-- ============================
+         Chapter 2: Artifacts
+         ============================ -->
 
     <!-- Artifact Header Spread -->
-    <section class="artifact-spread header-spread" data-spread="0" id="artifacts">
+    <section class="artifact-spread header-spread" data-spread="{{ portraitCount + 1 }}" id="artifacts">
         <div class="section-label">ARTIFACTS</div>
 
         <div class="page-description">
@@ -951,15 +894,11 @@ marker: "making"
             <a href="/making/creator/{{ family.slug }}/" class="filter-chip">{{ family.name }}</a>
             {%- endfor -%}
         </nav>
-
-        <div class="scroll-hint" id="artifact-scroll-hint">
-            ↓ scroll to explore
-        </div>
     </section>
 
     <!-- Artifact Spreads -->
     {%- for artifact in collections.artifacts -%}
-    <section class="artifact-spread" data-spread="{{ loop.index }}">
+    <section class="artifact-spread" data-spread="{{ portraitCount + 1 + loop.index }}">
 
         <div class="spread-prompt">
             <div class="context-poem">
@@ -1008,11 +947,16 @@ marker: "making"
 
 </div>
 
-<!-- Artifact Navigation Dots -->
-<nav class="artifact-nav" id="artifact-nav">
-    <button class="book-nav-dot active" data-target="0" aria-label="Go to artifacts introduction"></button>
+<!-- Combined Navigation Dots -->
+<nav class="book-nav" id="book-nav">
+    <button class="book-nav-dot active" data-target="0" aria-label="Go to portraits introduction"></button>
+    {%- for portrait in collections.portraits -%}
+    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ portrait.data.title }}"></button>
+    {%- endfor -%}
+    <span class="book-nav-separator"></span>
+    <button class="book-nav-dot" data-target="{{ portraitCount + 1 }}" aria-label="Go to artifacts introduction"></button>
     {%- for artifact in collections.artifacts -%}
-    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ artifact.data.title }}"></button>
+    <button class="book-nav-dot" data-target="{{ portraitCount + 1 + loop.index }}" aria-label="Go to {{ artifact.data.title }}"></button>
     {%- endfor -%}
 </nav>
 
@@ -1059,115 +1003,60 @@ marker: "making"
 
 <script>
 (function() {
-    // Portrait Book
-    const portraitBook = document.getElementById('portrait-book');
-    const portraitDots = document.querySelectorAll('#book-nav .book-nav-dot');
-    const portraitSpreads = document.querySelectorAll('.portrait-spread');
-    const portraitScrollHint = document.getElementById('scroll-hint');
-    const portraitNav = document.getElementById('book-nav');
-    const PORTRAIT_STORAGE_KEY = 'making-portraits-scroll-position';
+    const book = document.getElementById('making-book');
+    const allSpreads = book.querySelectorAll('.portrait-spread, .artifact-spread');
+    const dots = document.querySelectorAll('#book-nav .book-nav-dot');
+    const scrollHint = document.getElementById('scroll-hint');
+    const STORAGE_KEY = 'making-scroll-position';
 
-    // Artifact Book
-    const artifactBook = document.getElementById('artifact-book');
-    const artifactDots = document.querySelectorAll('#artifact-nav .book-nav-dot');
-    const artifactSpreads = document.querySelectorAll('.artifact-spread');
-    const artifactScrollHint = document.getElementById('artifact-scroll-hint');
-    const artifactNav = document.getElementById('artifact-nav');
-    const ARTIFACT_STORAGE_KEY = 'making-artifacts-scroll-position';
-
-    // Track which book is in view
-    let activeBook = 'portraits';
-
-    // Restore portrait scroll position on load
-    const savedPortraitIndex = sessionStorage.getItem(PORTRAIT_STORAGE_KEY);
-    if (savedPortraitIndex !== null) {
-        const index = parseInt(savedPortraitIndex, 10);
-        if (index > 0 && index < portraitSpreads.length) {
+    // Restore scroll position on load
+    const savedIndex = sessionStorage.getItem(STORAGE_KEY);
+    if (savedIndex !== null) {
+        const index = parseInt(savedIndex, 10);
+        if (index > 0 && index < allSpreads.length) {
             setTimeout(() => {
-                portraitSpreads[index].scrollIntoView({ behavior: 'instant' });
+                allSpreads[index].scrollIntoView({ behavior: 'instant' });
             }, 0);
         }
     }
 
-    // Portrait book scroll handler
-    portraitBook.addEventListener('scroll', () => {
-        const scrollPos = portraitBook.scrollTop;
+    // Handle hash navigation (e.g. /making/#artifacts)
+    if (window.location.hash === '#artifacts') {
+        const artifactHeader = book.querySelector('.artifact-spread.header-spread');
+        if (artifactHeader) {
+            setTimeout(() => {
+                artifactHeader.scrollIntoView({ behavior: 'instant' });
+            }, 50);
+        }
+    }
+
+    // Scroll handler
+    book.addEventListener('scroll', () => {
+        const scrollPos = book.scrollTop;
         const spreadHeight = window.innerHeight;
         const currentIndex = Math.round(scrollPos / spreadHeight);
 
-        sessionStorage.setItem(PORTRAIT_STORAGE_KEY, currentIndex.toString());
+        sessionStorage.setItem(STORAGE_KEY, currentIndex.toString());
 
-        portraitDots.forEach((dot, i) => {
+        dots.forEach((dot, i) => {
             dot.classList.toggle('active', i === currentIndex);
         });
 
-        if (scrollPos > 50 && portraitScrollHint) {
-            portraitScrollHint.classList.add('hidden');
+        if (scrollPos > 50 && scrollHint) {
+            scrollHint.classList.add('hidden');
         }
     });
 
-    // Portrait dot click handlers
-    portraitDots.forEach((dot, i) => {
+    // Dot click handlers
+    dots.forEach((dot, i) => {
         dot.addEventListener('click', () => {
-            portraitSpreads[i].scrollIntoView({ behavior: 'smooth' });
-        });
-    });
-
-    // Artifact book scroll handler
-    artifactBook.addEventListener('scroll', () => {
-        const scrollPos = artifactBook.scrollTop;
-        const spreadHeight = window.innerHeight;
-        const currentIndex = Math.round(scrollPos / spreadHeight);
-
-        sessionStorage.setItem(ARTIFACT_STORAGE_KEY, currentIndex.toString());
-
-        artifactDots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentIndex);
-        });
-
-        if (scrollPos > 50 && artifactScrollHint) {
-            artifactScrollHint.classList.add('hidden');
-        }
-    });
-
-    // Artifact dot click handlers
-    artifactDots.forEach((dot, i) => {
-        dot.addEventListener('click', () => {
-            artifactSpreads[i].scrollIntoView({ behavior: 'smooth' });
-        });
-    });
-
-    // Intersection observer to show correct nav dots
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.5
-    };
-
-    const portraitObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                activeBook = 'portraits';
-                portraitNav.style.display = 'flex';
-                artifactNav.classList.remove('active');
+            if (i < allSpreads.length) {
+                allSpreads[i].scrollIntoView({ behavior: 'smooth' });
             }
         });
-    }, observerOptions);
+    });
 
-    const artifactObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                activeBook = 'artifacts';
-                portraitNav.style.display = 'none';
-                artifactNav.classList.add('active');
-            }
-        });
-    }, observerOptions);
-
-    portraitObserver.observe(portraitBook);
-    artifactObserver.observe(artifactBook);
-
-    // Lightbox (for portraits only)
+    // Lightbox (for portrait specimens)
     const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';
     lightbox.innerHTML = '<button class="lightbox-close">close</button><img src="" alt="">';
