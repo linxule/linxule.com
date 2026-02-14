@@ -434,7 +434,7 @@ Defined in `eleventy/collections.js`:
 - `writing` - All posts, newest first
 - `portraits` - With auto-numbered seriesNumber
 - `artifacts` - Things Claude made directly, newest first
-- `writingBySeries` - Grouped by series field
+- `writingBySeries` - Grouped by series field. Sort order: `loom`, `ai-whispers`, `singles`, `epistemic-voids`, `organizational-futures`, `archive`. New series need entries in both `collections.js` (sort order) and `series.njk` (poem + description)
 - `portraitsByPrompter` - Grouped by exact prompter
 - `portraitsByPrompterFamily` - Grouped by first word of prompter (claude, gpt, etc.)
 - `artifactsByCreator` - Grouped by exact creator (e.g., "opus 4.5")

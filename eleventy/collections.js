@@ -226,7 +226,7 @@ module.exports = function(eleventyConfig) {
     });
 
     // Custom sort order
-    const order = ['loom', 'singles', 'epistemic-voids', 'organizational-futures', 'archive'];
+    const order = ['loom', 'ai-whispers', 'singles', 'epistemic-voids', 'organizational-futures', 'archive'];
     return Object.values(bySeries).sort((a, b) => {
       const aIdx = order.indexOf(a.slug);
       const bIdx = order.indexOf(b.slug);
