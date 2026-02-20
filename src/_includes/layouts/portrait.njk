@@ -326,6 +326,28 @@ marker: "making"
         opacity: 1;
     }
 
+    .specimen-download {
+        position: absolute;
+        bottom: 0.5rem;
+        left: 0.5rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.55rem;
+        color: var(--bloom);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        text-decoration: none;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .specimen-download:hover {
+        color: var(--accident);
+    }
+
+    .specimen:hover .specimen-download {
+        opacity: 1;
+    }
+
     .portrait-nav {
         display: flex;
         justify-content: space-between;
@@ -478,6 +500,7 @@ marker: "making"
         {% for image in images %}
         <figure class="specimen" data-src="{{ image.src }}"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
             {% optimizedImage image.src, image.alt | default(title ~ ' variation ' ~ loop.index), "(max-width: 900px) 100vw, 50vw" %}
+            <a class="specimen-download" href="{{ image.src }}" download aria-label="Download original">↓</a>
             <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
         </figure>
         {% endfor %}
