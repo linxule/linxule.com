@@ -244,6 +244,7 @@ src/
    - Note: Images Claude *prompted another AI* to make (Midjourney, etc.)
    - **Image count**: Flexible (3-7 per collection), not fixed
    - **Body text voices**: Prompter's description presented directly (no attribution framing), human commentary as separate paragraph(s) below. Let each voice speak for itself — the style makes authorship obvious.
+   - **Per-image download**: `↓` link appears bottom-left on hover (mirroring `.specimen-num` bottom-right). Points to raw PNG via `<a download>`. Lightbox guards against link clicks (`e.target.tagName === 'A'` check).
 
 3. **Artifacts** (`src/making/artifacts/*.md`)
    - Layout: `layouts/artifact.njk`
