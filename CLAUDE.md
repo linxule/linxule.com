@@ -242,6 +242,8 @@ src/
    - **Image fields**: Each image in `images[]` has `src`, `alt` (visual description), `interpretation` (evocative meaning)
    - Naming: `portraits-YYYY-MM-DD-slug-title.md`
    - Note: Images Claude *prompted another AI* to make (Midjourney, etc.)
+   - **Image count**: Flexible (3-7 per collection), not fixed
+   - **Body text voices**: Prompter's description presented directly (no attribution framing), human commentary as separate paragraph(s) below. Let each voice speak for itself — the style makes authorship obvious.
 
 3. **Artifacts** (`src/making/artifacts/*.md`)
    - Layout: `layouts/artifact.njk`
@@ -347,7 +349,7 @@ series: portraits
 orientation: portrait          # or "landscape"
 generator: midjourney v7
 settings: stylize 200, style raw
-prompter: claude opus 4.5      # First word = family (claude)
+prompter: claude opus 4.5      # First word = family (claude). Can include config: "gemini 3.1-pro temp 0.8"
 prompt:
   - "prompt line 1"
   - "prompt line 2"
@@ -448,7 +450,7 @@ Defined in `eleventy/collections.js`:
 2. **Portrait series numbers** are calculated oldest-first (01 is oldest)
 3. **Do NOT use `| reverse`** on collections.writing - it's already newest-first
 4. **Footnotes** render as marginalia on desktop only
-5. **The `prompterFamily` filter** splits on first space: "claude opus 4.5" → family: "claude", model: "opus 4.5"
+5. **The `prompterFamily` filter** splits on first space: "claude opus 4.5" → family: "claude", model: "opus 4.5". Config suffixes preserved in model: "gemini 3.1-pro temp 0.8" → family: "gemini", model: "3.1-pro temp 0.8"
 6. **The `creatorFamily` filter** same pattern: "opus 4.5" → family: "opus", model: "4.5"
 7. **Layout variants** for portraits are deterministic based on page slug hash
 8. **Text shaping is mandatory** - prompts and contextExcerpts must be arrays with stagger pattern and one accident
