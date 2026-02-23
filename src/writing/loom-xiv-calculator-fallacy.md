@@ -169,7 +169,7 @@ Xule is a researcher studying how human & machine intelligences shape the future
 
 ### **Kevin Corley**
 
-Kevin is a Professor of Management at Imperial College Business School [(College Profile)](https://profiles.imperial.ac.uk/k.corley). He develops and disseminates knowledge on leading organizational change and how people experience change. He helped found the [London+ Qualitative Community](https://londonqualcommunity.com/).
+Kevin is a Professor of Management at Imperial Business School [(College Profile)](https://profiles.imperial.ac.uk/k.corley). He develops and disseminates knowledge on leading organizational change and how people experience change. He helped found the [London+ Qualitative Community](https://londonqualcommunity.com/).
 
 ### **AI Collaborators**
 

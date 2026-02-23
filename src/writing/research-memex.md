@@ -28,7 +28,7 @@ Working honestly with gaps (both AI's and our own) is harder than it sounds. It 
 
 For months before teaching, I'd been collaborating with AI, really working WITH it. Various Claude instances, other models, exploring what happens when you treat AI as a thinking partner. The experience kept revealing something: this collaborative approach sparked insights I couldn't reach alone. Discussions with Erkko Autio and Kevin Corley helped shape what this meant for research practice.
 
-Then Erkko generously invited me to co-teach a systematic reviews module to MRes students at Imperial College Business School. An opportunity to incorporate agentic AI into what students were learning. I developed materials, workflows, ways of working with the frontier tools practitioners actually use for complex work: Claude Code, Cherry Studio, MCP servers.
+Then Erkko generously invited me to co-teach a systematic reviews module to MRes students at Imperial Business School. An opportunity to incorporate agentic AI into what students were learning. I developed materials, workflows, ways of working with the frontier tools practitioners actually use for complex work: Claude Code, Cherry Studio, MCP servers.
 
 September 2025. Week 2, Session 3. I'm watching students experiment with these systems. They're orchestrating multiple AI agents, each handling different parts of their literature review. What struck me was how they were thinking about the work. They'd stopped asking "which tool?" and started asking "how do I work with these systems?"
 

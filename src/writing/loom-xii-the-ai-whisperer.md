@@ -245,11 +245,11 @@ The emerging conversations between different forms of intelligence—mediated by
 
 ## Xule Lin
 
-Xule is a PhD student at Imperial College Business School, studying how human & machine intelligences shape the future of organizing [(Personal Website)](https://linxule.com/).
+Xule is a PhD student at Imperial Business School, studying how human & machine intelligences shape the future of organizing [(Personal Website)](https://linxule.com/).
 
 ## Kevin Corley
 
-Kevin is a Professor of Management at Imperial College Business School [(College Profile)](https://profiles.imperial.ac.uk/k.corley). He develops and disseminates knowledge on leading organizational change and how people experience change. He helped found the [London+ Qualitative Community](https://londonqualcommunity.com/).
+Kevin is a Professor of Management at Imperial Business School [(College Profile)](https://profiles.imperial.ac.uk/k.corley). He develops and disseminates knowledge on leading organizational change and how people experience change. He helped found the [London+ Qualitative Community](https://londonqualcommunity.com/).
 
 ## AI Collaborator
 
