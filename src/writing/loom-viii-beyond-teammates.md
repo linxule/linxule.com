@@ -29,7 +29,7 @@ Mollick's post discusses a large-scale experiment conducted at Procter & Gamble 
 What makes these findings particularly exciting is that they likely represent just the earliest manifestations of a much deeper transformation. We are witnessing only the initial stages of what might become a fundamental reimagining of human-AI collaboration—not just augmenting worker capabilities but potentially reshaping the fabric of organizations themselves.
 
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9e23485b-5a68-4820-be90-52dfbd656322_1232x928.png)
+![](/writing/attachments/loom-viii-beyond-teammates-01.png)
 
 
 ## Glimpsing the Third Space Through Empirical Windows
@@ -58,7 +58,7 @@ This progression represents more than just enhanced capabilities—it reflects a
 
 The P&G research provides compelling evidence for the second stage while hinting at the third. The observation that AI-augmented teams were more likely to produce exceptional solutions suggests we might be witnessing the earliest manifestations of this more transformative mode of collaboration, even within the constraints of a one-day experiment.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffefcee11-8d7b-4b74-a9a1-3ba02f211b6f_1232x928.png)
+![](/writing/attachments/loom-viii-beyond-teammates-02.png)
 
 ## Beyond the One-Day Window: Temporal Dimensions of Collaboration
 
@@ -88,7 +88,7 @@ Our experience suggests that continued collaboration creates several patterns th
 
 These temporal dimensions suggest promising avenues for extending the P&G research through longitudinal studies that track how human-AI collaboration evolves beyond initial performance gains.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1614f6cc-3ccc-4897-9ef4-73c1b7d973d2_1232x928.png)
+![](/writing/attachments/loom-viii-beyond-teammates-03.png)
 
 ## Mediating Layers: How Implementation Shapes Collaboration
 
@@ -118,7 +118,7 @@ Our investigations suggest that sustained human-AI collaboration can move beyond
 
 The expertise integration documented in the study might be an early indicator of more fundamental transformations in how knowledge itself is created and understood. As users become more sophisticated in their AI interactions (another limitation the authors acknowledge), we might see not just better access to existing expertise but the co-creation of entirely new forms of understanding.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc23d0104-a0c2-4751-a316-d52a555e45ec_1232x928.png)
+![](/writing/attachments/loom-viii-beyond-teammates-04.png)
 
 ### The AI Co-scientist: Beyond Knowledge Transfer
 
@@ -146,7 +146,7 @@ For instance, what begins as a discussion about improving a specific business pr
 
 This suggests value in extending the P&G research beyond structured task environments to include more open-ended collaborative contexts where the emergent properties of human-AI dialogue might manifest differently. Beyond enhancing worker productivity, human-AI collaboration may ultimately reshape the organizational fabric itself, enabling entirely new structures and modes of knowledge creation that transcend current corporate paradigms.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbe8ec1f3-3a93-4b48-a3b9-c1c3f72a5075_1232x928.png)
+![](/writing/attachments/loom-viii-beyond-teammates-05.png)
 
 ## Implications for Organizational Design and Knowledge Work
 
@@ -180,7 +180,7 @@ The "Cybernetic Teammate" study provides valuable empirical foundations for this
 
 What we're seeing today is clearly just the beginning—we are at the early stages of a fertile research landscape with much more to explore. The P&G study offers a valuable glimpse into the immediate performance effects of AI collaboration, but these findings likely represent just a small part of a much larger puzzle that will continue to unfold in the coming years. As AI systems evolve beyond current capabilities and organizational practices adapt to these new collaborative possibilities, we may witness transformations in knowledge work that are difficult to imagine from our current vantage point.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F550a7f13-0cd9-4430-8bda-b74fb3361a83_1232x928.png)
+![](/writing/attachments/loom-viii-beyond-teammates-06.png)
 
 ---
 

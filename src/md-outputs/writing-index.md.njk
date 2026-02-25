@@ -1,0 +1,14 @@
+---
+permalink: /writing.md
+eleventyExcludeFromCollections: true
+---
+# Writing
+
+All posts grouped by series.
+
+{% for series in collections.writingBySeries %}
+## {{ series.name }}
+
+{% for post in series.items %}- [{{ post.data.title | safe }}](https://linxule.com/writing/{{ post.fileSlug }}.md) — {{ post.date | readableDate }}{% if post.data.subtitle %} · *{{ post.data.subtitle }}*{% endif %}{% if post.data.authors %} · {{ post.data.authors | join(", ") }}{% endif %}{% if post.data.keywords %} · Keywords: {{ post.data.keywords | join(", ") }}{% endif %}
+{% endfor %}
+{% endfor %}

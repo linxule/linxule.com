@@ -69,6 +69,10 @@
     {%- set mdUrl = page.url | replace(r/\/$/, "") + ".md" %}
     <link rel="alternate" type="text/markdown" href="{{ mdUrl }}">
     {%- endif %}
+    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' %}
+    {%- set mdUrl = page.url | replace(r/\/$/, "") + ".md" %}
+    <link rel="alternate" type="text/markdown" href="{{ mdUrl }}">
+    {%- endif %}
 
     {# Vercel Analytics #}
     <script>

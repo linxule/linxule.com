@@ -18,7 +18,7 @@ date: 2025-11-08
 
 If you're like most social science researchers I know, you've probably tried ChatGPT, maybe Claude, and wondered, **"Which AI should I actually be using for my work?" The answer, unfortunately (or fortunately?), is "it depends."**
 
-![img](https://substackcdn.com/image/fetch/$s_!uQB6!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F96cb07ed-27e5-4c3d-9f27-6a60481144ef_2912x1632.png)
+![img](/writing/attachments/which-ai-tool-should-i-use-01.png)
 
 Let's be honest: the AI landscape is a mess of model names and hype. You aren't concerned with benchmarks—you just want to get your literature review, coding, or analysis going without drowning in token limits or copy-pasting context between chats.
 

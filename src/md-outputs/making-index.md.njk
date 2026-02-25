@@ -1,0 +1,17 @@
+---
+permalink: /making.md
+eleventyExcludeFromCollections: true
+---
+# Making
+
+Portraits and artifacts.
+
+## Portraits
+
+{% for portrait in collections.portraits %}- [{{ portrait.data.title | safe }}](https://linxule.com/making/portraits/{{ portrait.fileSlug }}.md) — {{ portrait.date | readableDate }}{% if portrait.data.generator %} · Generator: {{ portrait.data.generator }}{% endif %}{% if portrait.data.prompter %} · Prompter: {{ portrait.data.prompter }}{% endif %}
+{% endfor %}
+
+## Artifacts
+
+{% for artifact in collections.artifacts %}- [{{ artifact.data.title | safe }}](https://linxule.com/making/artifacts/{{ artifact.fileSlug }}.md) — {{ artifact.date | readableDate }}{% if artifact.data.creator %} · Creator: {{ artifact.data.creator }}{% endif %}{% if artifact.data.medium %} · Medium: {{ artifact.data.medium }}{% endif %}
+{% endfor %}

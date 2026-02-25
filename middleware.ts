@@ -3,7 +3,7 @@ import { rewrite, next } from '@vercel/functions';
 // Content paths that have .md counterparts
 // Matches: /writing/slug, /making/portraits/slug, /making/artifacts/slug,
 //          /talks/slug, /cv, /cv-zh, /thinking, /teaching
-const MD_PATHS = /^\/(writing\/[^/]+|making\/portraits\/[^/]+|making\/artifacts\/[^/]+|talks\/[^/]+|cv|cv-zh|thinking|teaching)\/?$/;
+const MD_PATHS = /^\/(writing\/[^/]+|making\/portraits\/[^/]+|making\/artifacts\/[^/]+|talks\/[^/]+|cv|cv-zh|thinking|teaching|writing|making|talks)\/?$/;
 
 export default function middleware(request: Request) {
   const accept = request.headers.get('accept') || '';
@@ -28,9 +28,12 @@ export default function middleware(request: Request) {
 export const config = {
   matcher: [
     '/writing/:path',
+    '/writing',
     '/making/portraits/:path',
     '/making/artifacts/:path',
+    '/making',
     '/talks/:path',
+    '/talks',
     '/cv',
     '/cv-zh',
     '/thinking',

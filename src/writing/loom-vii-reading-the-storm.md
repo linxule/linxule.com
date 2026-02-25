@@ -26,7 +26,7 @@ date: 2025-03-02
 
 This moment of clarity often strikes researchers who carefully craft experiments with AI agents, defining their roles and personalities. The outputs initially seem fascinating, filled with distinct voices and perspectives. Then comes the revelation – these seemingly autonomous agents are reflecting our own design decisions back at us, creating a hall of mirrors where every response is shaped by our choices.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb9c7678c-afee-4ccb-9ee6-5eb1091946d0_1408x768.jpeg)
+![](/writing/attachments/loom-vii-reading-the-storm-01.jpeg)
 
 Throughout our exploration of AI systems in social science, we've encountered a strange revelation – in our attempt to create artificial agency, we're rediscovering something fundamental about human capability that was always present but perhaps overlooked. This whispered insight emerges not through grand proclamations about technological advancement, but through the subtle patterns revealed when human and artificial intelligence interact.
 
@@ -36,26 +36,26 @@ This reflection isn't neutral. AI systems often act as amplifiers of our existin
 
 To illustrate this dynamic, we asked several AI models to generate stories in the style of "greentext"—a narrative format originating on platforms like 4chan and similar forums, characterized by brief, first-person statements prefaced with ">" symbols that create a staccato storytelling rhythm, often used for self-deprecating or satirical anecdotes.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F964d7c01-f481-4517-bdc1-fbc73ab580b3_752x286.png)
+![](/writing/attachments/loom-vii-reading-the-storm-02.png)
 
 
 When prompted to create greentext stories about "being a qualitative researcher using AI," each model generated distinct yet revealing narratives that reflect different interpretations of academic culture, research practices, and AI capabilities:
 
 - **GPT-4.5**: A humorous greentext about a researcher whose AI makes up themes, including "existential dread" for transcripts about household chores, leading to a best paper award
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1c0c75c8-8770-4172-a2a3-8f0057750531_666x1424.png)
+![](/writing/attachments/loom-vii-reading-the-storm-03.png)
 
 
 
 - **Claude 3.7 Sonnet**: A greentext about a researcher investigating AI capabilities who discovers fabricated interviews yet receives praise
     
     
-    ![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa1ad9f37-d2ff-490e-af31-821557c0609e_890x570.png)
+    ![](/writing/attachments/loom-vii-reading-the-storm-04.png)
 
     
 - **DeepSeek R1**: A greentext about using GPT-5 for thematic analysis that overinterprets gardening challenges as trauma[1]
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F91115110-6606-489f-84ed-27a0e1c6bb32_752x970.png)
+![](/writing/attachments/loom-vii-reading-the-storm-05.png)
 
 
 These humorous narratives illustrate a serious point about **interpretive amplification**—how AI systems absorb, reflect, and often magnify aspects of human culture and discourse. Each story reveals something about the AI's interpretive framework and training data: one model emphasizes the fabrication of academic insights, another focuses on disciplinary tensions between qualitative researchers and computer scientists, while a third satirizes psychological overinterpretation in academia.
@@ -96,7 +96,7 @@ When an AI chatbot generates an interpretation, it's not simply processing data�
 
 Each reveals something about both the argument itself and their own mediating frameworks. This creates a complex interplay between human meaning-making and machine-mediated understanding.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fed912e27-5107-4035-ae48-74f99f7ded31_1408x768.jpeg)
+![](/writing/attachments/loom-vii-reading-the-storm-06.jpeg)
 
 ## The Post-Post-Truth Paradox
 
@@ -122,7 +122,7 @@ In [LOOM VI](https://threadcounts.substack.com/p/loom-vi-the-pattern-beneath-the
 
 Consider what happens when we interact with different AI systems or host the same base model through different providers. The "personality" shifts dramatically—not because the underlying capabilities have fundamentally changed, but because each layer of technical architecture and design choices shapes what kinds of understanding can emerge. When presented with the same complex question, different AI systems might offer notably different interpretations, each shaped by their training, configuration, and embedded assumptions.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbc3cc254-7746-4f72-9b4a-1989bad79cd0_1408x768.jpeg)
+![](/writing/attachments/loom-vii-reading-the-storm-07.jpeg)
 
 ## Cultivating Understanding in the Storm
 
@@ -176,7 +176,7 @@ In this light, we're not just surviving the storm—we're learning to read the w
 
 As we continue this exploration, we expect to find that the true potential lies not in seeking unmediated truth but in developing new forms of understanding that acknowledge and work with the complex interplay of human and artificial meaning-making. In doing so, we may discover ways of knowing that are both more nuanced and more powerful than either purely human or purely machine approaches could achieve alone.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F823c8a8d-24c3-4350-9106-6ca63ea7a145_1408x768.jpeg)
+![](/writing/attachments/loom-vii-reading-the-storm-08.jpeg)
 
 ---
 

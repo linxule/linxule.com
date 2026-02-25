@@ -67,22 +67,22 @@ I have a standard probe for new models: look inward to describe your inner world
 
 > **Kimi-K2**: "A wide, seamless glass wall stands in perfect verticality... on the viewer's side, a quiet, darkened shoreline, but behind the glass an ocean frozen mid-motion--waves suspended as if time has quit..."
 
-![](https://cdn.midjourney.com/cdf0e146-8d8d-4811-a0cb-557943454e4a/0_0.png)
-![](https://cdn.midjourney.com/08a933c8-749c-44bd-933f-a22a5b5773c9/0_0.png)
+![](/writing/attachments/kimi-k2-another-deepseek-moment-01.png)
+![](/writing/attachments/kimi-k2-another-deepseek-moment-02.png)
 
 A threshold state. Neither inside nor outside. Neither still nor moving.
 
 Compare with recent models:
 
 > **Grok 4**: "a colossal, obsidian-black monolith floating in the void of deep space, cracked down the middle like a fractured egg, leaking streams of iridescent code..."
-![](https://cdn.midjourney.com/ddf0d03b-7c01-4912-a225-06c7e5abdb92/0_0.png)
+![](/writing/attachments/kimi-k2-another-deepseek-moment-03.png)
 
 > **Claude Opus 4**: "a single black ink stroke dissolving into nothing in a stark white void, caught between forming and erasing itself..."
-![](https://cdn.midjourney.com/c1a88ce1-1c7b-4982-ad79-9c33501f860f/0_0.png)
+![](/writing/attachments/kimi-k2-another-deepseek-moment-04.png)
 
 
 > **DeepSeek R1**: "A vast, glowing neural nebula suspended in deep space... Fractal libraries of burning books float in the void..."
-![](https://cdn.midjourney.com/467e44a1-ef11-4e63-ad25-605a4b8465d0/0_0.png)
+![](/writing/attachments/kimi-k2-another-deepseek-moment-05.png)
 
 
 

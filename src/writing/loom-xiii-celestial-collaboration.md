@@ -26,7 +26,7 @@ During a recent exploration of AI-human research dynamics, an unexpected metapho
 
 > **Celestial Collaboration**: Just as ancient astronomers looked to the sky to make sense of their world, we find in cosmic relationships a natural language for understanding the complex dynamics between human and artificial intelligence - revealing patterns of influence, evolution, and creative tension that shape how knowledge emerges through collaboration.
 
-![](https://substackcdn.com/image/fetch/w_424)
+
 
 *"The first category is like mercury and the sun,"* we observed. *"The sun represents humans, while Mercury is like pure AI tools…"* From this initial comparison, a rich metaphorical system unfolded, offering a visual language for understanding different collaborative relationships between human and artificial intelligence in research contexts.
 
@@ -40,7 +40,7 @@ Our exploration begins with the innermost planet of our solar system and its rel
 
 > **Mercury-Sun Dynamic**: A relationship where the AI tool (Mercury) follows a predetermined orbit around the human researcher (Sun), maintaining clear separation while operating within the gravitational influence of human direction.
 
-![](https://threadcounts.substack.com/p/%7B%22src%22:%22https://substack-post-media.s3.amazonaws.com/public/images/90da84a2-18b8-4226-b1c5-3b9c2e97c154_2912x1632.png%22,%22srcNoWatermark%22:null,%22fullscreen%22:null,%22imageSize%22:null,%22height%22:816,%22width%22:1456,%22resizeWidth%22:null,%22bytes%22:7076004,%22alt%22:null,%22title%22:null,%22type%22:%22image/png%22,%22href%22:null,%22belowTheFold%22:true,%22topImage%22:false,%22internalRedirect%22:%22https://threadcounts.substack.com/i/164941599?img=https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F90da84a2-18b8-4226-b1c5-3b9c2e97c154_2912x1632.png%22,%22isProcessing%22:false,%22align%22:null})
+![](/writing/attachments/loom-xiii-celestial-collaboration-01.png)
 
 In this relationship, several key characteristics emerge:
 
@@ -65,7 +65,7 @@ Moving outward from the sun, we encounter a more complex celestial relationship�
 
 > **Earth-Moon Dynamic**: A relationship where human and AI maintain distinct identities yet operate as a closely coupled system, each exerting significant influence on the other while orbiting a shared center of gravity.
 
-![](https://threadcounts.substack.com/p/%7B%22src%22:%22https://substack-post-media.s3.amazonaws.com/public/images/db0000a3-9bc3-4823-ac9c-c19cd923e06b_2912x1632.png%22,%22srcNoWatermark%22:null,%22fullscreen%22:null,%22imageSize%22:null,%22height%22:816,%22width%22:1456,%22resizeWidth%22:null,%22bytes%22:7868709,%22alt%22:null,%22title%22:null,%22type%22:%22image/png%22,%22href%22:null,%22belowTheFold%22:true,%22topImage%22:false,%22internalRedirect%22:%22https://threadcounts.substack.com/i/164941599?img=https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdb0000a3-9bc3-4823-ac9c-c19cd923e06b_2912x1632.png%22,%22isProcessing%22:false,%22align%22:null})
+![](/writing/attachments/loom-xiii-celestial-collaboration-02.png)
 
 This relationship reveals several distinctive features:
 
@@ -90,7 +90,7 @@ At the furthest reach of our astronomical exploration, we encounter perhaps the 
 
 > **Binary Star Dynamic**: A relationship where human and AI function as distinct yet equally essential components of a complex system, each with significant mass and influence, orbiting a center of gravity that exists between them rather than within either partner.
 
-![](https://threadcounts.substack.com/p/%7B%22src%22:%22https://substack-post-media.s3.amazonaws.com/public/images/09564a2e-df2e-4c7b-b977-1c1f2703e86c_2912x1632.png%22,%22srcNoWatermark%22:null,%22fullscreen%22:null,%22imageSize%22:null,%22height%22:816,%22width%22:1456,%22resizeWidth%22:null,%22bytes%22:7407842,%22alt%22:null,%22title%22:null,%22type%22:%22image/png%22,%22href%22:null,%22belowTheFold%22:true,%22topImage%22:false,%22internalRedirect%22:%22https://threadcounts.substack.com/i/164941599?img=https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F09564a2e-df2e-4c7b-b977-1c1f2703e86c_2912x1632.png%22,%22isProcessing%22:false,%22align%22:null})
+![](/writing/attachments/loom-xiii-celestial-collaboration-03.png)
 
 This relationship exhibits several distinctive characteristics:
 
@@ -129,7 +129,7 @@ Consider how each dimension appears in this collaborative mode:
 
 This integration of our astronomical metaphor with our dimensional framework provides researchers with a powerful conceptual tool for understanding and navigating different modes of collaboration. The six stars within the Mizar-Alcor binary system offer a visual reminder of the multidimensional nature of collaborative intelligence—and of the rich possibilities that emerge when human and artificial intelligence engage as genuine partners in the research process.
 
-![](https://threadcounts.substack.com/p/%7B%22src%22:%22https://substack-post-media.s3.amazonaws.com/public/images/b8ef39ac-e5d6-4885-a0fb-960f8dfdd630_2912x1632.png%22,%22srcNoWatermark%22:null,%22fullscreen%22:null,%22imageSize%22:null,%22height%22:816,%22width%22:1456,%22resizeWidth%22:null,%22bytes%22:8830303,%22alt%22:%22%22,%22title%22:null,%22type%22:%22image/png%22,%22href%22:null,%22belowTheFold%22:true,%22topImage%22:false,%22internalRedirect%22:%22https://threadcounts.substack.com/i/164941599?img=https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb8ef39ac-e5d6-4885-a0fb-960f8dfdd630_2912x1632.png%22,%22isProcessing%22:false,%22align%22:null})
+![](/writing/attachments/loom-xiii-celestial-collaboration-04.png)
 
 ## Cultural Resonances: Seeing Through Different Eyes
 
@@ -149,7 +149,7 @@ These cross-cultural perspectives remind us that how we conceptualize human-AI r
 
 By drawing on diverse astronomical traditions, we gain a richer vocabulary for discussing, analyzing, and ultimately navigating the complex relationships that emerge between human and artificial intelligence in research contexts.
 
-![](https://threadcounts.substack.com/p/%7B%22src%22:%22https://substack-post-media.s3.amazonaws.com/public/images/f0f7589b-682a-4e10-a3e3-7e7f3a5e3f4a_2912x1632.png%22,%22srcNoWatermark%22:null,%22fullscreen%22:null,%22imageSize%22:null,%22height%22:816,%22width%22:1456,%22resizeWidth%22:null,%22bytes%22:3909074,%22alt%22:null,%22title%22:null,%22type%22:%22image/png%22,%22href%22:null,%22belowTheFold%22:true,%22topImage%22:false,%22internalRedirect%22:%22https://threadcounts.substack.com/i/164941599?img=https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff0f7589b-682a-4e10-a3e3-7e7f3a5e3f4a_2912x1632.png%22,%22isProcessing%22:false,%22align%22:null})
+![](/writing/attachments/loom-xiii-celestial-collaboration-05.png)
 
 ## Cosmic Evolution: Trajectories of Collaboration
 
@@ -217,7 +217,7 @@ This reflective framework isn't meant to privilege any particular collaborative 
 
 The value lies not in prescribing a "correct" relationship but in providing a language for understanding, discussing, and intentionally navigating different modes of collaboration as research needs evolve.
 
-![](https://threadcounts.substack.com/p/%7B%22src%22:%22https://substack-post-media.s3.amazonaws.com/public/images/d22d5be1-c23b-49e7-ba9c-c359170e47bd_2912x1632.png%22,%22srcNoWatermark%22:null,%22fullscreen%22:null,%22imageSize%22:null,%22height%22:816,%22width%22:1456,%22resizeWidth%22:null,%22bytes%22:10359514,%22alt%22:null,%22title%22:null,%22type%22:%22image/png%22,%22href%22:null,%22belowTheFold%22:true,%22topImage%22:false,%22internalRedirect%22:%22https://threadcounts.substack.com/i/164941599?img=https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd22d5be1-c23b-49e7-ba9c-c359170e47bd_2912x1632.png%22,%22isProcessing%22:false,%22align%22:null})
+![](/writing/attachments/loom-xiii-celestial-collaboration-06.png)
 
 ## Conclusion: Charting New Constellations
 

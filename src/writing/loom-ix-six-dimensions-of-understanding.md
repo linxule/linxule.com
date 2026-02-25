@@ -25,7 +25,7 @@ When we first ventured into AI's role in qualitative research in [LOOM I](https:
 
 Just as each [Infinity Stone](https://en.wikipedia.org/wiki/Infinity_Stones) embodies a cosmic force in the Marvel universe, our partnership with AI reveals spaces where intelligence sparks, evolves, and transforms through practice. So regardless of whether you are a [Marvel fan](https://marvelcinematicuniverse.fandom.com/wiki/Infinity_Stones#Stones) or not, we believe the following framework for understanding what is created in the [Third Space](https://threadcounts.substack.com/p/loom-v-the-third-space) will resonate with those engaging with AI in their research.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F499672a2-b534-4274-a6d7-661225f3159a_2464x1856.png)
+![](/writing/attachments/loom-ix-six-dimensions-of-understanding-01.png)
 
 # Six Stones, Six Dimensions
 
@@ -53,7 +53,7 @@ Consider a vast library where knowledge is segregated into separate rooms. Tradi
 
 This connects to our exploration of "**Epistemic Connectivity**" in [LOOM II](https://threadcounts.substack.com/p/loom-ii-the-organizational-weave), where we examined how organizational contexts shape emerging patterns of understanding.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc527d357-e7e4-4edd-9f52-64d415ef23ca_2464x1856.png)
+![](/writing/attachments/loom-ix-six-dimensions-of-understanding-02.png)
 
 
 ## Power Stone: Amplifying Creative Potential
@@ -80,7 +80,7 @@ Imagine viewing organizational data through multiple theoretical lenses simultan
 
 This connects to [LOOM IV: Dialogue as Method](https://threadcounts.substack.com/p/loom-iv-dialogue-as-method), where we explored knowledge co-creation through structured interaction with AI systems.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc3f153d8-6d4b-4d8f-a12e-5c38d19708c7_2464x1856.png)
+![](/writing/attachments/loom-ix-six-dimensions-of-understanding-03.png)
 
 ## Mind Stone: Decoding Hidden Patterns
 
@@ -106,7 +106,7 @@ Think of navigating a wilderness with only two essential tools: a detailed map s
 
 This connects to [LOOM VII: Reading the Storm](https://threadcounts.substack.com/p/loom-vii-reading-the-storm), where we explored how to cultivate understanding in an increasingly mediated world.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9f95d6dc-9ab3-44fc-aa96-90cf54fdd5f8_2048x2048.png)
+![](/writing/attachments/loom-ix-six-dimensions-of-understanding-04.png)
 
 ---
 
@@ -135,7 +135,7 @@ Similarly, overlapping scenario modeling (Time Stone) compels rigorous boundary 
 This connects to our discussion of "**Productive Friction**" in [LOOM V](https://threadcounts.substack.com/p/loom-v-the-third-space), where we explored how resistance in human-AI interaction might be a feature rather than a bug.
 
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fab87e538-07e3-452f-9488-bac81f440fec_2464x1856.png)
+![](/writing/attachments/loom-ix-six-dimensions-of-understanding-05.png)
 
 ---
 
@@ -196,7 +196,7 @@ Our framework translates directly into four actionable strategies:
 > **Quick Application**: Choose one dimension to strengthen. Before investing resources, map how development in this dimension might positively impact your capabilities in at least two other dimensions.
 
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe9c10939-defe-4eb6-b5f2-541d560b33ae_2464x1856.png)
+![](/writing/attachments/loom-ix-six-dimensions-of-understanding-06.png)
 
 ---
 
@@ -219,7 +219,7 @@ The path forward isn't about pursuing technological dominance or defending human
 
 **Your next dimension awaits.**
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb89bd6a9-1eb4-4f21-9e84-8c52aa5675c4_2464x1856.png)
+![](/writing/attachments/loom-ix-six-dimensions-of-understanding-07.png)
 
 ---
 

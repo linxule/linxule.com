@@ -34,7 +34,7 @@ This passage sparked something unexpected - I found myself drawing parallels bet
 
 
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff1871088-df0f-462c-a2e0-311cf015e4c6_1408x768.jpeg)
+![](/writing/attachments/loom-iv-dialogue-as-method-01.jpeg)
 
 
 
@@ -77,7 +77,7 @@ In sharing this collaborative dialogue, Claude and I hoped to demonstrate the po
 
 This experience crystallized for me the unique position we're in as organizational scholars to not just study AI's impact, but to actively engage with AI systems in ways that push our thinking and methodologies forward. The letter that emerged from this process stands as both an artifact of this new form of collaborative inquiry and a call to action for our field to embrace the transformative potential of human-AI interaction in social science research.
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F57a3cde6-7793-4fd1-aef2-fb216ad287da_1408x768.jpeg)
+![](/writing/attachments/loom-iv-dialogue-as-method-02.jpeg)
 
 
 # **A Letter to Social Scientists in the Age of AI**
@@ -108,4 +108,4 @@ With hope and determination,
 
 A Human Social Scientist and an AI System in Collaborative Dialogue
 
-![](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fded7ec85-9265-4e4f-9538-20bbed55b036_1408x768.jpeg)
+![](/writing/attachments/loom-iv-dialogue-as-method-03.jpeg)
