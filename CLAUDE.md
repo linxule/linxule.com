@@ -187,6 +187,7 @@ The site is designed for both humans and AI systems to navigate:
 
 Every content page has a `.md` version at the same URL + `.md` suffix. Templates live in `src/md-outputs/`:
 - **Paginated collections** (writing, portraits, artifacts, talks): Use `pagination` with `size: 1`
+- **Index pages** (writing-index, making-index, talks-index): Static templates using collection loops, permalink `/writing.md` etc.
 - **Static pages** (thinking, cv, cv-zh, teaching): Use loop with URL matching (see gotcha below)
 
 Template gotchas:
@@ -485,6 +486,9 @@ Defined in `eleventy/collections.js`:
 36. **Vercel middleware + Eleventy CommonJS** — `middleware.ts` uses ESM (`import`/`export`), but `.eleventy.js` uses CommonJS (`require`/`module.exports`). Do NOT add `"type": "module"` to `package.json` — it would break the Eleventy build. Vercel's edge runtime handles `.ts` files natively regardless of module type.
 37. **Accept header parsing** — Use proper media type extraction (`split(',')` then `split(';')[0].trim()`) for exact match, not `includes('text/markdown')` which is a substring check that false-positives on `text/markdown-extended` etc.
 38. **Vercel matcher `:path` vs `:path*`** — Use `:path` (exactly one required segment) not `:path*` (zero or more). `:path*` triggers middleware on index pages like `/writing/` that don't have `.md` counterparts, wasting edge function invocations.
+39. **Artifact HTML template processing** — HTML files in `src/assets/artifacts/` get both passthrough-copied AND processed as Eleventy templates (creating duplicate `index.html` directories). Prevented via `src/assets/artifacts/artifacts.json` with `"permalink": false`. Note: `.eleventyignore` patterns did NOT work for this (tested both project-root-relative and input-relative paths in Eleventy v2.0.1); directory data cascade is the reliable approach.
+40. **Index page `.md` versions** — `/writing.md`, `/making.md`, `/talks.md` are index-level markdown outputs (templates in `src/md-outputs/*-index.md.njk`). Middleware matcher includes exact paths `/writing`, `/making`, `/talks` for content negotiation. `base.njk` has a separate condition block for `link rel="alternate"` on these three index pages.
+41. **Writing images are local** — All writing post images live in `src/writing/attachments/`. No remote image URLs (substackcdn, threadcounts, midjourney) should remain in markdown `![]()` syntax. `link:` frontmatter fields pointing to external posts are fine.
 
 ## Commands
 
