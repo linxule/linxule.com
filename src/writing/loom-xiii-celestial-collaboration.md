@@ -26,7 +26,7 @@ During a recent exploration of AI-human research dynamics, an unexpected metapho
 
 > **Celestial Collaboration**: Just as ancient astronomers looked to the sky to make sense of their world, we find in cosmic relationships a natural language for understanding the complex dynamics between human and artificial intelligence - revealing patterns of influence, evolution, and creative tension that shape how knowledge emerges through collaboration.
 
-
+![](/writing/attachments/loom-xiii-celestial-collaboration-00.png)
 
 *"The first category is like mercury and the sun,"* we observed. *"The sun represents humans, while Mercury is like pure AI tools…"* From this initial comparison, a rich metaphorical system unfolded, offering a visual language for understanding different collaborative relationships between human and artificial intelligence in research contexts.
 
