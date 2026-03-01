@@ -4,6 +4,8 @@ type: talk
 date: 2024-09-20
 slides: https://www.canva.com/design/DAGQE-VHef4/yWU-mwe6Jmv_Cvl_hNZTGg/view?embed
 event: Systematic Reviews · Imperial Business School PhD Program
+speakers:
+  - Xule Lin
 keywords:
   - ai tools
   - social science

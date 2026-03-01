@@ -4,6 +4,8 @@ type: talk
 date: 2023-12-08
 slides: https://www.canva.com/design/DAF2Y_P0OoU/myJ9SeJMtnyCTR7M8-K5QQ/view?embed
 event: Methods Reading Group · Imperial Business School
+speakers:
+  - Xule Lin
 keywords:
   - large language models
   - research methods
