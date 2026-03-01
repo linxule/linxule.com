@@ -17,4 +17,4 @@ Reframes the common question "Which AI should I use?" into a more productive one
 
 For each zone, walks through three layers of engagement: what the task actually is, how to set up the work, and what model to use — distinguishing between chat platforms, AI-enhanced tools, and AI agents. Closes with two takeaways: the frontier keeps moving (reasoning, math, and research capabilities expand fast), and your choices shape what you see (these are analytical decisions, not just productivity decisions).
 
-Part of the [Learning to Research with AI](https://www.imperial.ac.uk/business-school/research/idea/news-and-events/) series organized by the IDEA Lab at Imperial Business School.
+Part of the Learning to Research with AI series organized by the IDEA Lab at Imperial Business School.
