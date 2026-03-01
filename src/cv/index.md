@@ -124,7 +124,10 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Guest Lectures
 
-- _"AI for Social Science: The Evolution of AI in Literature Reviews and Beyond"_
+- _"What AI Tool to Pick When"_
+	- Learning to Research with AI, IDEA Lab, Imperial Business School, 2026 ([Slides](https://www.canva.com/design/DAHA1mYHjV0/ukfM5WE-2b2OWRnzGMBQsQ/view))
+	- Framework for matching AI tools to research tasks based on verification feasibility and solution space
+- <br/>_"AI for Social Science: The Evolution of AI in Literature Reviews and Beyond"_
 	- Systematic Reviews module at the PhD program, Imperial Business School, 2023 & 2024 ([Slides](https://tinyurl.com/29svdbby))
 - <br/>_"How will AI Transform Research Process"_
 	- Research Seminar, King's Business School, King's College London, 2024
