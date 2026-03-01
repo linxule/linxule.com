@@ -105,7 +105,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 # Presentations
 
 - _"Rethinking Human-AI Collaboration in Interpretive Research"_
-	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0), Online, 2026 ([Video](https://www.youtube.com/watch?v=fPoVMFEh6TM))
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0), Online, 2026 ([Video](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research/))
 	- With Kevin Corley
 	- Introduced celestial metaphors for human-AI collaboration and examined epistemic responsibility in AI-augmented qualitative research
 - <br/>_"Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes"_
@@ -125,15 +125,15 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 # Guest Lectures
 
 - _"What AI Tool to Pick When"_
-	- Learning to Research with AI, IDEA Lab, Imperial Business School, 2026 ([Slides](https://www.canva.com/design/DAHA1mYHjV0/ukfM5WE-2b2OWRnzGMBQsQ/view))
+	- Learning to Research with AI, IDEA Lab, Imperial Business School, 2026 ([Slides](https://linxule.com/talks/what-ai-tool-to-pick-when/))
 	- Framework for matching AI tools to research tasks based on verification feasibility and solution space
 - <br/>_"AI for Social Science: The Evolution of AI in Literature Reviews and Beyond"_
-	- Systematic Reviews module at the PhD program, Imperial Business School, 2023 & 2024 ([Slides](https://tinyurl.com/29svdbby))
+	- Systematic Reviews module at the PhD program, Imperial Business School, 2023 & 2024 ([Slides](https://linxule.com/talks/ai-for-social-science/))
 - <br/>_"How will AI Transform Research Process"_
 	- Research Seminar, King's Business School, King's College London, 2024
 	- Invited by Prof. Phanish Puranam (INSEAD), main seminar speaker
 - <br/>_"Teaching AI to Lend a Hand: Customizing Large Language Models (LLMs) for Data, Writing & Coding"_
-	- Methods Reading Group, Imperial Business School, 2023 & 2024 ([Slides](https://tinyurl.com/22t6pua2))
+	- Methods Reading Group, Imperial Business School, 2023 & 2024 ([Slides](https://linxule.com/talks/teaching-ai-to-lend-a-hand/))
 
 # Teaching
 
