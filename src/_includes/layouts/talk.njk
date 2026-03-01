@@ -23,7 +23,7 @@ marker: "talks"
         font-family: 'IBM Plex Mono', monospace;
         font-size: 0.6rem;
         color: var(--ink-ghost);
-        letter-spacing: 0.15em;
+        letter-spacing: 0.2em;
         margin-bottom: 1.5rem;
     }
 
@@ -55,8 +55,8 @@ marker: "talks"
         margin-top: 1rem;
     }
 
-    /* Video embed */
-    .video-container {
+    /* Media embed (video, slides) */
+    .media-container {
         position: relative;
         width: 100%;
         padding-bottom: 56.25%; /* 16:9 aspect ratio */
@@ -66,28 +66,18 @@ marker: "talks"
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .video-container:hover {
+    .media-container:hover {
         border-color: var(--bloom);
         box-shadow: 0 8px 24px var(--bloom-glow);
     }
 
-    .video-container iframe {
+    .media-container iframe {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         border: none;
-    }
-
-    .video-container .video-placeholder {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        color: var(--ink-faint);
     }
 
     /* Description/body content */
@@ -135,6 +125,10 @@ marker: "talks"
         color: var(--bloom);
     }
 
+    .external-link + .external-link {
+        margin-left: 0.75rem;
+    }
+
     .talk-footer {
         margin-top: 4rem;
         padding-top: 2rem;
@@ -180,10 +174,10 @@ marker: "talks"
 
 <div class="talk-container">
 
-    <article class="talk-content" data-pagefind-body data-pagefind-filter="type:talk">
+    <article class="talk-content" data-pagefind-body data-pagefind-filter="type:{{ type | default('talk') }}">
 
         <header class="talk-header">
-            <div class="talk-num">TALK NO. {{ seriesNumber | default("01") }}</div>
+            <div class="talk-num">{{ (type | default("talk")) | upper }} NO. {{ seriesNumber | default("01") }}</div>
             <h1 class="talk-title">{{ title }}</h1>
             <div class="talk-meta">
                 {% if speakers %}
@@ -213,7 +207,7 @@ marker: "talks"
         </header>
 
         {% if youtube %}
-        <div class="video-container">
+        <div class="media-container">
             <iframe
                 src="https://www.youtube.com/embed/{{ youtube }}"
                 title="{{ title }}"
@@ -223,10 +217,21 @@ marker: "talks"
             </iframe>
         </div>
         {% elif video %}
-        <div class="video-container">
+        <div class="media-container">
             <iframe
                 src="{{ video }}"
                 title="{{ title }}"
+                allowfullscreen
+                loading="lazy">
+            </iframe>
+        </div>
+        {% endif %}
+
+        {% if slides %}
+        <div class="media-container">
+            <iframe
+                src="{{ slides }}"
+                title="{{ title }} — slides"
                 allowfullscreen
                 loading="lazy">
             </iframe>
@@ -239,8 +244,14 @@ marker: "talks"
         </div>
         {% endif %}
 
+        {% if youtube %}
+        <a href="https://www.youtube.com/watch?v={{ youtube }}" class="external-link">Watch on YouTube →</a>
+        {% endif %}
+        {% if slides %}
+        <a href="{{ slides }}" class="external-link">View slides →</a>
+        {% endif %}
         {% if link %}
-        <a href="{{ link }}" class="external-link">Watch on YouTube →</a>
+        <a href="{{ link }}" class="external-link">Visit website →</a>
         {% endif %}
 
         <footer class="talk-footer">

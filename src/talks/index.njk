@@ -76,6 +76,16 @@ permalink: /talks/
         transform: translateX(0.5rem);
     }
 
+    .entry-type {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.55rem;
+        color: var(--ink-ghost);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 0.15rem;
+    }
+
     .entry-event {
         font-family: 'IBM Plex Mono', monospace;
         font-size: 0.6rem;
@@ -185,6 +195,9 @@ permalink: /talks/
     {%- for talk in collections.talks -%}
     <div class="entry">
         <a href="{{ talk.url }}" class="entry-link">
+            {%- if talk.data.type and talk.data.type != "talk" -%}
+            <span class="entry-type">{{ talk.data.type }}</span>
+            {%- endif -%}
             {%- if talk.data.event -%}
             <span class="entry-event">{{ talk.data.event }}</span>
             {%- endif -%}

@@ -1,18 +1,19 @@
 ---
 title: rethinking human-AI collaboration in interpretive research
+type: talk
 date: 2026-01-28
 event: New Scholars · Generative AI Series
 speakers:
   - Kevin Corley
   - Xule Lin
 youtube: fPoVMFEh6TM
+slides: https://www.canva.com/design/DAG_WU-RIoc/9Orko4uJAbF3N98WYRrdaw/view?embed
 keywords:
   - human-AI collaboration
   - interpretive research
   - qualitative methods
   - epistemology
   - grounded theory
-accident: true
 ---
 
 What happens to meaning-making when AI enters interpretive research?
