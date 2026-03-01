@@ -92,7 +92,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 - [_"Human & Artificial Intelligence in Organizations (HAIO): Interdisciplinary Impact"_](https://haiosymposium.com/)
 	- Symposium, September 2024, Imperial College London
 	- Co-organizers: Kevin Corley (Department of Management and Entrepreneurship), Chris Tucci (Imperial-X), David Shrier (Centre for Digital Transformation), Mark Kennedy (Data Science Institute)
-	- Panelists: Jennifer Ding (Alan Turing Institute), Lujian Ibrahim (Oxford), Winnie Street (Google Research), Kevin R. McKee (Google Deepmind), Aidan Peppin (Cohere for AI), Martin Anthony (LSE), Susan Scott (Imperial)
+	- Panelists: Jennifer Ding (Alan Turing Institute), Lujain Ibrahim (Oxford), Winnie Street (Google Research), Kevin R. McKee (Google Deepmind), Aidan Peppin (Cohere for AI), Martin Anthony (LSE), Susan Scott (Imperial)
 - <br/>_"Humans and Algorithms in Organizations: Navigating the Intersection of Blockchain and AI"_
 	- Panel Symposium, 2024 Academy of Management Annual Meeting (Chicago, Illinois)
 	- Co-chairs: Magnus van Haaren (RSM) & Carlos Santana (NTNU)
