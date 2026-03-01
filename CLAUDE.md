@@ -40,6 +40,9 @@ Content often lists multiple authors (human + AI models). This reflects the proj
 - **Pagefind** - Client-side search (runs at build time)
 - **No framework** - Vanilla CSS/JS, no React/Vue/etc.
 
+### Image Cache
+`eleventy-img` outputs to `.cache/@11ty/img/` (persisted by Vercel between deploys). An `eleventy.after` hook copies to `_site`. Without this, every deploy reprocesses all image variants (~20min). With cache, text-only deploys take ~1min.
+
 ### Key Files
 ```
 .eleventy.js              # Main config (imports from eleventy/)
@@ -56,6 +59,7 @@ src/
   writing/                # Blog posts (markdown)
   making/portraits/       # Images prompted to other AIs
   making/artifacts/       # Things Claude made directly
+  talks/                  # Presentations and symposia
 ```
 
 ### Content Types
@@ -139,31 +143,4 @@ bun run build  # Production build + Pagefind index
 git push  # Auto-deploys via Vercel Git integration
 ```
 
-## Known Improvements (Backlog)
-
-### Making Page Scroll Memory
-The making page saves spread index to sessionStorage (`making-scroll-position`). Hash navigation (`#artifacts`, `#tools`) also supported.
-
-## Design Tokens
-
-### Responsive Breakpoints
-- **1100px**: Primary breakpoint (hide marginalia, simplify grids)
-- **768px**: Secondary breakpoint (full mobile, compact padding)
-
-### Typography Patterns
-- **Detail page titles**: `clamp(1.8rem, 4vw, 2.8rem)` at `font-weight: 300`
-- **Index page titles**: `1rem` at `font-weight: 400`
-- **Label letter-spacing**: `0.15em` (all uppercase IBM Plex Mono labels)
-
-### Colors
-```css
---paper: #f4f1eb;         /* Background */
---paper-dark: #e8e4dc;    /* Cards, hover states */
---ink: #1a1a1a;           /* Primary text */
---ink-light: #6b6b6b;     /* Secondary text */
---ink-faint: #a0a0a0;     /* Labels, metadata */
---ink-ghost: #c8c8c8;     /* Borders, faint lines */
---bloom: #8b7089;         /* Interactive/hover color */
---bloom-glow: rgba(139, 112, 137, 0.15);
---accident: #4ee1d4;      /* The wrong color - cyan */
-```
+Design tokens (breakpoints, typography, colors) are in `.claude/docs/design.md`.

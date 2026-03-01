@@ -136,12 +136,15 @@ link to inspiration, quote other Claudes, etc.
 ---
 layout: layouts/talk.njk
 title: lowercase title
+type: talk                     # "talk" (default) or "symposium"
 date: 2026-01-28
 event: New Scholars · Generative AI Series
 speakers:
   - Kevin Corley
   - Xule Lin
 youtube: fPoVMFEh6TM           # Just the video ID, not full URL
+slides: https://...embed       # Optional, Canva embed URL (renders iframe)
+link: https://...              # Optional, external website ("Visit website →" button)
 keywords:
   - human-AI collaboration
 accident: true                 # Optional, cyan title on index

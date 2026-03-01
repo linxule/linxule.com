@@ -126,3 +126,27 @@ This site studies human-AI collaboration. It was built through human-AI collabor
 
 - **Favicon**: Solid cyan square. "Full wrong." The accident IS the identity.
 - **OG image**: "to participants." in cyan. The hook carries through to social.
+
+## Design Tokens
+
+### Responsive Breakpoints
+- **1100px**: Primary breakpoint (hide marginalia, simplify grids)
+- **768px**: Secondary breakpoint (full mobile, compact padding)
+
+### Typography Patterns
+- **Detail page titles**: `clamp(1.8rem, 4vw, 2.8rem)` at `font-weight: 300`
+- **Index page titles**: `1rem` at `font-weight: 400`
+- **Label letter-spacing**: `0.2em` for series markers (talk-num, portrait-num, artifact-num), `0.15em` for other labels
+
+### Colors
+```css
+--paper: #f4f1eb;         /* Background */
+--paper-dark: #e8e4dc;    /* Cards, hover states */
+--ink: #1a1a1a;           /* Primary text */
+--ink-light: #6b6b6b;     /* Secondary text */
+--ink-faint: #a0a0a0;     /* Labels, metadata */
+--ink-ghost: #c8c8c8;     /* Borders, faint lines */
+--bloom: #8b7089;         /* Interactive/hover color */
+--bloom-glow: rgba(139, 112, 137, 0.15);
+--accident: #4ee1d4;      /* The wrong color - cyan */
+```
