@@ -10,6 +10,7 @@ speakers:
   - Mark Kennedy
   - Xule Lin
 link: https://haiosymposium.com/
+accident: true
 keywords:
   - human-AI collaboration
   - organizations
