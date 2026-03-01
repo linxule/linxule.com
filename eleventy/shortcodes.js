@@ -19,7 +19,7 @@ module.exports = function(eleventyConfig) {
       let metadata = await Image(inputPath, {
         widths: [400, 800, 1200, null], // null = original size
         formats: ["avif", "webp", "png"],
-        outputDir: "./_site/assets/images/optimized/",
+        outputDir: "./.cache/@11ty/img/",
         urlPath: "/assets/images/optimized/",
         filenameFormat: function (id, src, width, format) {
           // Include parent folder to avoid collisions (01.png exists in multiple folders)

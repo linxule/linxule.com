@@ -5,6 +5,9 @@ bun.lock
 # Build output
 _site/
 
+# Eleventy image cache (persisted by Vercel between builds)
+.cache/
+
 # System files
 **/.DS_Store
 

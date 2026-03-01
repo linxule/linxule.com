@@ -1,5 +1,7 @@
 const markdownIt = require("markdown-it");
 const markdownItFootnote = require("markdown-it-footnote");
+const fs = require("fs");
+const path = require("path");
 
 // Modular configuration
 const collections = require('./eleventy/collections');
@@ -42,6 +44,15 @@ module.exports = function(eleventyConfig) {
   collections(eleventyConfig);
   filters(eleventyConfig);
   shortcodes(eleventyConfig);
+
+  // Copy cached optimized images to build output after build
+  eleventyConfig.on("eleventy.after", () => {
+    const cacheDir = ".cache/@11ty/img/";
+    const outputDir = "_site/assets/images/optimized/";
+    if (fs.existsSync(cacheDir)) {
+      fs.cpSync(cacheDir, outputDir, { recursive: true });
+    }
+  });
 
   return {
     dir: {
