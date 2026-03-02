@@ -35,13 +35,16 @@ title: 简历
 - <br/>[Gitcoin Grants](https://grants.gitcoin.co/): 第19轮，Metagov治理研究专项，2023
 - <br/>[Radical Exchange Foundation](https://www.radicalxchange.org/): 学生奖学金，2019 & 2022
 
+# 发表论文
+
+- Lin, X., & Corley, K. G. (2025). _Interpretive Orchestration: When Human Intuition meets Machine Intelligence_. 《战略组织》_Strategic Organization_. [附条件接收]
+	- 受邀理论贡献，探讨研究者在使用AI进行组织分析时如何保持诠释控制。发展了AI增强组织研究的原则，在实现计算规模的同时保留理论判断。
+
 # 审稿中论文
 
 - Weiss, T., Rindova, V., McClellan, B., & Lin, X., with Corley, K. G. _Curating Entrepreneurial Possibilities._ 《管理学会期刊》_Academy of Management Journal_. [第二轮修改]
 	- 注：为盲审目的对标题进行了改写
 	- 研究创业者如何识别和发展战略机会。展示了SIGNA的适用性：AI增强的扎根理论 (grounded theory) 分析使大规模创业数据的模式识别成为可能。
-- <br/>Lin, X., & Corley, K. G. (2025). _Interpretive Orchestration: When Human Intuition meets Machine Intelligence_. 《战略组织》_Strategic Organization_. [审稿中]
-	- 受邀理论贡献，探讨研究者在使用AI进行组织分析时如何保持诠释控制。发展了AI增强组织研究的原则，在实现计算规模的同时保留理论判断。
 - <br/>Baldwin, C. Y. (哈佛商学院) & Lin, X. (2025). _Technological Paradigms, Trajectories, and Revolutions: On Pin Factories and Tailored Suits_. [书章审稿中]
 	- 基于Giovanni Dosi的技术轨迹框架，研究服装行业的组织范式——从别针工厂到定制裁缝再到数字平台。识别了与理解算法组织相关的手工艺协调原则。
 

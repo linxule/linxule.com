@@ -36,13 +36,16 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 - <br/>[Gitcoin Grants](https://grants.gitcoin.co/): Round 19, Governance Research Round by Metagov, 2023
 - <br/>[Radical Exchange Foundation](https://www.radicalxchange.org/): Student Scholarship, 2019 & 2022
 
+# Publications
+
+- Lin, X., & Corley, K. G. (2025). _Interpretive Orchestration: When Human Intuition meets Machine Intelligence_. Strategic Organization. [Conditionally accepted]
+	- Invited theoretical contribution examining how researchers maintain interpretive control when using AI for organizational analysis. Develops principles for AI-augmented organizational research that preserve theoretical judgment while enabling computational scale.
+
 # Under Review
 
 - Weiss, T., Rindova, V., McClellan, B., & Lin, X., with Corley, K. G. _Curating Entrepreneurial Possibilities._ Academy of Management Journal. [2nd round of R&R]
 	- Note: Title paraphrased for blind review purposes
 	- Examines how entrepreneurs identify and develop strategic opportunities. Demonstrates SIGNA's applicability: AI-augmented grounded theory analysis enabled pattern identification across large-scale entrepreneurial data.
-- <br/>Lin, X., & Corley, K. G. (2025). _Interpretive Orchestration: When Human Intuition meets Machine Intelligence_. Strategic Organization. [Manuscript under review]
-	- Invited theoretical contribution examining how researchers maintain interpretive control when using AI for organizational analysis. Develops principles for AI-augmented organizational research that preserve theoretical judgment while enabling computational scale.
 - <br/>Baldwin, C. Y. (Harvard Business School), & Lin, X. (2025). _Technological Paradigms, Trajectories, and Revolutions: On Pin Factories and Tailored Suits_. [Book chapter in Review]
 	- Examines organizational paradigms in the apparel industry, from pin factories to bespoke tailoring to digital platforms, building on Giovanni Dosi's framework of technological trajectories. Identifies principles of craft coordination relevant to understanding algorithmic organizations.
 
