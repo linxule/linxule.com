@@ -39,7 +39,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 # Publications
 
 - Lin, X., & Corley, K. G. (2025). _Interpretive Orchestration: When Human Intuition meets Machine Intelligence_. Strategic Organization. [Conditionally accepted]
-	- Invited theoretical contribution examining how researchers maintain interpretive control when using AI for organizational analysis. Develops principles for AI-augmented organizational research that preserve theoretical judgment while enabling computational scale.
+	- Invited theoretical contribution proposing interpretive orchestration, a framework that reframes qualitative researchers as orchestrators of human-AI collaboration navigating two epistemic challenges: translating tacit knowledge into forms AI can process, and exercising judgment over '1.5 order data'—computationally derived patterns requiring human interpretation for theoretical significance. Develops three strategic models (Socratic, Euclidean, Vitruvian) for maintaining epistemic responsibility.
 
 # Under Review
 

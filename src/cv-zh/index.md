@@ -38,7 +38,7 @@ title: 简历
 # 发表论文
 
 - Lin, X., & Corley, K. G. (2025). _Interpretive Orchestration: When Human Intuition meets Machine Intelligence_. 《战略组织》_Strategic Organization_. [附条件接收]
-	- 受邀理论贡献，探讨研究者在使用AI进行组织分析时如何保持诠释控制。发展了AI增强组织研究的原则，在实现计算规模的同时保留理论判断。
+	- 受邀理论贡献，提出"诠释性编排"(interpretive orchestration)框架，将定性研究者重新定位为人机协作的编排者，应对两大认识论挑战：将隐性知识转化为AI可处理的形式（翻译挑战），以及对"1.5阶数据"——计算可见但需人类诠释才具理论意义的模式——行使学术判断（判断挑战）。提出三种战略模型（苏格拉底式、欧几里得式、维特鲁威式）以维护认识论责任。
 
 # 审稿中论文
 
