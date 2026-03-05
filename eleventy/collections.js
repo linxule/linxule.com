@@ -204,6 +204,9 @@ module.exports = function(eleventyConfig) {
       } else if (series.startsWith('LOOM')) {
         slug = 'loom';
         name = 'LOOM';
+      } else if (series.startsWith('Research with AI')) {
+        slug = 'research-with-ai';
+        name = 'Research with AI';
       } else {
         slug = series.toLowerCase().replace(/\s+/g, '-');
         name = series;
@@ -226,7 +229,7 @@ module.exports = function(eleventyConfig) {
     });
 
     // Custom sort order
-    const order = ['loom', 'ai-whispers', 'singles', 'epistemic-voids', 'organizational-futures', 'archive'];
+    const order = ['loom', 'research-with-ai', 'ai-whispers', 'singles', 'epistemic-voids', 'organizational-futures', 'archive'];
     return Object.values(bySeries).sort((a, b) => {
       const aIdx = order.indexOf(a.slug);
       const bIdx = order.indexOf(b.slug);
