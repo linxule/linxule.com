@@ -207,6 +207,9 @@ module.exports = function(eleventyConfig) {
       } else if (series.startsWith('Research with AI')) {
         slug = 'research-with-ai';
         name = 'Research with AI';
+      } else if (series.startsWith('Organizational Futures')) {
+        slug = 'organizational-futures';
+        name = 'Organizational Futures';
       } else {
         slug = series.toLowerCase().replace(/\s+/g, '-');
         name = series;
