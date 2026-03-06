@@ -155,9 +155,9 @@ Body content is the talk description. Use `<span class="accident">phrase</span>`
 
 ## Series Management
 
-Current series (in display order): `loom`, `ai-whispers`, `singles`, `epistemic-voids`, `organizational-futures`, `archive`.
+Current series (in display order): `loom`, `research-with-ai`, `ai-whispers`, `singles`, `epistemic-voids`, `organizational-futures`, `archive`.
 
-**Adding a new series**: Add the slug to both `eleventy/collections.js` (seriesOrder array) and `series.njk` (poem + description).
+**Adding a new series**: Add the slug to both `eleventy/collections.js` (sort order array + `startsWith()` pattern if series has numbered parts) and `series.njk` (poem + description).
 
 ## Footnotes as Marginalia
 

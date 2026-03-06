@@ -85,7 +85,7 @@ Defined in `eleventy/collections.js`:
 - `writing` - All posts, newest first
 - `portraits` - With auto-numbered seriesNumber
 - `artifacts` - Things Claude made directly, newest first
-- `writingBySeries` - Grouped by series field. Sort order: `loom`, `ai-whispers`, `singles`, `epistemic-voids`, `organizational-futures`, `archive`. New series need entries in both `collections.js` (sort order) and `series.njk` (poem + description)
+- `writingBySeries` - Grouped by series field. Sort order: `loom`, `research-with-ai`, `ai-whispers`, `singles`, `epistemic-voids`, `organizational-futures`, `archive`. Series with numbered parts (e.g., "LOOM · IV", "Research with AI · I", "Organizational Futures · I") use `startsWith()` normalization in `collections.js`. New series need entries in both `collections.js` (sort order + slug pattern) and `series.njk` (poem + description)
 - `portraitsByPrompter` - Grouped by exact prompter
 - `portraitsByPrompterFamily` - Grouped by first word of prompter (claude, gpt, etc.)
 - `artifactsByCreator` - Grouped by exact creator (e.g., "opus 4.5")
