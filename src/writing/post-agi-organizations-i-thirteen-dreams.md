@@ -15,6 +15,8 @@ keywords:
   - human-AI collaboration
   - organizational design
   - LLM behavior
+  - post-AGI organizations predictions
+  - post-AGI society predictions
 link: https://www.threadcounts.org/p/post-agi-organizations-i-thirteen
 date: 2026-03-06
 ogImage: /writing/attachments/post-agi-organizations-i-thirteen-dreams.png
