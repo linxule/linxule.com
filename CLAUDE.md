@@ -30,7 +30,7 @@ Each page should have one "accident" - something intentionally wrong, rendered i
 
 ### Human-AI Collaboration
 
-Content often lists multiple authors (human + AI models). This reflects the project's thesis about algorithmic participants in knowledge work. Authors are listed as arrays, not comma-separated strings.
+Content often lists multiple authors (human + AI models). This reflects the project's thesis about human-AI collaboration and what becomes invisible when algorithms enter organizational life. Authors are listed as arrays, not comma-separated strings.
 
 ## Architecture
 
@@ -67,7 +67,7 @@ src/
 1. **Writing** (`src/writing/*.md`) — Layout: `layouts/writing.njk`, Marker: "writing" (003)
 2. **Portraits** (`src/making/portraits/*.md`) — Layout: `layouts/portrait.njk`, Marker: "making" (002)
 3. **Artifacts** (`src/making/artifacts/*.md`) — Layout: `layouts/artifact.njk`, Marker: "making" (002)
-4. **Thinking** (`src/thinking/`) — Layout: `layouts/thinking.njk`, Marker: "thinking" (004)
+4. **Thinking** (`src/thinking/`) — Layout: `layouts/thinking.njk`, Marker: "thinking" (001). Data fields: `thesis`, `thesis_continued` (array), `problem`, `observations`, `orientations`. No longer has `boundaries`, `working_on`, `methods`.
 5. **Teaching** (`src/teaching/`)
 6. **CV** (`src/cv/`)
 7. **Talks** (`src/talks/*.md`) — Layout: `layouts/talk.njk`, Marker: "talks" (005)

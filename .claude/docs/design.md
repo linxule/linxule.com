@@ -125,7 +125,7 @@ This site studies human-AI collaboration. It was built through human-AI collabor
 ## Brand Decisions
 
 - **Favicon**: Solid cyan square. "Full wrong." The accident IS the identity.
-- **OG image**: "to participants." in cyan. The hook carries through to social.
+- **OG image**: ⚠️ STALE — currently shows old "to participants." tagline. Needs regeneration to match new framing: "impossible to see" or "not as tools." in cyan.
 
 ## Design Tokens
 
