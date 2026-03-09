@@ -1,6 +1,6 @@
 module.exports = {
     title: "Xule Lin",
-    description: "Studying what happens when algorithms shift from tools to participants.",
+    description: "What becomes impossible to see when algorithms enter organizational life — not as tools.",
     url: "https://linxule.com",
     author: "Xule Lin",
     language: "en"

@@ -1,38 +1,36 @@
 ---
 layout: layouts/thinking.njk
 title: thinking
+description: "What becomes impossible to see when AI systems carry implicit theories about collective organizing."
 
-thesis: "When algorithmic participants enter organizational life, the boundaries we use to think start shifting."
+thesis: "AI systems carry implicit theories about collective organizing. These theories are invisible from inside."
 
-boundaries:
-  - left: tool
-    right: agent
-  - left: understanding
-    right: trust
-  - left: human
-    right: AI
-  - left: hierarchy
-    right: network
+thesis_continued:
+  - "The pressure to converge"
+  - "prunes possibilities without leaving a trace."
+  - "In models."
+  - "In institutions."
+  - "In how people use these tools."
+  - "The loss feels like clarity."
 
 problem:
-  - "Organizational theory assumes human actors. Algorithms are part of decision-making now, and the frameworks were built when algorithms are simple immovable objects."
-  - "They assume stable actors in defined roles. When tools start behaving more like participants, the theories stop helping."
-
-observations_intro: "These observations share a common source—each points to a boundary that no longer holds the way it once did."
+  - "Not that organizational frameworks are outdated. That the shift is antimemetic. It removes itself from view."
 
 observations:
-  - title: "The line between tool and agent is getting blurry"
+  - title: "The line between tool and agent is dissolving"
     fragments:
       - "Algorithms used to augment decisions"
       - "Now they shape how organizations work"
       - "And organizations generate the data that trains the next version"
       - "The tools we build are building us back"
+      - "Neither side can see the full loop from inside it"
 
   - title: "Understanding is giving way to trust"
     fragments:
-      - "Scientists accept AI outputs because they've worked before"
-      - "Not because anyone can explain why"
-      - text: "We can articulate things we can't actually understand"
+      - "We used to need to understand before we trusted"
+      - "Now we often trust before we understand"
+      - "Sometimes the understanding never comes"
+      - text: "We can articulate things we can't understand"
         accident: true
 
   - title: "What emerges from collaboration resists attribution"
@@ -40,26 +38,28 @@ observations:
       - "Human-AI work produces things neither would reach alone"
       - "The output belongs to the interaction, not to either side"
 
-  - title: "Old coordination patterns keep showing up"
+  - title: "Convergence reconstructs itself in every system"
     fragments:
-      - "London tailors coordinate through shared understanding, not formal structure"
-      - "Their patterns may matter more as algorithmic participants make hierarchy less stable"
+      - "Alignment narrows model outputs toward the predictable"
+      - "Institutions narrow human outputs toward the legible"
+      - "Both feel like improvement from inside"
 
-  - title: "Decentralization reconstructs hierarchy through algorithms"
+  - title: "The loom"
     fragments:
-      - "Effective decentralization often means"
-      - "making hierarchy transparent and bounded"
+      - "The capacity to hold multiple possibilities open"
+      - "in models, in humans, in organizations"
+      - "is the thing most worth protecting"
+      - "and the thing most systematically destroyed"
+      - "The question is whether the encounter between human and AI"
+      - "can keep the space open longer than either could alone"
 
-working_on:
-  - "How AI and organizations form feedback loops that create emergent forms of agency."
-  - "DAOs as sites where I develop and test theory — code as constitution, tokens as coordination."
-  - "Two sites for one question — formalize an organizational function, discover what the formalization misses."
-  - "Coordination through craft and shared understanding — the London tailoring study."
-  - "Governance when agency emerges from dynamics, rather than residing in any single actor."
-
-methods:
-  - "Qualitative research combined with computational methods"
-  - "Holding the synthesis myself rather than outsourcing it"
-  - "Most writing emerges from actual dialogue with AI systems"
-  - "Building tools partly to test whether the ideas work"
+orientations:
+  - "What theories of organizing do AI systems carry?"
+  - "And what do organizations inherit by adopting them without knowing?"
+  - "Can human-AI work preserve divergence, or does every collaboration converge?"
+  - "What would institutions look like if designed around relational cognition rather than individual optimization?"
+  - "How do you work at computational scale without surrendering the capacity to notice what doesn't fit?"
+  - "Why would you trust one AI system to study convergence?"
+  - "What if the writing is the method?"
+  - "Who holds the synthesis?"
 ---

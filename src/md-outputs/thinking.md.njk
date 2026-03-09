@@ -7,9 +7,7 @@ eleventyExcludeFromCollections: true
 
 **Thesis**: {{ thinking.data.thesis }}
 
-## Boundaries
-
-{% for boundary in thinking.data.boundaries %}- {{ boundary.left }} ↔ {{ boundary.right }}
+{% for line in thinking.data.thesis_continued %}{{ line }}
 {% endfor %}
 
 ## Problem
@@ -19,8 +17,6 @@ eleventyExcludeFromCollections: true
 
 ## Observations
 
-{{ thinking.data.observations_intro }}
-
 {% for observation in thinking.data.observations %}
 ### {{ observation.title }}
 
@@ -28,12 +24,7 @@ eleventyExcludeFromCollections: true
 {% endfor %}
 {% endfor %}
 
-## Working On
+## Orientations
 
-{% for item in thinking.data.working_on %}- {{ item }}
-{% endfor %}
-
-## Methods
-
-{% for method in thinking.data.methods %}- {{ method }}
+{% for item in thinking.data.orientations %}- {{ item }}
 {% endfor %}
