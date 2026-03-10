@@ -10,11 +10,11 @@ layout: layouts/writing.njk
 series: "LOOM · IV"           # Optional, groups posts
 title: "Post Title"
 subtitle: "Optional subtitle"  # Italicized below title
-description: "150-160 char SEO description for search results and social previews"
+description: "130-160 char SEO description"
 authors:                       # Array, not string
   - "Xule Lin"
   - "Claude 3.5 Sonnet"
-keywords:                      # For tags and search
+keywords:                      # Use keywords, not tags
   - keyword1
   - keyword2
 date: 2025-01-24              # ISO format

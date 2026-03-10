@@ -10,11 +10,16 @@ speakers:
   - Mark Kennedy
   - Xule Lin
 link: https://haiosymposium.com/
+description: "AI in organizations symposium at Imperial College London — management, data science, and AI safety researchers examining how AI reshapes organizational life."
 accident: true
 keywords:
   - human-AI collaboration
-  - organizations
-  - interdisciplinary
+  - AI in organizations
+  - Imperial College London
+  - interdisciplinary research
+  - organizational theory
+  - AI symposium
+  - artificial intelligence governance
 ---
 
 A one-day symposium at Imperial College London bringing together researchers across disciplines to examine how artificial intelligence is reshaping organizational life.

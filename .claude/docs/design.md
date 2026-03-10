@@ -25,6 +25,12 @@ From Tschichold: running text stays consistent. Breathing happens at structural 
 
 Writing index uses a 7-entry wave: 0 → 2rem → 4rem → 5rem → 3rem → 1.5rem → 0.5rem. We chose 7 over 5 because 5 felt too mechanical. On mobile, stagger removed — scanning mode needs straight lines.
 
+Two scales of stagger exist across the site:
+- **Block-level** (observation blocks, writing index entries): larger offsets ~0-6.5rem, organic wave
+- **Text-level** (fragments, prompt lines, thesis lines): smaller offsets ~0-2.25rem, spread-line pattern
+
+The thinking page uses both: observation blocks wave at block-level (2→5→3→6.5→1.5), thesis-continued and observation fragments wave at text-level (spread-line pattern). "The loom" (final observation) pulls back to 1.5rem to ground the synthesis.
+
 ## Text Shaping (CRITICAL FOR NEW CONTENT)
 
 Text is shaped, not just displayed. When adding new portraits, artifacts, or section introductions, apply these patterns:

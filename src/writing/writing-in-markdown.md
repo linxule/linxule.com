@@ -5,11 +5,15 @@ title: "Writing in Markdown"
 description: "Cite-while-you-write with Zotero and export via Marked 2. CSS templates for AMJ, Chicago style, and academic CVs included."
 date: 2020-09-30
 excerpt: "Cite-while-you-write, Bibliography, Document Layouts"
-tags:
-  - markdown
-  - writing
-  - zotero
-  - tools
+keywords:
+  - cite-while-you-write Zotero
+  - Marked 2 academic export
+  - pandoc citation workflow
+  - CSS templates academic papers
+  - markdown to PDF academic
+  - Zettlr cite-while-you-write
+  - Better BibTeX workflow
+  - academic writing tools
 ---
 
 # Cite-while-you-write (CWYW) with Zotero

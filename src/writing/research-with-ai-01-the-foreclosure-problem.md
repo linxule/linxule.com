@@ -3,7 +3,7 @@ layout: layouts/writing.njk
 series: "Research with AI · I"
 title: "Research with AI #1: The Foreclosure Problem"
 subtitle: "AI makes you faster at finding what you already know to look for. That's the problem."
-description: "The foreclosure problem: how AI tools quietly narrow the space of what you might have considered, and how to build a thinking partner that broadens it instead."
+description: "The foreclosure problem: how AI literature review tools optimize for speed over discovery, quietly narrowing what you might have considered — and how to build a Claude Code thinking partner that broadens it instead."
 authors:
   - "Xule Lin"
 keywords:
@@ -13,6 +13,14 @@ keywords:
   - exploitation and exploration
   - knowledge production
   - agentic research
+  - claude code for literature review
+  - AI thinking partner
+  - unknown unknowns
+  - AI research workflow
+  - Semantic Scholar API
+  - OpenAlex
+  - systematic literature review
+  - human-AI collaboration
 link: https://www.threadcounts.org/p/research-with-ai-1-the-foreclosure
 date: 2026-03-05
 ogImage: /writing/attachments/rwa-01-cover.png

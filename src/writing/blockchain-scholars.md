@@ -5,11 +5,15 @@ title: "Blockchain Scholars"
 description: "Scholars studying blockchain governance, DAOs, and decentralized platforms across management, law, finance, and information systems."
 date: 2022-12-20
 excerpt: "Growing list of scholars working on blockchain-related studies in management and adjacent fields"
-tags:
-  - blockchain
-  - dao
-  - research
-  - governance
+keywords:
+  - blockchain governance scholars
+  - DAO research academics
+  - decentralized autonomous organizations
+  - blockchain management research
+  - platform governance
+  - organizational design blockchain
+  - decentralized coordination
+  - knowledge production
 ---
 
 > **Note:** This resource was last updated in December 2022. Some links may be outdated.

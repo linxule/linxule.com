@@ -8,12 +8,16 @@ authors:
   - "Xule Lin"
   - "Claude Opus 4.5"
 keywords:
-  - organizational futures
-  - agentic AI
-  - AI coordination
+  - agentic AI frameworks alternatives
+  - AI agent coordination patterns
+  - craft-based workflow design
   - human-AI collaboration
-  - craft
-  - tailor workshop
+  - organizational futures
+  - distributed judgment in AI systems
+  - Claude Code multi-agent orchestration
+  - tacit knowledge and AI agents
+  - peer coordination vs delegation
+  - bespoke tailoring as coordination model
 link: https://www.threadcounts.org/p/your-next-ai-framework-might-be-centuries-old
 date: 2026-01-20
 ogImage: /writing/attachments/gesture-suspended-cover.png

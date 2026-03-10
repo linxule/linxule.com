@@ -7,6 +7,12 @@ orientation: landscape
 generator: midjourney v7
 settings: stylize 200, style raw
 prompter: kimi k2 thinking
+keywords:
+  - absence as structure
+  - negative space
+  - minimalist still life
+  - incomplete circle
+  - entropy and form
 prompt:
   - a circle of smooth river stones on white paper
   - but one stone is missing

@@ -2,15 +2,20 @@
 layout: layouts/writing.njk
 series: "Thinking"
 title: "What I'm Thinking, January 2026"
-description: "Am I inside the experiment? The line between studying algorithmic organizing and doing it had moved. What does governance look like when participants include systems that learn and adapt?"
+description: "Researching algorithmic organizing while doing it — what governance looks like when AI systems are participants, not just tools. Joining SKEMA to find out."
 authors:
   - "Xule Lin"
 keywords:
   - human-AI collaboration
   - AI coordination
   - DAO governance
-  - SKEMA
+  - SKEMA Centre for Artificial Intelligence
   - organizational research
+  - working with Claude AI
+  - algorithmic organizing
+  - multi-substrate coordination
+  - decentralized governance research
+  - knowledge production with AI
 date: 2026-01-13
 ---
 

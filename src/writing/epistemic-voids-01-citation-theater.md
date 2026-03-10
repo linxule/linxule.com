@@ -3,16 +3,21 @@ layout: layouts/writing.njk
 series: "Epistemic Voids"
 title: "Epistemic Voids #1: Citation Theater"
 subtitle: "When papers become props"
-description: "A viral thesis workflow inverts the sequence that produces understanding: AI-generated claims first, papers retrofitted as evidence. All the surface markers of rigor, none of the depth."
+description: "AI thesis writing gone wrong — a viral workflow generates claims first, retrofits citations as evidence. Surface markers of academic rigor, none of the depth."
 authors:
   - "Xule Lin"
   - "Claude"
 keywords:
   - citation theater
-  - AI workflows
-  - academic writing
+  - AI thesis writing workflow
+  - AI-assisted academic writing risks
   - epistemic responsibility
   - qualitative research
+  - Google AI Co-Scientist
+  - confirmatory bias in AI tools
+  - AI-generated literature review risks
+  - adversarial review in research
+  - knowledge production
 link: https://www.threadcounts.org/p/epistemic-voids-1-citation-theater
 date: 2025-11-30
 ---

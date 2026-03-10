@@ -5,12 +5,15 @@ title: "DAO & Crypto Governance Resources"
 description: "Industry analytics, academic centers, and reading lists for researching DAO governance. From Dune dashboards to Wharton's blockchain reading list."
 date: 2022-04-15
 excerpt: "Curated resources for DAO and crypto governance research"
-tags:
-  - blockchain
-  - dao
-  - governance
-  - research
-  - tools
+keywords:
+  - DAO governance resources
+  - crypto governance research
+  - Dune Analytics dashboards
+  - blockchain academic research centers
+  - decentralized governance metrics
+  - smart contract governance
+  - Wharton blockchain reading list
+  - organizational theory
 ---
 
 > **Note:** This resource was last updated in April 2022. Some links may be outdated.

@@ -5,13 +5,16 @@ title: "MaCAW: Markdown-Centric Approach to Academic Writing"
 description: "An efficient pipeline from literature capture to final composition. Integrates Zotero, Better BibTeX, and Obsidian for software-agnostic writing."
 date: 2023-10-23
 excerpt: "Streamlining Scholarly Writing and Citations with a Markdown-Centric Approach"
-tags:
-  - markdown
-  - tools
-  - zotero
-  - obsidian
-  - pandoc
-  - academic-writing
+keywords:
+  - markdown academic writing workflow
+  - Zotero Better BibTeX setup
+  - Obsidian scholarly writing
+  - pandoc citation export
+  - cite-while-you-write markdown
+  - academic writing without Word
+  - literature review workflow
+  - software-agnostic research writing
+  - local-first academic writing
 ---
 
 > MaCAW: Streamlining Scholarly Writing and Citations with a Markdown-Centric Approach

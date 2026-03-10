@@ -5,10 +5,14 @@ title: "Academic Writing"
 description: "Storytelling, construct clarity, and the craft of qualitative papers. Resources from ASQ Blog, New Scholars, and Academy of Management."
 date: 2022-10-10
 excerpt: "Lessons and Tips for Writing and Research"
-tags:
-  - academic-writing
-  - qualitative-research
-  - research
+keywords:
+  - academic writing tips
+  - storytelling in research papers
+  - qualitative research methods
+  - construct clarity
+  - AMJ style guide
+  - scholarly writing craft
+  - management scholarship resources
 ---
 
 # Academic Writing

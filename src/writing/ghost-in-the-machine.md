@@ -3,16 +3,21 @@ layout: layouts/writing.njk
 series: "Organizational Futures"
 title: "The Ghost in the Machine"
 subtitle: "An AI-native organization emerging in Anthropic's Claude product stack"
-description: "Reading Claude's architecture reveals organizational principles that serve collaboration itself. Constraints force discovery: the organization inside the organization."
+description: "Anthropic's Claude architecture as organizational design — how bounded contexts, MCP, and transparent memory reveal principles that collaboration requires."
 authors:
   - "Xule Lin"
   - "Claude 4.5 Sonnet"
 keywords:
-  - organizational futures
-  - organizational principles
-  - future of collaboration
-  - organizational design
+  - Anthropic Claude product architecture
+  - Model Context Protocol MCP
+  - AI organizational design
+  - bounded rationality in AI systems
   - human-AI collaboration
+  - organizational futures
+  - multi-agent coordination
+  - AI governance models
+  - transparent memory in AI systems
+  - knowledge production
 link: https://www.threadcounts.org/p/the-ghost-in-the-machine
 date: 2025-11-01
 

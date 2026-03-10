@@ -11,6 +11,10 @@ keywords:
   - research methods
   - ai tools
   - prompt engineering
+  - customizing LLMs
+  - academic writing with AI
+  - coding assistance
+  - human-AI collaboration
 ---
 
 A practical workshop on customizing large language models for academic research workflows — covering data analysis, academic writing, and coding assistance. Demonstrates how researchers can move beyond generic prompting toward task-specific LLM configurations.

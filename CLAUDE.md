@@ -112,6 +112,7 @@ Most frequently hit. Full list of 41 in `.claude/docs/gotchas.md`.
 13. **Vercel middleware + Eleventy CommonJS** — Do NOT add `"type": "module"` to `package.json`
 14. **Artifact HTML template processing** — Prevented via `src/assets/artifacts/artifacts.json` with `"permalink": false`. `.eleventyignore` did NOT work.
 15. **Writing images are local** — All in `src/writing/attachments/`. No remote image URLs in markdown `![]()` syntax.
+16. **`tags` and `keywords` both feed `tagPages`** — `collections.js` reads both fields. Standard is `keywords`; some pre-2023 posts still use `tags`.
 
 ## Commands
 

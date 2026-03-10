@@ -11,6 +11,11 @@ keywords:
   - research methods
   - large language models
   - human-AI collaboration
+  - AI tool selection framework
+  - AI agents
+  - automate augment collaborate
+  - IDEA Lab Imperial
+  - verification feasibility
 ---
 
 Reframes the common question "Which AI should I use?" into a more productive one: "What am I asking AI to do?" Introduces a two-axis framework — verification feasibility (easy to hard) crossed with solution space (bounded to divergent) — that maps research tasks onto three zones of engagement: **Automate** (bounded tasks you can easily verify, like exploring datasets), **Augment** (middle-ground work like literature reviews), and **Collaborate** (divergent tasks that resist easy verification, like making sense of complexity).

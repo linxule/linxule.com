@@ -11,6 +11,11 @@ keywords:
   - social science
   - literature review
   - systematic review
+  - LLM-augmented synthesis
+  - embedding-based retrieval
+  - Imperial Business School
+  - research workflow
+  - human-AI collaboration
 ---
 
 Guest lecture for the Systematic Reviews module in the Imperial Business School PhD program, co-taught with Erkko Autio. Traces the evolution of AI tools in academic literature reviews — from keyword search to embedding-based retrieval to LLM-augmented synthesis — and examines implications for research practice.
