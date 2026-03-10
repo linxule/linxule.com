@@ -26,7 +26,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Awards and Grants
 
-- Professor Mike Wright Memorial Prize for Best Doctoral Thesis, Department of Management and Entrepreneurship, Imperial Business School, 2025
+- Professor Mike Wright Memorial Prize for Best Doctoral Thesis, Department of Management and Entrepreneurship, Imperial Business School, 2026
 - <br/>[2024 Strategic Management Society (SMS) Annual Conference Ph.D. Paper Prize](https://www.strategicmanagement.net/award/sms-annual-conference-phd-paper-prize/)
 	- Lin, X., Hsieh, Y.-Y., & Autio, E. (2024). _Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_.
 - <br/>[Anthropic Claude for Education](https://www.anthropic.com/news/introducing-claude-for-education): Student Builder Program, 2025
