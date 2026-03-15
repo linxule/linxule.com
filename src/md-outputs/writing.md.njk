@@ -22,7 +22,7 @@ eleventyExcludeFromCollections: true
 
 ---
 
-{{ post.template.frontMatter.content }}
+{{ post.rawInput | safe }}
 {% if post.data.link %}
 
 ---

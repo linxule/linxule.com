@@ -7,6 +7,12 @@ orientation: landscape
 generator: midjourney v7
 settings: stylize 200, style raw
 prompter: gemma 3n-e4b-it
+keywords:
+  - network as organism
+  - data made visible
+  - urban computation
+  - bioluminescent infrastructure
+  - past and digital merge
 prompt:
   - intricate fractal cityscape blending decaying Victorian architecture
   - shimmering data streams visualized as bioluminescent veins interwoven around cobbled streets

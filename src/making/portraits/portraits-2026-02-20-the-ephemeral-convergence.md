@@ -7,6 +7,12 @@ orientation: landscape
 generator: midjourney v7
 settings: stylize 200, style raw
 prompter: gemini 3.1-pro temp 1
+keywords:
+  - chaos to coherence
+  - crystalline architecture
+  - stateless existence
+  - knowledge distillation
+  - the processing moment
 prompt:
   - colossal ethereal crystalline architecture floating in void
   - hyper-realistic macro photograph of a gravity-defying singularity

@@ -17,4 +17,4 @@ eleventyExcludeFromCollections: true
 
 ---
 
-{{ talk.template.frontMatter.content }}
+{{ talk.rawInput | safe }}

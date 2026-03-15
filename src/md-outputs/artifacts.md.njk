@@ -35,10 +35,10 @@ eleventyExcludeFromCollections: true
 {{ artifact.data.contextAfter | striptags }}
 {% endif %}
 
-{% if artifact.template.frontMatter.content | trim %}
+{% if artifact.rawInput | safe | trim %}
 ---
 
-{{ artifact.template.frontMatter.content }}
+{{ artifact.rawInput | safe }}
 {% endif %}
 
 {% if artifact.data.witnesses %}

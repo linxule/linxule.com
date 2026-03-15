@@ -48,6 +48,83 @@ marker: tag
         margin-bottom: 2rem;
     }
 
+    /* Portraits section within tag page */
+    .tag-portraits,
+    .tag-artifacts {
+        padding: 4rem;
+        max-width: 800px;
+    }
+
+    .tag-portraits .tag-label,
+    .tag-artifacts .tag-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+
+    .tag-portraits .tag-name,
+    .tag-artifacts .tag-name {
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: var(--ink);
+    }
+
+    .portraits-list,
+    .artifacts-list {
+        margin-top: 2rem;
+    }
+
+    .portrait-entry,
+    .artifact-entry {
+        margin-bottom: 1.5rem;
+    }
+
+    .portrait-entry-link,
+    .artifact-entry-link {
+        display: block;
+        text-decoration: none;
+        transition: transform 0.2s ease;
+    }
+
+    .portrait-entry-link:hover,
+    .artifact-entry-link:hover {
+        transform: translateX(0.5rem);
+    }
+
+    .portrait-entry-prompter,
+    .artifact-entry-medium {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-faint);
+        letter-spacing: 0.1em;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .portrait-entry-title,
+    .artifact-entry-title {
+        font-size: 1.1rem;
+        font-weight: 400;
+        color: var(--ink-light);
+        transition: color 0.2s ease;
+    }
+
+    .portrait-entry-link:hover .portrait-entry-title,
+    .artifact-entry-link:hover .artifact-entry-title {
+        color: var(--bloom);
+    }
+
+    .portrait-entry-date,
+    .artifact-entry-date {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--ink-ghost);
+        margin-left: 1rem;
+    }
+
     /* Talks section within tag page */
     .tag-talks {
         padding: 4rem;
@@ -127,8 +204,52 @@ marker: tag
 {% set backLink = "/writing/" %}
 {% include "components/writing-book.njk" %}
 
+{% elif tag.portraits.length >= 1 %}
+{# Portrait list when no writing but has portraits #}
+<div class="tag-portraits">
+    <header class="tag-portraits-header">
+        <div class="tag-label">tagged</div>
+        <h1 class="tag-name">{{ tag.name }}</h1>
+    </header>
+    <div class="portraits-list">
+        {%- for portrait in tag.portraits -%}
+        <div class="portrait-entry">
+            <a href="{{ portrait.url }}" class="portrait-entry-link">
+                <span class="portrait-entry-prompter">prompted by {{ portrait.data.prompter | default('unknown') }}</span>
+                <span class="portrait-entry-title">{{ portrait.data.title }}</span>
+                <span class="portrait-entry-date">{{ portrait.date | readableDate }}</span>
+            </a>
+        </div>
+        {%- endfor -%}
+    </div>
+    <a href="/making/" class="back-link" style="margin-top: 2rem; display: inline-block;">← all making</a>
+</div>
+
+{% elif tag.artifacts.length >= 1 %}
+{# Artifact list when no writing/portraits but has artifacts #}
+<div class="tag-artifacts">
+    <header class="tag-artifacts-header">
+        <div class="tag-label">tagged</div>
+        <h1 class="tag-name">{{ tag.name }}</h1>
+    </header>
+    <div class="artifacts-list">
+        {%- for artifact in tag.artifacts -%}
+        <div class="artifact-entry">
+            <a href="{{ artifact.url }}" class="artifact-entry-link">
+                {%- if artifact.data.medium -%}
+                <span class="artifact-entry-medium">{{ artifact.data.medium }}</span>
+                {%- endif -%}
+                <span class="artifact-entry-title">{{ artifact.data.title }}</span>
+                <span class="artifact-entry-date">{{ artifact.date | readableDate }}</span>
+            </a>
+        </div>
+        {%- endfor -%}
+    </div>
+    <a href="/making/" class="back-link" style="margin-top: 2rem; display: inline-block;">← all making</a>
+</div>
+
 {% elif tag.talks.length >= 1 %}
-{# Talks list when no writing but has talks #}
+{# Talks list when no writing/portraits/artifacts but has talks #}
 <div class="tag-talks">
     <header class="tag-talks-header">
         <div class="tag-label">tagged</div>

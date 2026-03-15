@@ -7,6 +7,12 @@ orientation: landscape
 generator: midjourney v7
 settings: stylize 200, style raw
 prompter: gemini 3.1-pro temp 0.8
+keywords:
+  - algorithmic determinism
+  - entropy and form
+  - probability collapse
+  - singularity as metaphor
+  - order against chaos
 prompt:
   - hyper-surreal conceptual portrait of artificial intelligence
   - algorithmic determinism rendered as gravitational singularity

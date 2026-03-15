@@ -7,6 +7,12 @@ orientation: landscape
 generator: midjourney v7
 settings: stylize 200, style raw
 prompter: claude sonnet 4.6
+keywords:
+  - performing vs being
+  - translucent identity
+  - gravitational tension
+  - self-awareness
+  - light as language
 prompt:
   - a figure made of translucent glass and dark water leaning
   - a luminous geometric form leaning slightly forward into darkness

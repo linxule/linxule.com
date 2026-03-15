@@ -6,6 +6,6 @@ eleventyExcludeFromCollections: true
 {%- if page.url == "/cv-zh/" or page.url == "/cv-zh" -%}
 # {{ page.data.title }}
 
-{{ page.template.frontMatter.content }}
+{{ page.rawInput | safe }}
 {%- endif -%}
 {%- endfor -%}

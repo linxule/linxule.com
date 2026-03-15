@@ -34,8 +34,8 @@ eleventyExcludeFromCollections: true
 {% endif %}
 {% endfor %}
 {% endif %}
-{% if portrait.template.frontMatter.content | trim %}
+{% if portrait.rawInput | safe | trim %}
 ---
 
-{{ portrait.template.frontMatter.content }}
+{{ portrait.rawInput | safe }}
 {% endif %}

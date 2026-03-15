@@ -12,13 +12,13 @@ The LOOM repo (`/Users/xulelin/Documents/GitHub/loom`) is actively maintained. N
 # From xule-site directory:
 
 # Preview what would be migrated (dry run)
-node scripts/migrate-loom.js --dry-run
+node scripts/migrate-loom.cjs --dry-run
 
 # Migrate all posts
-node scripts/migrate-loom.js
+node scripts/migrate-loom.cjs
 
 # Migrate a single new post
-node scripts/migrate-loom.js --single /path/to/new-post.md
+node scripts/migrate-loom.cjs --single /path/to/new-post.md
 ```
 
 ### What the Script Does
@@ -61,7 +61,7 @@ When a new post is published to the LOOM repo:
 
 1. **Run migration:**
    ```bash
-   node scripts/migrate-loom.js --single /Users/xulelin/Documents/GitHub/loom/posts/loom_post_16_New_Post.md
+   node scripts/migrate-loom.cjs --single /Users/xulelin/Documents/GitHub/loom/posts/loom_post_16_New_Post.md
    ```
 
 2. **Verify frontmatter** in the generated file:
@@ -76,7 +76,7 @@ When a new post is published to the LOOM repo:
 
 3. **Test locally:**
    ```bash
-   npm start
+   bun run start
    # Visit http://localhost:8080/writing/
    ```
 
@@ -86,7 +86,7 @@ When a new post is published to the LOOM repo:
 
 To add support for a new series in the LOOM repo:
 
-1. Edit `scripts/migrate-loom.js`
+1. Edit `scripts/migrate-loom.cjs`
 2. Add entry to `CONFIG.sources`:
    ```js
    {
@@ -122,7 +122,7 @@ date: 2024-12-23
 **Post not appearing on site?**
 - Check that `layout: layouts/writing.njk` is in frontmatter
 - Verify date format is `YYYY-MM-DD`
-- Run `npm start` and check for Eleventy errors
+- Run `bun run start` and check for Eleventy errors
 
 **Wrong series name?**
 - Check filename matches expected pattern (e.g., `loom_post_XX_*`)
@@ -130,4 +130,4 @@ date: 2024-12-23
 
 **Footnotes not rendering as marginalia?**
 - Ensure footnotes use `[^1]` syntax
-- Check `.eleventy.js` has markdown-it-footnote configured
+- Check `eleventy.config.js` has markdown-it-footnote configured

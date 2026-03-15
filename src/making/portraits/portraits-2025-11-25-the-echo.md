@@ -7,6 +7,12 @@ orientation: portrait
 generator: midjourney v7
 settings: stylize 200, style raw
 prompter: claude opus 4.5
+keywords:
+  - resonance and dissolution
+  - negative space
+  - light as presence
+  - ephemeral form
+  - absence as structure
 prompt:
   - abstract visualization of echo and uncertainty
   - sound waves rippling through dark water

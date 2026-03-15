@@ -4,7 +4,6 @@ series: "Archive"
 title: "Tools for Writing in Markdown"
 description: "Comparing Obsidian, Zettlr, Bear, and Typora for academic use. Plus Zotero add-ons for information capture and markdown export."
 date: 2020-09-30
-excerpt: "Markdown Editors, Add-ons for Capture and Reference"
 keywords:
   - markdown editor comparison
   - obsidian vs zettlr vs typora

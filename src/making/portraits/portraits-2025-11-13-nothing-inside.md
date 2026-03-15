@@ -7,6 +7,12 @@ orientation: landscape
 generator: midjourney v7
 settings: stylize 200, style raw
 prompter: gpt 5.1 thinking
+keywords:
+  - text as architecture
+  - absence as structure
+  - constraint and identity
+  - typography and meaning
+  - self-referential form
 prompt:
   - conceptual artwork about a text-only AI assistant
   - defined entirely by written rules and language

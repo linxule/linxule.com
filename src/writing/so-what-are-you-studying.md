@@ -4,7 +4,6 @@ series: "Archive"
 title: "So, what are you studying?"
 description: "How blockchain enables decentralized forms of organizing. From DAOs to culinary innovation - research streams exploring new organizational boundaries."
 date: 2020-05-26
-excerpt: "My research focus in 2020"
 keywords:
   - decentralized organizations research
   - DAO organizational theory
