@@ -15,10 +15,6 @@ marker: "writing"
         grid-column: 2;
     }
     
-    .marginalia {
-        grid-column: 3;
-    }
-    
     .article-header {
         margin-bottom: 4rem;
     }
@@ -207,10 +203,6 @@ marker: "writing"
         .article-container {
             grid-template-columns: 1fr minmax(auto, var(--measure)) 1fr;
         }
-        
-        .marginalia {
-            display: none;
-        }
     }
     
     @media (max-width: 768px) {
@@ -343,6 +335,62 @@ marker: "writing"
         if (e.key === 'Escape' && lightbox.classList.contains('active')) {
             closeLightbox();
         }
+    });
+})();
+</script>
+
+<!-- Marginalia positioning: align notes with their references -->
+<script>
+(function() {
+    var marginalia = document.querySelector('.article-body .marginalia');
+    if (!marginalia) return;
+
+    var body = document.querySelector('.article-body');
+    var notes = marginalia.querySelectorAll('.margin-note');
+    if (!notes.length) return;
+
+    var MQ = window.matchMedia('(min-width: 1101px)');
+
+    function position() {
+        if (!MQ.matches) {
+            notes.forEach(function(n) {
+                n.style.cssText = '';
+                n.classList.add('positioned');
+            });
+            marginalia.style.cssText = '';
+            return;
+        }
+
+        var bodyRect = body.getBoundingClientRect();
+        var lastBottom = 0;
+
+        notes.forEach(function(note) {
+            var ref = body.querySelector('.fn-ref[href="#' + note.id + '"]');
+            if (!ref) { note.classList.add('positioned'); return; }
+
+            var top = ref.getBoundingClientRect().top - bodyRect.top;
+            if (top < lastBottom) top = lastBottom;
+
+            note.style.position = 'absolute';
+            note.style.top = top + 'px';
+            note.style.right = '-300px';
+            note.style.width = '260px';
+
+            lastBottom = top + note.offsetHeight + 12;
+            note.classList.add('positioned');
+        });
+    }
+
+    if (document.fonts) {
+        document.fonts.ready.then(position);
+    } else {
+        window.addEventListener('load', position);
+    }
+
+    var timer;
+    window.addEventListener('resize', function() {
+        clearTimeout(timer);
+        timer = setTimeout(position, 150);
     });
 })();
 </script>

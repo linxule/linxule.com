@@ -426,12 +426,14 @@ p {
    Marginalia / Footnotes
    ======================================== */
 
-/* Position marginalia in the grid */
+/* Marginalia container: zero-width anchor, notes overflow into margin */
 .article-body .marginalia {
     position: absolute;
-    right: -300px;
-    width: 260px;
     top: 0;
+    left: 0;
+    right: 0;
+    width: 0;
+    overflow: visible;
 }
 
 .margin-note {
@@ -439,7 +441,12 @@ p {
     color: var(--ink-faint);
     line-height: 1.6;
     font-style: italic;
-    margin-bottom: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.margin-note.positioned {
+    opacity: 1;
 }
 
 .fn-num {
@@ -814,7 +821,31 @@ a:focus-visible {
 
 @media (max-width: 1100px) {
     .article-body .marginalia {
-        display: none;
+        position: static;
+        width: 100%;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .article-body .marginalia::before {
+        content: 'Notes';
+        display: block;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+    }
+
+    .article-body .margin-note {
+        position: static !important;
+        opacity: 1 !important;
+        top: auto !important;
+        width: 100% !important;
+        right: auto !important;
+        margin-bottom: 1.5rem;
     }
 }
 
@@ -1079,8 +1110,20 @@ a:focus-visible {
     .rendering {
         display: none;
     }
-    
+
     body::before {
         display: none;
+    }
+
+    .article-body .marginalia {
+        position: static;
+        width: 100%;
+        margin-top: 2rem;
+        border-top: 1px solid #ccc;
+    }
+
+    .article-body .margin-note {
+        position: static !important;
+        opacity: 1 !important;
     }
 }
