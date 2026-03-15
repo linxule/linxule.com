@@ -5,7 +5,7 @@ All known gotchas for the site. The top items are also in the main CLAUDE.md; th
 1. **Collections are sorted newest-first** for display
 2. **Portrait series numbers** are calculated oldest-first (01 is oldest)
 3. **Do NOT use `| reverse`** on collections.writing — it's already newest-first
-4. **Footnotes** render as marginalia on desktop only
+4. **Footnotes** render as marginalia on desktop (>1100px, JS-positioned next to refs with collision detection) and as endnotes on mobile (≤1100px, static block at article bottom with "Notes" heading). Notes start `opacity: 0` and fade in after positioning. Print also uses endnotes style
 5. **The `prompterFamily` filter** splits on first space: "claude opus 4.5" → family: "claude", model: "opus 4.5". Config suffixes preserved in model: "gemini 3.1-pro temp 0.8" → family: "gemini", model: "3.1-pro temp 0.8"
 6. **The `creatorFamily` filter** same pattern: "opus 4.5" → family: "opus", model: "4.5"
 7. **Layout variants** for portraits are deterministic based on page slug hash

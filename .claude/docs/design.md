@@ -116,7 +116,7 @@ Filtering changes WHAT you see, not HOW you browse. `/making/model/midjourney-v6
 
 ## Mobile Is a Different Reading Mode
 
-- Marginalia hidden — supplementary, not essential
+- Marginalia becomes endnotes at article bottom — content preserved, position changes
 - Stagger removed — scanning mode needs straight lines
 - Layouts simplify — the variation is a desktop reward
 

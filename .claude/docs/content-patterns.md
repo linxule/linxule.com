@@ -31,6 +31,11 @@ accident: true                 # Optional, highlights title in cyan
 3. Use **absolute paths** for images: `/writing/attachments/filename.ext`
    - Posts render to `/writing/post-slug/index.html`, so relative `attachments/...` resolves incorrectly
 4. Use standard markdown footnotes for marginalia: `[^1]` → `[^1]: Note text`
+   - Desktop (>1100px): JS positions each note in the right margin next to its reference
+   - Mobile (≤1100px): notes appear as endnotes at the article bottom with "Notes" heading
+   - Named footnotes work (`[^phd]`) — markdown-it-footnote converts to numeric IDs
+   - Notes start hidden (`opacity: 0`) and fade in after positioning to prevent FOUC
+   - Collision detection pushes overlapping notes downward (relevant for dense footnote clusters)
 
 ## Portrait Frontmatter
 
@@ -147,7 +152,7 @@ slides: https://...embed       # Optional, Canva embed URL (renders iframe)
 link: https://...              # Optional, external website ("Visit website →" button)
 keywords:
   - human-AI collaboration
-accident: true                 # Optional, cyan title on index
+accident: true                 # Optional, cyan title on both index and detail page
 ---
 
 Body content is the talk description. Use `<span class="accident">phrase</span>` for inline accidents.
@@ -161,9 +166,11 @@ Current series (in display order): `loom`, `research-with-ai`, `ai-whispers`, `s
 
 ## Footnotes as Marginalia
 
-Use standard markdown footnotes — they render as marginalia on desktop:
+Use standard markdown footnotes — they render as marginalia on desktop, endnotes on mobile:
 ```markdown
 This is body text[^1] with a note.
 
-[^1]: This appears in the margin on desktop, inline on mobile.
+[^1]: This appears in the right margin on desktop, as an endnote on mobile.
 ```
+
+Implementation: markdown-it-footnote renders `<aside class="marginalia">` at end of `.article-body`. JS in `writing.njk` positions each `.margin-note` absolutely next to its `.fn-ref` using `left: calc(100% + 2rem)`. Collision detection pushes overlapping notes down. On mobile (≤1100px), CSS reflows the aside as static endnotes with a "Notes" heading. Print uses endnotes style too.

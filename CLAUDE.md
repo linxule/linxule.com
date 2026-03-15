@@ -19,7 +19,7 @@ These files contain the full details extracted from this file. **Read them when 
 
 This site embodies a "book in the algorithmic age" metaphor:
 - Paper/ink color scheme (warm cream `#f4f1eb`, dark text `#1a1a1a`)
-- Marginalia via footnotes (rendered in sidebar on desktop, inline on mobile)
+- Marginalia via footnotes (JS-positioned in right margin on desktop, endnotes on mobile)
 - Spine-like navigation along left edge
 - "Bloom" cursor interaction (violet `#8b7089` glow on hover)
 - Print-like typography with careful spacing
@@ -31,6 +31,10 @@ Each page should have one "accident" - something intentionally wrong, rendered i
 ### Human-AI Collaboration
 
 Content often lists multiple authors (human + AI models). This reflects the project's thesis about human-AI collaboration and what becomes invisible when algorithms enter organizational life. Authors are listed as arrays, not comma-separated strings.
+
+## Repo Structure
+
+The website repo is `xule-site/`, not the parent `personal-website/` directory. If Claude Code opens from the parent, all git commands need `git -C xule-site/`.
 
 ## Architecture
 
@@ -95,7 +99,7 @@ Defined in `eleventy/collections.js`:
 
 ## Key Gotchas
 
-Most frequently hit. Full list of 41 in `.claude/docs/gotchas.md`.
+Most frequently hit. Full list of 42 in `.claude/docs/gotchas.md`.
 
 1. **Collections are sorted newest-first** for display
 2. **Portrait series numbers** are calculated oldest-first (01 is oldest)
