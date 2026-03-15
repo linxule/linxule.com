@@ -15,9 +15,9 @@ This site embodies a "book in the algorithmic age" metaphor:
 ## Quick Start
 
 ```bash
-npm install    # Install dependencies
-npm start      # Dev server at localhost:8080
-npm run build  # Production build + search index
+bun install    # Install dependencies
+bun run start  # Dev server at localhost:8080
+bun run build  # Production build + search index
 ```
 
 ## Structure
@@ -35,6 +35,7 @@ src/
 ├── assets/css/main.css    # Shared styles, design tokens
 ├── writing/*.md           # Blog posts
 ├── making/portraits/*.md  # AI portrait series
+├── talks/                 # Presentations and symposia
 ├── thinking/              # Research manifesto
 ├── teaching/              # Teaching page
 └── cv/                    # CV page
@@ -109,6 +110,12 @@ images:
 ---
 ```
 
+### Artifacts
+
+Artifacts live in `src/making/artifacts/` and use the naming pattern `artifact-YYYY-MM-DD-slug.md`.
+
+Use `layout: layouts/artifact.njk` with fields such as `creator`, `medium`, `src` or `images`, and optional context fields like `contextExcerpt`, `contextBefore`, and `contextAfter`.
+
 ### The Accident
 
 Each page should have one "accident" - something intentionally wrong, rendered in cyan (`#4ee1d4`).
@@ -123,12 +130,12 @@ Each page should have one "accident" - something intentionally wrong, rendered i
 The site uses [Pagefind](https://pagefind.app/) for client-side search:
 - Indexes at build time
 - Available at `/search/`
-- Searches writing and portraits
+- Searches writing, portraits, artifacts, talks, teaching, and CV
 
 ## Deployment
 
 ```bash
-npm run build   # Outputs to _site/
+bun run build   # Outputs to _site/
 ```
 
 - **Vercel**: Auto-detects Eleventy, deploys on push
