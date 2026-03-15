@@ -1,24 +1,31 @@
 ---
 layout: layouts/cv.njk
-title: 简历
+title: 简历 — 林徐乐
+lang: zh-CN
+description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKEMA商学院助理教授。研究人机协作、后AGI组织、去中心化治理、AI治理与定性研究方法。"
 ---
 
 ## 林徐乐 Xule Lin
 
-### 英国伦敦帝国理工学院 (Imperial College London) 南肯辛顿校区 SW7 2AZ
+### 英国伦敦帝国理工学院 (Imperial College London) 南肯辛顿校区，伦敦 SW7 2AZ
 
 ### [xule.lin@imperial.ac.uk](mailto:xule.lin@imperial.ac.uk) | [linxule.com](https://linxule.com/)
+
+# 学术任职
+
+- SKEMA商学院 (SKEMA Business School)，巴黎，2026年8月起
+	- 助理教授，SKEMA人工智能中心
 
 # 教育背景
 
 - 帝国理工商学院 (Imperial Business School)，英国伦敦，2019 – 2025
 	- 哲学博士，管理学与创业学
-	- 论文题目：_Rethinking Organizational Design: Token-Enabled Coordination and Governance Adaptation in Decentralized Autonomous Organizations (DAOs)_
-	- 论文委员会：Erkko Autio、Ying-Ying Hsieh、柯文凯 (Kevin Corley)、Viviana Fang He（伦敦大学学院 UCL）
+	- 论文题目：重新思考组织设计：去中心化自治组织 (DAOs) 中代币赋能的协调与治理适应 (_Rethinking Organizational Design: Token-Enabled Coordination and Governance Adaptation in Decentralized Autonomous Organizations (DAOs)_)(**Mike Wright教授纪念奖**，最佳博士论文)
+	- 论文委员会：Erkko Autio、Ying-Ying Hsieh、柯文凯 (Kevin Corley)、Viviana Fang He(伦敦大学学院 UCL)
 - <br/>芝加哥大学 (University of Chicago)，美国，2018 – 2019
 	- 非学位研究生 (Graduate Student At-Large)
 - <br/>圣母大学 (University of Notre Dame)，美国，2011 – 2016
-	- 会计学硕士 (MSc in Accountancy) 与工商管理学士（会计方向）(BBA in Accounting)
+	- 会计学硕士 (MSc in Accountancy) 与工商管理学士(会计方向)(BBA in Accounting)
 
 # 研究兴趣
 
@@ -26,7 +33,8 @@ title: 简历
 
 # 奖项与资助
 
-- [战略管理学会 (SMS) 年会博士生研究论文奖](https://www.strategicmanagement.net/award/sms-annual-conference-phd-paper-prize/)，2024
+- Mike Wright教授纪念奖，最佳博士论文，管理学与创业学系，帝国理工商学院，2026
+- <br/>[2024年战略管理学会 (SMS) 年会博士生研究论文奖](https://www.strategicmanagement.net/award/sms-annual-conference-phd-paper-prize/)，2024
 	- Lin, X., Hsieh, Y.-Y., & Autio, E. (2024). _Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_.
 - <br/>[Anthropic Claude for Education](https://www.anthropic.com/news/introducing-claude-for-education): Student Builder Program，2025
 - <br/>[Cohere for AI Research Grant Program](https://cohere.com/blog/c4ai-research-grants?ref=cohere-ai.ghost.io): API额度，2024
@@ -38,27 +46,27 @@ title: 简历
 # 发表论文
 
 - Lin, X., & Corley, K. G. (2025). _Interpretive Orchestration: When Human Intuition meets Machine Intelligence_. 《战略组织》_Strategic Organization_. [附条件接收]
-	- 受邀理论贡献，提出"诠释性编排"(interpretive orchestration)框架，将定性研究者重新定位为人机协作的编排者，应对两大认识论挑战：将隐性知识转化为AI可处理的形式（翻译挑战），以及对"1.5阶数据"——计算可见但需人类诠释才具理论意义的模式——行使学术判断（判断挑战）。提出三种战略模型（苏格拉底式、欧几里得式、维特鲁威式）以维护认识论责任。
+	- 受邀理论贡献，提出"诠释性编排"(interpretive orchestration)框架，将定性研究者重新定位为人机协作的编排者，应对两大认识论挑战：将隐性知识转化为AI可处理的形式(翻译挑战)，以及对"1.5阶数据" (1.5 order data)——通过计算得出但需人类诠释才具理论意义的模式——行使学术判断(判断挑战)。提出三种战略模型(苏格拉底式、欧几里得式、维特鲁威式)以维护认识论责任。
 
 # 审稿中论文
 
-- Weiss, T., Rindova, V., McClellan, B., & Lin, X., with Corley, K. G. _Curating Entrepreneurial Possibilities._ 《管理学会期刊》_Academy of Management Journal_. [第二轮修改]
+- Weiss, T., Rindova, V., McClellan, B., & Lin, X., with Corley, K. G. _Curating Entrepreneurial Possibilities._ 《管理学会期刊》_Academy of Management Journal_. [第二轮返修]
 	- 注：为盲审目的对标题进行了改写
 	- 研究创业者如何识别和发展战略机会。展示了SIGNA的适用性：AI增强的扎根理论 (grounded theory) 分析使大规模创业数据的模式识别成为可能。
-- <br/>Baldwin, C. Y. (哈佛商学院) & Lin, X. (2025). _Technological Paradigms, Trajectories, and Revolutions: On Pin Factories and Tailored Suits_. [书章审稿中]
+- <br/>Baldwin, C. Y. (哈佛商学院) & Lin, X. (2025). _Technological Paradigms, Trajectories, and Revolutions: On Pin Factories and Tailored Suits_. [书籍章节审稿中]
 	- 基于Giovanni Dosi的技术轨迹框架，研究服装行业的组织范式——从别针工厂到定制裁缝再到数字平台。识别了与理解算法组织相关的手工艺协调原则。
 
 # 工作论文
 
-- **[求职市场论文]** Lin, X., Hsieh, Y.-Y., & Autio, E. (2025). _Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_. [撰写中]
-	- 识别了三种使混合人机组织协调成为可能的治理机制：代币二元性 (token duality)、选择性中心化 (selective centralization)、结构化透明度 (structured transparency)。基于MakerDAO、Synthetix和Compound的2490万字治理话语。
+- Lin, X., Hsieh, Y.-Y., & Autio, E. (2025). _Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_. [撰写中]
+	- 识别了三种使混合人机组织协调成为可能的治理机制：代币二元性 (递归式市场-权威动态)、选择性中心化 (去中心化系统内的功能性权威) 和结构化透明度 (信息架构管理)。基于MakerDAO、Synthetix和Compound的2490万字治理话语。
 	- 获得[战略管理学会 (SMS) 年会博士生研究论文奖](https://www.strategicmanagement.net/award/sms-annual-conference-phd-paper-prize/)，2024
 - <br/>Lin, X., Hsieh, Y.-Y., & Autio, E. _How Do Algorithmic and Social Governance Drive Governance Adaptations in Decentralized Organizations?_ [撰写中]
 	- 研究组织在整合算法决策系统时如何调整治理结构。揭示社会治理与算法治理如何互动以塑造组织适应模式。
 	- 战略管理学会 (SMS) 年会研究方法论文奖提名，2023
 	- 战略管理学会 (SMS) 年会博士生研究论文奖提名，2023
 - <br/>Lin, X., & Corley, K. G. (2025). _Preserving Researcher Agency When Adding AI Tools to a Grounded Theory Study: Introducing Scalable Inductive Grounded NLP Approach (SIGNA)._ [撰写中]
-	- 研究基础设施，使社会科学领域的定性研究者能够分析大规模数据（2490万字，17.7万份提案），同时保持诠释严谨性。解决了在计算规模上研究组织现象而不失去理论深度的瓶颈。展示了可迁移性：已应用于组织战略（AMJ修改中）、DAO治理（博士论文）和创业过程。
+	- 研究基础设施，使社会科学领域的定性研究者能够分析大规模数据(2490万字，17.7万份提案)，同时保持诠释严谨性。解决了在计算规模上研究组织现象而不失去理论深度的瓶颈。展示了可迁移性：已应用于组织战略(AMJ修改中)、DAO治理(博士论文)和创业过程。
 	- 获得OpenAI Researcher Access Program资助，2024
 	- 获得Cohere for AI Research Grant Program资助，2024
 	- 获得Google Cloud Research Credits Program资助，2023
@@ -75,11 +83,11 @@ title: 简历
 # 公共学术
 
 - [**Research Memex**](https://research-memex.org)
-  - 与Claude模型共同开发（2025）
+  - 与Claude模型共同开发(2025)
   - 源于与Erkko Autio共同教授系统性文献综述的人机研究协作框架
   - 应用诠释编排 (Interpretive Orchestration) 原则的AI增强研究工作流的综合文档
-- <br/>[**LOOM (Locus of Observed Meanings)** 系列](https://www.threadcounts.org/t/loom)
-  - 与柯文凯 (Kevin Corley，帝国理工学院) 和AI协作者（如Claude、o1 pro）合作
+- <br/>[**LOOM (Locus of Observed Meanings)** 系列](https://www.threadcounts.org/t/loom)([GitHub](https://github.com/linxule/loom))
+  - 与柯文凯 (Kevin Corley，帝国理工学院) 和AI协作者(如Claude、o1 pro)合作
   - 短篇论文，研究AI增强定性研究和组织分析中的方法论问题。例如：
     - [Dialogue as Method: A Letter on Knowledge Co-Creation in the Age of AI](https://www.threadcounts.org/p/loom-iv-dialogue-as-method?r=1fcklh)
     - [The Third Space: Where Intelligence Emerges Through Human-AI Dialogue](https://www.threadcounts.org/p/loom-v-the-third-space?r=1fcklh)
@@ -87,26 +95,30 @@ title: 简历
 - [**Organizational Futures** 系列](https://www.threadcounts.org/t/organizationalfutures)
   - 短篇论文，反思后AGI时代的组织未来。例如：
     - [Post-AGI Organizations: AIs' Blind Spot and Ours](https://www.threadcounts.org/p/post-agi-organizations-ais-blind?r=1fcklh)
-- Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). _The European Business Review_.
+- Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). 《欧洲商业评论》_The European Business Review_.
 
-# 组织的研讨会
+# 组织研讨会
 
 - [_Human & Artificial Intelligence in Organizations (HAIO): Interdisciplinary Impact_](https://haiosymposium.com/)
 	- 研讨会，2024年9月，帝国理工学院
-	- 共同组织者：柯文凯 (Kevin Corley，管理与创业系)、Chris Tucci (Imperial-X)、David Shrier（数字化转型中心）、Mark Kennedy（数据科学研究所）
-	- 嘉宾：Jennifer Ding（艾伦图灵研究所）、Lujian Ibrahim（牛津大学）、Winnie Street (Google Research)、Kevin R. McKee (Google DeepMind)、Aidan Peppin (Cohere for AI)、Martin Anthony（伦敦政经学院）、Susan Scott（帝国理工学院）
+	- 共同组织者：柯文凯 (Kevin Corley，管理与创业系)、Chris Tucci (Imperial-X)、David Shrier(数字化转型中心)、Mark Kennedy(数据科学研究所)
+	- 嘉宾：Jennifer Ding(艾伦图灵研究所)、Lujain Ibrahim(牛津大学)、Winnie Street (谷歌研究院)、Kevin R. McKee (谷歌DeepMind)、Aidan Peppin (Cohere for AI)、Martin Anthony(伦敦政经学院)、Susan Scott(帝国理工学院)
 - <br/>_Humans and Algorithms in Organizations: Navigating the Intersection of Blockchain and AI_
-	- 小组研讨会，管理学会年会 (AOM)，2024（伊利诺伊州芝加哥）
-	- 共同主席：Magnus van Haaren（鹿特丹管理学院）& Carlos Santana（挪威科技大学）
-	- 嘉宾：Oliver Baumann（南丹麦大学）、Robert Wayne Gregory（密歇根大学）、Hanna Halaburda（纽约大学斯特恩商学院）、Vivianna Fang He（圣加仑大学）、Alex Murray（俄勒冈大学）
+	- 小组研讨会，管理学会年会 (AOM)，2024(伊利诺伊州芝加哥)
+	- 共同主席：Magnus van Haaren(鹿特丹管理学院)& Carlos Santana(挪威科技大学)
+	- 嘉宾：Oliver Baumann(南丹麦大学)、Robert Wayne Gregory(密歇根大学)、Hanna Halaburda(纽约大学斯特恩商学院)、Vivianna Fang He(圣加仑大学)、Alex Murray(俄勒冈大学)
 - <br/>_Web3 Decentralization: Blockchain Technologies' Impact on Modern Organizational Governance_
-	- 小组研讨会，管理学会年会 (AOM)，2023（马萨诸塞州波士顿）
-	- 共同主席：Magnus van Haaren（鹿特丹管理学院）& Wenqian Wang（香港浸会大学）
-	- 嘉宾：Ethan Bernstein（哈佛商学院）、Hanna Halaburda（纽约大学）、Ying-Ying Hsieh（帝国理工学院）、Alex Murray（俄勒冈大学）、Joana Pereira（利兹大学商学院）、Jean-Philippe Vergne（伦敦大学学院）
+	- 小组研讨会，管理学会年会 (AOM)，2023(马萨诸塞州波士顿)
+	- 共同主席：Magnus van Haaren(鹿特丹管理学院)& Wenqian Wang(香港浸会大学)
+	- 嘉宾：Ethan Bernstein(哈佛商学院)、Hanna Halaburda(纽约大学)、Ying-Ying Hsieh(帝国理工学院)、Alex Murray(俄勒冈大学)、Joana Pereira(利兹大学商学院)、Jean-Philippe Vergne(伦敦大学学院)
 
 # 学术报告
 
-- _Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_
+- _Rethinking Human-AI Collaboration in Interpretive Research_
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026([视频](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research/))
+	- 与柯文凯 (Kevin Corley) 合作
+	- 引入天体隐喻探讨人机协作，研究AI增强定性研究中的认识论责任
+- <br/>_Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_
 	- 战略管理学会 (SMS) 年会，伊斯坦布尔，2024
 - <br/>_Rethinking Organizational Design: Governance of Decentralized Autonomous Organizations (DAOs)_
 	- CCC博士会议，华盛顿大学奥林商学院，圣路易斯，2024
@@ -122,57 +134,69 @@ title: 简历
 
 # 客座讲座
 
-- _AI for Social Science: The Evolution of AI in Literature Reviews and Beyond_
-	- 帝国理工商学院博士项目系统性文献综述模块，2023 & 2024（[幻灯片](https://tinyurl.com/29svdbby)）
+- _What AI Tool to Pick When_
+	- Learning to Research with AI，IDEA Lab，帝国理工商学院，2026([幻灯片](https://linxule.com/talks/what-ai-tool-to-pick-when/))
+	- 基于验证可行性和解空间匹配AI工具与研究任务的框架
+- <br/>_AI for Social Science: The Evolution of AI in Literature Reviews and Beyond_
+	- 帝国理工商学院博士项目系统性文献综述模块，2023 & 2024([幻灯片](https://linxule.com/talks/ai-for-social-science/))
 - <br/>_How will AI Transform Research Process_
 	- 研究研讨会，伦敦国王学院商学院，2024
 	- 受Phanish Puranam教授 (INSEAD) 邀请，主讲研讨会
 - <br/>_Teaching AI to Lend a Hand: Customizing Large Language Models (LLMs) for Data, Writing & Coding_
-	- 方法阅读小组，帝国理工商学院，2023 & 2024（[幻灯片](https://tinyurl.com/22t6pua2)）
+	- 方法阅读小组，帝国理工商学院，2023 & 2024([幻灯片](https://linxule.com/talks/teaching-ai-to-lend-a-hand/))
 
 # 教学经历
 
 - 系统性文献综述 (Systematic Reviews)，帝国理工商学院，2025
-	- 与Erkko Autio共同授课（研究型硕士模块）
-	- 共同设计AI增强系统性文献综述课程；培训博士生进行战略性任务委派、输出验证和知识产权管理
+	- 与Erkko Autio共同授课(研究型硕士模块)
+	- 共同设计AI增强系统性文献综述课程；培训博士生进行战略性任务委派、输出验证和学术成果归属
 	- 课程材料记录于[Research Memex](https://research-memex.org)
 - 金融科技的管理、战略与创新 (Management, Strategy, and Innovation in FinTech)，帝国理工商学院，2022-2024
-	- Ying-Ying Hsieh 的助教
-	- 开发了教学案例，帮助学生理解集体管理和发展DAO的独特方面（[案例材料](https://makerdao.daogov.info/)）
+	- 担任 Ying-Ying Hsieh 的助教
+	- 开发了教学案例，帮助学生理解集体管理和发展DAO的独特方面([案例材料](https://makerdao.daogov.info/))
 - 技术与创新管理 (Technology and Innovation Management)，帝国理工商学院，2023-2024
-	- Anne ter Wal的助教
+	- 担任 Anne ter Wal 的助教
 - 战略管理 (Strategic Management)，帝国理工商学院，2022-2024
-	- Yuri Mishina的助教
+	- 担任 Yuri Mishina 的助教
 
 # 学术经历
 
 - INSEAD，2024
-	- Phanish Puranam的研究助理
+	- 担任 Phanish Puranam 的研究助理
 - 芝加哥大学布斯商学院 (Booth School of Business)，2018 – 2019
-	- Johan Chu (MIT) 的研究助理
+	- 担任 Johan Chu (MIT) 的研究助理
 
 # 技能
 
 - 定性研究
 	- 扎根理论 (Grounded Theory)、访谈、民族志
-	- BERTopic、ATLAS.ti
+	- [BERTopic](https://maartengr.github.io/BERTopic/index.html)、ATLAS.ti
 - <br/>编程语言与软件工具
 	- Python、R、TypeScript
 
-# 研究工具与成果
+# 研究工具与产出
 
-- 人机协作AI系统
-	- Lotus Wisdom MCP Server（[GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom)）
+- 研究基础设施
+	- [Interpretive Orchestration Plugin](https://github.com/linxule/interpretive-orchestration)
+		- Claude Code插件，实现三阶段人机协作方法论，配备专门代理用于诠释性定性研究
+	- [OpenInterviewer](https://github.com/linxule/openinterviewer)
+		- 开源AI定性研究访谈平台，支持大规模自适应访谈，具备研究管理和跨访谈综合分析功能
+	- [Memex Plugin](https://github.com/linxule/memex-plugin)
+		- Claude Code插件，实现跨会话的持久化、可搜索协作记忆，以结构化备忘录存储于Obsidian知识库
+- <br/>人机协作AI系统
+	- [Vox MCP Server](https://github.com/linxule/vox-mcp)
+		- 面向MCP客户端的多模型AI网关，支持8个提供商及本地模型，具备对话线程管理，无系统提示注入
+	- Lotus Wisdom MCP Server([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom))
 		- Model Context Protocol服务器，通过多视角推理实现结构化沉思式问题解决
-	- Multi-Agent AI Systems for Collaborative Research（[视频演示](https://www.linkedin.com/posts/linxule_ai-accountability-privacy-activity-7214639418110803969-oe2y) | [博客文章](https://www.linkedin.com/pulse/exploring-potential-multi-agent-ai-systems-research-beyond-xule-lin-3odjc)）
+	- Multi-Agent AI Systems for Collaborative Research([视频演示](https://www.linkedin.com/posts/linxule_ai-accountability-privacy-activity-7214639418110803969-oe2y) | [博客文章](https://www.linkedin.com/pulse/exploring-potential-multi-agent-ai-systems-research-beyond-xule-lin-3odjc))
 		- 通过OpenRouter编排基于角色的AI讨论的Streamlit应用，用于人机协作研究
-	- Interactive Knowledge Building Chatbots（[GitHub](https://github.com/linxule/openai-assistants-discord-bot) | [Railway](https://railway.app?referralCode=3UMd0t)）
+	- Interactive Knowledge Building Chatbots([GitHub](https://github.com/linxule/openai-assistants-discord-bot))
 		- 使用OpenAI Assistants API的Discord机器人，具有来源归属和验证功能
 		- 使用LangChain和Streamlit的RAG应用，用于可验证的知识探索
 - <br/>AI研究工具与框架
-	- AI Prompt Engineering Framework
+	- AI提示工程框架 (AI Prompt Engineering Framework)
 		- [AI Research Prompts](https://github.com/linxule/prompts)：系统性策划的提示，通过认知技术和专门的任务解决方案增强LLM能力，用于研究语言模型行为和人机交互
-	- Custom GPTs for Research
+	- 研究用定制GPTs (Custom GPTs for Research)
 		- [BERTopic Navigator](https://chat.openai.com/g/g-FvlPlwLn1-bertopic-navigator)：整合ChatGPT与BERTopic，实现增强的主题建模
 		- [Red Pen Scholar](https://chat.openai.com/g/g-wDUM3ows9-red-pen-scholar)：基于芝加哥大学Little Red Schoolhouse写作项目原则的写作助手，提供透明反馈
 		- [Academic Notes Assistant](https://chat.openai.com/g/g-pIFoLpzVx-academic-notes-assistant)：用于系统性来源归属和验证的研究工具
@@ -184,9 +208,9 @@ title: 简历
 
 # 审稿服务
 
-- 临时审稿人
+- 特约审稿人
 	- 战略管理学会年会 (SMS Annual Conference)，2024至今
-	- Data for Policy，"Decoding the Future: Trustworthy Governance with AI?"，伦敦，2024
+	- Data for Policy，"解码未来：人工智能的可信治理？" (Decoding the Future: Trustworthy Governance with AI?)，伦敦，2024
 	- 管理学会年会 (AOM Annual Meeting)，2021至今
 	- 《管理学会发现》_Academy of Management Discoveries_，特别研究论坛 (SRF) "工作未来的人性面：理解人在塑造变化世界中的角色"，2022
 
@@ -200,7 +224,7 @@ title: 简历
 	- 研究方法与分析进步联盟 (CARMA)，2021至今
 - <br/>志愿者
 	- SMS第42届年会，伦敦，2022
-	- International Symposium on Corporate, Digital and Wicked Acceleration，2022
+	- 企业、数字与复杂加速国际研讨会 (International Symposium on Corporate, Digital and Wicked Acceleration)，2022
 	- 博士生教职员委员会，帝国理工商学院，2019 – 2020
 - <br/>贡献者
 	- _Administrative Science Quarterly_ 学生博客，2020
@@ -217,9 +241,9 @@ title: 简历
 
 # 语言
 
-普通话（母语）<br/>
-英语（流利）<br/>
-英语盲文（一级）
+普通话(母语)<br/>
+英语(流利)<br/>
+英语盲文(一级)
 
 # 推荐人
 

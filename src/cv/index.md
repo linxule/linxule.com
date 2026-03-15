@@ -9,6 +9,11 @@ title: CV
 
 ### [xule.lin@imperial.ac.uk](mailto:xule.lin@imperial.ac.uk) | [linxule.com](https://linxule.com/)
 
+# Academic Appointments
+
+- SKEMA Business School, Paris, August 2026 –
+	- Assistant Professor, SKEMA Centre for Artificial Intelligence
+
 # Education
 
 - Imperial Business School, Imperial College London, 2019 – 2025
@@ -51,7 +56,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Working Papers
 
-- **[Job Market Paper]** Lin, X., Hsieh, Y.-Y., & Autio, E. (2025). _Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_. [Manuscript in preparation]
+- Lin, X., Hsieh, Y.-Y., & Autio, E. (2025). _Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_. [Manuscript in preparation]
 	- Identifies three governance mechanisms enabling coordination in hybrid human-algorithmic organizations: token duality (recursive market-authority dynamics), selective centralization (functional authority within decentralized systems), and structured transparency (managing information architectures). Based on 24.9M words of governance discourse across MakerDAO, Synthetix, and Compound.
 	- Recipient, [2024 Strategic Management Society (SMS) Annual Conference Ph.D. Paper Prize](https://www.strategicmanagement.net/award/sms-annual-conference-phd-paper-prize/)
 - <br/>Lin, X., Hsieh, Y.-Y., & Autio, E. _How Do Algorithmic and Social Governance Drive Governance Adaptations in Decentralized Organizations?_ [Manuscript in preparation]
@@ -79,7 +84,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
   - Co-developed with Claude models (2025)
   - Framework for human-AI research collaboration emerging from co-teaching Systematic Reviews with Erkko Autio
   - Comprehensive documentation of AI-augmented research workflows applying Interpretive Orchestration principles
-- <br/>[**LOOM (Locus of Observed Meanings)** series](https://www.threadcounts.org/t/loom)
+- <br/>[**LOOM (Locus of Observed Meanings)** series](https://www.threadcounts.org/t/loom) ([GitHub](https://github.com/linxule/loom))
   - In collaboration with Kevin Corley (Imperial College London) and AI collaborators (e.g., Claude, o1 pro)
   - Short-form essays examining methodological questions in AI-augmented qualitative research and organizational analysis. Examples:
     - [Dialogue as Method: A Letter on Knowledge Co-Creation in the Age of AI](https://www.threadcounts.org/p/loom-iv-dialogue-as-method?r=1fcklh)
@@ -169,12 +174,21 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Research Tools & Artifacts
 
-- AI Systems for Human-AI Collaboration
+- Research Infrastructure
+	- [Interpretive Orchestration Plugin](https://github.com/linxule/interpretive-orchestration)
+		- Claude Code plugin implementing a 3-stage human-AI collaboration methodology with specialized agents for interpretive qualitative research
+	- [OpenInterviewer](https://github.com/linxule/openinterviewer)
+		- Open-source AI-powered qualitative research platform for conducting adaptive interviews at scale with study management and cross-interview synthesis
+	- [Memex Plugin](https://github.com/linxule/memex-plugin)
+		- Claude Code plugin for persistent, searchable collaborative memory across sessions, stored as structured memos in an Obsidian vault
+- <br/>AI Systems for Human-AI Collaboration
+	- [Vox MCP Server](https://github.com/linxule/vox-mcp)
+		- Multi-model AI gateway for MCP clients supporting 8 providers and local models with conversation threading and no system prompt injection
 	- Lotus Wisdom MCP Server ([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom))
 		- Model Context Protocol server enabling structured contemplative problem-solving through multi-perspective reasoning
 	- Multi-Agent AI Systems for Collaborative Research  ([Video demo](https://www.linkedin.com/posts/linxule_ai-accountability-privacy-activity-7214639418110803969-oe2y) | [Blog post](https://www.linkedin.com/pulse/exploring-potential-multi-agent-ai-systems-research-beyond-xule-lin-3odjc))
 		- Streamlit application orchestrating role-based AI discussions via OpenRouter for human-AI teaming research
-	- Interactive Knowledge Building Chatbots ([GitHub](https://github.com/linxule/openai-assistants-discord-bot) | [Railway](https://railway.app?referralCode=3UMd0t))
+	- Interactive Knowledge Building Chatbots ([GitHub](https://github.com/linxule/openai-assistants-discord-bot))
 		- Discord bot using OpenAI's assistant API with source attribution and verification
 		- RAG-based applications using Langchain and Streamlit for verifiable knowledge exploration
 - <br/>AI Research Tools & Frameworks
