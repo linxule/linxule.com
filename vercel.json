@@ -60,6 +60,10 @@
         {
           "key": "Cache-Control",
           "value": "public, s-maxage=60, stale-while-revalidate=600"
+        },
+        {
+          "key": "Vary",
+          "value": "Accept"
         }
       ]
     }
