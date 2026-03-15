@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 bun.lock
+package-lock.json
 
 # Build output
 _site/
@@ -11,8 +12,25 @@ _site/
 # System files
 **/.DS_Store
 
-# Local-only documentation (private workflows)
-LOCAL_MANUAL.md
-.claude/LOCAL_MANUAL.md
-.claude/archive/
-.claude/rules/
+# Claude Code workspace (private docs, rules, archives)
+.claude/
+.claude.local.md
+
+# Vercel local config
+.vercel/
+
+# Secrets and credentials
+.env*
+*.secret
+*.pem
+
+# Scripts with tokens or private data
+scripts/indexnow-submit.sh
+scripts/baidu-submit-*.txt
+scripts/wikidata-entry.md
+scripts/gsc/
+url-submission-list.txt
+
+# Local audit/scratch files
+SITE_AUDIT_*.md
+_site_*/
