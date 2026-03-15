@@ -1,18 +1,16 @@
 # CLAUDE.md - AI Assistant Context
 
-This file helps AI assistants (Claude, etc.) understand the project philosophy and technical architecture. Detailed reference material lives in `.claude/docs/` — read those files when working on the relevant area.
+Project architecture and conventions. Extended reference docs live in `.claude/docs/` (local-only, gitignored) — read those files when working on the relevant area.
 
-## Reference Docs
+## Local Reference Docs (gitignored)
 
-These files contain the full details extracted from this file. **Read them when the task involves their area.**
-
-- `.claude/docs/design.md` — Deep design principles, stagger patterns, text shaping rules, accident philosophy. **Read when**: creating new content, modifying layouts, extending the design system.
-- `.claude/docs/content-patterns.md` — Frontmatter YAML templates for all content types, workflows for adding new content, series management. **Read when**: adding writing posts, portraits, artifacts, talks.
-- `.claude/docs/making-architecture.md` — Making page CSS architecture, unified spread system, shared behaviors across all 6 making pages. **Read when**: modifying making pages, debugging layout issues.
-- `.claude/docs/ai-discoverability.md` — Full AI/LLM discoverability system, markdown output templates, content negotiation, discovery signals. **Read when**: adding AI signals, modifying llms.txt, working on md-outputs, debugging middleware.
-- `.claude/docs/infrastructure.md` — Deployment config (Vercel, redirects), collections architecture, series management. **Read when**: modifying deployment, adding collections or series, debugging routing.
-- `.claude/docs/gotchas.md` — Complete gotchas list. **Read when**: encountering unexpected behavior or before making significant changes. Top gotchas below.
-- `.claude/LOCAL_MANUAL.md` (gitignored) — Local file paths, machine-specific workflows, private notes.
+- `.claude/docs/design.md` — Design principles, stagger patterns, text shaping, accident philosophy
+- `.claude/docs/content-patterns.md` — Frontmatter templates, content workflows, series management
+- `.claude/docs/making-architecture.md` — Making page CSS architecture, unified spread system
+- `.claude/docs/ai-discoverability.md` — AI/LLM discoverability, markdown outputs, content negotiation
+- `.claude/docs/infrastructure.md` — Deployment, redirects, collections, search engine setup
+- `.claude/docs/gotchas.md` — Complete gotchas list (top items below)
+- `.claude/LOCAL_MANUAL.md` — Local paths, credentials, machine-specific workflows
 
 ## Project Philosophy
 
