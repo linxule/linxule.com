@@ -3,10 +3,10 @@
  * Custom shortcodes for image optimization and other content generation
  */
 
-const Image = require("@11ty/eleventy-img");
-const path = require("path");
+import Image from "@11ty/eleventy-img";
+import path from "path";
 
-module.exports = function(eleventyConfig) {
+export default function(eleventyConfig) {
 
   // Optimized image shortcode - generates AVIF, WebP + responsive srcset
   eleventyConfig.addAsyncShortcode("optimizedImage", async function(src, alt, sizes = "50vw") {
@@ -44,4 +44,4 @@ module.exports = function(eleventyConfig) {
       return `<img src="${src}" alt="${alt || ''}" loading="lazy">`;
     }
   });
-};
+}

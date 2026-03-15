@@ -3,7 +3,7 @@
  * LOOM Post Migration Script
  *
  * Migrates posts from the LOOM repo to the Eleventy site.
- * Run from xule-site directory: node scripts/migrate-loom.js
+ * Run from xule-site directory: node scripts/migrate-loom.cjs
  *
  * Options:
  *   --dry-run    Show what would be migrated without writing files

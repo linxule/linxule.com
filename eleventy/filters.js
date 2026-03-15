@@ -3,7 +3,7 @@
  * Custom filters for date formatting, string manipulation, and content extraction
  */
 
-module.exports = function(eleventyConfig) {
+export default function(eleventyConfig) {
 
   // Date formatting
   eleventyConfig.addFilter("readableDate", (dateObj) => {
@@ -123,4 +123,4 @@ module.exports = function(eleventyConfig) {
     if (url.startsWith('/talks/')) return 'talk';
     return 'page';
   });
-};
+}

@@ -1,14 +1,12 @@
-const markdownIt = require("markdown-it");
-const markdownItFootnote = require("markdown-it-footnote");
-const fs = require("fs");
-const path = require("path");
+import markdownIt from "markdown-it";
+import markdownItFootnote from "markdown-it-footnote";
+import fs from "fs";
 
-// Modular configuration
-const collections = require('./eleventy/collections');
-const filters = require('./eleventy/filters');
-const shortcodes = require('./eleventy/shortcodes');
+import collections from './eleventy/collections.js';
+import filters from './eleventy/filters.js';
+import shortcodes from './eleventy/shortcodes.js';
 
-module.exports = function(eleventyConfig) {
+export default function(eleventyConfig) {
 
   // Markdown with footnotes (custom marginalia rendering)
   const md = markdownIt({
@@ -64,4 +62,4 @@ module.exports = function(eleventyConfig) {
     markdownTemplateEngine: "njk",
     htmlTemplateEngine: "njk"
   };
-};
+}

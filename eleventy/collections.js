@@ -3,7 +3,7 @@
  * Defines all content collections for writing, portraits, thinking, and tag aggregations
  */
 
-module.exports = function(eleventyConfig) {
+export default function(eleventyConfig) {
 
   // Writing collection - sorted newest first
   eleventyConfig.addCollection("writing", function(collectionApi) {
@@ -232,7 +232,7 @@ module.exports = function(eleventyConfig) {
     });
 
     // Custom sort order
-    const order = ['loom', 'research-with-ai', 'ai-whispers', 'singles', 'epistemic-voids', 'organizational-futures', 'archive'];
+    const order = ['loom', 'research-with-ai', 'ai-whispers', 'thinking', 'singles', 'epistemic-voids', 'organizational-futures', 'archive'];
     return Object.values(bySeries).sort((a, b) => {
       const aIdx = order.indexOf(a.slug);
       const bIdx = order.indexOf(b.slug);
@@ -253,7 +253,7 @@ module.exports = function(eleventyConfig) {
           slug: slug,
           writing: [],
           portraits: [],
-          thinking: [],
+          artifacts: [],
           talks: []
         };
       }
@@ -282,13 +282,13 @@ module.exports = function(eleventyConfig) {
       }
     });
 
-    // Process thinking posts (if any exist as markdown)
-    collectionApi.getFilteredByGlob("src/thinking/**/*.md").forEach(item => {
+    // Process artifacts
+    collectionApi.getFilteredByGlob("src/making/artifacts/**/*.md").forEach(item => {
       if (item.data.keywords) {
-        item.data.keywords.forEach(kw => addToTag(kw, item, 'thinking'));
+        item.data.keywords.forEach(kw => addToTag(kw, item, 'artifacts'));
       }
       if (item.data.tags) {
-        item.data.tags.forEach(tag => addToTag(tag, item, 'thinking'));
+        item.data.tags.forEach(tag => addToTag(tag, item, 'artifacts'));
       }
     });
 
@@ -306,11 +306,11 @@ module.exports = function(eleventyConfig) {
     Object.values(tagMap).forEach(tag => {
       tag.writing.sort((a, b) => b.date - a.date);
       tag.portraits.sort((a, b) => b.date - a.date);
-      tag.thinking.sort((a, b) => b.date - a.date);
+      tag.artifacts.sort((a, b) => b.date - a.date);
       tag.talks.sort((a, b) => b.date - a.date);
-      tag.total = tag.writing.length + tag.portraits.length + tag.thinking.length + tag.talks.length;
+      tag.total = tag.writing.length + tag.portraits.length + tag.artifacts.length + tag.talks.length;
     });
 
     return Object.values(tagMap).sort((a, b) => a.name.localeCompare(b.name));
   });
-};
+}
