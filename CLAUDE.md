@@ -99,24 +99,25 @@ Defined in `eleventy/collections.js`:
 
 ## Key Gotchas
 
-Most frequently hit. Full list of 42 in `.claude/docs/gotchas.md`.
+Most frequently hit. Full list in `.claude/docs/gotchas.md`.
 
 1. **Collections are sorted newest-first** for display
 2. **Portrait series numbers** are calculated oldest-first (01 is oldest)
 3. **Do NOT use `| reverse`** on collections.writing — it's already newest-first
-4. **The `prompterFamily` filter** splits on first space: "claude opus 4.5" → family: "claude", model: "opus 4.5"
-5. **The `creatorFamily` filter** same pattern: "opus 4.5" → family: "opus", model: "4.5"
-6. **Layout variants** for portraits are deterministic based on page slug hash
-7. **Text shaping is mandatory** — prompts and contextExcerpts must be arrays with stagger pattern and one accident
-8. **Trailing slashes** — `vercel.json` has `trailingSlash: false`; sitemap.xml.njk strips trailing slashes to match
-9. **New content type checklist** — When adding a section, update: `collections.js`, homepage nav in `index.njk`, `llms.txt.njk`, `tag.njk`. Ensure grayscale hover-reveal + mobile override
-10. **Nunjucks regex in replace** — Use `| replace(r/\/$/, "")` for regex patterns
-11. **JSON output in Nunjucks** — Use `| dump | safe` for proper JSON string escaping
-12. **Guard undefined arrays in templates** — `contextExcerpt`, `prompt`, `images` can be undefined. Wrap in `{% if array %}`
-13. **Vercel middleware + Eleventy CommonJS** — Do NOT add `"type": "module"` to `package.json`
-14. **Artifact HTML template processing** — Prevented via `src/assets/artifacts/artifacts.json` with `"permalink": false`. `.eleventyignore` did NOT work.
-15. **Writing images are local** — All in `src/writing/attachments/`. No remote image URLs in markdown `![]()` syntax.
-16. **`tags` and `keywords` both feed `tagPages`** — `collections.js` reads both fields. Standard is `keywords`; some pre-2023 posts still use `tags`.
+4. **Footnotes** render as marginalia on desktop (JS-positioned next to refs), endnotes on mobile (≤1100px)
+5. **The `prompterFamily` filter** splits on first space: "claude opus 4.5" → family: "claude", model: "opus 4.5"
+6. **The `creatorFamily` filter** same pattern: "opus 4.5" → family: "opus", model: "4.5"
+7. **Layout variants** for portraits are deterministic based on page slug hash
+8. **Text shaping is mandatory** — prompts and contextExcerpts must be arrays with stagger pattern and one accident
+9. **Trailing slashes** — `vercel.json` has `trailingSlash: false`; sitemap.xml.njk strips trailing slashes to match
+10. **New content type checklist** — When adding a section, update: `collections.js`, homepage nav in `index.njk`, `llms.txt.njk`, `tag.njk`. Ensure grayscale hover-reveal + mobile override
+11. **Nunjucks regex in replace** — Use `| replace(r/\/$/, "")` for regex patterns
+12. **JSON output in Nunjucks** — Use `| dump | safe` for proper JSON string escaping
+13. **Guard undefined arrays in templates** — `contextExcerpt`, `prompt`, `images` can be undefined. Wrap in `{% if array %}`
+14. **Vercel middleware + Eleventy CommonJS** — Do NOT add `"type": "module"` to `package.json`
+15. **Artifact HTML template processing** — Prevented via `src/assets/artifacts/artifacts.json` with `"permalink": false`. `.eleventyignore` did NOT work.
+16. **Writing images are local** — All in `src/writing/attachments/`. No remote image URLs in markdown `![]()` syntax.
+17. **`tags` and `keywords` both feed `tagPages`** — `collections.js` reads both fields. Standard is `keywords`; some pre-2023 posts still use `tags`.
 
 ## Commands
 
