@@ -28,27 +28,71 @@
           "value": "text/plain; charset=utf-8"
         }
       ]
+    },
+    {
+      "source": "/assets/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/writing/attachments/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/((?!_vercel|api|cdn-cgi).*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept",
+          "value": ".*text/html.*"
+        }
+      ],
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=60, stale-while-revalidate=600"
+        }
+      ]
     }
   ],
   "redirects": [
     {
+      "source": "/favicon.ico",
+      "destination": "/assets/favicon.svg",
+      "statusCode": 301
+    },
+    {
+      "source": "/favicon.png",
+      "destination": "/assets/favicon-32.png",
+      "statusCode": 301
+    },
+    {
       "source": "/curation-dao/:path*",
-      "destination": "/writing/dao-governance-resources/",
+      "destination": "/writing/dao-governance-resources",
       "statusCode": 301
     },
     {
       "source": "/curation-dao",
-      "destination": "/writing/dao-governance-resources/",
+      "destination": "/writing/dao-governance-resources",
       "statusCode": 301
     },
     {
       "source": "/daogov/:path*",
-      "destination": "/writing/dao-governance-resources/",
+      "destination": "/writing/dao-governance-resources",
       "statusCode": 301
     },
     {
       "source": "/daogov",
-      "destination": "/writing/dao-governance-resources/",
+      "destination": "/writing/dao-governance-resources",
       "statusCode": 301
     },
     {
@@ -63,17 +107,17 @@
     },
     {
       "source": "/publications/:path*",
-      "destination": "/cv/#publications",
+      "destination": "/cv#publications",
       "statusCode": 301
     },
     {
       "source": "/publications",
-      "destination": "/cv/#publications",
+      "destination": "/cv#publications",
       "statusCode": 301
     },
     {
       "source": "/publication/:path*",
-      "destination": "/cv/#publications",
+      "destination": "/cv#publications",
       "statusCode": 301
     },
     {
@@ -83,12 +127,12 @@
     },
     {
       "source": "/posts/2020/06/resources-for-dao-research/:path*",
-      "destination": "/writing/dao-governance-resources/",
+      "destination": "/writing/dao-governance-resources",
       "statusCode": 301
     },
     {
       "source": "/posts/:path*",
-      "destination": "/writing/",
+      "destination": "/writing",
       "statusCode": 301
     },
     {
@@ -98,42 +142,42 @@
     },
     {
       "source": "/cV",
-      "destination": "/cv/",
+      "destination": "/cv",
       "statusCode": 301
     },
     {
       "source": "/CV",
-      "destination": "/cv/",
+      "destination": "/cv",
       "statusCode": 301
     },
     {
       "source": "/CV-zh",
-      "destination": "/cv-zh/",
+      "destination": "/cv-zh",
       "statusCode": 301
     },
     {
       "source": "/CV-ZH",
-      "destination": "/cv-zh/",
+      "destination": "/cv-zh",
       "statusCode": 301
     },
     {
       "source": "/简历",
-      "destination": "/cv-zh/",
+      "destination": "/cv-zh",
       "statusCode": 301
     },
     {
       "source": "/履历",
-      "destination": "/cv-zh/",
+      "destination": "/cv-zh",
       "statusCode": 301
     },
     {
       "source": "/Writing",
-      "destination": "/writing/",
+      "destination": "/writing",
       "statusCode": 301
     },
     {
       "source": "/Making",
-      "destination": "/making/",
+      "destination": "/making",
       "statusCode": 301
     },
     {
@@ -168,27 +212,27 @@
     },
     {
       "source": "/collection-archive",
-      "destination": "/writing/",
+      "destination": "/writing",
       "statusCode": 301
     },
     {
       "source": "/year-archive",
-      "destination": "/writing/",
+      "destination": "/writing",
       "statusCode": 301
     },
     {
       "source": "/page-archive",
-      "destination": "/writing/",
+      "destination": "/writing",
       "statusCode": 301
     },
     {
       "source": "/projects/md_academic",
-      "destination": "/writing/macaw-markdown-academic-writing/",
+      "destination": "/writing/macaw-markdown-academic-writing",
       "statusCode": 301
     },
     {
       "source": "/projects/:path*",
-      "destination": "/writing/",
+      "destination": "/writing",
       "statusCode": 301
     }
   ]

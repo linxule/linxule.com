@@ -15,6 +15,7 @@ _site/
 # Claude Code workspace (private docs, rules, archives)
 .claude/
 .claude.local.md
+LOCAL_MANUAL.md
 
 # Vercel local config
 .vercel/

@@ -9,6 +9,7 @@ marker: "writing"
         grid-template-columns: 1fr minmax(auto, var(--measure)) 280px 1fr;
         gap: 0 2rem;
         padding: 10rem 2rem 6rem;
+        overflow-x: clip;
     }
     
     article {
@@ -181,7 +182,7 @@ marker: "writing"
             {% if series %}
             <div class="article-series">{{ series }}</div>
             {% endif %}
-            <h1 class="article-title">{{ title }}</h1>
+            <h1 class="article-title{% if accident %} accident{% endif %}">{{ title }}</h1>
             {% if subtitle %}
             <p class="article-subtitle">{{ subtitle }}</p>
             {% endif %}
@@ -307,14 +308,18 @@ marker: "writing"
 
     var MQ = window.matchMedia('(min-width: 1101px)');
 
-    function position() {
+    function position(animate) {
         if (!MQ.matches) {
             notes.forEach(function(n) {
                 n.style.cssText = '';
                 n.classList.add('positioned');
             });
-            marginalia.style.cssText = '';
             return;
+        }
+
+        if (!animate) {
+            marginalia.style.transition = 'none';
+            notes.forEach(function(n) { n.style.transition = 'none'; });
         }
 
         var bodyRect = body.getBoundingClientRect();
@@ -329,24 +334,36 @@ marker: "writing"
 
             note.style.position = 'absolute';
             note.style.top = top + 'px';
-            note.style.left = 'calc(100% + 2rem)';
-            note.style.width = '260px';
+            note.style.left = 'calc(100% + 1.5rem)';
+            note.style.width = 'clamp(180px, 20vw, 260px)';
 
             lastBottom = top + note.offsetHeight + 12;
             note.classList.add('positioned');
         });
+
+        if (!animate) {
+            // Force reflow then restore transitions
+            marginalia.offsetHeight;
+            marginalia.style.transition = '';
+            notes.forEach(function(n) { n.style.transition = ''; });
+        }
     }
 
+    // Initial position with fade-in
     if (document.fonts) {
-        document.fonts.ready.then(position);
+        document.fonts.ready.then(function() { position(true); });
     } else {
-        window.addEventListener('load', position);
+        window.addEventListener('load', function() { position(true); });
     }
 
+    // Breakpoint crossing — instant, no debounce
+    MQ.addEventListener('change', function() { position(false); });
+
+    // Resize within same mode — debounced, no animation
     var timer;
     window.addEventListener('resize', function() {
         clearTimeout(timer);
-        timer = setTimeout(position, 150);
+        timer = setTimeout(function() { position(false); }, 100);
     });
 })();
 </script>

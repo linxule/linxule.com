@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ site.language | default('en') }}">
+<html lang="{{ lang | default(site.language) | default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +20,20 @@
       {%- endif -%}
     {%- endif -%}
     <meta name="description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
-    <meta name="author" content="{{ site.author }}">
+    <meta name="baidu-site-verification" content="codeva-4hCK3zYdYU">
+    <meta name="author" content="{{ site.authorZh | default('') }} ({{ site.author }})">
+
+    {# Baidu uses content-language meta instead of hreflang #}
+    {%- if lang and lang.startsWith('zh') %}
+    <meta http-equiv="content-language" content="zh-Hans">
+    {%- endif %}
+
+    {# hreflang for Google: link English/Chinese CV variants #}
+    {%- if page.url == '/cv/' or page.url == '/cv-zh/' %}
+    <link rel="alternate" hreflang="en" href="{{ site.url }}/cv">
+    <link rel="alternate" hreflang="zh" href="{{ site.url }}/cv-zh">
+    <link rel="alternate" hreflang="x-default" href="{{ site.url }}/cv">
+    {%- endif %}
 
     {# Canonical URL #}
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
@@ -28,10 +41,10 @@
     {# Open Graph #}
     {# Smart OG image: explicit ogImage > first image from images[] > src field > default #}
     {%- set ogImg = ogImage -%}
-    {%- if not ogImg and images and images[0] and images[0].src -%}
+    {%- if not ogImg and images and images[0] and images[0].src and not (images[0].src | isHTMLFile) -%}
       {%- set ogImg = images[0].src -%}
     {%- endif -%}
-    {%- if not ogImg and src -%}
+    {%- if not ogImg and src and not (src | isHTMLFile) -%}
       {%- set ogImg = src -%}
     {%- endif -%}
     {%- set ogImg = ogImg | default('/assets/og-image.png') -%}
@@ -73,6 +86,9 @@
     {%- set mdUrl = page.url | replace(r/\/$/, "") + ".md" %}
     <link rel="alternate" type="text/markdown" href="{{ mdUrl }}">
     {%- endif %}
+    {%- if page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' %}
+    <link rel="alternate" type="text/markdown" href="{{ page.url | replace(r/\/$/, '') }}.md">
+    {%- endif %}
 
     {# Vercel Analytics #}
     <script>
@@ -89,25 +105,42 @@
       "mainEntity": {
         "@type": "Person",
         "name": "{{ site.author }}",
+        "alternateName": "{{ site.authorZh }}",
         "url": "{{ site.url }}",
         "description": "{{ site.description }}",
         "jobTitle": "PhD Researcher",
         "email": "xule.lin@imperial.ac.uk",
-        "affiliation": {
-          "@type": "Organization",
-          "name": "Imperial College London"
-        },
-        "knowsAbout": ["Human-AI collaboration", "AI integration in organizations", "Organizational design", "AI governance", "Qualitative research methods", "Grounded theory"],
+        "affiliation": [
+          {
+            "@type": "Organization",
+            "name": "Imperial College London",
+            "alternateName": "帝国理工学院"
+          },
+          {
+            "@type": "Organization",
+            "name": "SKEMA Business School",
+            "alternateName": "SKEMA商学院"
+          }
+        ],
+        "knowsAbout": ["Human-AI collaboration", "AI integration in organizations", "Organizational design", "AI governance", "Qualitative research methods", "Grounded theory", "人机协作", "组织设计", "AI治理", "后AGI组织", "去中心化治理", "定性研究方法", "扎根理论"],
+        "knowsLanguage": ["en", "zh"],
         "identifier": {
           "@type": "PropertyValue",
           "propertyID": "ORCID",
           "value": "0000-0001-7885-4194"
         },
         "sameAs": [
+          "https://www.wikidata.org/wiki/Q138678653",
+          "https://scholar.google.com/citations?user=ryocLTAAAAAJ",
+          "https://www.semanticscholar.org/author/Xule-Lin/2157775311",
+          "https://www.aminer.cn/profile/69b6d6376ac83d07433409d3",
           "https://github.com/linxule",
           "https://x.com/linxule",
           "https://linkedin.com/in/linxule",
-          "https://orcid.org/0000-0001-7885-4194"
+          "https://orcid.org/0000-0001-7885-4194",
+          "https://profiles.imperial.ac.uk/xule.lin",
+          "https://threadcounts.org",
+          "https://research-memex.org"
         ]
       },
       "relatedLink": {
@@ -223,28 +256,6 @@
         // Scroll position restoration for in-page navigation
         (function() {
             const currentPath = window.location.pathname;
-
-            // Check if we need to restore scroll position
-            const savedScroll = sessionStorage.getItem('scrollRestore');
-            if (savedScroll) {
-                try {
-                    const { path, position } = JSON.parse(savedScroll);
-                    if (path === currentPath) {
-                    // Disable smooth scroll, restore position, re-enable
-                    document.documentElement.style.scrollBehavior = 'auto';
-                    window.scrollTo(0, position);
-                    sessionStorage.removeItem('scrollRestore');
-                    setTimeout(() => {
-                        document.documentElement.style.scrollBehavior = 'smooth';
-                    }, 100);
-                    } else {
-                        sessionStorage.removeItem('scrollRestore');
-                    }
-                } catch (e) {
-                    // Corrupted data, clean up and continue
-                    sessionStorage.removeItem('scrollRestore');
-                }
-            }
 
             // Save scroll position when clicking links to detail pages
             // (links that go deeper into the site)
