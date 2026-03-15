@@ -8,8 +8,8 @@ speakers:
   - Xule Lin
 keywords:
   - large language models
-  - research methods
-  - ai tools
+  - research methodology
+  - AI tools
   - prompt engineering
   - customizing LLMs
   - academic writing with AI

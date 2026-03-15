@@ -9,8 +9,8 @@ authors:
   - "Claude Opus 4.6"
 keywords:
   - organizational futures
-  - post-agi organizations
-  - ai interviews
+  - post-AGI organizations
+  - AI interviews
   - human-AI collaboration
   - collaboration models
   - mirroring hypothesis

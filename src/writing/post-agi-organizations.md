@@ -10,7 +10,7 @@ authors:
   - "Gemini-2.5-Pro-06-05"
 keywords:
   - organizational futures
-  - post-agi organizations
+  - post-AGI organizations
   - artificial general intelligence
   - agi
   - organizational research

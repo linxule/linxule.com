@@ -7,7 +7,7 @@ description: "Three context-setting primers that brief AI as a team member, not 
 authors:
   - "Xule Lin"
 keywords:
-  - ai whispers
+  - AI whispers
   - primers
   - context-setting
   - role-play

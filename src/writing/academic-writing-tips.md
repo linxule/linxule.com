@@ -7,7 +7,7 @@ date: 2022-10-10
 keywords:
   - academic writing tips
   - storytelling in research papers
-  - qualitative research methods
+  - qualitative research
   - construct clarity
   - AMJ style guide
   - scholarly writing craft

@@ -7,7 +7,7 @@ description: "Subtle nudges that steer AI conversations without lengthy prompts.
 authors:
   - "Xule Lin"
 keywords:
-  - ai whispers
+  - AI whispers
   - prodders
   - conversational steering
   - vibe

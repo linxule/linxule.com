@@ -7,8 +7,8 @@ event: Learning to Research with AI · IDEA Lab, Imperial Business School
 speakers:
   - Xule Lin
 keywords:
-  - ai tools
-  - research methods
+  - AI tools
+  - research methodology
   - large language models
   - human-AI collaboration
   - AI tool selection framework

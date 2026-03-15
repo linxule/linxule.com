@@ -7,7 +7,7 @@ description: "Prompts for sustaining long AI conversations — local maxima chec
 authors:
   - "Xule Lin"
 keywords:
-  - ai whispers
+  - AI whispers
   - breathers
   - local maxima
   - context compaction

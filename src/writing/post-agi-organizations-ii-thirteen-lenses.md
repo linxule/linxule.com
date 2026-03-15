@@ -9,8 +9,8 @@ authors:
   - "Claude Opus 4.6"
 keywords:
   - organizational futures
-  - post-agi organizations
-  - ai self-reflection
+  - post-AGI organizations
+  - AI self-reflection
   - non-human perspectives
   - human-AI collaboration
   - LLM behavior

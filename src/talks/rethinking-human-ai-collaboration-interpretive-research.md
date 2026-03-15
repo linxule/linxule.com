@@ -11,7 +11,7 @@ slides: https://www.canva.com/design/DAG_WU-RIoc/9Orko4uJAbF3N98WYRrdaw/view?emb
 keywords:
   - human-AI collaboration
   - interpretive research
-  - qualitative methods
+  - qualitative research
   - epistemology
   - grounded theory
   - epistemic responsibility

@@ -9,8 +9,8 @@ authors:
   - "Claude Opus 4.6"
 keywords:
   - organizational futures
-  - post-agi organizations
-  - ai interviews
+  - post-AGI organizations
+  - AI interviews
   - organizational forms
   - human-AI collaboration
   - organizational design

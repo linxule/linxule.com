@@ -7,7 +7,7 @@ event: Systematic Reviews · Imperial Business School PhD Program
 speakers:
   - Xule Lin
 keywords:
-  - ai tools
+  - AI tools
   - social science
   - literature review
   - systematic review
