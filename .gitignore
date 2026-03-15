@@ -26,7 +26,6 @@ LOCAL_MANUAL.md
 *.pem
 
 # Scripts with tokens or private data
-scripts/indexnow-submit.sh
 scripts/baidu-submit-*.txt
 scripts/wikidata-entry.md
 scripts/gsc/
