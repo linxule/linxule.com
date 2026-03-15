@@ -103,6 +103,10 @@ marker: "talks"
         color: var(--bloom);
     }
 
+    .talk-title.accident {
+        color: var(--accident);
+    }
+
     .talk-body .accident {
         color: var(--accident);
     }
@@ -178,7 +182,7 @@ marker: "talks"
 
         <header class="talk-header">
             <div class="talk-num">{{ (type | default("talk")) | upper }} NO. {{ seriesNumber | default("01") }}</div>
-            <h1 class="talk-title">{{ title }}</h1>
+            <h1 class="talk-title{% if accident %} accident{% endif %}">{{ title }}</h1>
             <div class="talk-meta">
                 {% if speakers %}
                 <span class="meta-item">
