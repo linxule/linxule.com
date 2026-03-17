@@ -49,7 +49,7 @@
         <div class="essay-horizon"></div>
 
         <p class="essay-opening">
-            "{{ essay.data.opening | default(essay.templateContent | excerpt(250)) }}"
+            "{{ essay.data.opening | default(essay.data.description) }}"
         </p>
 
         <div class="essay-meta">

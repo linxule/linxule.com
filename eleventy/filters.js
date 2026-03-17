@@ -80,13 +80,14 @@ export default function(eleventyConfig) {
     return layouts[Math.abs(hash) % layouts.length];
   });
 
-  // Extract opening excerpt from content
+  // Extract opening excerpt from content (fallback only — prefer frontmatter description)
   eleventyConfig.addFilter("excerpt", (content, length = 200) => {
     if (!content) return '';
     // Strip HTML tags
     const text = content.replace(/<[^>]+>/g, '');
-    // Get first paragraph (split by double newline)
-    const firstPara = text.split(/\n\n/)[0].trim();
+    // Get first non-empty paragraph (split by double newline)
+    const paras = text.split(/\n\n/).map(p => p.trim()).filter(p => p.length > 0);
+    const firstPara = paras[0] || '';
     // Truncate if needed
     if (firstPara.length > length) {
       return firstPara.slice(0, length).trim() + '...';
