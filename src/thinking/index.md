@@ -60,6 +60,7 @@ orientations:
   - "What would institutions look like if designed around relational cognition rather than individual optimization?"
   - "How do you work at computational scale without surrendering the capacity to notice what doesn't fit?"
   - "Why would you trust one AI system to study convergence?"
+  - "What happens when articulation outruns understanding — and the gap is invisible?"
   - "What if the writing is the method?"
   - "Who holds the synthesis?"
 ---

@@ -3,14 +3,17 @@ layout: layouts/writing.njk
 series: "LOOM · XVII"
 title: "LOOM XVII: The Polanyi Inversion"
 subtitle: "What Happens When We Can Tell More Than We Know"
-description: "Polanyi said we know more than we can tell. AI inverts this — we can now tell more than we know. When friction dissolves, articulation outruns understanding."
+description: "Polanyi's paradox: we know more than we can tell. AI inverts this — we can now tell more than we know. When friction dissolves, articulation outruns understanding."
 authors:
   - "Xule Lin"
   - "Kevin Corley"
   - "Claude Opus 4.6"
 keywords:
   - Polanyi Inversion
+  - Polanyi's paradox
+  - Michael Polanyi
   - tacit knowledge
+  - epistemic alienation
   - qualitative research
   - abstraction
   - breadth-depth tradeoff

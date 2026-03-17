@@ -96,7 +96,7 @@ Which way it tips depends on whether users develop the capacity to make these ca
 
 For knowledge workers, the message is this: you have the execution power now. The question is whether you have the methodology. "Think in complete tasks" is useful guidance if you already know what a complete task looks like for your work. If you don't, you're not blocked by the terminal anymore. You're blocked by the harder problems of knowing what to ask for and when to know it's enough.
 
-For those of us developing approaches to human-AI collaboration, this is a moment of leverage. The execution layer is opening: how to structure AI interactions for specific kinds of work, what checkpoints enable human judgment, how to make tacit knowledge visible. What gets talked about and built in response to these new interfaces shapes how millions of knowledge workers engage with these systems.
+For those of us developing approaches to human-AI collaboration, this is a moment of leverage. The execution layer is opening: how to structure AI interactions for specific kinds of work, what checkpoints enable human judgment, how to make [tacit knowledge](/writing/loom-xvii-the-polanyi-inversion/) visible. What gets talked about and built in response to these new interfaces shapes how millions of knowledge workers engage with these systems.
 
 Some of us are building toward that: tools that capture how to approach different kinds of work, not just execute tasks you can already specify.
 

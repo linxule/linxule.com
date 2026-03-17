@@ -404,7 +404,7 @@ The questions this opens:
 - **For Institutional Theory:** How do norms and culture form in hybrid human-AI systems? Can we encode organizational culture as architecture? What happens to isomorphism when organizations can install capabilities rather than hiring for them?
 - **For Organization Design Theory:** What are design principles for collaborative systems that combine human creativity with AI capability? How do we design for emergent value that neither participant could create alone?
 - **For Trust Research:** How is trust established between heterogeneous intelligences? Does Luhmann’s analysis of trust in complex systems extend to human-AI collaboration?
-- **For Organizational Learning:** What does organizational memory mean when it’s stored in CLAUDE.md files that both humans and AI can read and modify? What are the analogues of tacit knowledge in AI systems?
+- **For Organizational Learning:** What does organizational memory mean when it’s stored in CLAUDE.md files that both humans and AI can read and modify? What are the analogues of [tacit knowledge](/writing/loom-xvii-the-polanyi-inversion/) in AI systems?
 
 These questions are urgent as organizations navigate what recent scholarship frames as **managing with AI** —integrating human-AI collaboration with algorithmic management to jointly design decision rights, oversight, and coordination. Our analysis contributes meso-level organizational insights to this emerging agenda: demonstrating how to read technical architecture for embedded organizational principles, observe coordination dynamics as they crystallize, and interpret design choices through theoretical frameworks.
 
