@@ -56,6 +56,9 @@ src/
 
 Writing, Portraits, Artifacts, Thinking, Concepts, Teaching, CV, Talks. Each has its own layout in `src/_includes/layouts/`. Frontmatter templates and workflows in `.claude/docs/content-patterns.md`. Concept propagation and departure infrastructure in `.claude/rules/concept-propagation.md`.
 
+### Concept Definitions
+Writing posts that coin concepts use `defines` frontmatter (term + definition). This drives: DefinedTerm JSON-LD, `concepts` collection in site-index.json, citation blocks. The `deepLinkDefinitions` transform auto-anchors blockquote definitions (`> **Term**: ...`). Full workflow in `.claude/rules/concept-propagation.md`.
+
 ### CSS Architecture
 
 **Intentionally uses inline `<style>` blocks per page.** Each page is self-contained — no unused CSS shipped. Not technical debt, it's the architecture. Global styles in `src/assets/css/main.css`.
@@ -77,6 +80,9 @@ Most frequently hit. Full list in `.claude/docs/gotchas.md`.
 5. **Guard undefined arrays** — `contextExcerpt`, `prompt`, `images` can be undefined. Wrap in `{% if array %}`
 6. **ESM project** — `package.json` has `"type": "module"`. Config is `eleventy.config.js`. All JS uses ESM (`import`/`export default`). Only `scripts/migrate-loom.cjs` is CommonJS.
 7. **`tags` and `keywords` both feed `tagPages`** — standard is `keywords`
+8. **Eleventy transforms only have `this.page`** — no access to `this.data` or frontmatter. Use markdown-level HTML (`<a id="...">`) for data-driven anchors
+9. **CSS class collisions** — `main.css` classes leak into inline `<style>` blocks. New layouts must use unique class names (e.g., `.concept-entry-name` not `.concept-term`)
+10. **New content pages need AI discoverability** — `md-outputs/*.md.njk` + `<link rel="alternate">` in base.njk + middleware.ts route + llms.txt entry
 
 ## Commands
 
