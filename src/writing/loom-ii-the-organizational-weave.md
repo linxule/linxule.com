@@ -27,12 +27,9 @@ It's here, in these rich organizational spaces, that new forms of collaborative 
 
 Join us as we explore what makes organizational perspectives crucial for understanding the future of human-AI collaboration. Your insights help bridge the gap between technical advancement and human understanding.
 
-Read the full piece: https://open.substack.com/pub/threadcounts/p/loom-ii-the-organizational-weave
-
-
 ---
 
-> This is the second post of the series - LOOM: Locus of Observed Meanings. Check out the [first post for our vision for LOOM](https://threadcounts.substack.com/p/loom-locus-of-observed-meanings?r=1fcklh).
+> This is the second post of the series - LOOM: Locus of Observed Meanings. Check out the [first post for our vision for LOOM](/writing/loom-i-locus-of-observed-meanings/).
 
 ---
 

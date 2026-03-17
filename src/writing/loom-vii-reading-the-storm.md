@@ -53,7 +53,7 @@ When prompted to create greentext stories about "being a qualitative researcher 
     ![](/writing/attachments/loom-vii-reading-the-storm-04.png)
 
     
-- **DeepSeek R1**: A greentext about using GPT-5 for thematic analysis that overinterprets gardening challenges as trauma[1]
+- **DeepSeek R1**: A greentext about using GPT-5 for thematic analysis that overinterprets gardening challenges as trauma[^deepseek]
 
 ![](/writing/attachments/loom-vii-reading-the-storm-05.png)
 
@@ -116,7 +116,7 @@ The result isn't just that truth becomes relative (the post-truth condition), bu
 
 ## Beyond Simple Patterns
 
-In [LOOM VI](https://threadcounts.substack.com/p/loom-vi-the-pattern-beneath-the-voices?r=1fcklh), we traced different cognitive signatures across AI models—patterns of interaction that seemed to reveal distinct approaches to knowledge creation. But now a more complex picture emerges. What if these signatures aren't just characteristics of the models themselves, but reflections of the entire system of choices and constraints we've built around them?
+In [LOOM VI](/writing/loom-vi-the-pattern-beneath-the-voices/), we traced different cognitive signatures across AI models—patterns of interaction that seemed to reveal distinct approaches to knowledge creation. But now a more complex picture emerges. What if these signatures aren't just characteristics of the models themselves, but reflections of the entire system of choices and constraints we've built around them?
 
 > **Whispered Capabilities**: These patterns reveal something about human intellectual processes that were always present but never fully articulated. Like whispers that become audible only in certain acoustic environments, they become visible precisely through the contrast created by our artificial systems.
 
@@ -194,7 +194,7 @@ Kevin is a Professor of Management at Imperial Business School [(College Profile
 
 Our AI collaborators for this essay are Claude 3.7 & 3.5 Sonnet. Both versions of Claude were given our meeting transcripts, and previous LOOM posts, and collaborated with us via multiple rounds of discussions on this piece.
 
-[1](https://threadcounts.substack.com/p/loom-vii-reading-the-storm#footnote-anchor-1-157055241)
+[^deepseek]: DeepSeek R1's CoT (Chain of Thought) follows below.
 
 DeepSeek R1's CoT (Chain of Thought):
 

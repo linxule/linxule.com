@@ -201,7 +201,7 @@ The orchestral dimension of human agency—the capacity to coordinate multiple f
 
 > **The Orchestrator Role**: The emerging human position as conductor of multiple AI systems, requiring not just technical knowledge but meta-awareness of how different forms of AI agency interact and complement each other.
 
-This evolution of human agency has sparked dialogue among organizational scholars. [Professor Tima Bansal](https://www.linkedin.com/in/tima-bansal/) recently responded to our **[LOOM VIII: Beyond Teammates - The Third Space of Human-AI Collaboration](https://threadcounts.substack.com/p/loom-viii-beyond-teammates-the-third?r=1fcklh)** regarding the progression of human-AI interaction intensity and the emergence of micro-organizations:
+This evolution of human agency has sparked dialogue among organizational scholars. [Professor Tima Bansal](https://www.linkedin.com/in/tima-bansal/) recently responded to our **[LOOM VIII: Beyond Teammates - The Third Space of Human-AI Collaboration](/writing/loom-viii-beyond-teammates/)** regarding the progression of human-AI interaction intensity and the emergence of micro-organizations:
 
 > ***"…I am truly intrigued, as I've only used AI as a tool. What I particularly like about this approach is that humans are still driving the research endeavour, but generating insights they couldn't have otherwise generated. Human ethics still govern the endeavour.***
 > 

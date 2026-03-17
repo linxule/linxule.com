@@ -39,11 +39,7 @@ The pattern emerged through a deceptively simple test - how different AI models 
 >
 > Creates space for knowledge to emerge through conversation, treating expertise as a collaborative discovery rather than a fixed state.
 
-[
-
 ![](/writing/attachments/loom-vi-the-pattern-beneath-the-voices-02.png)
-
-](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8d578380-5b20-4376-bdec-4a1855a271a2_1214x742.png)
 
 > **Systematic Classification** (Gemini Pro)
 >

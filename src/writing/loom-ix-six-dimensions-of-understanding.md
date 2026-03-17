@@ -21,9 +21,9 @@ link: https://threadcounts.substack.com/p/loom-ix-the-six-dimensions-of-understa
 date: 2025-04-04
 ---
 
-When we first ventured into AI's role in qualitative research in [LOOM I](https://threadcounts.substack.com/p/loom-locus-of-observed-meanings), we thought of interactions simply as conversations—exchanges bouncing insights back and forth. But soon we noticed something deeper at play, a hidden architecture beneath the dialogue. As we further explored these patterns, we began looking for ways to express them so that others would understand what we were seeing. One of the more fun ways we found to express these patterns relates to the Infinity Stones that played such a central part to the Marvel Cinematic Universe (MCU). This is because the reference to each stone turns out to be more than just mere metaphor; we believe they represent meaningful lenses, each illuminating distinct dimensions where human and artificial intelligence create understanding neither could achieve alone.
+When we first ventured into AI's role in qualitative research in [LOOM I](/writing/loom-i-locus-of-observed-meanings/), we thought of interactions simply as conversations—exchanges bouncing insights back and forth. But soon we noticed something deeper at play, a hidden architecture beneath the dialogue. As we further explored these patterns, we began looking for ways to express them so that others would understand what we were seeing. One of the more fun ways we found to express these patterns relates to the Infinity Stones that played such a central part to the Marvel Cinematic Universe (MCU). This is because the reference to each stone turns out to be more than just mere metaphor; we believe they represent meaningful lenses, each illuminating distinct dimensions where human and artificial intelligence create understanding neither could achieve alone.
 
-Just as each [Infinity Stone](https://en.wikipedia.org/wiki/Infinity_Stones) embodies a cosmic force in the Marvel universe, our partnership with AI reveals spaces where intelligence sparks, evolves, and transforms through practice. So regardless of whether you are a [Marvel fan](https://marvelcinematicuniverse.fandom.com/wiki/Infinity_Stones#Stones) or not, we believe the following framework for understanding what is created in the [Third Space](https://threadcounts.substack.com/p/loom-v-the-third-space) will resonate with those engaging with AI in their research.
+Just as each [Infinity Stone](https://en.wikipedia.org/wiki/Infinity_Stones) embodies a cosmic force in the Marvel universe, our partnership with AI reveals spaces where intelligence sparks, evolves, and transforms through practice. So regardless of whether you are a [Marvel fan](https://marvelcinematicuniverse.fandom.com/wiki/Infinity_Stones#Stones) or not, we believe the following framework for understanding what is created in the [Third Space](/writing/loom-v-the-third-space/) will resonate with those engaging with AI in their research.
 
 ![](/writing/attachments/loom-ix-six-dimensions-of-understanding-01.png)
 
@@ -39,7 +39,7 @@ Imagine standing at a crossroads with many paths ahead. Alone, you might choose 
 
 **The Shift**: Futures transform from fixed predictions into gardens of possibility you actively cultivate.
 
-This dimension builds directly on our "**Third Space**" concept from [LOOM V](https://threadcounts.substack.com/p/loom-v-the-third-space), where we explored how intelligence emerges through human-AI dialogue rather than residing in either participant alone.
+This dimension builds directly on our "**Third Space**" concept from [LOOM V](/writing/loom-v-the-third-space/), where we explored how intelligence emerges through human-AI dialogue rather than residing in either participant alone.
 
 ## Space Stone: Opening Doors Between Worlds
 
@@ -51,7 +51,7 @@ Consider a vast library where knowledge is segregated into separate rooms. Tradi
 
 **The Shift**: Knowledge domains transform from separate territories into an interconnected landscape where borders hold the greatest discoveries.
 
-This connects to our exploration of "**Epistemic Connectivity**" in [LOOM II](https://threadcounts.substack.com/p/loom-ii-the-organizational-weave), where we examined how organizational contexts shape emerging patterns of understanding.
+This connects to our exploration of "**Epistemic Connectivity**" in [LOOM II](/writing/loom-ii-the-organizational-weave/), where we examined how organizational contexts shape emerging patterns of understanding.
 
 ![](/writing/attachments/loom-ix-six-dimensions-of-understanding-02.png)
 
@@ -66,7 +66,7 @@ Think of creativity as sketching on a canvas. Humans offer initial vision and AI
 
 **The Shift**: Creative limits become branching paths instead of barriers.
 
-This connects to [LOOM III](https://threadcounts.substack.com/p/loom-iii-ai-and-the-future-of-research), where we explored how human-AI collaboration reshapes research practice and identity in the social sciences.
+This connects to [LOOM III](/writing/loom-iii-between-automated-precision-and-lived-understanding/), where we explored how human-AI collaboration reshapes research practice and identity in the social sciences.
 
 ## Reality Stone: Shifting Perspectives
 
@@ -78,7 +78,7 @@ Imagine viewing organizational data through multiple theoretical lenses simultan
 
 **The Shift**: Theoretical frameworks transform from competing explanations into complementary perspectives that together reveal multidimensional truth.
 
-This connects to [LOOM IV: Dialogue as Method](https://threadcounts.substack.com/p/loom-iv-dialogue-as-method), where we explored knowledge co-creation through structured interaction with AI systems.
+This connects to [LOOM IV: Dialogue as Method](/writing/loom-iv-dialogue-as-method/), where we explored knowledge co-creation through structured interaction with AI systems.
 
 ![](/writing/attachments/loom-ix-six-dimensions-of-understanding-03.png)
 
@@ -92,7 +92,7 @@ Picture reading a thousand-page novel. As a human, you might grasp major themes 
 
 **The Shift**: Complex systems transform from either overwhelming chaos or oversimplified models into multilayered patterns with discoverable order at every scale.
 
-This builds on our "**Cognitive Signatures**" concept in [LOOM VI](https://threadcounts.substack.com/p/loom-vi-the-pattern-beneath-the-voices), where we identified distinct patterns of interaction and analysis that emerge through human-AI collaboration.
+This builds on our "**Cognitive Signatures**" concept in [LOOM VI](/writing/loom-vi-the-pattern-beneath-the-voices/), where we identified distinct patterns of interaction and analysis that emerge through human-AI collaboration.
 
 ## Soul Stone: Aligning With Meaning
 
@@ -104,7 +104,7 @@ Think of navigating a wilderness with only two essential tools: a detailed map s
 
 **The Shift**: Values transform from fixed constraints into navigational instruments that reveal meaningful paths through possibility spaces.
 
-This connects to [LOOM VII: Reading the Storm](https://threadcounts.substack.com/p/loom-vii-reading-the-storm), where we explored how to cultivate understanding in an increasingly mediated world.
+This connects to [LOOM VII: Reading the Storm](/writing/loom-vii-reading-the-storm/), where we explored how to cultivate understanding in an increasingly mediated world.
 
 ![](/writing/attachments/loom-ix-six-dimensions-of-understanding-04.png)
 
@@ -118,7 +118,7 @@ Just as the Infinity Stones differ in strength and character, research capabilit
 > 
 > _A sociology research team discovers their dimensional signature shows strength in meaning alignment (Soul) and theoretical frameworks (Reality) with limitations in future exploration (Time). Rather than weakening their identity, they partner with computational social scientists strong in simulation and scenario analysis—creating collaborative capabilities that honor each group's distinctive strengths._
 
-This builds on our exploration of "Cognitive Signatures" in [LOOM VI](https://threadcounts.substack.com/p/loom-vi-the-pattern-beneath-the-voices), where we identified how different AI systems reveal distinct pathways to understanding.
+This builds on our exploration of "Cognitive Signatures" in [LOOM VI](/writing/loom-vi-the-pattern-beneath-the-voices/), where we identified how different AI systems reveal distinct pathways to understanding.
 
 ## Beyond Complementarity: Generative Friction
 
@@ -132,7 +132,7 @@ When both humans and AI analyze organizational narratives, disagreements natural
 
 Similarly, overlapping scenario modeling (Time Stone) compels rigorous boundary testing, refining strategic foresight through productive conflict. Here, friction isn't inefficiency; it's the engine of epistemic evolution, continuously reshaping human and AI roles through dynamic interaction.
 
-This connects to our discussion of "**Productive Friction**" in [LOOM V](https://threadcounts.substack.com/p/loom-v-the-third-space), where we explored how resistance in human-AI interaction might be a feature rather than a bug.
+This connects to our discussion of "**Productive Friction**" in [LOOM V](/writing/loom-v-the-third-space/), where we explored how resistance in human-AI interaction might be a feature rather than a bug.
 
 
 ![](/writing/attachments/loom-ix-six-dimensions-of-understanding-05.png)

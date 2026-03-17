@@ -40,7 +40,7 @@ We found ourselves reaching for something different: the theorist-craftsperson. 
 
 An example from our own building: one of the tools we'll describe went through what we came to call "the maestro's refinement"—a period where we struggled with how to describe the human-AI relationship without falling into hierarchical language. Neither human nor AI is "master" in this work. We eventually landed on the atelier metaphor: both are co-apprentices to a shared craft tradition. That reframe didn't come from planning. It came from building, from hitting walls—from theorizing BY practicing.
 
-LOOM has been fourteen posts of theorizing. Not just *about* AI-human collaboration in qualitative research, but *through* it—every post written collaboratively, every concept emerging from practice. [The Third Space](https://www.threadcounts.org/p/loom-v-the-third-space). [The Calculator Fallacy](https://www.threadcounts.org/p/loom-xiv-the-calculator-fallacy). [The AI Whisperer](https://www.threadcounts.org/p/loom-xii-the-ai-whisperer). These weren't concepts we thought up and then illustrated. They emerged from our practice of *engaging with* AI in our thinking.
+LOOM has been fourteen posts of theorizing. Not just *about* AI-human collaboration in qualitative research, but *through* it—every post written collaboratively, every concept emerging from practice. [The Third Space](/writing/loom-v-the-third-space/). [The Calculator Fallacy](/writing/loom-xiv-calculator-fallacy/). [The AI Whisperer](/writing/loom-xii-the-ai-whisperer/). These weren't concepts we thought up and then illustrated. They emerged from our practice of *engaging with* AI in our thinking.
 
 Now we're demonstrating that practice through building. The invitation isn't "here are tools that embody our ideas." It's "watch us work, try it yourself, refine your own practice."
 
@@ -70,7 +70,7 @@ What you can do is create *conditions* without determining *outcomes*. Structure
 
 Design choices become philosophical arguments. Supporting multiple models is how interpretive multiplicity becomes infrastructure. Enforcing manual coding before AI collaboration takes a position on theoretical sensitivity. Making AI reasoning visible is an epistemological commitment.
 
-We built these tools to create conditions for [Partnership Agency](https://www.threadcounts.org/p/loom-xiii-celestial-collaboration)—for the kind of human-AI collaboration where something emerges that neither could produce alone.
+We built these tools to create conditions for [Partnership Agency](/writing/loom-xiii-celestial-collaboration/)—for the kind of human-AI collaboration where something emerges that neither could produce alone.
 
 ---
 
@@ -128,7 +128,7 @@ The human does the theoretical work. The AI provides the dialogue that sharpens 
 
 The plugin also includes @research-configurator—what we've started calling "The Whisperer." This agent translates research goals into technical configuration, but it does so through progressive disclosure. Don't know which model to use? It asks about your research goals first, then suggests. Don't understand thinking budgets or batching strategies? It reveals complexity layer by layer, calibrated to where you are. The Whisperer builds trust by not overwhelming—showing you what you need when you need it, keeping the rest invisible until you're ready.
 
-If you've read [The AI Whisperer](https://www.threadcounts.org/p/loom-xii-the-ai-whisperer), you'll recognize what's happening here: mediation between AI capabilities and researcher expectations. That role is now built into the tool itself. (Yes, we automated ourselves. Not every team has a Whisperer—now every team can.)
+If you've read [The AI Whisperer](/writing/loom-xii-the-ai-whisperer/), you'll recognize what's happening here: mediation between AI capabilities and researcher expectations. That role is now built into the tool itself. (Yes, we automated ourselves. Not every team has a Whisperer—now every team can.)
 
 The design philosophy throughout: create frictions for users to pause and think, to respond, to document things—rather than "hey, produce this." Frictions that slow you down. Pauses that force reflection. Requirements that prevent the calculator mindset from taking over.
 

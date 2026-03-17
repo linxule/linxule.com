@@ -95,7 +95,7 @@ Yet when evaluating LLMs, the standards subtly shift. The LLMs are criticized fo
 
 Look elsewhere, we often accept opacity. Scientists routinely treat instruments as black boxes: flow cytometers, statistical software, and fMRI machines. We seem to trust calibration and validation without demanding transparency into mechanism. What makes LLMs different?
 
-Maybe, the assumption runs deeper: if LLMs participate at all, they must do so as a calculating machine (echoing the *[calculator fallacy](https://threadcounts.substack.com/p/loom-xiv-the-calculator-fallacy)* from the LOOM series). Is there a symmetry here? Users expecting LLMs to deliver the truth. Critics expecting LLMs to reliably fail before rendering judgment. Both assuming LLMs should behave like a calculator: deterministic, reproducible, conclusive. The same assumption, running in opposite directions.
+Maybe, the assumption runs deeper: if LLMs participate at all, they must do so as a calculating machine (echoing the *[calculator fallacy](/writing/loom-xiv-calculator-fallacy/)* from the LOOM series). Is there a symmetry here? Users expecting LLMs to deliver the truth. Critics expecting LLMs to reliably fail before rendering judgment. Both assuming LLMs should behave like a calculator: deterministic, reproducible, conclusive. The same assumption, running in opposite directions.
 
 I'm not sure. But the symmetry is worth noticing.
 
