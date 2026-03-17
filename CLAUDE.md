@@ -37,15 +37,16 @@ eleventy.config.js        # Main config (ESM, imports from eleventy/)
 middleware.ts             # Vercel Edge Middleware (Accept: text/markdown → .md rewrite)
 vercel.json               # Vercel deployment config (redirects, trailingSlash)
 eleventy/
-  collections.js          # Content collections (writing, portraits, artifacts, tags)
+  collections.js          # Content collections (writing, portraits, artifacts, tags, concepts)
   filters.js              # Template filters (readableDate, slugify, etc.)
   shortcodes.js           # Image optimization shortcode (making pages)
-  transforms.js           # Image optimization transform (writing pages)
+  transforms.js           # Image optimization + deep-link definition transforms (writing pages)
 src/
-  _includes/layouts/      # Page templates (writing.njk, portrait.njk, artifact.njk, etc.)
+  _includes/layouts/      # Page templates (writing.njk, portrait.njk, artifact.njk, concepts.njk, etc.)
   _data/site.js           # Global site config
   assets/css/main.css     # Global styles
   writing/                # Blog posts (markdown)
+  concepts/               # Concept territory page (signature concepts with questions)
   making/portraits/       # Images prompted to other AIs
   making/artifacts/       # Things Claude made directly
   talks/                  # Presentations and symposia
@@ -53,7 +54,7 @@ src/
 
 ### Content Types
 
-Writing, Portraits, Artifacts, Thinking, Teaching, CV, Talks. Each has its own layout in `src/_includes/layouts/`. Frontmatter templates and workflows in `.claude/docs/content-patterns.md`.
+Writing, Portraits, Artifacts, Thinking, Concepts, Teaching, CV, Talks. Each has its own layout in `src/_includes/layouts/`. Frontmatter templates and workflows in `.claude/docs/content-patterns.md`. Concept propagation and departure infrastructure in `.claude/rules/concept-propagation.md`.
 
 ### CSS Architecture
 
