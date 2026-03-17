@@ -596,6 +596,10 @@ p {
     font-weight: 400;
 }
 
+.article-body picture {
+    display: contents;
+}
+
 .article-body img {
     max-width: calc(100% + 4rem);
     margin: 3rem -2rem;
@@ -605,10 +609,16 @@ p {
     background: var(--paper-dark);
     padding: 1rem;
     transition: filter 0.3s ease;
+    cursor: zoom-in;
 }
 
 .article-body img:hover {
     filter: grayscale(0%);
+}
+
+.article-body blockquote img {
+    max-width: 100%;
+    margin: 1.5rem 0;
 }
 
 .article-body figure {

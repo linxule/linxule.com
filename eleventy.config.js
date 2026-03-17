@@ -5,6 +5,7 @@ import fs from "fs";
 import collections from './eleventy/collections.js';
 import filters from './eleventy/filters.js';
 import shortcodes from './eleventy/shortcodes.js';
+import transforms from './eleventy/transforms.js';
 
 export default function(eleventyConfig) {
 
@@ -42,6 +43,7 @@ export default function(eleventyConfig) {
   collections(eleventyConfig);
   filters(eleventyConfig);
   shortcodes(eleventyConfig);
+  transforms(eleventyConfig);
 
   // Copy cached optimized images to build output after build
   eleventyConfig.on("eleventy.after", () => {

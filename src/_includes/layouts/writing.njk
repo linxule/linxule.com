@@ -241,9 +241,8 @@ marker: "writing"
 
     let triggerElement = null;
 
-    // Make images focusable and add cursor
+    // Make images focusable for keyboard nav
     articleImages.forEach(img => {
-        img.style.cursor = 'pointer';
         img.setAttribute('tabindex', '0');
         img.setAttribute('role', 'button');
         img.setAttribute('aria-label', 'View ' + (img.alt || 'image') + ' full size');
@@ -251,7 +250,7 @@ marker: "writing"
 
     function openLightbox(img) {
         triggerElement = img;
-        lightboxImg.src = img.src;
+        lightboxImg.src = img.dataset.fullSrc || img.src;
         lightboxImg.alt = img.alt || '';
         lightbox.classList.add('active');
         lightbox.setAttribute('aria-hidden', 'false');
