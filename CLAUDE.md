@@ -28,8 +28,8 @@ The website repo is `xule-site/`, not the parent `personal-website/` directory. 
 - **Pagefind** - Client-side search (runs at build time)
 - **No framework** - Vanilla CSS/JS, no React/Vue/etc.
 
-### Image Cache
-`eleventy-img` outputs to `.cache/@11ty/img/` (persisted by Vercel between deploys). An `eleventy.after` hook copies to `_site`. Without this, every deploy reprocesses all image variants (~20min). With cache, text-only deploys take ~1min. See `.claude/rules/architecture.md` for image pipeline constraints.
+### Image Pipeline
+`eleventy-img` optimizes images in two ways: the `optimizedImage` **shortcode** (making pages — called explicitly in templates) and the `optimizeWritingImages` **transform** (writing pages — auto-converts markdown `<img>` to responsive `<picture>` at build time). Both output AVIF/WebP with responsive srcset to `.cache/@11ty/img/` (persisted by Vercel between deploys). An `eleventy.after` hook copies to `_site`. Without cache, first deploy processes all images (~30s). With cache, text-only deploys take ~1.5s. See `.claude/rules/architecture.md` for constraints.
 
 ### Key Files
 ```
@@ -39,7 +39,8 @@ vercel.json               # Vercel deployment config (redirects, trailingSlash)
 eleventy/
   collections.js          # Content collections (writing, portraits, artifacts, tags)
   filters.js              # Template filters (readableDate, slugify, etc.)
-  shortcodes.js           # Image optimization shortcode
+  shortcodes.js           # Image optimization shortcode (making pages)
+  transforms.js           # Image optimization transform (writing pages)
 src/
   _includes/layouts/      # Page templates (writing.njk, portrait.njk, artifact.njk, etc.)
   _data/site.js           # Global site config
@@ -71,7 +72,7 @@ Most frequently hit. Full list in `.claude/docs/gotchas.md`.
 1. **Do NOT use `| reverse`** on collections.writing — already newest-first
 2. **Footnotes** render as marginalia on desktop (JS-positioned next to refs), endnotes on mobile (≤1100px)
 3. **Text shaping is mandatory** — prompts and contextExcerpts must be arrays with stagger pattern and one accident
-4. **Writing images are local** — All in `src/writing/attachments/`. No remote image URLs in markdown `![]()` syntax
+4. **Writing images are local and auto-optimized** — All in `src/writing/attachments/`, auto-converted to responsive AVIF/WebP `<picture>` at build time. Use standard markdown `![](path)` — the transform handles optimization. Lightbox shows original via `data-full-src`
 5. **Guard undefined arrays** — `contextExcerpt`, `prompt`, `images` can be undefined. Wrap in `{% if array %}`
 6. **ESM project** — `package.json` has `"type": "module"`. Config is `eleventy.config.js`. All JS uses ESM (`import`/`export default`). Only `scripts/migrate-loom.cjs` is CommonJS.
 7. **`tags` and `keywords` both feed `tagPages`** — standard is `keywords`
