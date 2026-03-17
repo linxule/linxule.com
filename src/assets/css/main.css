@@ -668,6 +668,50 @@ p {
     font-style: italic;
 }
 
+/* Deep-linked blockquote definitions in writing pages */
+.article-body blockquote.concept-definition {
+    border-left: 2px solid var(--ink-light);
+    position: relative;
+}
+
+.article-body blockquote.concept-definition strong {
+    font-weight: 500;
+    color: var(--ink);
+    font-style: normal;
+}
+
+.article-body blockquote.concept-definition::before {
+    content: '\00a7';
+    position: absolute;
+    left: -1.5rem;
+    top: 1.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-ghost);
+    font-style: normal;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.article-body blockquote.concept-definition:hover::before,
+.article-body blockquote.concept-definition:target::before {
+    opacity: 1;
+}
+
+.article-body blockquote.concept-definition:target {
+    border-left-color: var(--bloom);
+}
+
+.article-body blockquote.concept-definition:target::before {
+    color: var(--bloom);
+}
+
+@media (max-width: 768px) {
+    .article-body blockquote.concept-definition::before {
+        display: none;
+    }
+}
+
 /* ========================================
    Specimens (images)
    ======================================== */

@@ -17,6 +17,9 @@ keywords:
   - cognitive impedance matching
   - personalized agency
   - micro-organizations
+defines:
+  - term: "Whispered Agency"
+    definition: "The rediscovery of fundamental human capability through attempting to create artificial agency — what was always present but overlooked."
 link: https://threadcounts.substack.com/p/loom-x-the-whispered-agency
 date: 2025-04-15    
 ---

@@ -17,6 +17,9 @@ keywords:
   - progressive mastery
   - interpretive frameworks
   - research methodology
+defines:
+  - term: "Cognitive Signatures"
+    definition: "Distinct patterns of interaction and analysis that emerge through human-AI collaboration, shaping how understanding develops."
 link: https://threadcounts.substack.com/p/loom-vi-the-pattern-beneath-the-voices
 date: 2025-02-16
 ---

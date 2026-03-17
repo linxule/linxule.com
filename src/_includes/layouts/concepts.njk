@@ -1,0 +1,235 @@
+---
+layout: layouts/base.njk
+marker: "concepts"
+---
+
+<style>
+    main {
+        padding: 10rem 4rem 6rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .spread-opening {
+        min-height: 70vh;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 4rem;
+        align-items: end;
+        padding-bottom: 8rem;
+        position: relative;
+    }
+
+    .page-marker {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+    }
+
+    .territory-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+
+    .thesis-statement {
+        font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+        font-weight: 300;
+        line-height: 1.9;
+        max-width: 500px;
+    }
+
+    .thesis-continued {
+        font-size: 1.05rem;
+        color: var(--ink-light);
+        max-width: 500px;
+        margin-top: 2rem;
+    }
+
+    .thesis-line {
+        display: block;
+        line-height: 2;
+    }
+
+    .thesis-line:nth-child(1) { margin-left: 0; }
+    .thesis-line:nth-child(2) { margin-left: 1.5rem; }
+    .thesis-line:nth-child(3) { margin-left: 0.75rem; }
+    .thesis-line:nth-child(4) { margin-left: 2.25rem; }
+
+    .horizon {
+        width: 100%;
+        height: 1px;
+        background: var(--ink-ghost);
+        margin: 5rem 0;
+    }
+
+    .territory {
+        padding: 2rem 0;
+    }
+
+    .territory-name {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        padding-top: 0.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .concept-entry {
+        padding: 1.2rem 0;
+        margin-left: 2rem;
+    }
+
+    .concept-entry:nth-child(2) { margin-left: 4.5rem; }
+    .concept-entry:nth-child(3) { margin-left: 3rem; }
+    .concept-entry:nth-child(4) { margin-left: 5.5rem; }
+    .concept-entry:nth-child(5) { margin-left: 1.5rem; }
+
+    .concept-entry-name {
+        font-size: 1.1rem;
+        font-weight: 400;
+        transition: color 0.3s ease;
+        text-decoration: none;
+        color: var(--ink);
+    }
+
+    .concept-entry-name.emerging {
+        color: var(--ink-ghost);
+    }
+
+    a.concept-entry-name:hover {
+        color: var(--bloom);
+    }
+
+    .concept-oneliner {
+        font-style: italic;
+        color: var(--ink-light);
+        font-size: 0.95rem;
+        line-height: 1.8;
+        margin-top: 0.4rem;
+        margin-left: 1rem;
+    }
+
+    .territory-questions {
+        margin-top: 2.5rem;
+        padding-left: 2rem;
+    }
+
+    .territory-question {
+        padding: 0.6rem 0;
+        font-size: 0.95rem;
+        color: var(--ink-light);
+        line-height: 1.8;
+        transition: color 0.3s ease;
+    }
+
+    .territory-question:hover {
+        color: var(--bloom);
+    }
+
+    .territory-question:nth-child(1) { margin-left: 0; }
+    .territory-question:nth-child(2) { margin-left: 1.5rem; }
+    .territory-question:nth-child(3) { margin-left: 0.75rem; }
+    .territory-question:nth-child(4) { margin-left: 2.25rem; }
+
+    .page-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .back-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        color: var(--bloom);
+    }
+
+    @media (max-width: 900px) {
+        main {
+            padding: 8rem 2rem 4rem;
+        }
+
+        .spread-opening {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .thesis-line:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .concept-entry:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .concept-oneliner {
+            margin-left: 0;
+        }
+
+        .territory-question:nth-child(n) {
+            margin-left: 0;
+        }
+    }
+</style>
+
+<section class="spread-opening">
+    <span class="page-marker">006</span>
+    <div>
+        <div class="territory-label">Concepts</div>
+    </div>
+    <div>
+        <p class="thesis-statement">{{ thesis }}</p>
+        {% if thesis_continued %}
+        <div class="thesis-continued">
+            {% for line in thesis_continued %}
+            <span class="thesis-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="horizon"></div>
+
+{% for territory in territories %}
+<section class="territory">
+    <div class="territory-name">{{ territory.name }}</div>
+    {% for concept in territory.concepts %}
+    <div class="concept-entry">
+        {% if concept.essay %}
+        <a class="concept-entry-name" href="{{ concept.essay }}#dfn-{{ concept.term | slugify }}">{{ concept.term }}</a>
+        {% else %}
+        <span class="concept-entry-name emerging">{{ concept.term }}</span>
+        {% endif %}
+        <div class="concept-oneliner">{{ concept.oneliner }}</div>
+    </div>
+    {% endfor %}
+    {% if territory.questions %}
+    <div class="territory-questions">
+        {% for q in territory.questions %}
+        <div class="territory-question">{{ q }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+{% if not loop.last %}
+<div class="horizon"></div>
+{% endif %}
+{% endfor %}
+
+<footer class="page-footer">
+    <a href="/" class="back-link">← return</a>
+</footer>

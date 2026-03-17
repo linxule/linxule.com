@@ -19,6 +19,9 @@ keywords:
   - research expertise
   - professional identity
   - epistemological transition
+defines:
+  - term: "Calculator Fallacy"
+    definition: "Approaching AI as if it delivers definitive, objective answers — treating a collaborator as a calculator."
 link: https://threadcounts.substack.com/p/loom-xiv-the-calculator-fallacy
 date: 2025-10-02
 ---

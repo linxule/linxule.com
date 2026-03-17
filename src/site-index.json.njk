@@ -61,5 +61,17 @@ eleventyExcludeFromCollections: true
       "youtube": {{ (talk.data.youtube or '') | dump | safe }}
     }{% if not loop.last %},{% endif %}
 {%- endfor %}
+  ],
+  "concepts": [
+{%- for concept in collections.concepts %}
+    {
+      "term": {{ concept.term | dump | safe }},
+      "definition": {{ concept.definition | dump | safe }},
+      "url": "{{ concept.url | replace(r/\/$/, "") }}#{{ concept.anchor }}",
+      "canonicalEssay": {{ concept.title | dump | safe }},
+      "authors": [{% for author in concept.authors %}"{{ author }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "date": "{{ concept.date.toISOString().split('T')[0] }}"
+    }{% if not loop.last %},{% endif %}
+{%- endfor %}
   ]
 }

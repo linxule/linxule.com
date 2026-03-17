@@ -136,6 +136,76 @@ marker: "writing"
         color: var(--bloom);
     }
     
+    .article-citation {
+        margin-top: 3rem;
+        padding: 1.5rem 2rem;
+        background: var(--paper-dark, #f5f0e8);
+        border-radius: 2px;
+    }
+
+    .citation-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+    }
+
+    .citation-terms {
+        font-style: italic;
+        color: var(--ink-light);
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    .citation-term-name {
+        font-weight: 500;
+        color: var(--ink);
+        font-style: normal;
+    }
+
+    .citation-full {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--ink-light);
+        line-height: 1.8;
+    }
+
+    .citation-copy {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-faint);
+        background: none;
+        border: 1px solid var(--ink-ghost);
+        padding: 0.3rem 0.8rem;
+        margin-top: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .citation-copy:hover {
+        color: var(--bloom);
+        border-color: var(--bloom);
+    }
+
+    .article-license {
+        margin-top: 2rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--ink-faint);
+        letter-spacing: 0.05em;
+    }
+
+    .article-license a {
+        color: var(--ink-faint);
+        text-decoration-color: var(--ink-ghost);
+    }
+
+    .article-license a:hover {
+        color: var(--bloom);
+    }
+
     .article-footer {
         margin-top: 4rem;
         padding-top: 2rem;
@@ -214,7 +284,25 @@ marker: "writing"
         {% if link %}
         <a href="{{ link }}" class="external-link">Read on Thread Counts →</a>
         {% endif %}
-        
+
+        {% if defines %}
+        <div class="article-citation">
+            <div class="citation-label">cite this</div>
+            <div class="citation-terms">
+                {% for def in defines %}
+                <span class="citation-term-name">{{ def.term }}</span>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+                — first defined here.
+            </div>
+            <div class="citation-full" id="citation-text">{{ authors | join(", ") }} ({{ date | readableDate }}). "{{ title }}." {{ site.url }}{{ page.url }}</div>
+            <button class="citation-copy" onclick="navigator.clipboard.writeText(document.getElementById('citation-text').textContent.trim()).then(()=>{this.textContent='copied';setTimeout(()=>{this.textContent='copy'},1500)})">copy</button>
+        </div>
+        {% endif %}
+
+        <div class="article-license">
+            <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a> — use this, build on it, cite it.
+        </div>
+
         <footer class="article-footer">
             <a href="/writing/" class="nav-link">← all writing</a>
             <span class="page-marker">003</span>

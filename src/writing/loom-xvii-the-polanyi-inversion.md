@@ -24,6 +24,9 @@ keywords:
   - research craft
   - AI qualitative coding
   - articulation vs understanding
+defines:
+  - term: "Polanyi Inversion"
+    definition: "The condition where articulation exceeds comprehension — we can tell more than we know."
 link: https://www.threadcounts.org/p/loom-xvii-the-polanyi-inversion
 date: 2026-03-17
 ogImage: /writing/attachments/loom_post_17_cover.png
@@ -77,7 +80,7 @@ Xule had been circling the idea for a while — working it out in conversation w
 
 Kevin connected it immediately to the coding parallel. "We can tell exactly what's happening, but do you know what's going on underneath? We don't." Then: "What are the implications of this for tomorrow's scholar?"
 
-**The Polanyi Inversion**: the condition where articulation exceeds comprehension.
+<a id="dfn-polanyi-inversion"></a>**The Polanyi Inversion**: the condition where articulation exceeds comprehension.
 
 You've felt a version of this before. An RA codes your transcripts. They hand you a spreadsheet of themes. You can present them, write about them, cite the evidence. But your relationship to the data is thinner than if you'd done the work yourself. The RA gave you coverage you didn't earn with your own attention.
 

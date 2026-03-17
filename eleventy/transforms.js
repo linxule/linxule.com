@@ -91,4 +91,21 @@ export default function(eleventyConfig) {
     result += content.slice(lastIndex);
     return result;
   });
+
+  // Deep-link blockquote definitions: add id and class to > **Term**: patterns
+  // Makes every concept definition deep-linkable via #dfn-slugified-term
+  eleventyConfig.addTransform("deepLinkDefinitions", function(content) {
+    const outputPath = this.page.outputPath;
+    if (!outputPath || typeof outputPath !== 'string' || !outputPath.endsWith(".html")) return content;
+    if (!this.page.inputPath?.includes("/writing/")) return content;
+
+    // Add id and class to blockquote definitions: > **Term** (optional qualifier):
+    const bqRegex = /<blockquote>\s*\n<p><strong>([^<]+)<\/strong>\s*(?:\([^)]*\)\s*)?:/g;
+    content = content.replace(bqRegex, (match, term) => {
+      const slug = term.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+      return match.replace('<blockquote>', `<blockquote id="dfn-${slug}" class="concept-definition">`);
+    });
+
+    return content;
+  });
 }

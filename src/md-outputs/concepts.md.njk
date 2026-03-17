@@ -1,0 +1,23 @@
+---
+permalink: /concepts.md
+eleventyExcludeFromCollections: true
+---
+{% for item in collections.all %}{% if item.inputPath == "./src/concepts/index.md" %}
+# {{ item.data.title }}
+
+{{ item.data.thesis }}
+
+{% for line in item.data.thesis_continued %}{{ line.text | default(line) }}
+{% endfor %}
+
+{% for territory in item.data.territories %}
+## {{ territory.name }}
+
+{% for concept in territory.concepts %}
+**{{ concept.term }}**: *{{ concept.oneliner }}*
+{% endfor %}
+{% if territory.questions %}
+
+{% for q in territory.questions %}- {{ q }}
+{% endfor %}{% endif %}
+{% endfor %}{% endif %}{% endfor %}

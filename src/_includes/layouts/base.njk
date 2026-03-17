@@ -86,8 +86,11 @@
     {%- set mdUrl = page.url | replace(r/\/$/, "") + ".md" %}
     <link rel="alternate" type="text/markdown" href="{{ mdUrl }}">
     {%- endif %}
-    {%- if page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' %}
+    {%- if page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' %}
     <link rel="alternate" type="text/markdown" href="{{ page.url | replace(r/\/$/, '') }}.md">
+    {%- endif %}
+    {%- if page.url == '/concepts/' %}
+    <link rel="license" href="https://creativecommons.org/licenses/by/4.0/">
     {%- endif %}
 
     {# Vercel Analytics #}
@@ -162,7 +165,15 @@
       "datePublished": "{{ date.toISOString().split('T')[0] }}",
       "author": [{% for author in authors %}{"@type": "Person", "name": "{{ author }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
       "publisher": {"@type": "Person", "name": "{{ site.author }}"},
-      "mainEntityOfPage": "{{ site.url }}{{ page.url }}"
+      "mainEntityOfPage": "{{ site.url }}{{ page.url }}"{% if defines %},
+      "hasPart": [{% for def in defines %}{
+        "@type": "DefinedTerm",
+        "name": "{{ def.term }}",
+        "description": {{ def.definition | dump | safe }},
+        "url": "{{ site.url }}{{ page.url }}#dfn-{{ def.term | slugify }}",
+        "inDefinedTermSet": "{{ site.url }}/concepts/",
+        "creator": {"@type": "Person", "name": "{{ site.author }}"}
+      }{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
     }
     </script>
     {% endif %}

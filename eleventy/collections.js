@@ -313,4 +313,26 @@ export default function(eleventyConfig) {
 
     return Object.values(tagMap).sort((a, b) => a.name.localeCompare(b.name));
   });
+
+  // Concepts: flattened from `defines` frontmatter across writing posts
+  eleventyConfig.addCollection("concepts", function(collectionApi) {
+    const concepts = [];
+    collectionApi.getFilteredByGlob("src/writing/**/*.md").forEach(item => {
+      if (item.data.defines) {
+        item.data.defines.forEach(def => {
+          const slug = def.term.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+          concepts.push({
+            term: def.term,
+            definition: def.definition,
+            anchor: `dfn-${slug}`,
+            url: item.url,
+            date: item.date,
+            authors: item.data.authors || [],
+            title: item.data.title
+          });
+        });
+      }
+    });
+    return concepts.sort((a, b) => a.term.localeCompare(b.term));
+  });
 }

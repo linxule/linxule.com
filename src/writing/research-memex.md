@@ -13,6 +13,9 @@ keywords:
   - interpretive orchestration
   - human-AI collaboration
   - research pedagogy
+defines:
+  - term: "Interpretive Orchestration"
+    definition: "Maintaining your own interpretive judgment while gaining from what AI enables — the researcher as conductor, not delegator."
 date: 2025-10-17
 ---
 
