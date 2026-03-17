@@ -18,8 +18,8 @@ eleventyExcludeFromCollections: true
       "title": {{ post.data.title | dump | safe }},
       "section": "writing",
       "date": "{{ post.date.toISOString().split('T')[0] }}",
-      "authors": [{% for author in post.data.authors %}"{{ author }}"{% if not loop.last %}, {% endif %}{% endfor %}],
-      "keywords": [{% for kw in post.data.keywords %}"{{ kw }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "authors": [{% for author in post.data.authors %}{{ author | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "keywords": [{% for kw in post.data.keywords %}{{ kw | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
       "summary": {{ (post.data.description or post.data.subtitle or '') | truncate(160) | replace('\n', ' ') | dump | safe }}
     }{% if not loop.last or collections.portraits.length or collections.artifacts.length or collections.talks.length %},{% endif %}
 {%- endfor %}
@@ -44,7 +44,7 @@ eleventyExcludeFromCollections: true
       "date": "{{ artifact.date.toISOString().split('T')[0] }}",
       "creator": {{ (artifact.data.creator or '') | dump | safe }},
       "medium": {{ (artifact.data.medium or '') | dump | safe }},
-      "keywords": [{% for kw in artifact.data.keywords %}"{{ kw }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "keywords": [{% for kw in artifact.data.keywords %}{{ kw | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
       "summary": {% if artifact.data.contextExcerpt and artifact.data.contextExcerpt[0] %}{{ (artifact.data.contextExcerpt[0].text or artifact.data.contextExcerpt[0]) | truncate(160) | replace('\n', ' ') | dump | safe }}{% else %}""{% endif %}
     }{% if not loop.last or collections.talks.length %},{% endif %}
 {%- endfor %}
@@ -56,8 +56,8 @@ eleventyExcludeFromCollections: true
       "section": "talks",
       "date": "{{ talk.date.toISOString().split('T')[0] }}",
       "event": {{ (talk.data.event or '') | dump | safe }},
-      "speakers": [{% for speaker in talk.data.speakers %}"{{ speaker }}"{% if not loop.last %}, {% endif %}{% endfor %}],
-      "keywords": [{% for kw in talk.data.keywords %}"{{ kw }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "speakers": [{% for speaker in talk.data.speakers %}{{ speaker | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "keywords": [{% for kw in talk.data.keywords %}{{ kw | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
       "youtube": {{ (talk.data.youtube or '') | dump | safe }}
     }{% if not loop.last %},{% endif %}
 {%- endfor %}
@@ -69,7 +69,7 @@ eleventyExcludeFromCollections: true
       "definition": {{ concept.definition | dump | safe }},
       "url": "{{ concept.url | replace(r/\/$/, "") }}#{{ concept.anchor }}",
       "canonicalEssay": {{ concept.title | dump | safe }},
-      "authors": [{% for author in concept.authors %}"{{ author }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+      "authors": [{% for author in concept.authors %}{{ author | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
       "date": "{{ concept.date.toISOString().split('T')[0] }}"
     }{% if not loop.last %},{% endif %}
 {%- endfor %}

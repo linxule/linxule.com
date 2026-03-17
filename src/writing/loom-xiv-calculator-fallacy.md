@@ -38,7 +38,7 @@ That question hung in the air. Someone whose expertise told them such a thing co
 
 We'd stumbled into what we now call the calculator fallacy.
 
-**The calculator fallacy**: approaching AI as if it's Excel, a tool that delivers definitive, objective, correct-or-incorrect answers. 
+<a id="dfn-calculator-fallacy"></a>**The calculator fallacy**: approaching AI as if it's Excel, a tool that delivers definitive, objective, correct-or-incorrect answers. 
 
 The pattern also emerged clearly while teaching research methods. When students encounter Excel, they expect it to calculate correctly. But AI in qualitative work? As Xule observed: "It's not that it can't find the right answer, it's that we're asking it to do things that don't have a right answer."
 

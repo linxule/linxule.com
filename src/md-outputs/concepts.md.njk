@@ -14,9 +14,21 @@ eleventyExcludeFromCollections: true
 ## {{ territory.name }}
 
 {% for concept in territory.concepts %}
-**{{ concept.term }}**: *{{ concept.oneliner }}*
+### {{ concept.term }}
+
+*{{ concept.oneliner }}*
+{% for c in collections.concepts %}{% if c.term == concept.term %}
+
+> {{ c.definition }}
+
+Source: [{{ c.title }}]({{ site.url }}{{ c.url }}#{{ c.anchor }})
+{% endif %}{% endfor %}{% if concept.essay %}
+Essay: {{ site.url }}{{ concept.essay }}
+{% endif %}
+
 {% endfor %}
 {% if territory.questions %}
+**Questions this territory opens:**
 
 {% for q in territory.questions %}- {{ q }}
 {% endfor %}{% endif %}
