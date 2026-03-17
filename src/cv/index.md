@@ -84,15 +84,15 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
   - Co-developed with Claude models (2025)
   - Framework for human-AI research collaboration emerging from co-teaching Systematic Reviews with Erkko Autio
   - Comprehensive documentation of AI-augmented research workflows applying Interpretive Orchestration principles
-- <br/>[**LOOM (Locus of Observed Meanings)** series](https://www.threadcounts.org/t/loom) ([GitHub](https://github.com/linxule/loom))
+- <br/>[**LOOM (Locus of Observed Meanings)** series](/writing/series/loom/) ([GitHub](https://github.com/linxule/loom))
   - In collaboration with Kevin Corley (Imperial College London) and AI collaborators (e.g., Claude, o1 pro)
   - Short-form essays examining methodological questions in AI-augmented qualitative research and organizational analysis. Examples:
-    - [Dialogue as Method: A Letter on Knowledge Co-Creation in the Age of AI](https://www.threadcounts.org/p/loom-iv-dialogue-as-method?r=1fcklh)
-    - [The Third Space: Where Intelligence Emerges Through Human-AI Dialogue](https://www.threadcounts.org/p/loom-v-the-third-space?r=1fcklh)
-    - [The AI Whisperer: How AI Is Transforming Research](https://www.threadcounts.org/p/loom-xii-the-ai-whisperer?r=1fcklh)
-- [**Organizational Futures** series](https://www.threadcounts.org/t/organizationalfutures)
+    - [Dialogue as Method: A Letter on Knowledge Co-Creation in the Age of AI](/writing/loom-iv-dialogue-as-method/)
+    - [The Third Space: Where Intelligence Emerges Through Human-AI Dialogue](/writing/loom-v-the-third-space/)
+    - [The AI Whisperer: How AI Is Transforming Research](/writing/loom-xii-the-ai-whisperer/)
+- [**Organizational Futures** series](/writing/series/organizational-futures/)
   - Short-form essays reflecting on organizational futures in the post-AGI era. Examples:
-    - [Post-AGI Organizations: AIs' Blind Spot and Ours](https://www.threadcounts.org/p/post-agi-organizations-ais-blind?r=1fcklh)
+    - [Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations/)
 - Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). The European Business Review.
 
 # Organized Symposia

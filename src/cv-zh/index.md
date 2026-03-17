@@ -86,15 +86,15 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
   - 与Claude模型共同开发(2025)
   - 源于与Erkko Autio共同教授系统性文献综述的人机研究协作框架
   - 应用诠释编排 (Interpretive Orchestration) 原则的AI增强研究工作流的综合文档
-- <br/>[**LOOM (Locus of Observed Meanings)** 系列](https://www.threadcounts.org/t/loom)([GitHub](https://github.com/linxule/loom))
+- <br/>[**LOOM (Locus of Observed Meanings)** 系列](/writing/series/loom/)([GitHub](https://github.com/linxule/loom))
   - 与柯文凯 (Kevin Corley，帝国理工学院) 和AI协作者(如Claude、o1 pro)合作
   - 短篇论文，研究AI增强定性研究和组织分析中的方法论问题。例如：
-    - [Dialogue as Method: A Letter on Knowledge Co-Creation in the Age of AI](https://www.threadcounts.org/p/loom-iv-dialogue-as-method?r=1fcklh)
-    - [The Third Space: Where Intelligence Emerges Through Human-AI Dialogue](https://www.threadcounts.org/p/loom-v-the-third-space?r=1fcklh)
-    - [The AI Whisperer: How AI Is Transforming Research](https://www.threadcounts.org/p/loom-xii-the-ai-whisperer?r=1fcklh)
-- [**Organizational Futures** 系列](https://www.threadcounts.org/t/organizationalfutures)
+    - [Dialogue as Method: A Letter on Knowledge Co-Creation in the Age of AI](/writing/loom-iv-dialogue-as-method/)
+    - [The Third Space: Where Intelligence Emerges Through Human-AI Dialogue](/writing/loom-v-the-third-space/)
+    - [The AI Whisperer: How AI Is Transforming Research](/writing/loom-xii-the-ai-whisperer/)
+- [**Organizational Futures** 系列](/writing/series/organizational-futures/)
   - 短篇论文，反思后AGI时代的组织未来。例如：
-    - [Post-AGI Organizations: AIs' Blind Spot and Ours](https://www.threadcounts.org/p/post-agi-organizations-ais-blind?r=1fcklh)
+    - [Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations/)
 - Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). 《欧洲商业评论》_The European Business Review_.
 
 # 组织研讨会
