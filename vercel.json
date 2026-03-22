@@ -293,6 +293,11 @@
       "source": "/tag/academic-writing",
       "destination": "/writing",
       "statusCode": 301
+    },
+    {
+      "source": "/talks/2023-12/methods-reading",
+      "destination": "/talks",
+      "statusCode": 301
     }
   ]
 }
