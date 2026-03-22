@@ -238,6 +238,61 @@
       "source": "/projects/:path*",
       "destination": "/writing",
       "statusCode": 301
+    },
+    {
+      "source": "/resume",
+      "destination": "/cv",
+      "statusCode": 301
+    },
+    {
+      "source": "/talkmap.html",
+      "destination": "/talks",
+      "statusCode": 301
+    },
+    {
+      "source": "/talkmap",
+      "destination": "/talks",
+      "statusCode": 301
+    },
+    {
+      "source": "/archive-layout-with-content",
+      "destination": "/writing",
+      "statusCode": 301
+    },
+    {
+      "source": "/talks/2023-08/aom",
+      "destination": "/talks",
+      "statusCode": 301
+    },
+    {
+      "source": "/talks/2023-08-01/aom",
+      "destination": "/talks",
+      "statusCode": 301
+    },
+    {
+      "source": "/talks/2024-08/aom",
+      "destination": "/talks",
+      "statusCode": 301
+    },
+    {
+      "source": "/talks/2024-05/ccc",
+      "destination": "/talks",
+      "statusCode": 301
+    },
+    {
+      "source": "/teaching/2014-spring-teaching-1",
+      "destination": "/teaching",
+      "statusCode": 301
+    },
+    {
+      "source": "/teaching/:path*",
+      "destination": "/teaching",
+      "statusCode": 301
+    },
+    {
+      "source": "/tag/academic-writing",
+      "destination": "/writing",
+      "statusCode": 301
     }
   ]
 }
