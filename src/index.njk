@@ -105,49 +105,6 @@ layout: layouts/base.njk
         color: var(--accident);
     }
 
-    /* Ink — hide text while waiting for fonts */
-    body.ink-waiting .colophon,
-    body.ink-waiting .core-question,
-    body.ink-waiting .page-marker {
-        opacity: 0;
-    }
-
-    /* Ink reveal — homepage first visit only
-       Rhythm mirrors meaning: breath before the accident,
-       flow through the middle, pause before the landing.
-       Gaps: 0.7s → 0.8s → 0.5s → 0.4s → 0.8s
-       Wave contour, not metronome. */
-    @keyframes inkReveal {
-        0% { opacity: 0; transform: translateY(4px); }
-        30% { opacity: 0.3; transform: translateY(2px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-
-    body.ink-reveal .colophon,
-    body.ink-reveal .page-marker {
-        opacity: 0;
-        animation: inkReveal 0.6s ease forwards;
-    }
-
-    body.ink-reveal .colophon { animation-delay: 0s; }
-    body.ink-reveal .page-marker { animation-delay: 4.0s; }
-
-    body.ink-reveal .core-question .line {
-        opacity: 0;
-        animation: inkReveal 0.6s ease forwards;
-    }
-
-    /* "I study what becomes"    — opening */
-    body.ink-reveal .core-question .line:nth-child(1) { animation-delay: 0.7s; }
-    /* "impossible to see"       — the accident. breath before it. */
-    body.ink-reveal .core-question .line:nth-child(2) { animation-delay: 1.5s; }
-    /* "when algorithms enter"   — picks up */
-    body.ink-reveal .core-question .line:nth-child(3) { animation-delay: 2.0s; }
-    /* "organizational life"     — continues, deepest indent */
-    body.ink-reveal .core-question .line:nth-child(4) { animation-delay: 2.4s; }
-    /* "not as tools."           — the turn. pause before the landing. */
-    body.ink-reveal .core-question .line:nth-child(5) { animation-delay: 3.2s; }
-    
     .page-marker {
         font-family: 'IBM Plex Mono', monospace;
         font-size: 0.7rem;
@@ -380,15 +337,3 @@ layout: layouts/base.njk
     </div>
 </section>
 
-<script>
-// Ink reveal: first visit only per session, waits for fonts
-if (!sessionStorage.getItem('ink-revealed')) {
-    // Hide text until fonts load and animation starts
-    document.body.classList.add('ink-waiting');
-    (document.fonts ? document.fonts.ready : Promise.resolve()).then(function() {
-        document.body.classList.remove('ink-waiting');
-        document.body.classList.add('ink-reveal');
-        sessionStorage.setItem('ink-revealed', '1');
-    });
-}
-</script>
