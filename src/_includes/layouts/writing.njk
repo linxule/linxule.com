@@ -139,7 +139,7 @@ marker: "writing"
     .article-citation {
         margin-top: 3rem;
         padding: 1.5rem 2rem;
-        background: var(--paper-dark, #f5f0e8);
+        background: var(--paper-dark, #e8e4dc);
         border-radius: 2px;
     }
 
@@ -451,6 +451,22 @@ marker: "writing"
     window.addEventListener('resize', function() {
         clearTimeout(timer);
         timer = setTimeout(function() { position(false); }, 100);
+    });
+
+    // Marginalia bloom — ref and note highlight together on hover
+    document.querySelectorAll('.fn-ref').forEach(function(ref) {
+        var noteId = ref.getAttribute('href');
+        if (!noteId) return;
+        var note = document.querySelector(noteId);
+        if (!note) return;
+
+        ref.addEventListener('mouseenter', function() { note.classList.add('bloom-active'); });
+        ref.addEventListener('mouseleave', function() { note.classList.remove('bloom-active'); });
+        ref.addEventListener('focus', function() { note.classList.add('bloom-active'); });
+        ref.addEventListener('blur', function() { note.classList.remove('bloom-active'); });
+
+        note.addEventListener('mouseenter', function() { ref.classList.add('bloom-active'); });
+        note.addEventListener('mouseleave', function() { ref.classList.remove('bloom-active'); });
     });
 })();
 </script>

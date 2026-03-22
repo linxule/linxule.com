@@ -216,6 +216,7 @@
     {% set isHomepage = page.url == '/' %}
     {% include "partials/ai-breadcrumb.njk" %}
 
+    <a href="#main-content" class="sr-only">Skip to content</a>
     <div class="bloom-cursor" id="bloom"></div>
 
     <nav class="spine">
@@ -225,7 +226,7 @@
         {% endif %}
     </nav>
     
-    <main>
+    <main id="main-content">
         {{ content | safe }}
     </main>
     
