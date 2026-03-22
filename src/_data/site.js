@@ -1,4 +1,9 @@
+import { execSync } from 'child_process';
+
+const hash = execSync('git rev-parse --short HEAD').toString().trim();
+
 export default {
+    version: hash,
     title: "Xule Lin",
     titleZh: "林徐乐",
     description: "What becomes impossible to see when algorithms enter organizational life — not as tools.",
