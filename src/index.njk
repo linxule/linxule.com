@@ -100,10 +100,36 @@ layout: layouts/base.njk
     .core-question .line.accident {
         color: var(--accident);
     }
-    
+
     .core-question:hover .line.accident {
         color: var(--accident);
     }
+
+    /* Ink reveal — homepage first visit only */
+    @keyframes inkReveal {
+        0% { opacity: 0; transform: translateY(3px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    body.ink-reveal .colophon,
+    body.ink-reveal .page-marker {
+        animation: inkReveal 0.5s ease forwards;
+        opacity: 0;
+    }
+
+    body.ink-reveal .colophon { animation-delay: 0.1s; }
+    body.ink-reveal .page-marker { animation-delay: 1.2s; }
+
+    body.ink-reveal .core-question .line {
+        opacity: 0;
+        animation: inkReveal 0.4s ease forwards;
+    }
+
+    body.ink-reveal .core-question .line:nth-child(1) { animation-delay: 0.3s; }
+    body.ink-reveal .core-question .line:nth-child(2) { animation-delay: 0.5s; }
+    body.ink-reveal .core-question .line:nth-child(3) { animation-delay: 0.65s; }
+    body.ink-reveal .core-question .line:nth-child(4) { animation-delay: 0.8s; }
+    body.ink-reveal .core-question .line:nth-child(5) { animation-delay: 1.0s; }
     
     .page-marker {
         font-family: 'IBM Plex Mono', monospace;
@@ -336,3 +362,11 @@ layout: layouts/base.njk
         </div>
     </div>
 </section>
+
+<script>
+// Ink reveal: first visit only per session
+if (!sessionStorage.getItem('ink-revealed')) {
+    document.body.classList.add('ink-reveal');
+    sessionStorage.setItem('ink-revealed', '1');
+}
+</script>
