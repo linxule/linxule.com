@@ -105,6 +105,13 @@ layout: layouts/base.njk
         color: var(--accident);
     }
 
+    /* Ink — hide text while waiting for fonts */
+    body.ink-waiting .colophon,
+    body.ink-waiting .core-question,
+    body.ink-waiting .page-marker {
+        opacity: 0;
+    }
+
     /* Ink reveal — homepage first visit only */
     @keyframes inkReveal {
         0% { opacity: 0; transform: translateY(3px); }
@@ -364,9 +371,14 @@ layout: layouts/base.njk
 </section>
 
 <script>
-// Ink reveal: first visit only per session
+// Ink reveal: first visit only per session, waits for fonts
 if (!sessionStorage.getItem('ink-revealed')) {
-    document.body.classList.add('ink-reveal');
-    sessionStorage.setItem('ink-revealed', '1');
+    // Hide text until fonts load and animation starts
+    document.body.classList.add('ink-waiting');
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(function() {
+        document.body.classList.remove('ink-waiting');
+        document.body.classList.add('ink-reveal');
+        sessionStorage.setItem('ink-revealed', '1');
+    });
 }
 </script>
