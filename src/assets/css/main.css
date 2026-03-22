@@ -1207,7 +1207,7 @@ a:focus-visible {
     }
 
     body::before {
-        display: none;
+        display: none !important;
     }
 
     .article-body .marginalia {

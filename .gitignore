@@ -34,3 +34,6 @@ url-submission-list.txt
 # Local audit/scratch files
 SITE_AUDIT_*.md
 _site_*/
+
+# Development tools (paper workshop, etc.)
+tools/
