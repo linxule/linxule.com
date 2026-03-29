@@ -130,6 +130,11 @@
       "statusCode": 301
     },
     {
+      "source": "/posts/2023/10/macaw",
+      "destination": "/writing/macaw-markdown-academic-writing",
+      "statusCode": 301
+    },
+    {
       "source": "/posts/2020/06/resources-for-dao-research/:path*",
       "destination": "/writing/dao-governance-resources",
       "statusCode": 301

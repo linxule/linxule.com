@@ -20,6 +20,9 @@
       {%- endif -%}
     {%- endif -%}
     <meta name="description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
+    {%- if robots %}
+    <meta name="robots" content="{{ robots }}">
+    {%- endif %}
     <meta name="baidu-site-verification" content="codeva-4hCK3zYdYU">
     <meta name="author" content="{{ site.authorZh | default('') }} ({{ site.author }})">
 

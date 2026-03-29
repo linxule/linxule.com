@@ -6,6 +6,8 @@ pagination:
 permalink: /tag/{{ tag.slug }}/
 layout: layouts/base.njk
 marker: tag
+eleventyComputed:
+  robots: "{% if tag.writing.length < 1 %}noindex, follow{% endif %}"
 ---
 
 <style>

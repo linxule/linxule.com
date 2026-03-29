@@ -2,7 +2,7 @@
 layout: layouts/writing.njk
 title: "Which AI Tool Should I Actually Use? A No-BS Guide for Social Science Researchers"
 subtitle: "How I learned to stop worrying and use multiple AIs"
-description: "Stop asking 'What's the best AI?' Start asking 'What's this task asking for?' The memo method turns AI handoffs into opportunities to clarify your own thinking."
+description: "ChatGPT vs Claude vs Gemini for social science research — a practical decision tree for literature reviews, coding, and analysis, with a memo method for model switching."
 authors:
   - "Xule Lin"
 keywords:

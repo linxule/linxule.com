@@ -3,7 +3,7 @@ layout: layouts/writing.njk
 series: "Organizational Futures"
 title: "Claude Cowork: The Easy Part Is Over"
 subtitle: "The Terminal Fell—Now What?"
-description: "The terminal barrier fell. The harder barrier is epistemic: knowing where structure lives—in the filenames, or in your head. Delegation vs. dialogue."
+description: "Claude Cowork brings Claude Code to knowledge workers without the terminal. But the real barrier was never the interface — it's knowing what to delegate vs. dialogue."
 authors:
   - "Xule Lin"
   - "Claude Opus 4.5"
