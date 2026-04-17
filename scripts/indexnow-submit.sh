@@ -8,6 +8,11 @@ if [ -z "${INDEXNOW_KEY:-}" ]; then
   echo "IndexNow: INDEXNOW_KEY not set — skipping submission (non-fatal)"
   exit 0
 fi
+# Only submit on production deploys. Previews shouldn't advertise themselves to search engines.
+if [ -n "${VERCEL_ENV:-}" ] && [ "$VERCEL_ENV" != "production" ]; then
+  echo "IndexNow: VERCEL_ENV=${VERCEL_ENV} — skipping (production only)"
+  exit 0
+fi
 KEY="$INDEXNOW_KEY"
 HOST="linxule.com"
 KEY_LOCATION="https://${HOST}/${KEY}.txt"
