@@ -1,0 +1,45 @@
+---
+permalink: /.well-known/api-catalog
+eleventyExcludeFromCollections: true
+eleventyAllowMissingExtension: true
+---
+{
+  "linkset": [
+    {
+      "anchor": "{{ site.url }}/",
+      "service-doc": [
+        {
+          "href": "{{ site.url }}/llms.txt",
+          "type": "text/plain",
+          "title": "Site overview for AI systems (llms.txt)"
+        }
+      ],
+      "describedby": [
+        {
+          "href": "{{ site.url }}/site-index.json",
+          "type": "application/json",
+          "title": "Machine-readable content index"
+        }
+      ],
+      "alternate": [
+        {
+          "href": "{{ site.url }}/feed.xml",
+          "type": "application/atom+xml",
+          "title": "Atom feed — 20 most recent items"
+        },
+        {
+          "href": "{{ site.url }}/index.md",
+          "type": "text/markdown",
+          "title": "Homepage as markdown"
+        }
+      ],
+      "sitemap": [
+        {
+          "href": "{{ site.url }}/sitemap.xml",
+          "type": "application/xml",
+          "title": "Sitemap"
+        }
+      ]
+    }
+  ]
+}
