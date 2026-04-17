@@ -62,7 +62,7 @@
         {
           "type": "header",
           "key": "Accept",
-          "value": ".*text/html.*"
+          "value": ".*text/(html|markdown).*"
         }
       ],
       "headers": [
