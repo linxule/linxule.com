@@ -4,7 +4,11 @@
 # Sitemap ping → Google
 # Runs automatically after build, or manually: bash scripts/indexnow-submit.sh
 
-KEY="${INDEXNOW_KEY:?Set INDEXNOW_KEY env var}"
+if [ -z "${INDEXNOW_KEY:-}" ]; then
+  echo "IndexNow: INDEXNOW_KEY not set — skipping submission (non-fatal)"
+  exit 0
+fi
+KEY="$INDEXNOW_KEY"
 HOST="linxule.com"
 KEY_LOCATION="https://${HOST}/${KEY}.txt"
 
