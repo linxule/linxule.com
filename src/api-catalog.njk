@@ -1,0 +1,83 @@
+---
+permalink: /.well-known/api-catalog
+eleventyExcludeFromCollections: true
+eleventyAllowMissingExtension: true
+---
+{
+  "linkset": [
+    {
+      "anchor": "{{ site.url }}/",
+      "describedby": [
+        {
+          "href": "{{ site.url }}/llms.txt",
+          "type": "text/plain",
+          "title": "llms.txt — site overview for language models"
+        }
+      ],
+      "index": [
+        {
+          "href": "{{ site.url }}/site-index.json",
+          "type": "application/json",
+          "title": "Machine-readable content index"
+        }
+      ],
+      "sitemap": [
+        {
+          "href": "{{ site.url }}/sitemap.xml",
+          "type": "application/xml",
+          "title": "XML sitemap"
+        }
+      ],
+      "alternate": [
+        {
+          "href": "{{ site.url }}/feed.xml",
+          "type": "application/atom+xml",
+          "title": "Atom feed (20 most recent items)"
+        }
+      ],
+      "search": [
+        {
+          "href": "{{ site.url }}/search/",
+          "type": "text/html",
+          "title": "Full-text search (Pagefind)"
+        }
+      ]
+    },
+    {
+      "anchor": "{{ site.url }}/writing/",
+      "describedby": [
+        {
+          "href": "{{ site.url }}/writing.md",
+          "type": "text/markdown",
+          "title": "Writing index in markdown"
+        }
+      ],
+      "alternate": [
+        {
+          "href": "{{ site.url }}/feed.xml",
+          "type": "application/atom+xml"
+        }
+      ]
+    },
+    {
+      "anchor": "{{ site.url }}/making/",
+      "describedby": [
+        {
+          "href": "{{ site.url }}/making.md",
+          "type": "text/markdown",
+          "title": "Making index in markdown"
+        }
+      ]
+    },
+    {
+      "anchor": "{{ site.url }}/talks/",
+      "describedby": [
+        {
+          "href": "{{ site.url }}/talks.md",
+          "type": "text/markdown",
+          "title": "Talks index in markdown"
+        }
+      ]
+    }
+  ]
+}

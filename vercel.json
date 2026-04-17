@@ -7,7 +7,7 @@
       "headers": [
         {
           "key": "Link",
-          "value": "</llms.txt>; rel=\"llms-txt\""
+          "value": "</llms.txt>; rel=\"llms-txt\", </llms.txt>; rel=\"describedby\"; type=\"text/plain\", </sitemap.xml>; rel=\"sitemap\"; type=\"application/xml\", </feed.xml>; rel=\"alternate\"; type=\"application/atom+xml\"; title=\"Atom feed\", </site-index.json>; rel=\"index\"; type=\"application/json\", </.well-known/api-catalog>; rel=\"api-catalog\"; type=\"application/linkset+json\""
         }
       ]
     },
@@ -26,6 +26,15 @@
         {
           "key": "Content-Type",
           "value": "text/plain; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/.well-known/api-catalog",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/linkset+json; charset=utf-8"
         }
       ]
     },
