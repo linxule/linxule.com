@@ -299,11 +299,6 @@
       "statusCode": 301
     },
     {
-      "source": "/teaching/:path*",
-      "destination": "/teaching",
-      "statusCode": 301
-    },
-    {
       "source": "/tag/academic-writing",
       "destination": "/writing",
       "statusCode": 301
