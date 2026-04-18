@@ -38,8 +38,8 @@
     <link rel="alternate" hreflang="x-default" href="{{ site.url }}/cv">
     {%- endif %}
 
-    {# Canonical URL #}
-    <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+    {# Canonical URL — strip trailing slash to match vercel.json trailingSlash: false #}
+    <link rel="canonical" href="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
 
     {# Open Graph #}
     {# Smart OG image: explicit ogImage > first image from images[] > src field > default #}
@@ -54,7 +54,7 @@
     <meta property="og:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta property="og:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
-    <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+    <meta property="og:url" content="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
     <meta property="og:image" content="{{ site.url }}{{ ogImg }}">
 
     {# Twitter Card #}
@@ -169,12 +169,12 @@
       "datePublished": "{{ date.toISOString().split('T')[0] }}",
       "author": [{% for author in authors %}{"@type": "Person", "name": "{{ author }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
       "publisher": {"@type": "Person", "name": "{{ site.author }}"},
-      "mainEntityOfPage": "{{ site.url }}{{ page.url }}"{% if defines %},
+      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if defines %},
       "hasPart": [{% for def in defines %}{
         "@type": "DefinedTerm",
         "name": "{{ def.term }}",
         "description": {{ def.definition | dump | safe }},
-        "url": "{{ site.url }}{{ page.url }}#dfn-{{ def.term | slugify }}",
+        "url": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}#dfn-{{ def.term | slugify }}",
         "inDefinedTermSet": "{{ site.url }}/concepts/",
         "creator": {"@type": "Person", "name": "{{ site.author }}"}
       }{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
@@ -191,7 +191,7 @@
       "datePublished": "{{ date.toISOString().split('T')[0] }}",
       "creator": {"@type": "Person", "name": "{{ prompter | default(site.author) }}"},
       "publisher": {"@type": "Person", "name": "{{ site.author }}"},
-      "mainEntityOfPage": "{{ site.url }}{{ page.url }}"{% if images %},
+      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if images %},
       "image": [{% for image in images %}"{{ site.url }}{{ image.src }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
     }
     </script>
@@ -206,7 +206,7 @@
       "datePublished": "{{ date.toISOString().split('T')[0] }}",
       "creator": {"@type": "SoftwareApplication", "name": "{{ creator | default('Claude') }}"},
       "publisher": {"@type": "Person", "name": "{{ site.author }}"},
-      "mainEntityOfPage": "{{ site.url }}{{ page.url }}"{% if src %},
+      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if src %},
       "image": "{{ site.url }}{{ src }}"{% endif %}{% if medium %},
       "artMedium": "{{ medium }}"{% endif %}
     }
