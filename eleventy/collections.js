@@ -204,6 +204,9 @@ export default function(eleventyConfig) {
       } else if (series.startsWith('LOOM')) {
         slug = 'loom';
         name = 'LOOM';
+      } else if (series.startsWith('SEAM')) {
+        slug = 'seam';
+        name = 'SEAM';
       } else if (series.startsWith('Research with AI')) {
         slug = 'research-with-ai';
         name = 'Research with AI';
@@ -232,7 +235,7 @@ export default function(eleventyConfig) {
     });
 
     // Custom sort order
-    const order = ['loom', 'research-with-ai', 'ai-whispers', 'thinking', 'singles', 'epistemic-voids', 'organizational-futures', 'archive'];
+    const order = ['loom', 'seam', 'research-with-ai', 'ai-whispers', 'thinking', 'singles', 'epistemic-voids', 'organizational-futures', 'archive'];
     return Object.values(bySeries).sort((a, b) => {
       const aIdx = order.indexOf(a.slug);
       const bIdx = order.indexOf(b.slug);
