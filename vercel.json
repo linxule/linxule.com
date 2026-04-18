@@ -284,12 +284,22 @@
       "statusCode": 301
     },
     {
-      "source": "/talks/2024-08/aom",
+      "source": "/talks/2023-12/methods-reading",
+      "destination": "/talks",
+      "statusCode": 301
+    },
+    {
+      "source": "/talks/2023-12/sei",
       "destination": "/talks",
       "statusCode": 301
     },
     {
       "source": "/talks/2024-05/ccc",
+      "destination": "/talks",
+      "statusCode": 301
+    },
+    {
+      "source": "/talks/2024-08/aom",
       "destination": "/talks",
       "statusCode": 301
     },
@@ -304,8 +314,23 @@
       "statusCode": 301
     },
     {
-      "source": "/talks/2023-12/methods-reading",
-      "destination": "/talks",
+      "source": "/tag/ai-workflows",
+      "destination": "/tag/ai-research-workflow",
+      "statusCode": 301
+    },
+    {
+      "source": "/tag/organizational-principles",
+      "destination": "/tag/organizational-design",
+      "statusCode": 301
+    },
+    {
+      "source": "/tag/qualitative-methods",
+      "destination": "/tag/qualitative-research",
+      "statusCode": 301
+    },
+    {
+      "source": "/tag/research-methods",
+      "destination": "/tag/research-methodology",
       "statusCode": 301
     }
   ]
