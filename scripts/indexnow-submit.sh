@@ -9,8 +9,12 @@ if [ -z "${INDEXNOW_KEY:-}" ]; then
   exit 0
 fi
 # Only submit on production deploys. Previews shouldn't advertise themselves to search engines.
-if [ -n "${VERCEL_ENV:-}" ] && [ "$VERCEL_ENV" != "production" ]; then
-  echo "IndexNow: VERCEL_ENV=${VERCEL_ENV} — skipping (production only)"
+# Allowlist style: proceed ONLY when VERCEL_ENV is explicitly "production". The previous
+# check used [ -n "${VERCEL_ENV:-}" ] && [ "$VERCEL_ENV" != "production" ], which fails open
+# when VERCEL_ENV is unset (local dev, non-Vercel environments) and causes the script to
+# submit URLs — the opposite of intended behavior.
+if [ "${VERCEL_ENV:-}" != "production" ]; then
+  echo "IndexNow: VERCEL_ENV='${VERCEL_ENV:-}' — skipping (production only)"
   exit 0
 fi
 KEY="$INDEXNOW_KEY"
