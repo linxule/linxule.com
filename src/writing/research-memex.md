@@ -53,7 +53,7 @@ Then the AI layer: [Cherry Studio](https://research-memex.org/implementation/age
 
 The teaching experience with Erkko crystallized insights from months of collaborative AI work. What started as course materials became Research Memex, a comprehensive framework capturing what we'd learned about working at the frontier. Systematic reviews is one demonstration. The principles, tools, and workflows might apply across research contexts where you're working with AI. Might. We're still figuring this out.
 
-<a id="dfn-interpretive-orchestration"></a>**Interpretive Orchestration** is the foundational principle, originating from my paper with Kevin Corley (under review at *Strategic Organization*). It positions the researcher as conductor. Human judgment directs: research questions, analytical choices, theoretical integration, all the interpretive work requiring disciplinary expertise. AI amplifies: handles volume, identifies patterns at scale, generates rapid synthesis drafts, executes well-bounded cognitive tasks.
+<a id="dfn-interpretive-orchestration"></a>**Interpretive Orchestration** is the foundational principle, originating from [my paper with Kevin Corley](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) (forthcoming in *Strategic Organization*). It positions the researcher as conductor. Human judgment directs: research questions, analytical choices, theoretical integration, all the interpretive work requiring disciplinary expertise. AI amplifies: handles volume, identifies patterns at scale, generates rapid synthesis drafts, executes well-bounded cognitive tasks.
 
 Neither party delegates the hard thinking to the other. This philosophy shapes how every workflow is built.
 
