@@ -43,7 +43,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Publications
 
-- Lin, X., & Corley, K. G. (forthcoming). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. Strategic Organization. [Accepted, forthcoming] [[SSRN]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) | [[GitHub]](https://github.com/linxule/interpretive-orchestration-paper)
+- Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. Strategic Organization. https://doi.org/10.1177/14761270261448645 [Advance online publication] [[SSRN]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) | [[GitHub]](https://github.com/linxule/interpretive-orchestration-paper)
 	- Invited theoretical contribution proposing interpretive orchestration, a framework that reframes qualitative researchers as orchestrators of human-AI collaboration navigating two epistemic challenges: translating tacit knowledge into forms AI can process, and exercising judgment over '1.5 order data'—computationally derived patterns requiring human interpretation for theoretical significance. Develops three strategic models (Socratic, Euclidean, Vitruvian) for maintaining epistemic responsibility.
 
 # Under Review
