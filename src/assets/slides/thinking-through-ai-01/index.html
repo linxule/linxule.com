@@ -1,0 +1,1811 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Thinking Through AI — Masterclass</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<link rel="stylesheet" href="deck.css" />
+<script type="application/json" id="speaker-notes">
+[]
+</script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+<section data-label="01 Title" class="ground-white">
+  <div style="display:grid; grid-template-columns: 1fr auto; gap: 96px; height:100%;">
+    <!-- LEFT region: hard left-aligned across all sizes/weights -->
+    <div style="display:flex; flex-direction:column; justify-content:space-between;">
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <span class="eyebrow">New Scholar Series · 28 April 2026</span>
+        <span style="font-family:var(--font-display); font-weight:500; font-size:18px; letter-spacing:0.14em; text-transform:uppercase; color:var(--fg-2);">Working with AI Research Agents to Engage with Academic Literature</span>
+      </div>
+      <div>
+        <h1 style="font-family:var(--font-display); font-weight:800; font-size:200px; line-height:0.92; letter-spacing:-0.035em; margin:0; color:var(--imp-navy);">
+          Thinking<br/>
+          <span style="color:var(--imp-orange-red);">through AI</span><span style="display:inline-block; width:36px; height:36px; background:var(--imp-navy); vertical-align:baseline; margin-left:8px;"></span>
+        </h1>
+        <div style="margin-top:48px; font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:48px; line-height:1.2; color:var(--fg-2); letter-spacing:-0.005em;">
+          Literature review as scholarly practice.
+        </div>
+      </div>
+      <div>
+        <img src="assets/logos/wordmark-navy.svg" alt="Imperial College Business School" style="display:block; height:78px; width:auto;" />
+      </div>
+    </div>
+
+    <!-- RIGHT region: hard right-aligned across all sizes/weights -->
+    <div style="display:flex; flex-direction:column; justify-content:flex-end; text-align:right; gap:18px; min-width:520px;">
+      <div style="font-family:var(--font-display); font-weight:800; font-size:48px; letter-spacing:-0.01em; color:var(--imp-navy); line-height:1.05;">Xule Lin</div>
+      <div style="display:grid; grid-template-columns:1fr; gap:24px; margin-top:24px;">
+        <div>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:20px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Research Associate</div>
+          <div style="font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.25; color:var(--imp-navy); margin-top:6px;">Imperial College London</div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:20px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Incoming Assistant Professor</div>
+          <div style="font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.25; color:var(--imp-navy); margin-top:6px;">SKEMA Business School, Paris</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="02 Two failure modes" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <span class="eyebrow">Two ways to get this wrong</span>
+
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <!-- Top row: ABDICATION huge, gloss right-aligned at top -->
+      <div style="display:grid; grid-template-columns: 1fr 480px; gap:80px; align-items:flex-start;">
+        <h2 style="font-family:var(--font-display); font-weight:800; font-size:180px; line-height:0.92; letter-spacing:-0.035em; margin:0; color:var(--imp-navy);">
+          Abdication<span style="display:inline-block; width:32px; height:32px; background:var(--imp-orange-red); vertical-align:baseline; margin-left:8px;"></span>
+        </h2>
+        <div style="padding-top:48px;">
+          <div class="micro" style="font-size:24px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Mode A</div>
+          <p class="body" style="margin-top:16px; font-size:30px; font-weight:500;">Let AI think for you.<br/>Accept the outputs uncritically.<br/>Efficient — and epistemically hollow.</p>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:2px solid var(--imp-navy); margin:24px 0; opacity:0.15;" />
+
+      <!-- Bottom row: faded placeholder for Mode B (revealed on slide 02b) -->
+      <div style="display:grid; grid-template-columns: 480px 1fr; gap:80px; align-items:flex-start; opacity:0.14;">
+        <div style="padding-top:48px; text-align:right;">
+          <div class="micro" style="font-size:24px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Mode B</div>
+          <p class="body" style="margin-top:16px; font-size:30px; font-weight:500;">Refuse to engage.<br/>Wait it out.<br/>Safe — and increasingly untenable.</p>
+        </div>
+        <h2 style="font-family:var(--font-display); font-weight:800; font-size:180px; line-height:0.92; letter-spacing:-0.035em; margin:0; color:var(--imp-navy); text-align:right;">
+          Abnegation<span style="display:inline-block; width:32px; height:32px; background:var(--imp-orange-red); vertical-align:baseline; margin-left:8px;"></span>
+        </h2>
+      </div>
+    </div>
+
+    <p class="q" style="font-size:56px; color:var(--imp-orange-red); margin:0; max-width:80%; opacity:0;">There is a path between.</p>
+  </div>
+</section>
+
+<section data-label="02b Two failure modes — reveal" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <span class="eyebrow">Two ways to get this wrong</span>
+
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:grid; grid-template-columns: 1fr 480px; gap:80px; align-items:flex-start; opacity:0.28;">
+        <h2 style="font-family:var(--font-display); font-weight:800; font-size:180px; line-height:0.92; letter-spacing:-0.035em; margin:0; color:var(--imp-navy);">
+          Abdication<span style="display:inline-block; width:32px; height:32px; background:var(--imp-orange-red); vertical-align:baseline; margin-left:8px;"></span>
+        </h2>
+        <div style="padding-top:48px;">
+          <div class="micro" style="font-size:24px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Mode A</div>
+          <p class="body" style="margin-top:16px; font-size:30px; font-weight:500;">Let AI think for you.<br/>Accept the outputs uncritically.<br/>Efficient — and epistemically hollow.</p>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:2px solid var(--imp-navy); margin:24px 0; opacity:0.15;" />
+
+      <div style="display:grid; grid-template-columns: 480px 1fr; gap:80px; align-items:flex-start;">
+        <div style="padding-top:48px; text-align:right;">
+          <div class="micro" style="font-size:24px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Mode B</div>
+          <p class="body" style="margin-top:16px; font-size:30px; font-weight:500;">Refuse to engage.<br/>Wait it out.<br/>Safe — and increasingly untenable.</p>
+        </div>
+        <h2 style="font-family:var(--font-display); font-weight:800; font-size:180px; line-height:0.92; letter-spacing:-0.035em; margin:0; color:var(--imp-navy); text-align:right;">
+          Abnegation<span style="display:inline-block; width:32px; height:32px; background:var(--imp-orange-red); vertical-align:baseline; margin-left:8px;"></span>
+        </h2>
+      </div>
+    </div>
+
+    <p class="q" style="font-size:56px; color:var(--imp-orange-red); margin:0; max-width:80%;">There is a path between.</p>
+  </div>
+</section>
+
+<section data-label="03 Principle 01" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Three orientations</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        Three principles<span style="display:inline-block; width:22px; height:22px; background:var(--imp-orange-red); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:80px;">
+      <!-- 01 ACTIVE -->
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:140px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">01</div>
+        <hr style="border:none; border-top:2px solid var(--imp-navy); width:100%; margin:24px 0;" />
+        <div style="font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.01em;">Thinking through.</div>
+        <p style="margin-top:24px; font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.45; color:var(--fg-2);">AI is a medium for developing understanding — not a machine that automates it for you.</p>
+      </div>
+      <!-- 02 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:140px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">02</div>
+        <hr style="border:none; border-top:2px solid var(--imp-navy); width:100%; margin:24px 0;" />
+        <div style="font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.01em;">Engagement design.</div>
+        <p style="margin-top:24px; font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.45; color:var(--fg-2);">The skill is in how you structure the interaction — not which button you press.</p>
+      </div>
+      <!-- 03 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:140px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">03</div>
+        <hr style="border:none; border-top:2px solid var(--imp-navy); width:100%; margin:24px 0;" />
+        <div style="font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.01em;">The inward lens.</div>
+        <p style="margin-top:24px; font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.45; color:var(--fg-2);">When the output disappoints, examine your input first.</p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:40px; line-height:1.25; color:var(--imp-navy); margin:0; max-width:1500px; border-top:2px solid var(--imp-orange-red); padding-top:32px; opacity:0;">
+      We'll come back to them.
+    </p>
+  </div>
+</section>
+
+<section data-label="03b Principle 02" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Three orientations</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        Three principles<span style="display:inline-block; width:22px; height:22px; background:var(--imp-orange-red); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:80px;">
+      <!-- 01 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:140px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">01</div>
+        <hr style="border:none; border-top:2px solid var(--imp-navy); width:100%; margin:24px 0;" />
+        <div style="font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.01em;">Thinking through.</div>
+        <p style="margin-top:24px; font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.45; color:var(--fg-2);">AI is a medium for developing understanding — not a machine that automates it for you.</p>
+      </div>
+      <!-- 02 ACTIVE -->
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:140px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">02</div>
+        <hr style="border:none; border-top:2px solid var(--imp-navy); width:100%; margin:24px 0;" />
+        <div style="font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.01em;">Engagement design.</div>
+        <p style="margin-top:24px; font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.45; color:var(--fg-2);">The skill is in how you structure the interaction — not which button you press.</p>
+      </div>
+      <!-- 03 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:140px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">03</div>
+        <hr style="border:none; border-top:2px solid var(--imp-navy); width:100%; margin:24px 0;" />
+        <div style="font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.01em;">The inward lens.</div>
+        <p style="margin-top:24px; font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.45; color:var(--fg-2);">When the output disappoints, examine your input first.</p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:40px; line-height:1.25; color:var(--imp-navy); margin:0; max-width:1500px; border-top:2px solid var(--imp-orange-red); padding-top:32px; opacity:0;">
+      We'll come back to them.
+    </p>
+  </div>
+</section>
+
+<section data-label="03c Principle 03" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Three orientations</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        Three principles<span style="display:inline-block; width:22px; height:22px; background:var(--imp-orange-red); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:80px;">
+      <!-- 01 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:140px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">01</div>
+        <hr style="border:none; border-top:2px solid var(--imp-navy); width:100%; margin:24px 0;" />
+        <div style="font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.01em;">Thinking through.</div>
+        <p style="margin-top:24px; font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.45; color:var(--fg-2);">AI is a medium for developing understanding — not a machine that automates it for you.</p>
+      </div>
+      <!-- 02 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:140px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">02</div>
+        <hr style="border:none; border-top:2px solid var(--imp-navy); width:100%; margin:24px 0;" />
+        <div style="font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.01em;">Engagement design.</div>
+        <p style="margin-top:24px; font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.45; color:var(--fg-2);">The skill is in how you structure the interaction — not which button you press.</p>
+      </div>
+      <!-- 03 ACTIVE -->
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:140px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">03</div>
+        <hr style="border:none; border-top:2px solid var(--imp-navy); width:100%; margin:24px 0;" />
+        <div style="font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.01em;">The inward lens.</div>
+        <p style="margin-top:24px; font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.45; color:var(--fg-2);">When the output disappoints, examine your input first.</p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:40px; line-height:1.25; color:var(--imp-navy); margin:0; max-width:1500px; border-top:2px solid var(--imp-orange-red); padding-top:32px; opacity:1;">
+      We'll come back to them.
+    </p>
+  </div>
+</section>
+
+<section data-label="04 Today's plan" class="ground-white">
+  <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:120px; height:100%;">
+    <!-- LEFT: the running question, large, italic, hard-left -->
+    <div style="display:flex; flex-direction:column; justify-content:space-between;">
+      <span class="eyebrow">What we'll do</span>
+      <div>
+        <div class="micro" style="font-size:24px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:32px;">The starting question</div>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:60px; line-height:1.18; letter-spacing:-0.01em; color:var(--imp-navy); margin:0;">
+          When management researchers run audits, evaluations, or experiments on LLMs — what methods do they use, and what kinds of claims do they make<span style="color:var(--imp-orange-red); font-style:normal;">?</span>
+        </p>
+      </div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.45; color:var(--fg-2); margin:0; max-width:880px;">
+        We'll use AI to interrogate how our field engages with AI.<br/>The reflexive move is the point.
+      </p>
+    </div>
+
+    <!-- RIGHT: three configs, all muted -->
+    <div style="display:flex; flex-direction:column; justify-content:flex-end; gap:48px; text-align:right;">
+      <!-- Config 01 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">01<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Conversational AI</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude · Kimi · ChatGPT</div>
+      </div>
+      <!-- Config 02 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">02<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Deep research</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude · ChatGPT · Kimi Agent Swarm</div>
+      </div>
+      <!-- Config 03 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">03<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Agentic workflow</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude Code</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="04b Today's plan C01" class="ground-white">
+  <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:120px; height:100%;">
+    <!-- LEFT: the running question, large, italic, hard-left -->
+    <div style="display:flex; flex-direction:column; justify-content:space-between;">
+      <span class="eyebrow">What we'll do</span>
+      <div>
+        <div class="micro" style="font-size:24px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:32px;">The starting question</div>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:60px; line-height:1.18; letter-spacing:-0.01em; color:var(--imp-navy); margin:0;">
+          When management researchers run audits, evaluations, or experiments on LLMs — what methods do they use, and what kinds of claims do they make<span style="color:var(--imp-orange-red); font-style:normal;">?</span>
+        </p>
+      </div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.45; color:var(--fg-2); margin:0; max-width:880px;">
+        We'll use AI to interrogate how our field engages with AI.<br/>The reflexive move is the point.
+      </p>
+    </div>
+
+    <!-- RIGHT: three configs — 01 active, 02/03 muted -->
+    <div style="display:flex; flex-direction:column; justify-content:flex-end; gap:48px; text-align:right;">
+      <!-- Config 01 ACTIVE -->
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">01<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Conversational AI</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude · Kimi · ChatGPT</div>
+      </div>
+      <!-- Config 02 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">02<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Deep research</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude · ChatGPT · Kimi Agent Swarm</div>
+      </div>
+      <!-- Config 03 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">03<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Agentic workflow</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude Code</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="04c Today's plan C02" class="ground-white">
+  <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:120px; height:100%;">
+    <!-- LEFT: the running question, large, italic, hard-left -->
+    <div style="display:flex; flex-direction:column; justify-content:space-between;">
+      <span class="eyebrow">What we'll do</span>
+      <div>
+        <div class="micro" style="font-size:24px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:32px;">The starting question</div>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:60px; line-height:1.18; letter-spacing:-0.01em; color:var(--imp-navy); margin:0;">
+          When management researchers run audits, evaluations, or experiments on LLMs — what methods do they use, and what kinds of claims do they make<span style="color:var(--imp-orange-red); font-style:normal;">?</span>
+        </p>
+      </div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.45; color:var(--fg-2); margin:0; max-width:880px;">
+        We'll use AI to interrogate how our field engages with AI.<br/>The reflexive move is the point.
+      </p>
+    </div>
+
+    <!-- RIGHT: three configs — 02 active, 01/03 muted -->
+    <div style="display:flex; flex-direction:column; justify-content:flex-end; gap:48px; text-align:right;">
+      <!-- Config 01 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">01<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Conversational AI</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude · Kimi · ChatGPT</div>
+      </div>
+      <!-- Config 02 ACTIVE -->
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">02<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Deep research</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude · ChatGPT · Kimi Agent Swarm</div>
+      </div>
+      <!-- Config 03 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">03<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Agentic workflow</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude Code</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="04d Today's plan C03" class="ground-white">
+  <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:120px; height:100%;">
+    <!-- LEFT: the running question, large, italic, hard-left -->
+    <div style="display:flex; flex-direction:column; justify-content:space-between;">
+      <span class="eyebrow">What we'll do</span>
+      <div>
+        <div class="micro" style="font-size:24px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:32px;">The starting question</div>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:60px; line-height:1.18; letter-spacing:-0.01em; color:var(--imp-navy); margin:0;">
+          When management researchers run audits, evaluations, or experiments on LLMs — what methods do they use, and what kinds of claims do they make<span style="color:var(--imp-orange-red); font-style:normal;">?</span>
+        </p>
+      </div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.45; color:var(--fg-2); margin:0; max-width:880px;">
+        We'll use AI to interrogate how our field engages with AI.<br/>The reflexive move is the point.
+      </p>
+    </div>
+
+    <!-- RIGHT: three configs — 03 active, 01/02 muted -->
+    <div style="display:flex; flex-direction:column; justify-content:flex-end; gap:48px; text-align:right;">
+      <!-- Config 01 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">01<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Conversational AI</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude · Kimi · ChatGPT</div>
+      </div>
+      <!-- Config 02 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">02<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Deep research</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude · ChatGPT · Kimi Agent Swarm</div>
+      </div>
+      <!-- Config 03 ACTIVE -->
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:88px; line-height:0.9; color:var(--imp-orange-red); letter-spacing:-0.03em;">03<span style="display:inline-block; width:16px; height:16px; background:var(--imp-navy); vertical-align:baseline; margin-left:4px;"></span></div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:36px; color:var(--imp-navy); margin-top:8px;">Agentic workflow</div>
+        <div style="font-family:var(--font-display); font-weight:500; font-size:24px; color:var(--fg-2); margin-top:4px;">Claude Code</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="05 Section 01 Conversational AI" class="ground-orange bleed">
+  <div style="position:relative; width:100%; height:100%; padding:96px 128px; box-sizing:border-box;">
+    <!-- Massive black numeral, off-canvas left -->
+    <div style="position:absolute; left:-40px; top:60px; right:46%; overflow:hidden; font-family:var(--font-display); font-weight:800; font-size:680px; line-height:0.78; letter-spacing:-0.05em; color:var(--imp-black); user-select:none; white-space:nowrap;">
+      01
+    </div>
+    <!-- Bottom-right text block, hard right-aligned -->
+    <div style="position:absolute; right:128px; bottom:96px; text-align:right; max-width:680px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-black);">Configuration one</div>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.96; letter-spacing:-0.025em; margin:32px 0 0 0; color:var(--imp-white);">
+        The Socratic<br/>conversation<span style="display:inline-block; width:18px; height:18px; background:var(--imp-black); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+      <p style="margin-top:32px; font-family:var(--font-citation); font-style:italic; font-size:40px; line-height:1.25; color:var(--imp-black);">Thinking with AI as a colleague.</p>
+      <div style="margin-top:24px; font-family:var(--font-display); font-weight:600; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(0,0,0,0.7);">Claude · Kimi · ChatGPT</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="06 Opening prompt" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Move 01 · Articulate before you tool</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">You → Claude</div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:60px; line-height:1.22; letter-spacing:-0.005em; color:var(--imp-navy); margin:0; max-width:1700px;">
+      "When management researchers run <span style="color:var(--imp-orange-red);">audits, evaluations, or experiments on LLMs</span>, what <span style="color:var(--imp-orange-red);">methods</span> do they use and what <span style="color:var(--imp-orange-red);">kinds of claims</span> do they make based on those methods?"
+    </p>
+
+    <div style="border-top:2px solid var(--imp-navy); padding-top:32px; display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Principle 01<br/>Thinking through</div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.4; color:var(--imp-navy); margin:0;">
+        The act of writing this prompt forced me to know what I was actually looking for.<br/><strong>The clarity achieved through the prompt is the insight.</strong>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section data-label="07 The first answer" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Move 02a · The first answer is rarely the answer</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.18em; text-transform:uppercase; color:var(--fg-2);">Claude → You</div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:60px; line-height:1.22; letter-spacing:-0.005em; color:var(--fg-2); margin:0; max-width:1600px;">
+      "Here are five dominant approaches: behavioral audits, decision-support deployment studies, ethnographic accounts, survey-based attitudes, and case studies of adoption…"
+    </p>
+
+    <p style="font-family:var(--font-display); font-weight:600; font-size:48px; line-height:1.2; color:var(--imp-navy); margin:0; max-width:1400px;">
+      Competent.<br/>Useful.<br/><span style="color:var(--imp-orange-red);">Don't accept it, yet.</span>
+    </p>
+  </div>
+</section>
+
+<section data-label="07b The meta turn" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Move 02 · the meta turn</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:104px; line-height:0.96; letter-spacing:-0.025em; margin:24px 0 0 0; color:var(--imp-navy);">
+        Step back.<br/><span style="color:var(--imp-orange-red);">Read what just happened.</span>
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1.15fr; gap:64px; align-items:start;">
+      <!-- LEFT: Main thread, muted (the residue) -->
+      <div style="opacity:0.42; border-left:4px solid var(--fg-2); padding:8px 0 8px 28px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.18em; text-transform:uppercase; color:var(--fg-2);">Main thread</div>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.4; color:var(--fg-2); margin:14px 0 0 0;">
+          Q1 → five canonical methods. Competent. Flat.
+        </p>
+        <div style="margin-top:14px; font-family:var(--font-display); font-weight:500; font-size:16px; color:var(--fg-2); letter-spacing:0.04em;">
+          ← where we just were
+        </div>
+      </div>
+
+      <!-- RIGHT: New session, prominent -->
+      <div style="border-left:4px solid var(--imp-orange-red); padding:8px 0 8px 28px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">New session · You → Claude</div>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:40px; line-height:1.25; color:var(--imp-navy); margin:18px 0 0 0; letter-spacing:-0.005em;">
+          "Read this conversation. Why isn't it getting at <span style="color:var(--imp-orange-red);">what I'm actually trying to understand</span>?"
+        </p>
+        <div style="margin-top:14px; font-family:var(--font-display); font-weight:600; font-size:18px; color:var(--imp-navy); letter-spacing:0.04em;">
+          ↓ paste the transcript
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start; border-top:2px solid var(--imp-navy); padding-top:24px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Principle 03<br/>The inward lens</div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.4; color:var(--imp-navy); margin:0;">
+        Don't argue with the answer.<br/>Bring the transcript into a new conversation, and ask the conversation what your prompt was carrying.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section data-label="08 What my prompt didn't carry" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Move 02 · what the new session surfaced</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.96; letter-spacing:-0.025em; margin:24px 0 0 0; color:var(--imp-navy);">
+        What my prompt<br/><span style="color:var(--imp-orange-red);">didn't carry.</span>
+      </h2>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:24px;">
+      <div style="display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start; border-top:2px solid rgba(0,33,71,0.15); padding-top:20px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-2);">What the prompt asked</div>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.4; color:var(--imp-navy); margin:0;">
+          Methods researchers use <em>on</em> LLMs — audits, evaluations, experiments.<br/><span style="color:var(--fg-2);">A literature about using LLMs in research.</span>
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start; border-top:2px solid rgba(0,33,71,0.15); padding-top:20px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">What I actually wanted</div>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.4; color:var(--imp-navy); margin:0;">
+          How researchers treat LLMs <em>as</em> theoretical objects — evaluative cognition, compliance modes, fairness reasoning.<br/><span style="color:var(--fg-2);">A literature about what LLMs are like.</span>
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start; border-top:2px solid var(--imp-navy); padding-top:20px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-navy);">The gap</div>
+        <p style="font-family:var(--font-display); font-weight:600; font-size:28px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Studies make claims about what LLMs are like — but the methods often can't license those claims.<br/><span style="color:var(--imp-orange-red);">The construct-method matching gap.</span>
+        </p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:34px; line-height:1.3; color:var(--imp-orange-red); margin:0; text-align:center; max-width:1500px; align-self:center;">
+      The conversation didn't fail. The frame did.
+    </p>
+  </div>
+</section>
+
+<section data-label="08b Sharpened prompt" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Move 03b · Sharpen the frame</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">You → Claude</div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:54px; line-height:1.22; letter-spacing:-0.005em; color:var(--imp-navy); margin:0; max-width:1700px;">
+      "When management researchers treat LLMs as <span style="color:var(--imp-orange-red);">theoretical objects of study</span> — making claims about what LLMs are like as <span style="color:var(--imp-orange-red);">evaluators, decision-makers, reasoners, or cognitive entities</span> — what <span style="color:var(--imp-orange-red);">evidence</span> do they use to support those claims?"
+    </p>
+
+    <div style="border-top:2px solid var(--imp-navy); padding-top:32px; display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Principle 03<br/>The inward lens</div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.4; color:var(--imp-navy); margin:0;">
+        Resist the instinct to blame the model (e.g., not smart, biased).<br/>Observe whether the output mirrored the input.<br/>Notice what the frame was.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section data-label="08c Claude · Configuration 01 demo" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; gap:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Configuration 01 · Claude</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.22em; text-transform:uppercase; color:var(--imp-navy); opacity:0.7;">Demo</div>
+    </div>
+    <div style="flex:1; display:flex; min-height:0; align-items:center; justify-content:center;">
+      <img src="assets/screenshots/config1-claude.png" alt="Claude · Configuration 01 conversation" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; box-shadow:0 8px 32px rgba(0,33,71,0.18);" />
+    </div>
+  </div>
+</section>
+
+<section data-label="08c2 ChatGPT · Configuration 01 demo" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; gap:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Configuration 01 · ChatGPT</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.22em; text-transform:uppercase; color:var(--imp-navy); opacity:0.7;">Demo</div>
+    </div>
+    <div style="flex:1; display:flex; min-height:0; align-items:center; justify-content:center;">
+      <img src="assets/screenshots/config1-chatgpt.png" alt="ChatGPT · Configuration 01 conversation" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; box-shadow:0 8px 32px rgba(0,33,71,0.18);" />
+    </div>
+  </div>
+</section>
+
+<section data-label="08c3 Kimi · Configuration 01 demo" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; gap:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Configuration 01 · Kimi</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.22em; text-transform:uppercase; color:var(--imp-navy); opacity:0.7;">Demo</div>
+    </div>
+    <div style="flex:1; display:flex; min-height:0; align-items:center; justify-content:center;">
+      <img src="assets/screenshots/config1-kimi.png" alt="Kimi · Configuration 01 conversation" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; box-shadow:0 8px 32px rgba(0,33,71,0.18);" />
+    </div>
+  </div>
+</section>
+
+<section data-label="08d Config 01 · the pivot" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Configuration 01 · synthesis across models</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:104px; line-height:0.96; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        Three reads. One pattern.<br/><span style="color:var(--imp-orange-red);">Still not done.</span>
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:80px; padding-top:32px; border-top:2px solid rgba(0,33,71,0.15);">
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-navy); margin-bottom:20px;">What the agents gave us</div>
+        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:22px;">
+          <li style="font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.4; color:var(--imp-navy);">Four research postures (evaluators, decision-makers, silicon samples, psychological entities)</li>
+          <li style="font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.4; color:var(--imp-navy);">Behavioral evidence dominates — outputs matching outputs</li>
+          <li style="font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.4; color:var(--imp-navy);">Critical countercurrent surfacing <span style="color:var(--fg-2);">(Lin 2025; dual-validity; Lindebaum &amp; Fleming)</span></li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:20px;">What we still need to push on</div>
+        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:22px;">
+          <li style="font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.4; color:var(--imp-navy);">Why do researchers settle on one account of LLM internals over others?</li>
+          <li style="font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.4; color:var(--imp-navy);">What work is borrowed theoretical vocabulary doing?</li>
+          <li style="font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.4; color:var(--imp-navy);">The map is here. The mechanism isn't. <span style="font-weight:700; color:var(--imp-orange-red);">→ Configuration 02</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="09 What's visible (C1)" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Configuration 01 · Takeaway</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        The transcript <span style="color:var(--imp-orange-red);">is</span><br/>the work.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:64px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red); border-top:2px solid var(--imp-orange-red); padding-top:24px;">What's visible</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:28px; border-top:2px solid var(--imp-orange-red); padding-top:24px;">
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Articulation of what you actually want.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Conversational steering, diagnostic turns, reframing.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Reflexive reversal: input before model.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-label="09b What's harder (C1)" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow muted" style="color:var(--fg-2);">Configuration 01 · Takeaway</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        And what <span style="color:var(--imp-orange-red);">stays hidden</span>.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:64px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--fg-2); border-top:2px solid var(--fg-2); padding-top:24px;">What's harder</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:36px; border-top:2px solid var(--fg-2); padding-top:24px;">
+        <li>
+          <div style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.25; color:var(--fg-2);">Verifying the underlying claims.</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.5; color:var(--fg-3, #6b7280); margin-top:10px; max-width:920px;">
+            Requires going back to the actual paper.<br/>The conversation surfaces names; verification is still your reading.
+          </div>
+        </li>
+        <li>
+          <div style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.25; color:var(--fg-2);">Systematic coverage of a literature.</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.5; color:var(--fg-3, #6b7280); margin-top:10px; max-width:920px;">
+            Mapping with criteria: journals, keywords, inclusion rules.<br/>The same discipline scholars have always used; conversational AI doesn't replace it.
+          </div>
+        </li>
+        <li>
+          <div style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.25; color:var(--fg-2);">Cross-session continuity.</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.5; color:var(--fg-3, #6b7280); margin-top:10px; max-width:920px;">
+            Solved by collaborative memoing at the end of a session.<br/>A standalone artifact that can re-prime any model, any chat.
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-label="10 Section 02 Deep research" class="ground-orange bleed">
+  <div style="position:relative; width:100%; height:100%; padding:96px 128px; box-sizing:border-box;">
+    <div style="position:absolute; left:-40px; top:60px; right:46%; overflow:hidden; font-family:var(--font-display); font-weight:800; font-size:680px; line-height:0.78; letter-spacing:-0.05em; color:var(--imp-black); user-select:none; white-space:nowrap;">
+      02
+    </div>
+    <div style="position:absolute; right:128px; bottom:96px; text-align:right; max-width:680px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-black);">Configuration two</div>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.96; letter-spacing:-0.025em; margin:32px 0 0 0; color:var(--imp-white);">
+        The orchestrated<br/>search<span style="display:inline-block; width:18px; height:18px; background:var(--imp-black); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+      <p style="margin-top:32px; font-family:var(--font-citation); font-style:italic; font-size:40px; line-height:1.25; color:var(--imp-black);">Let agents discover. Then interrogate.</p>
+      <div style="margin-top:24px; font-family:var(--font-display); font-weight:600; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(0,0,0,0.7);">Claude DR · ChatGPT DR · Kimi Agent Swarm</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="11 Deep research query" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; gap:36px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Configuration 02 · part A · design the query</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">You → Deep Research</div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:50px; line-height:1.24; color:var(--imp-navy); margin:0; max-width:1750px;">
+      "Survey how management researchers treat LLMs as <span style="color:var(--imp-orange-red);">cognitive, evaluative, or psychological entities</span> (2022–2026) — beyond using LLMs as tools."
+    </p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:28px 56px;">
+      <div style="border-top:2px solid var(--imp-orange-red); padding-top:18px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:12px;">01 · Theoretical claims</div>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.4; color:var(--imp-navy); margin:0;">
+          What's being claimed about LLM internals — cognitive, evaluative, motivational, architectural?
+        </p>
+      </div>
+      <div style="border-top:2px solid var(--imp-orange-red); padding-top:18px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:12px;">02 · Behavioral evidence</div>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.4; color:var(--imp-navy); margin:0;">
+          Output patterns, human comparisons, behavioral paradigms, psychometric administration.
+        </p>
+      </div>
+      <div style="border-top:2px solid var(--imp-orange-red); padding-top:18px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:12px;">03 · Inferential moves</div>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.4; color:var(--imp-navy); margin:0;">
+          Where vocabulary borrows from psychology, behavioral economics, organizational theory.
+        </p>
+      </div>
+      <div style="border-top:2px solid var(--imp-orange-red); padding-top:18px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:12px;">04 · Countercurrents</div>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.4; color:var(--imp-navy); margin:0;">
+          Lin's Six Fallacies, dual-validity, Lindebaum &amp; Fleming — what these critiques target.
+        </p>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:56px; background:rgba(0,33,71,0.05); padding:24px 32px; border-radius:4px;">
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-navy); margin-bottom:10px;">+ Compare across fields</div>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.4; color:var(--imp-navy); margin:0;">
+          AI alignment, interpretability, computational social science, HCI — where do management's standards diverge?
+        </p>
+      </div>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-navy); margin-bottom:10px;">+ Surface the mechanism</div>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.4; color:var(--imp-navy); margin:0;">
+          Where the same evidence supports multiple accounts. What work imported vocabulary does that the evidence can't.
+        </p>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start; border-top:2px solid var(--imp-navy); padding-top:24px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Principle 02<br/>Engagement design</div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.45; color:var(--imp-navy); margin:0;">
+        A deep-research query is a contract.<br/>Be precise about scope, structure, and what you want surfaced — let the agent split the work.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section data-label="11b Methodological decision" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+    <span class="eyebrow">Move 01 · continued</span>
+    <h2 style="font-family:var(--font-display); font-weight:800; font-size:160px; line-height:0.94; letter-spacing:-0.035em; margin:48px 0 0 0; color:var(--imp-navy); max-width:1500px;">
+      A query is a<br/>
+      <span style="color:var(--imp-orange-red);">methodological</span><br/>
+      decision<span style="display:inline-block; width:30px; height:30px; background:var(--imp-orange-red); vertical-align:baseline; margin-left:8px;"></span>
+    </h2>
+  </div>
+</section>
+
+<section data-label="11c ChatGPT · Configuration 02 part A" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; gap:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Configuration 02 · ChatGPT · Deep Research</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.22em; text-transform:uppercase; color:var(--imp-navy); opacity:0.7;">Demo</div>
+    </div>
+    <div style="flex:1; display:flex; min-height:0; align-items:center; justify-content:center;">
+      <img src="assets/screenshots/config2-chatgpt.png" alt="ChatGPT · Deep Research run" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; box-shadow:0 8px 32px rgba(0,33,71,0.18);" />
+    </div>
+  </div>
+</section>
+
+<section data-label="11c2 Claude · Configuration 02 part A" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; gap:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Configuration 02 · Claude · Deep Research</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.22em; text-transform:uppercase; color:var(--imp-navy); opacity:0.7;">Demo</div>
+    </div>
+    <div style="flex:1; display:flex; min-height:0; align-items:center; justify-content:center;">
+      <img src="assets/screenshots/config2-claude.png" alt="Claude · Deep Research run" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; box-shadow:0 8px 32px rgba(0,33,71,0.18);" />
+    </div>
+  </div>
+</section>
+
+<section data-label="11d Config 02 · Kimi Swarm prompt" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Configuration 02 · part B · adapt to the agent</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">You → Kimi Swarm</div>
+    </div>
+
+    <h2 style="font-family:var(--font-display); font-weight:800; font-size:104px; line-height:0.95; letter-spacing:-0.03em; margin:0; color:var(--imp-navy);">
+      More to do.<br/><span style="color:var(--imp-orange-red);">More to ask.</span>
+    </h2>
+
+    <div style="display:grid; grid-template-columns:1fr 1.3fr; gap:64px; align-items:start;">
+      <!-- LEFT: Same question + Latitude -->
+      <div style="display:flex; flex-direction:column; gap:24px;">
+        <div style="border-left:4px solid var(--fg-2); padding:8px 0 8px 28px;">
+          <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.18em; text-transform:uppercase; color:var(--fg-2);">Same question</div>
+          <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:22px; line-height:1.4; color:var(--fg-2); margin:14px 0 0 0;">
+            "Survey how management researchers treat LLMs as cognitive, evaluative, or psychological entities (2022–2026) — beyond using LLMs as tools…"
+          </p>
+          <div style="margin-top:12px; font-family:var(--font-display); font-weight:500; font-size:16px; line-height:1.4; color:var(--fg-2); letter-spacing:0.04em;">
+            ← from Configuration 02 · deep research
+          </div>
+        </div>
+        <div style="border-left:4px solid var(--imp-navy); padding:8px 0 8px 28px;">
+          <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-navy);">+ Latitude</div>
+          <p style="font-family:var(--font-display); font-weight:500; font-size:22px; line-height:1.4; color:var(--imp-navy); margin:14px 0 0 0;">
+            Design the workflow yourself — phases, sub-agents, parallelize where useful.<br/>Redirect if a stream is thinner or richer than expected.<br/>Document what you did and what you skipped.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT: Different deliverable -->
+      <div style="border-left:4px solid var(--imp-orange-red); padding:8px 0 8px 28px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">Different deliverable</div>
+        <p style="font-family:var(--font-display); font-weight:600; font-size:32px; line-height:1.2; color:var(--imp-navy); margin:14px 0 0 0; letter-spacing:-0.01em;">
+          A folder, not a chat.
+        </p>
+        <ul style="list-style:none; padding:0; margin:18px 0 0 0; display:flex; flex-direction:column; gap:8px;">
+          <li style="font-family:var(--font-display); font-weight:500; font-size:21px; line-height:1.4; color:var(--imp-navy);"><code style="font-family:ui-monospace,Menlo,monospace; font-size:17px; background:rgba(0,33,71,0.06); padding:2px 8px; border-radius:3px;">/papers</code> — PDFs, Zotero-ready filenames.</li>
+          <li style="font-family:var(--font-display); font-weight:500; font-size:21px; line-height:1.4; color:var(--imp-navy);"><code style="font-family:ui-monospace,Menlo,monospace; font-size:17px; background:rgba(0,33,71,0.06); padding:2px 8px; border-radius:3px;">.bib</code> + <code style="font-family:ui-monospace,Menlo,monospace; font-size:17px; background:rgba(0,33,71,0.06); padding:2px 8px; border-radius:3px;">.ris</code> — bibliography.</li>
+          <li style="font-family:var(--font-display); font-weight:500; font-size:21px; line-height:1.4; color:var(--imp-navy);"><code style="font-family:ui-monospace,Menlo,monospace; font-size:17px; background:rgba(0,33,71,0.06); padding:2px 8px; border-radius:3px;">stream_[N]_*.md</code> — per-stream summaries.</li>
+          <li style="font-family:var(--font-display); font-weight:500; font-size:21px; line-height:1.4; color:var(--imp-navy);"><code style="font-family:ui-monospace,Menlo,monospace; font-size:17px; background:rgba(0,33,71,0.06); padding:2px 8px; border-radius:3px;">synthesis.md</code> — cross-stream, the analytical core.</li>
+          <li style="font-family:var(--font-display); font-weight:500; font-size:21px; line-height:1.4; color:var(--imp-navy);"><code style="font-family:ui-monospace,Menlo,monospace; font-size:17px; background:rgba(0,33,71,0.06); padding:2px 8px; border-radius:3px;">phase_[N]_notes.md</code> — phase-by-phase reasoning.</li>
+          <li style="font-family:var(--font-display); font-weight:500; font-size:21px; line-height:1.4; color:var(--imp-navy);"><code style="font-family:ui-monospace,Menlo,monospace; font-size:17px; background:rgba(0,33,71,0.06); padding:2px 8px; border-radius:3px;">README.md</code> — decisions, skips, caveats.</li>
+        </ul>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:18px; line-height:1.4; color:var(--imp-orange-red); margin:18px 0 0 0;">
+          Quality bar — foundation for a published lit review. Inferential clarity over coverage breadth.
+        </p>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start; border-top:2px solid var(--imp-navy); padding-top:24px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Principle 02<br/>Engagement design</div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.45; color:var(--imp-navy); margin:0;">
+        Be precise about what artifacts you expect — that is our half of the contract.<br/>
+        Be charitable about how the agent orchestrates — it knows its own runtime; let it split the work.<br/>
+        Stay clear on the analytical stages and outputs you want surfaced along the way.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section data-label="11e Config 02 · Kimi orchestration in flight" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; gap:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Configuration 02 · part B · orchestration in flight</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.22em; text-transform:uppercase; color:var(--imp-navy); opacity:0.7;">Demo</div>
+    </div>
+    <div style="flex:1; display:flex; min-height:0; align-items:center; justify-content:center;">
+      <img src="assets/screenshots/config2-kimi.png" alt="Kimi Agent Swarm · orchestration in flight" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; box-shadow:0 8px 32px rgba(0,33,71,0.18);" />
+    </div>
+  </div>
+</section>
+
+<section data-label="11f Abdication" class="ground-navy">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+    <span class="eyebrow on-dark" style="color:var(--imp-orange-red);">Move 02 · the indictment</span>
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:108px; line-height:1.08; letter-spacing:-0.015em; color:var(--imp-white); margin:48px 0 0 0; max-width:1700px; text-wrap:balance;">
+      "Most people stop here.<br/>
+      They cite the report and move on.<br/>
+      <span style="color:var(--imp-orange-red);">That's abdication<br/>
+      wearing a lab coat.</span>"
+    </p>
+  </div>
+</section>
+
+<section data-label="12 What it got right" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Move 02 · the credit</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        The report is <span style="color:var(--imp-orange-red);">raw material</span>.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:64px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red); border-top:2px solid var(--imp-orange-red); padding-top:24px;">What it got right</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:28px; border-top:2px solid var(--imp-orange-red); padding-top:24px;">
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Broad coverage across journals and years.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Surfaced papers I wouldn't have found on my own.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Clean structuring of method families.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-label="12b Take it elsewhere" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Move 02 · the bridge</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        Take it <span style="color:var(--imp-orange-red);">somewhere new</span>.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:64px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red); border-top:2px solid var(--imp-orange-red); padding-top:24px;">Two paths</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:36px; border-top:2px solid var(--imp-orange-red); padding-top:24px;">
+        <li>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:40px; line-height:1.25; color:var(--imp-navy);">New session, same model.</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.5; color:var(--fg-2); margin-top:10px; max-width:920px;">
+            Open a fresh session. Hand the report in — not as answer, as evidence.<br/>The new session has no allegiance to its first take.
+          </div>
+        </li>
+        <li>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:40px; line-height:1.25; color:var(--imp-navy);">Cross-agent.</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.5; color:var(--fg-2); margin-top:10px; max-width:920px;">
+            Feed Kimi's report into Claude. Feed ChatGPT's into Kimi.<br/>Each model's frame surfaces the others' assumptions.
+          </div>
+        </li>
+      </ul>
+<p style="margin-top:32px; font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.4; color:var(--fg-2); max-width:920px;">We'll walk path one in a moment. Path two is yours to take home.</p>
+    </div>
+  </div>
+</section>
+
+<section data-label="13 Fresh session prompt" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <span class="eyebrow">Move 03 · Architect the sessions</span>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">New session · reports attached</div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:52px; line-height:1.32; letter-spacing:-0.005em; color:var(--imp-navy); margin:0; max-width:1750px;">
+      "Here are deep research reports on how management research treats LLMs as cognitive entities.<br/>
+      Read them <span style="color:var(--imp-orange-red);">critically</span>.<br/>
+      What assumptions do they carry?<br/>
+      What would a <span style="color:var(--imp-orange-red);">qualitative researcher</span> notice that's missing?<br/>
+      What would a <span style="color:var(--imp-orange-red);">critical theorist</span> push back on?"
+    </p>
+
+    <div style="border-top:2px solid var(--imp-navy); padding-top:32px;">
+      <p style="font-family:var(--font-display); font-weight:700; font-size:48px; line-height:1.1; color:var(--imp-navy); margin:0; letter-spacing:-0.015em;">
+        A new session,<br/><span style="color:var(--imp-orange-red);">a different epistemic position.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section data-label="13b Two modes — exploration" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Move 03 · continued</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.96; letter-spacing:-0.025em; margin:24px 0 0 0; color:var(--imp-navy);">
+        Two modes.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:80px;">
+      <div style="border-left:4px solid var(--imp-orange-red); padding:24px 0 24px 32px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">Mode 01</div>
+        <p style="font-family:var(--font-display); font-weight:700; font-size:48px; line-height:1.1; color:var(--imp-navy); margin:24px 0 0 0; letter-spacing:-0.015em;">Exploration.</p>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.35; color:var(--fg-2); margin:14px 0 0 0;">Open-ended. Breadth-first.<br/>The agent is your thinking partner.</p>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.4; color:var(--imp-navy); margin:24px 0 0 0;">
+          "Let's read across the report. Where is it most coherent? Where does it strain?"
+        </p>
+      </div>
+      <div style="opacity:0.18; border-left:4px solid var(--imp-navy); padding:24px 0 24px 32px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-navy);">Mode 02</div>
+        <p style="font-family:var(--font-display); font-weight:700; font-size:48px; line-height:1.1; color:var(--imp-navy); margin:24px 0 0 0; letter-spacing:-0.015em;">&nbsp;</p>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.35; color:var(--fg-2); margin:14px 0 0 0;">&nbsp;<br/>&nbsp;</p>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.4; color:var(--imp-navy); margin:24px 0 0 0;">&nbsp;</p>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start; border-top:2px solid var(--imp-navy); padding-top:24px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Principle 02<br/>Engagement design</div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.4; color:var(--imp-navy); margin:0;">
+        First, the open read.<br/>The agent is your thinking partner — not your interrogator.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section data-label="13c Two modes — critical" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Move 03 · continued</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.96; letter-spacing:-0.025em; margin:24px 0 0 0; color:var(--imp-navy);">
+        Two modes.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:80px;">
+      <div style="opacity:0.32; border-left:4px solid var(--imp-orange-red); padding:24px 0 24px 32px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">Mode 01</div>
+        <p style="font-family:var(--font-display); font-weight:700; font-size:48px; line-height:1.1; color:var(--imp-navy); margin:24px 0 0 0; letter-spacing:-0.015em;">Exploration.</p>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.35; color:var(--fg-2); margin:14px 0 0 0;">Open-ended. Breadth-first.<br/>The agent is your thinking partner.</p>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.4; color:var(--imp-navy); margin:24px 0 0 0;">
+          "Let's read across the report. Where is it most coherent? Where does it strain?"
+        </p>
+      </div>
+      <div style="border-left:4px solid var(--imp-navy); padding:24px 0 24px 32px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-navy);">Mode 02</div>
+        <p style="font-family:var(--font-display); font-weight:700; font-size:48px; line-height:1.1; color:var(--imp-navy); margin:24px 0 0 0; letter-spacing:-0.015em;">Critical.</p>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:26px; line-height:1.35; color:var(--fg-2); margin:14px 0 0 0;">Step out of the field.<br/>With another field's eyes — charitably both ways.</p>
+        <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.4; color:var(--imp-navy); margin:24px 0 0 0;">
+          "Let's read this with AI-research eyes. Where does management's vocabulary diverge from how AI labs frame the same phenomena — and where would a management researcher reasonably push back?"
+        </p>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:18px; line-height:1.4; color:var(--imp-orange-red); margin:18px 0 0 0; letter-spacing:0.02em;">
+          Not "you are X." <span style="color:var(--fg-2);">Substantive perspective-taking — both sides have legitimate ground.</span>
+        </p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:32px; line-height:1.3; color:var(--imp-orange-red); margin:0; text-align:center; max-width:1500px; align-self:center;">
+      The difference is what you can't get from either alone.
+    </p>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:48px; align-items:flex-start; border-top:2px solid var(--imp-navy); padding-top:24px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Principle 02<br/>Engagement design</div>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.4; color:var(--imp-navy); margin:0;">
+        Then, the critical read.<br/>Collaborative framing — "let's read this as Y" — keeps the agent honest and keeps you in the loop.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section data-label="14 What's visible (C2)" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Configuration 02 · Takeaway</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        Discovery and<br/><span style="color:var(--imp-orange-red);">interrogation</span>, as a designed sequence.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:64px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red); border-top:2px solid var(--imp-orange-red); padding-top:24px;">What's visible</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:28px; border-top:2px solid var(--imp-orange-red); padding-top:24px;">
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Engagement design across multiple sessions.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Productive suspicion of any single output.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">A workflow with phases, each with its own purpose.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-label="14b What's harder (C2)" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow muted" style="color:var(--fg-2);">Configuration 02 · Takeaway</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        And what <span style="color:var(--imp-orange-red);">stays opaque</span>.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:64px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--fg-2); border-top:2px solid var(--fg-2); padding-top:24px;">What's harder</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:36px; border-top:2px solid var(--fg-2); padding-top:24px;">
+        <li>
+          <div style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.25; color:var(--fg-2);">Breadth comes at the cost of depth.</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.5; color:var(--fg-3, #6b7280); margin-top:10px; max-width:920px;">
+            The agent often works from titles, abstracts, and secondary write-ups.<br/>When PDFs are accessible, it reads them, but you have to notice which is which.
+          </div>
+        </li>
+        <li>
+          <div style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.25; color:var(--fg-2);">A gap between your query and the report.</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.5; color:var(--fg-3, #6b7280); margin-top:10px; max-width:920px;">
+            You can only channel so much understanding into a query.<br/>Reading the report against your question is where the missing pieces show up.
+          </div>
+        </li>
+        <li>
+          <div style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.25; color:var(--fg-2);">It won't carry your scholarly voice.</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:24px; line-height:1.5; color:var(--fg-3, #6b7280); margin-top:10px; max-width:920px;">
+            The output is competent prose, not your argument.<br/>Curating insight through your judgment is still the work.
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-label="15 Section 03 Claude Code" class="ground-orange bleed">
+  <div style="position:relative; width:100%; height:100%; padding:96px 128px; box-sizing:border-box;">
+    <div style="position:absolute; left:-40px; top:60px; right:46%; overflow:hidden; font-family:var(--font-display); font-weight:800; font-size:680px; line-height:0.78; letter-spacing:-0.05em; color:var(--imp-black); user-select:none; white-space:nowrap;">
+      03
+    </div>
+    <div style="position:absolute; right:128px; bottom:96px; text-align:right; max-width:680px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-black);">Configuration three</div>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.96; letter-spacing:-0.025em; margin:32px 0 0 0; color:var(--imp-white);">
+        The full<br/>bandwidth<span style="display:inline-block; width:18px; height:18px; background:var(--imp-black); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+      <p style="margin-top:32px; font-family:var(--font-citation); font-style:italic; font-size:40px; line-height:1.25; color:var(--imp-black);">When you can read along.</p>
+      <div style="margin-top:24px; font-family:var(--font-display); font-weight:600; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(0,0,0,0.7);">Claude Code · Codex CLI · Gemini CLI · Kimi CLI</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="16 Workflow" class="ground-navy">
+  <div class="stack-md" style="margin-bottom:40px;">
+    <span class="eyebrow on-dark">Move 01 · Watch the reasoning trace</span>
+    <h2 class="slide-title on-dark">Same question, visible process.</h2>
+  </div>
+
+  <div style="margin-top:16px; background:#001530; border:1px solid rgba(255,255,255,0.18); padding:36px 40px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size:24px; line-height:1.55; color:rgba(255,255,255,0.85);">
+    <div><span style="color:var(--imp-orange-red); font-weight:700;">▸ claude</span> <span style="opacity:0.6;">~/research/ai-in-mgmt</span></div>
+    <div style="margin-top:24px;"><span style="color:var(--imp-orange-red);">●</span> Reading <span style="color:var(--imp-pale-turquoise);">papers/llm-as-objects/*.md</span> <span style="opacity:0.6;">(11 files)</span></div>
+    <div><span style="color:var(--imp-orange-red);">●</span> Extracting claim-evidence pairs from each abstract …</div>
+    <div><span style="color:var(--imp-orange-red);">●</span> Cross-referencing with <span style="color:var(--imp-pale-turquoise);">papers/critical/</span> &nbsp;<span style="opacity:0.6;">(7 files)</span></div>
+    <div style="margin-top:16px; opacity:0.85;">Pattern emerging: 8 / 11 management studies make claims about LLM <em style="font-family:'EB Garamond', serif;">internal mechanisms</em> from output patterns alone. AI-side work reaches for interpretability or intervention designs to back the same claim.</div>
+    <div style="margin-top:24px;"><span style="color:var(--imp-orange-red);">▸</span> Drafting comparison table → <span style="color:var(--imp-pale-turquoise);">memo-v1.md</span></div>
+  </div>
+
+  <img src="assets/logos/wordmark-white.svg" alt="Imperial" class="wordmark" />
+</section>
+
+<section data-label="17 Mid-process intervention" class="ground-navy">
+  <div class="stack-md" style="margin-bottom:40px;">
+    <span class="eyebrow on-dark">Move 02 · Steer in real time</span>
+    <h2 class="slide-title on-dark">All three principles, alive at once.</h2>
+  </div>
+
+  <div style="margin-top:16px; background:#001530; border:1px solid rgba(255,255,255,0.18); padding:36px 40px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size:24px; line-height:1.55; color:rgba(255,255,255,0.85);">
+    <div style="opacity:0.6;">… continuing from previous turn …</div>
+    <div style="margin-top:16px;"><span style="color:var(--imp-orange-red);">●</span> Prioritizing the <span style="color:var(--imp-pale-turquoise);">behavioral-audit anchor</span> as the synthesis spine.</div>
+    <div style="margin-top:20px; padding:16px 20px; border-left:3px solid var(--imp-orange-red); background:rgba(255,69,0,0.10);">
+      <span style="color:var(--imp-orange-red); font-weight:700;">[ stop ]</span> &nbsp; Why that paper over the <span style="color:var(--imp-pale-turquoise);">critical-methods counter</span>? You're reproducing the dominant framing. What would the <em style="font-family:'EB Garamond', serif;">margins</em> of this literature look like?
+    </div>
+    <div style="margin-top:20px;"><span style="color:var(--imp-orange-red);">●</span> Re-anchoring on the critical-methods counter. Re-running comparison with critical-management methods first …</div>
+  </div>
+
+  <div style="margin-top:40px; display:flex; gap:24px; flex-wrap:wrap;">
+    <span class="principle-tag">01 · Thinking through</span>
+    <span class="principle-tag">02 · Engagement design</span>
+    <span class="principle-tag">03 · Inward lens</span>
+  </div>
+
+  <img src="assets/logos/wordmark-white.svg" alt="Imperial" class="wordmark" />
+</section>
+
+<section data-label="17a Config 03 · CLI + Obsidian" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; gap:28px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <div>
+        <span class="eyebrow">Configuration 03 · the ecosystem</span>
+        <h2 style="font-family:var(--font-display); font-weight:800; font-size:64px; line-height:1; letter-spacing:-0.025em; margin:16px 0 0 0; color:var(--imp-navy);">
+          The agent has a workshop.
+        </h2>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:14px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:22px; letter-spacing:0.22em; text-transform:uppercase; color:var(--imp-navy); opacity:0.7;">Demo</div>
+        <div style="font-family:var(--font-citation); font-style:italic; font-size:22px; color:var(--fg-2); text-align:right; max-width:480px; line-height:1.4;">
+          The agent reads the same files you preview.
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1; display:grid; grid-template-columns: 1fr 1fr; gap:32px;">
+      <!-- Left: CLI agent ecosystem -->
+      <div style="display:flex; flex-direction:column; border:1px solid rgba(0,33,71,0.18); border-radius:6px; overflow:hidden;">
+        <div style="background:var(--imp-navy); color:var(--imp-white); padding:14px 22px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.14em; text-transform:uppercase;">Agentic CLI</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-size:14px; opacity:0.7;">terminal · choose your agent</div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; padding:22px 24px; gap:18px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div style="border:1px solid rgba(0,33,71,0.18); padding:12px 14px; border-radius:4px;">
+              <div style="font-family:var(--font-display); font-weight:700; font-size:18px; color:var(--imp-navy);">Claude Code</div>
+              <div style="font-family:'EB Garamond', Georgia, serif; font-style:italic; font-size:15px; color:var(--fg-2);">Anthropic</div>
+            </div>
+            <div style="border:1px solid rgba(0,33,71,0.18); padding:12px 14px; border-radius:4px;">
+              <div style="font-family:var(--font-display); font-weight:700; font-size:18px; color:var(--imp-navy);">Codex CLI</div>
+              <div style="font-family:'EB Garamond', Georgia, serif; font-style:italic; font-size:15px; color:var(--fg-2);">OpenAI</div>
+            </div>
+            <div style="border:1px solid rgba(0,33,71,0.18); padding:12px 14px; border-radius:4px;">
+              <div style="font-family:var(--font-display); font-weight:700; font-size:18px; color:var(--imp-navy);">Gemini CLI</div>
+              <div style="font-family:'EB Garamond', Georgia, serif; font-style:italic; font-size:15px; color:var(--fg-2);">Google</div>
+            </div>
+            <div style="border:1px solid rgba(0,33,71,0.18); padding:12px 14px; border-radius:4px;">
+              <div style="font-family:var(--font-display); font-weight:700; font-size:18px; color:var(--imp-navy);">Kimi CLI</div>
+              <div style="font-family:'EB Garamond', Georgia, serif; font-style:italic; font-size:15px; color:var(--fg-2);">Moonshot</div>
+            </div>
+          </div>
+          <!-- Mini-terminal mock -->
+          <div style="background:#001530; color:rgba(255,255,255,0.88); padding:18px 22px; border-radius:4px; font-family:ui-monospace,Menlo,monospace; font-size:15px; line-height:1.55;">
+            <div style="opacity:0.55;">~/research/llm-as-objects $</div>
+            <div><span style="color:var(--imp-orange-red);">●</span> claude --dir ./vault</div>
+            <div style="opacity:0.55; margin-top:6px;">Reading 28 markdown notes …</div>
+            <div style="margin-top:6px;"><span style="color:var(--imp-pale-turquoise);">→</span> Building synthesis from 12 files matching <em>methods/</em>.</div>
+          </div>
+          <div style="font-family:'EB Garamond', Georgia, serif; font-style:italic; font-size:18px; line-height:1.4; color:var(--fg-2);">
+            Same workflow. Different brain on the other end of the prompt.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Obsidian vault -->
+      <div style="display:flex; flex-direction:column; border:1px solid rgba(0,33,71,0.18); border-radius:6px; overflow:hidden;">
+        <div style="background:var(--imp-navy); color:var(--imp-white); padding:14px 22px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.14em; text-transform:uppercase;">Obsidian vault</div>
+          <div style="font-family:var(--font-citation); font-style:italic; font-size:14px; opacity:0.7;">all markdown, all readable by you AND the agent</div>
+        </div>
+        <div style="flex:1; background:#FAFAF7; padding:22px 26px; font-family:ui-monospace,Menlo,monospace; font-size:15px; line-height:1.6; color:var(--imp-navy);">
+          <div>📁 vault/</div>
+          <div style="padding-left:18px;">📁 papers/ &nbsp;<span style="color:var(--fg-2);">— PDFs + .md conversions</span></div>
+          <div style="padding-left:36px;">📄 behavioral-audit-2024.pdf</div>
+          <div style="padding-left:36px;">📄 behavioral-audit-2024.md &nbsp;<span style="color:var(--imp-orange-red);">← deep-readable</span></div>
+          <div style="padding-left:36px;">📄 critical-methods-counter.md</div>
+          <div style="padding-left:18px;">📁 notes/</div>
+          <div style="padding-left:36px;">📄 methodological-landscape.md</div>
+          <div style="padding-left:36px;">📄 assumptions-baked-in.md</div>
+          <div style="padding-left:36px;">📄 cross-disciplinary-leads.md</div>
+          <div style="padding-left:18px;">📁 prompts/ &nbsp;<span style="color:var(--fg-2);">— reusable engagement designs</span></div>
+          <div style="padding-left:36px;">📄 socratic-pushback.md</div>
+          <div style="padding-left:36px;">📄 fresh-session-interrogation.md</div>
+          <div style="padding-left:18px;">📁 sessions/ &nbsp;<span style="color:var(--fg-2);">— transcripts as artifacts</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:24px; padding-top:8px;">
+      <div style="border-top:2px solid var(--imp-orange-red); padding-top:14px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:14px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:6px;">Preview anywhere</div>
+        <div style="font-family:'EB Garamond', Georgia, serif; font-size:18px; line-height:1.4; color:var(--imp-navy);">Markdown renders in Obsidian. The agent reads the same file. No format mismatch.</div>
+      </div>
+      <div style="border-top:2px solid var(--imp-orange-red); padding-top:14px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:14px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:6px;">PDF → markdown</div>
+        <div style="font-family:'EB Garamond', Georgia, serif; font-size:18px; line-height:1.4; color:var(--imp-navy);">Use AI to convert PDFs to markdown. Now you can read them deeply, annotate, and let the agent work against them.</div>
+      </div>
+      <div style="border-top:2px solid var(--imp-orange-red); padding-top:14px;">
+        <div style="font-family:var(--font-display); font-weight:700; font-size:14px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red); margin-bottom:6px;">Sessions are files</div>
+        <div style="font-family:'EB Garamond', Georgia, serif; font-size:18px; line-height:1.4; color:var(--imp-navy);">Drop transcripts in. Reuse prompts. The practice persists across model choices and interfaces.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="17b What's visible (C3)" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Configuration 03 · Takeaway</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        The reasoning trace<br/>becomes <span style="color:var(--imp-orange-red);">an artifact</span>.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:64px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red); border-top:2px solid var(--imp-orange-red); padding-top:24px;">What's visible</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:28px; border-top:2px solid var(--imp-orange-red); padding-top:24px;">
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Every choice the agent surfaced — and why.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">Mid-process intervention as a first-class move.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--imp-navy);">All three principles, simultaneously.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-label="17c What's harder (C3)" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow muted" style="color:var(--fg-2);">Configuration 03 · Takeaway</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.95; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-navy);">
+        And what <span style="color:var(--imp-orange-red);">it costs</span>.
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 320px 1fr; gap:64px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--fg-2); border-top:2px solid var(--fg-2); padding-top:24px;">What's harder</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:28px; border-top:2px solid var(--fg-2); padding-top:24px;">
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--fg-2);">Setup cost (files, tools, environment), which pays off in the long term.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--fg-2);">More surface area means more places to drift.</li>
+        <li style="font-family:var(--font-display); font-weight:500; font-size:40px; line-height:1.3; color:var(--fg-2);">More bandwidth ≠ better work. The principles still gate.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-label="18 Bandwidth · C1" class="ground-navy">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow on-dark" style="color:var(--imp-orange-red);">Three configurations · one practice</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.96; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-white);">
+        Not levels.<br/>
+        <span style="color:var(--imp-orange-red);">Bandwidths</span><span style="display:inline-block; width:22px; height:22px; background:var(--imp-white); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+    </div>
+
+    <div style="position:relative; height:280px; margin: 0 32px;">
+      <div style="position:absolute; left:0; right:0; top:50%; height:2px; background:rgba(255,255,255,0.25); transform:translateY(-50%);"></div>
+      <!-- only C1 lit -->
+      <div style="position:absolute; left:8%; top:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:50%; background:var(--imp-orange-red);"></div>
+      <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.18);"></div>
+      <div style="position:absolute; left:92%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.18);"></div>
+
+      <div style="position:absolute; left:8%; top:0; transform:translateX(-50%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; color:var(--imp-white); letter-spacing:-0.01em;">Configuration 01</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Conversational</div>
+      </div>
+      <div style="position:absolute; left:50%; top:0; transform:translateX(-50%); text-align:center; width:380px; opacity:0.25;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; color:var(--imp-white); letter-spacing:-0.01em;">Configuration 02</div>
+      </div>
+      <div style="position:absolute; left:92%; top:0; transform:translateX(-50%); text-align:center; width:380px; opacity:0.25;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; color:var(--imp-white); letter-spacing:-0.01em;">Configuration 03</div>
+      </div>
+
+      <div style="position:absolute; left:8%; bottom:-8px; transform:translate(-50%, 100%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-citation); font-style:italic; font-size:26px; line-height:1.3; color:rgba(255,255,255,0.85);">visible in conversation</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-display); font-weight:500; font-size:32px; line-height:1.4; color:rgba(255,255,255,0.78); margin:0; max-width:1100px;">
+      The narrowest bandwidth, but everything important is on the page.
+    </p>
+  </div>
+</section>
+
+<section data-label="18b Bandwidth · C1+C2" class="ground-navy">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow on-dark" style="color:var(--imp-orange-red);">Three configurations · one practice</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.96; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-white);">
+        Not levels.<br/>
+        <span style="color:var(--imp-orange-red);">Bandwidths</span><span style="display:inline-block; width:22px; height:22px; background:var(--imp-white); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+    </div>
+
+    <div style="position:relative; height:280px; margin: 0 32px;">
+      <div style="position:absolute; left:0; right:0; top:50%; height:2px; background:rgba(255,255,255,0.25); transform:translateY(-50%);"></div>
+      <div style="position:absolute; left:8%; top:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:50%; background:var(--imp-orange-red);"></div>
+      <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:50%; background:var(--imp-orange-red);"></div>
+      <div style="position:absolute; left:92%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.18);"></div>
+
+      <div style="position:absolute; left:8%; top:0; transform:translateX(-50%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; color:var(--imp-white); letter-spacing:-0.01em;">Configuration 01</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Conversational</div>
+      </div>
+      <div style="position:absolute; left:50%; top:0; transform:translateX(-50%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; color:var(--imp-white); letter-spacing:-0.01em;">Configuration 02</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Deep research</div>
+      </div>
+      <div style="position:absolute; left:92%; top:0; transform:translateX(-50%); text-align:center; width:380px; opacity:0.25;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; color:var(--imp-white); letter-spacing:-0.01em;">Configuration 03</div>
+      </div>
+
+      <div style="position:absolute; left:8%; bottom:-8px; transform:translate(-50%, 100%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-citation); font-style:italic; font-size:26px; line-height:1.3; color:rgba(255,255,255,0.85);">visible in conversation</div>
+      </div>
+      <div style="position:absolute; left:50%; bottom:-8px; transform:translate(-50%, 100%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-citation); font-style:italic; font-size:26px; line-height:1.3; color:rgba(255,255,255,0.85);">visible in interrogation</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-display); font-weight:500; font-size:32px; line-height:1.4; color:rgba(255,255,255,0.78); margin:0; max-width:1100px;">
+      Discovery you can't do alone, but the search itself stays opaque.
+    </p>
+  </div>
+</section>
+
+<section data-label="18c Bandwidth · all three" class="ground-navy">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow on-dark" style="color:var(--imp-orange-red);">Three configurations · one practice</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.96; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-white);">
+        Not levels.<br/>
+        <span style="color:var(--imp-orange-red);">Bandwidths</span><span style="display:inline-block; width:22px; height:22px; background:var(--imp-white); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+    </div>
+
+    <div style="position:relative; height:280px; margin: 0 32px;">
+      <div style="position:absolute; left:0; right:0; top:50%; height:2px; background:var(--imp-white); transform:translateY(-50%);"></div>
+      <div style="position:absolute; left:8%; top:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:50%; background:var(--imp-orange-red);"></div>
+      <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:50%; background:var(--imp-orange-red);"></div>
+      <div style="position:absolute; left:92%; top:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:50%; background:var(--imp-orange-red);"></div>
+
+      <div style="position:absolute; left:8%; top:0; transform:translateX(-50%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; color:var(--imp-white); letter-spacing:-0.01em;">Configuration 01</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Conversational</div>
+      </div>
+      <div style="position:absolute; left:50%; top:0; transform:translateX(-50%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; color:var(--imp-white); letter-spacing:-0.01em;">Configuration 02</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Deep research</div>
+      </div>
+      <div style="position:absolute; left:92%; top:0; transform:translateX(-50%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; color:var(--imp-white); letter-spacing:-0.01em;">Configuration 03</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:22px; letter-spacing:0.16em; text-transform:uppercase; color:var(--imp-orange-red);">Agentic</div>
+      </div>
+
+      <div style="position:absolute; left:8%; bottom:-8px; transform:translate(-50%, 100%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-citation); font-style:italic; font-size:26px; line-height:1.3; color:rgba(255,255,255,0.85);">visible in conversation</div>
+      </div>
+      <div style="position:absolute; left:50%; bottom:-8px; transform:translate(-50%, 100%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-citation); font-style:italic; font-size:26px; line-height:1.3; color:rgba(255,255,255,0.85);">visible in interrogation</div>
+      </div>
+      <div style="position:absolute; left:92%; bottom:-8px; transform:translate(-50%, 100%); text-align:center; width:380px;">
+        <div style="font-family:var(--font-citation); font-style:italic; font-size:26px; line-height:1.3; color:rgba(255,255,255,0.85);">visible in real-time steering</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-display); font-weight:500; font-size:32px; line-height:1.4; color:rgba(255,255,255,0.78); margin:0; max-width:1100px;">
+      
+      Same principles. Same practice. 
+    </p>
+  </div>
+</section>
+
+<section data-label="19 Section 04 Synthesis" class="ground-orange bleed">
+  <div style="position:relative; width:100%; height:100%; padding:96px 128px; box-sizing:border-box;">
+    <div style="position:absolute; left:-40px; top:60px; right:46%; overflow:hidden; font-family:var(--font-display); font-weight:800; font-size:680px; line-height:0.78; letter-spacing:-0.05em; color:var(--imp-black); user-select:none; white-space:nowrap;">
+      04
+    </div>
+    <div style="position:absolute; right:128px; bottom:96px; text-align:right; max-width:760px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-black);">What we did</div>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:120px; line-height:0.94; letter-spacing:-0.03em; margin:32px 0 0 0; color:var(--imp-white);">
+        Synthesis<span style="display:inline-block; width:22px; height:22px; background:var(--imp-black); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+      <p style="margin-top:32px; font-family:var(--font-citation); font-style:italic; font-size:40px; line-height:1.25; color:var(--imp-black);">The question sharpened — and the sharpening is the finding.</p>
+    </div>
+  </div>
+</section>
+
+<section data-label="20 Where we started" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <span class="eyebrow">The question, before and after</span>
+
+    <div style="display:grid; grid-template-columns: 220px 1fr; gap:48px; align-items:flex-start;">
+      <div style="font-family:var(--font-display); font-weight:800; font-size:160px; line-height:0.85; letter-spacing:-0.04em; color:var(--fg-2);">→</div>
+      <div>
+        <div class="micro" style="font-size:28px; letter-spacing:0.18em; text-transform:uppercase; color:var(--fg-2);">Where we started</div>
+        <p style="margin-top:24px; font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:54px; line-height:1.24; color:var(--fg-2); letter-spacing:-0.005em; max-width:1550px;">
+          When management researchers run audits, evaluations, or experiments on LLMs, what methods do they use and what kinds of claims do they make based on those methods?
+        </p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-display); font-weight:500; font-size:32px; line-height:1.4; color:var(--fg-2); margin:0; max-width:1100px;">
+      A reasonable opening, but soft. Look at what it becomes.
+    </p>
+  </div>
+</section>
+
+<section data-label="20b Where we ended" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <span class="eyebrow">The question, before and after</span>
+
+    <!-- compact echo of where-we-started, faded -->
+    <div style="display:grid; grid-template-columns: 120px 1fr; gap:32px; align-items:flex-start; opacity:0.45;">
+      <div style="font-family:var(--font-display); font-weight:800; font-size:64px; line-height:0.85; color:var(--fg-2);">→</div>
+      <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:28px; line-height:1.3; color:var(--fg-2); margin:0;">
+        When management researchers run audits, evaluations, or experiments on LLMs, what methods do they use and what kinds of claims do they make based on those methods?
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 220px 1fr; gap:48px; align-items:flex-start;">
+      <div style="font-family:var(--font-display); font-weight:800; font-size:160px; line-height:0.85; letter-spacing:-0.04em; color:var(--imp-orange-red);">→</div>
+      <div>
+        <div class="micro" style="font-size:28px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">Where we ended</div>
+        <p style="margin-top:24px; font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:54px; line-height:1.22; color:var(--imp-navy); letter-spacing:-0.01em; max-width:1550px;">
+          When management researchers treat LLMs as <span style="color:var(--imp-orange-red);">cognitive entities</span> — evaluators, decision-makers, reasoners — what <span style="color:var(--imp-orange-red);">evidence</span> licenses those claims, and what kinds of claims can that evidence actually <span style="color:var(--imp-orange-red);">support</span>?
+        </p>
+      </div>
+    </div>
+
+    <p class="q" style="font-size:44px; color:var(--imp-navy); margin:0; max-width:1400px; border-top:2px solid var(--imp-orange-red); padding-top:32px;">
+      The question you end with matters more than the question you start with.
+    </p>
+  </div>
+</section>
+
+<section data-label="21 Principle 01" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Principles, revisited</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.96; letter-spacing:-0.025em; margin:24px 0 0 0; color:var(--imp-navy);">From abstractions to craft.</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:64px;">
+      <!-- 01 ACTIVE -->
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.95; color:var(--imp-orange-red); letter-spacing:-0.02em;">01</div>
+        <div style="margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.015em;">Thinking through.</div>
+        <hr style="border:none; border-top:2px solid var(--imp-orange-red); margin:24px 0;"/>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Remember when I rewrote the prompt because my first version was too generic.
+        </p>
+      </div>
+      <!-- 02 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.95; color:var(--imp-orange-red); letter-spacing:-0.02em;">02</div>
+        <div style="margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.015em;">Engagement design.</div>
+        <hr style="border:none; border-top:2px solid var(--imp-orange-red); margin:24px 0;"/>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Remember when I took the deep-research report to a fresh session for interrogation.
+        </p>
+      </div>
+      <!-- 03 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.95; color:var(--imp-orange-red); letter-spacing:-0.02em;">03</div>
+        <div style="margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.015em;">The inward lens.</div>
+        <hr style="border:none; border-top:2px solid var(--imp-orange-red); margin:24px 0;"/>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Remember when the output went flat and I looked at my input instead of the model.
+        </p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:44px; line-height:1.25; color:var(--imp-navy); margin:0; max-width:1500px; border-top:2px solid var(--imp-orange-red); padding-top:32px; opacity:0;">
+      "The purpose of this talk is not to teach you the content. It's to change how you think about the <span style="color:var(--imp-orange-red);">process</span>."
+    </p>
+  </div>
+</section>
+
+<section data-label="21b Principle 02" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Principles, revisited</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.96; letter-spacing:-0.025em; margin:24px 0 0 0; color:var(--imp-navy);">From abstractions to craft.</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:64px;">
+      <!-- 01 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.95; color:var(--imp-orange-red); letter-spacing:-0.02em;">01</div>
+        <div style="margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.015em;">Thinking through.</div>
+        <hr style="border:none; border-top:2px solid var(--imp-orange-red); margin:24px 0;"/>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Remember when I rewrote the prompt because my first version was too generic.
+        </p>
+      </div>
+      <!-- 02 ACTIVE -->
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.95; color:var(--imp-orange-red); letter-spacing:-0.02em;">02</div>
+        <div style="margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.015em;">Engagement design.</div>
+        <hr style="border:none; border-top:2px solid var(--imp-orange-red); margin:24px 0;"/>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Remember when I took the deep-research report to a fresh session for interrogation.
+        </p>
+      </div>
+      <!-- 03 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.95; color:var(--imp-orange-red); letter-spacing:-0.02em;">03</div>
+        <div style="margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.015em;">The inward lens.</div>
+        <hr style="border:none; border-top:2px solid var(--imp-orange-red); margin:24px 0;"/>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Remember when the output went flat and I looked at my input instead of the model.
+        </p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:44px; line-height:1.25; color:var(--imp-navy); margin:0; max-width:1500px; border-top:2px solid var(--imp-orange-red); padding-top:32px; opacity:0;">
+      "The purpose of this talk is not to teach you the content. It's to change how you think about the <span style="color:var(--imp-orange-red);">process</span>."
+    </p>
+  </div>
+</section>
+
+<section data-label="21c Principle 03" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">Principles, revisited</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.96; letter-spacing:-0.025em; margin:24px 0 0 0; color:var(--imp-navy);">From abstractions to craft.</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:64px;">
+      <!-- 01 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.95; color:var(--imp-orange-red); letter-spacing:-0.02em;">01</div>
+        <div style="margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.015em;">Thinking through.</div>
+        <hr style="border:none; border-top:2px solid var(--imp-orange-red); margin:24px 0;"/>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Remember when I rewrote the prompt because my first version was too generic.
+        </p>
+      </div>
+      <!-- 02 muted -->
+      <div style="opacity:0.22;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.95; color:var(--imp-orange-red); letter-spacing:-0.02em;">02</div>
+        <div style="margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.015em;">Engagement design.</div>
+        <hr style="border:none; border-top:2px solid var(--imp-orange-red); margin:24px 0;"/>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Remember when I took the deep-research report to a fresh session for interrogation.
+        </p>
+      </div>
+      <!-- 03 ACTIVE -->
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:96px; line-height:0.95; color:var(--imp-orange-red); letter-spacing:-0.02em;">03</div>
+        <div style="margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:44px; line-height:1.1; color:var(--imp-navy); letter-spacing:-0.015em;">The inward lens.</div>
+        <hr style="border:none; border-top:2px solid var(--imp-orange-red); margin:24px 0;"/>
+        <p style="font-family:var(--font-display); font-weight:500; font-size:30px; line-height:1.35; color:var(--imp-navy); margin:0;">
+          Remember when the output went flat and I looked at my input instead of the model.
+        </p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:44px; line-height:1.25; color:var(--imp-navy); margin:0; max-width:1500px; border-top:2px solid var(--imp-orange-red); padding-top:32px;">
+      "The purpose of this talk is not to teach you the content. It's to change how you think about the <span style="color:var(--imp-orange-red);">process</span>."
+    </p>
+  </div>
+</section>
+
+<section data-label="22 Interpretive Orchestration" class="ground-white">
+  <div style="display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+    <div>
+      <span class="eyebrow">The framework behind the workshop</span>
+      <h2 style="font-family:var(--font-display); font-weight:800; font-size:144px; line-height:0.92; letter-spacing:-0.035em; margin:32px 0 0 0; color:var(--imp-navy); text-wrap:balance; max-width:1600px;">
+        Interpretive<br/><span style="color:var(--imp-orange-red);">Orchestration</span><span style="display:inline-block; width:26px; height:26px; background:var(--imp-navy); vertical-align:baseline; margin-left:6px;"></span>
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: auto 1fr; gap:48px; align-items:center; border-top:2px solid var(--imp-navy); border-bottom:2px solid var(--imp-navy); padding:32px 0;">
+      <div style="font-family:var(--font-display); font-weight:800; font-size:24px; letter-spacing:0.18em; text-transform:uppercase; color:var(--imp-orange-red);">Just published</div>
+      <p style="font-family:var(--font-display); font-weight:600; font-size:36px; line-height:1.3; color:var(--imp-navy); margin:0; letter-spacing:-0.01em;">
+        Lin, X. &amp; Corley, K. G. <span style="font-weight:500; color:var(--fg-2);">(2026).</span> &nbsp;<em style="font-family:var(--font-citation); font-style:italic; color:var(--imp-orange-red);">Strategic Organization</em>.
+      </p>
+    </div>
+
+    <p style="font-family:var(--font-display); font-weight:500; font-size:32px; line-height:1.4; color:var(--imp-navy); margin:0; max-width:1500px;">
+      Three models. Each maps to one configuration you just saw.
+    </p>
+  </div>
+</section>
+
+<section data-label="22b Models map to configurations" class="ground-white">
+  <div style="display:grid; grid-template-rows: auto 1fr; height:100%; gap:48px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:64px;">
+      <div>
+        <span class="eyebrow">The framework · 3 models, 3 configurations</span>
+        <h2 style="font-family:var(--font-display); font-weight:800; font-size:104px; line-height:0.94; letter-spacing:-0.03em; margin:24px 0 0 0; color:var(--imp-navy);">
+          One practice,<br/>three <span style="color:var(--imp-orange-red);">strategic models</span>.
+        </h2>
+      </div>
+      <p style="margin:0; max-width:520px; font-family:var(--font-citation); font-style:italic; font-size:26px; line-height:1.35; color:var(--fg-2); padding-bottom:16px;">
+        From Lin &amp; Corley, <em>Interpretive Orchestration</em>. The models are the practice; the configurations are how it shows up at different bandwidths.
+      </p>
+    </div>
+
+    <!-- Three columns of headers; three rows mapping each model to its configuration -->
+    <div style="display:grid; grid-template-columns: 100px 1.6fr 80px 1.4fr; gap:32px 56px; align-items:center; border-top:2px solid var(--imp-navy); padding-top:32px;">
+
+      <!-- Header row -->
+      <div style="font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:0.2em; text-transform:uppercase; color:var(--fg-2);">No.</div>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:0.2em; text-transform:uppercase; color:var(--fg-2);">Strategic model</div>
+      <div></div>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:0.2em; text-transform:uppercase; color:var(--imp-orange-red); text-align:right;">Configuration</div>
+
+      <!-- Row 1 -->
+      <div style="font-family:var(--font-display); font-weight:800; font-size:72px; line-height:1; color:var(--imp-orange-red); letter-spacing:-0.02em;">01</div>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:48px; line-height:1.05; color:var(--imp-navy); letter-spacing:-0.02em;"><span style="color:var(--imp-orange-red);">Socratic</span> tension</div>
+        <p style="margin:8px 0 0 0; font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.35; color:var(--imp-navy);">Deliberate contradiction to surface assumptions.</p>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:center;">
+        <svg width="80" height="20" viewBox="0 0 80 20" fill="none" aria-hidden="true">
+          <path d="M2 10 L70 10" stroke="var(--imp-orange-red)" stroke-width="2"/>
+          <path d="M62 4 L72 10 L62 16" stroke="var(--imp-orange-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; line-height:1.05; color:var(--imp-navy); letter-spacing:-0.015em;">Configuration 01</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:22px; line-height:1.3; color:var(--fg-2);">Conversational diagnosis</div>
+      </div>
+
+      <!-- Divider -->
+      <div style="grid-column: 1 / -1; height:1px; background:rgba(0,33,71,0.15);"></div>
+
+      <!-- Row 2 -->
+      <div style="font-family:var(--font-display); font-weight:800; font-size:72px; line-height:1; color:var(--imp-orange-red); letter-spacing:-0.02em;">02</div>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:48px; line-height:1.05; color:var(--imp-navy); letter-spacing:-0.02em;"><span style="color:var(--imp-orange-red);">Euclidean</span> documentation</div>
+        <p style="margin:8px 0 0 0; font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.35; color:var(--imp-navy);">Systematic context-building for reproducibility.</p>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:center;">
+        <svg width="80" height="20" viewBox="0 0 80 20" fill="none" aria-hidden="true">
+          <path d="M2 10 L70 10" stroke="var(--imp-orange-red)" stroke-width="2"/>
+          <path d="M62 4 L72 10 L62 16" stroke="var(--imp-orange-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; line-height:1.05; color:var(--imp-navy); letter-spacing:-0.015em;">Configuration 02</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:22px; line-height:1.3; color:var(--fg-2);">Deep-research orchestration</div>
+      </div>
+
+      <!-- Divider -->
+      <div style="grid-column: 1 / -1; height:1px; background:rgba(0,33,71,0.15);"></div>
+
+      <!-- Row 3 -->
+      <div style="font-family:var(--font-display); font-weight:800; font-size:72px; line-height:1; color:var(--imp-orange-red); letter-spacing:-0.02em;">03</div>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:48px; line-height:1.05; color:var(--imp-navy); letter-spacing:-0.02em;"><span style="color:var(--imp-orange-red);">Vitruvian</span> mastery</div>
+        <p style="margin:8px 0 0 0; font-family:var(--font-display); font-weight:500; font-size:24px; line-height:1.35; color:var(--imp-navy);">Reading across independent analytical passes.</p>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:center;">
+        <svg width="80" height="20" viewBox="0 0 80 20" fill="none" aria-hidden="true">
+          <path d="M2 10 L70 10" stroke="var(--imp-orange-red)" stroke-width="2"/>
+          <path d="M62 4 L72 10 L62 16" stroke="var(--imp-orange-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:var(--font-display); font-weight:800; font-size:36px; line-height:1.05; color:var(--imp-navy); letter-spacing:-0.015em;">Configuration 03</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:22px; line-height:1.3; color:var(--fg-2);">Agentic, full-bandwidth</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section data-label="23 Resources" class="ground-white">
+  <div class="stack-md" style="margin-bottom:60px;">
+    <span class="eyebrow">Take this with you</span>
+    <h2 class="slide-title">Resources.</h2>
+  </div>
+
+  <div class="res-grid" style="margin-top:24px;">
+    <div>
+      <h4>Start here · no setup</h4>
+      <ul>
+        <li>Claude &nbsp;<span class="url">claude.ai</span></li>
+        <li>Kimi &nbsp;<span class="url">kimi.ai</span></li>
+        <li>ChatGPT &nbsp;<span class="url">chatgpt.com</span></li>
+        <li>Gemini &nbsp;<span class="url">gemini.google.com</span></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Go deeper</h4>
+      <ul>
+        <li>Claude Code + Obsidian setup</li>
+        <li>Interpretive Orchestration paper<br/><span class="url">papers.ssrn.com / abstract_id=6629679</span></li>
+        <li>Markdown source on GitHub<br/><span class="url">github.com/linxule/interpretive-orchestration-paper</span></li>
+      </ul>
+    </div>
+    <div style="grid-column: 1 / -1; margin-top:24px;">
+      <h4>Supplementary readings</h4>
+      <ul style="display:grid; grid-template-columns:1fr 1fr; gap:14px 64px;">
+        <li>Epistemic Voids #1 — Citation Theater &nbsp;<span class="url">threadcounts.org</span></li>
+        <li>Research with AI #1 — The Foreclosure Problem &nbsp;<span class="url">threadcounts.org</span></li>
+        <li>LOOM XVI — Are You Climbing the Right Hill? &nbsp;<span class="url">threadcounts.org</span></li>
+        <li>Alvesson &amp; Sandberg (2011), <em>AMR</em> 36(2), 247–271</li>
+      </ul>
+    </div>
+  </div>
+
+  <img src="assets/logos/wordmark-navy.svg" alt="Imperial" class="wordmark" />
+</section>
+
+<section data-label="24 Close" class="ground-navy">
+  <div style="display:grid; grid-template-rows: auto 1fr auto; height:100%; gap:48px;">
+    <span class="eyebrow on-dark" style="color:var(--imp-orange-red);">Closing</span>
+
+    <div style="display:flex; flex-direction:column; justify-content:center;">
+      <p style="font-family:var(--font-citation); font-style:italic; font-weight:400; font-size:96px; line-height:1.06; letter-spacing:-0.015em; color:var(--imp-white); margin:0; text-wrap:balance; max-width:1600px;">
+        The question you end with matters more than the question you <span style="color:var(--imp-orange-red);">start with</span><span style="color:var(--imp-white); font-style:normal;">.</span>
+      </p>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.4; color:rgba(255,255,255,0.7); margin:36px 0 0 0; max-width:1100px;">
+        AI-augmented methods accelerate that movement and make it more visible.
+      </p>
+      <p style="font-family:var(--font-display); font-weight:500; font-size:28px; line-height:1.4; color:rgba(255,255,255,0.7); margin:12px 0 0 0; max-width:1100px;">
+        They demand deeper and more rigorous engagements from us.
+      </p>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid rgba(255,255,255,0.2); padding-top:28px;">
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:32px; color:var(--imp-white); letter-spacing:-0.01em;">Xule Lin</div>
+        <div style="margin-top:6px; font-family:var(--font-display); font-weight:500; font-size:20px; color:rgba(255,255,255,0.85); letter-spacing:0.02em;">xule.lin@imperial.ac.uk</div>
+        <div style="margin-top:4px; font-family:var(--font-display); font-weight:500; font-size:20px; color:rgba(255,255,255,0.6); letter-spacing:0.02em;">linxule.com &nbsp;·&nbsp; threadcounts.org &nbsp;·&nbsp; research-memex.org</div>
+      </div>
+      <div style="text-align:right;">
+        <img src="assets/logos/wordmark-white.svg" alt="Imperial College Business School" style="display:inline-block; height:60px; width:auto;" />
+      </div>
+    </div>
+  </div>
+</section>
+
+</deck-stage>
+
+<script src="deck-stage.js"></script>
+
+<!-- Subtle global page counter — appears on every slide except slide 1 -->
+<style>
+  .page-counter {
+    position: absolute;
+    right: 36px;
+    bottom: 28px;
+    z-index: 10;
+    pointer-events: none;
+    font-family: var(--font-display, system-ui, sans-serif);
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 0.18em;
+    color: var(--imp-navy, #002147);
+    opacity: 0.38;
+    font-variant-numeric: tabular-nums;
+  }
+  section.ground-navy .page-counter,
+  section.ground-orange .page-counter,
+  section.ground-black .page-counter { color: #ffffff; opacity: 0.55; }
+  section[data-label^="01 "] .page-counter { display: none; }
+</style>
+<script>
+(function () {
+  const stage = document.querySelector('deck-stage');
+  if (!stage) return;
+  const sections = stage.querySelectorAll(':scope > section');
+  const total = sections.length;
+  const totalStr = String(total).padStart(2, '0');
+  sections.forEach((sec, i) => {
+    const cs = getComputedStyle(sec);
+    if (cs.position === 'static') sec.style.position = 'relative';
+    const el = document.createElement('div');
+    el.className = 'page-counter';
+    el.textContent = `${String(i + 1).padStart(2, '0')} / ${totalStr}`;
+    sec.appendChild(el);
+  });
+})();
+</script>
+</body>
+</html>

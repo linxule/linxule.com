@@ -114,7 +114,10 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 
 # 学术报告
 
-- _Rethinking Human-AI Collaboration in Interpretive Research_
+- _Thinking Through AI: Literature Review as Scholarly Practice_
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026([视频](https://linxule.com/talks/thinking-through-ai-01/))
+	- 将文献综述视为学术实践：提出三项导向原则，开展跨三种 AI 配置的现场演示与动手实践环节
+- <br/>_Rethinking Human-AI Collaboration in Interpretive Research_
 	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026([视频](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research/))
 	- 与柯文凯 (Kevin Corley) 合作
 	- 引入天体隐喻探讨人机协作，研究AI增强定性研究中的认识论责任

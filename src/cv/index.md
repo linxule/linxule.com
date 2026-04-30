@@ -112,7 +112,10 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Presentations
 
-- _"Rethinking Human-AI Collaboration in Interpretive Research"_
+- _"Thinking Through AI: Literature Review as Scholarly Practice"_
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0), Online, 2026 ([Video](https://linxule.com/talks/thinking-through-ai-01/))
+	- Introduced thinking through, engagement design, and the inward lens as orienting principles for literature review with AI; live demonstrations across three AI configurations and a hands-on session
+- <br/>_"Rethinking Human-AI Collaboration in Interpretive Research"_
 	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0), Online, 2026 ([Video](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research/))
 	- With Kevin Corley
 	- Introduced celestial metaphors for human-AI collaboration and examined epistemic responsibility in AI-augmented qualitative research
