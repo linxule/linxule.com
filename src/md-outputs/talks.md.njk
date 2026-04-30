@@ -19,3 +19,4 @@ eleventyExcludeFromCollections: true
 ---
 
 {{ talk.rawInput | safe }}
+{% if talk.data.slides %}{% slidesOutline talk.data.slides %}{% endif %}
