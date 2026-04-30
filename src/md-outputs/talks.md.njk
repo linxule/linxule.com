@@ -12,6 +12,7 @@ eleventyExcludeFromCollections: true
 {% endif %}**Date**: {{ talk.date | readableDate }}
 {% if talk.data.speakers %}**Speakers**: {{ talk.data.speakers | join(", ") }}
 {% endif %}{% if talk.data.youtube %}**Video**: https://www.youtube.com/watch?v={{ talk.data.youtube }}
+{% endif %}{% if talk.data.slides %}**Slides**: {% if talk.data.slides.startsWith("/") %}{{ site.url }}{{ talk.data.slides }}{% else %}{{ talk.data.slides }}{% endif %}
 {% endif %}{% if talk.data.keywords %}**Keywords**: {{ talk.data.keywords | join(", ") }}
 {% endif %}
 
