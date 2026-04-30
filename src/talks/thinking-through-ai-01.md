@@ -27,6 +27,7 @@ The focus is on developing <span class="accident">interpretive understanding</sp
 
 Suggested companion reading:
 
+- [Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. _Strategic Organization_.](https://doi.org/10.1177/14761270261448645) — the foundational paper for the principles in this talk.
 - [Epistemic Voids #1: Citation Theater](/writing/epistemic-voids-01-citation-theater/)
 - [Research with AI #1: The Foreclosure Problem](/writing/research-with-ai-01-the-foreclosure-problem/)
 - [LOOM XVI: Are You Climbing the Right Hill?](/writing/loom-xvi-are-you-climbing-the-right-hill/)

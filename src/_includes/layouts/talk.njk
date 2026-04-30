@@ -55,6 +55,110 @@ marker: "talks"
         margin-top: 1rem;
     }
 
+    /* Media figure (wraps a video or slide-deck embed with caption + actions) */
+    .talk-media {
+        margin: 3rem 0;
+    }
+
+    .talk-media .media-container {
+        margin: 0;
+    }
+
+    .media-caption {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        margin: 0.75rem 0 0;
+        line-height: 1.6;
+        letter-spacing: 0.02em;
+    }
+
+    .media-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .media-action {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--ink-light);
+        background: transparent;
+        border: 1px solid var(--ink-ghost);
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        letter-spacing: 0.02em;
+    }
+
+    .media-action:hover,
+    .media-action:focus-visible {
+        border-color: var(--bloom);
+        color: var(--bloom);
+        outline: none;
+    }
+
+    .media-action[data-state="copied"] {
+        border-color: var(--bloom);
+        color: var(--bloom);
+    }
+
+    .media-action .icon {
+        display: inline-block;
+        margin-right: 0.35rem;
+        font-size: 0.85rem;
+        line-height: 1;
+        transform: translateY(1px);
+    }
+
+    /* Slides lightbox — pop-out fullscreen for the deck */
+    .slides-lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.94);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 1.5rem 1.5rem;
+    }
+
+    .slides-lightbox.active {
+        display: flex;
+    }
+
+    .slides-lightbox-frame {
+        width: min(96vw, 100%);
+        aspect-ratio: 16 / 9;
+        max-height: 92vh;
+        border: none;
+        background: var(--paper-dark);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    .slides-lightbox-close {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.5rem;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        color: rgba(255, 255, 255, 0.85);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        letter-spacing: 0.05em;
+    }
+
+    .slides-lightbox-close:hover,
+    .slides-lightbox-close:focus-visible {
+        border-color: rgba(255, 255, 255, 0.9);
+        color: white;
+        outline: none;
+    }
+
     /* Media embed (video, slides) */
     .media-container {
         position: relative;
@@ -211,35 +315,54 @@ marker: "talks"
         </header>
 
         {% if youtube %}
-        <div class="media-container">
-            <iframe
-                src="https://www.youtube.com/embed/{{ youtube }}"
-                title="{{ title }}"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                loading="lazy">
-            </iframe>
-        </div>
+        <figure class="talk-media">
+            <div class="media-container">
+                <iframe
+                    src="https://www.youtube.com/embed/{{ youtube }}"
+                    title="{{ title }}"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+            </div>
+            <figcaption class="media-caption">Recording — watch the full talk above.</figcaption>
+        </figure>
         {% elif video %}
-        <div class="media-container">
-            <iframe
-                src="{{ video }}"
-                title="{{ title }}"
-                allowfullscreen
-                loading="lazy">
-            </iframe>
-        </div>
+        <figure class="talk-media">
+            <div class="media-container">
+                <iframe
+                    src="{{ video }}"
+                    title="{{ title }}"
+                    allowfullscreen
+                    loading="lazy">
+                </iframe>
+            </div>
+            <figcaption class="media-caption">Recording.</figcaption>
+        </figure>
         {% endif %}
 
         {% if slides %}
-        <div class="media-container">
-            <iframe
-                src="{{ slides }}"
-                title="{{ title }} — slides"
-                allowfullscreen
-                loading="lazy">
-            </iframe>
-        </div>
+        <figure class="talk-media" data-slides-figure>
+            <div class="media-container">
+                <iframe
+                    src="{{ slides }}"
+                    title="{{ title }} — slides"
+                    allowfullscreen
+                    loading="lazy"
+                    data-slides-frame
+                    data-slides-src="{{ slides }}">
+                </iframe>
+            </div>
+            <figcaption class="media-caption">Slide deck{% if youtube or video %} — see the recording above for context{% endif %}. Pop out for fullscreen, or copy the link to share.</figcaption>
+            <div class="media-actions">
+                <button type="button" class="media-action" data-slides-fullscreen aria-label="Open slides fullscreen">
+                    <span class="icon" aria-hidden="true">⤢</span>Fullscreen
+                </button>
+                <button type="button" class="media-action" data-slides-copy aria-label="Copy link to share">
+                    <span class="icon" aria-hidden="true">⎘</span>Copy link
+                </button>
+            </div>
+        </figure>
         {% endif %}
 
         {% if content | trim %}
@@ -266,3 +389,96 @@ marker: "talks"
     </article>
 
 </div>
+
+{% if slides %}
+<div class="slides-lightbox" id="slides-lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Slide deck — full size">
+    <button type="button" class="slides-lightbox-close" data-slides-lightbox-close aria-label="Close slides">close</button>
+    <iframe class="slides-lightbox-frame" src="" title="{{ title }} — slides full size" allowfullscreen></iframe>
+</div>
+
+<script>
+(function () {
+    const figure = document.querySelector('[data-slides-figure]');
+    if (!figure) return;
+
+    const fullscreenBtn = figure.querySelector('[data-slides-fullscreen]');
+    const copyBtn = figure.querySelector('[data-slides-copy]');
+    const lightbox = document.getElementById('slides-lightbox');
+    const lightboxFrame = lightbox && lightbox.querySelector('iframe');
+    const lightboxClose = lightbox && lightbox.querySelector('[data-slides-lightbox-close]');
+    const sourceFrame = figure.querySelector('[data-slides-frame]');
+    const slidesUrl = sourceFrame && (sourceFrame.dataset.slidesSrc || sourceFrame.src);
+
+    let triggerEl = null;
+
+    function openLightbox() {
+        if (!lightbox || !lightboxFrame) return;
+        if (lightboxFrame.src !== slidesUrl) {
+            lightboxFrame.src = slidesUrl;
+        }
+        triggerEl = document.activeElement;
+        lightbox.classList.add('active');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        if (lightboxClose) lightboxClose.focus();
+    }
+
+    function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.classList.remove('active');
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (triggerEl && typeof triggerEl.focus === 'function') {
+            triggerEl.focus();
+            triggerEl = null;
+        }
+    }
+
+    if (fullscreenBtn) fullscreenBtn.addEventListener('click', openLightbox);
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if (lightbox) {
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox && lightbox.classList.contains('active')) {
+            closeLightbox();
+        }
+    });
+
+    function flashCopied() {
+        if (!copyBtn) return;
+        const original = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<span class="icon" aria-hidden="true">✓</span>Copied';
+        copyBtn.dataset.state = 'copied';
+        setTimeout(() => {
+            copyBtn.innerHTML = original;
+            delete copyBtn.dataset.state;
+        }, 1800);
+    }
+
+    if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+            const url = window.location.href;
+            if (navigator.clipboard && window.isSecureContext) {
+                try {
+                    await navigator.clipboard.writeText(url);
+                    flashCopied();
+                    return;
+                } catch (_) { /* fall through to legacy path */ }
+            }
+            const ta = document.createElement('textarea');
+            ta.value = url;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); flashCopied(); } catch (_) {}
+            document.body.removeChild(ta);
+        });
+    }
+})();
+</script>
+{% endif %}
