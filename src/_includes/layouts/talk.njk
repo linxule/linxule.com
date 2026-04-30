@@ -64,32 +64,34 @@ marker: "talks"
         margin: 0;
     }
 
+    /* "The caption" composite: machine voice, meta size, faint, centered */
     .media-caption {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-meta);
         color: var(--ink-faint);
+        text-align: center;
         margin: 0.75rem 0 0;
         line-height: 1.6;
-        letter-spacing: 0.02em;
     }
 
     .media-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
     }
 
     .media-action {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        color: var(--ink-light);
+        font-size: var(--size-meta);
+        color: var(--ink-faint);
         background: transparent;
         border: 1px solid var(--ink-ghost);
+        border-radius: 2px;
         padding: 0.5rem 1rem;
         cursor: pointer;
-        transition: all 0.2s ease;
-        letter-spacing: 0.02em;
+        transition: color 0.2s ease, border-color 0.2s ease;
     }
 
     .media-action:hover,
@@ -104,28 +106,25 @@ marker: "talks"
         color: var(--bloom);
     }
 
-    .media-action .icon {
-        display: inline-block;
-        margin-right: 0.35rem;
-        font-size: 0.85rem;
-        line-height: 1;
-        transform: translateY(1px);
-    }
-
-    /* Slides lightbox — pop-out fullscreen for the deck */
+    /* Slides lightbox — extends the existing .lightbox pattern (main.css) for an iframe */
     .slides-lightbox {
         position: fixed;
         inset: 0;
         z-index: 1000;
-        background: rgba(0, 0, 0, 0.94);
-        display: none;
+        background: rgba(26, 26, 26, 0.95);
+        display: flex;
         align-items: center;
         justify-content: center;
         padding: 2.5rem 1.5rem 1.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        cursor: zoom-out;
     }
 
     .slides-lightbox.active {
-        display: flex;
+        opacity: 1;
+        visibility: visible;
     }
 
     .slides-lightbox-frame {
@@ -133,29 +132,28 @@ marker: "talks"
         aspect-ratio: 16 / 9;
         max-height: 92vh;
         border: none;
+        border-radius: 2px;
         background: var(--paper-dark);
         box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+        cursor: default;
     }
 
     .slides-lightbox-close {
         position: absolute;
-        top: 1.25rem;
-        right: 1.5rem;
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.45);
-        color: rgba(255, 255, 255, 0.85);
+        top: 2rem;
+        right: 2rem;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        padding: 0.5rem 1rem;
+        font-size: var(--size-meta);
+        color: var(--ink-faint);
+        background: none;
+        border: none;
         cursor: pointer;
-        transition: all 0.2s ease;
-        letter-spacing: 0.05em;
+        transition: color 0.2s ease;
     }
 
     .slides-lightbox-close:hover,
     .slides-lightbox-close:focus-visible {
-        border-color: rgba(255, 255, 255, 0.9);
-        color: white;
+        color: var(--paper);
         outline: none;
     }
 
@@ -325,7 +323,7 @@ marker: "talks"
                     loading="lazy">
                 </iframe>
             </div>
-            <figcaption class="media-caption">Recording — watch the full talk above.</figcaption>
+            <figcaption class="media-caption">Recording</figcaption>
         </figure>
         {% elif video %}
         <figure class="talk-media">
@@ -337,7 +335,7 @@ marker: "talks"
                     loading="lazy">
                 </iframe>
             </div>
-            <figcaption class="media-caption">Recording.</figcaption>
+            <figcaption class="media-caption">Recording</figcaption>
         </figure>
         {% endif %}
 
@@ -353,14 +351,10 @@ marker: "talks"
                     data-slides-src="{{ slides }}">
                 </iframe>
             </div>
-            <figcaption class="media-caption">Slide deck{% if youtube or video %} — see the recording above for context{% endif %}. Pop out for fullscreen, or copy the link to share.</figcaption>
+            <figcaption class="media-caption">Slide deck</figcaption>
             <div class="media-actions">
-                <button type="button" class="media-action" data-slides-fullscreen aria-label="Open slides fullscreen">
-                    <span class="icon" aria-hidden="true">⤢</span>Fullscreen
-                </button>
-                <button type="button" class="media-action" data-slides-copy aria-label="Copy link to share">
-                    <span class="icon" aria-hidden="true">⎘</span>Copy link
-                </button>
+                <button type="button" class="media-action" data-slides-fullscreen aria-label="Open slides fullscreen">Fullscreen</button>
+                <button type="button" class="media-action" data-slides-copy aria-label="Copy link to share">Copy link</button>
             </div>
         </figure>
         {% endif %}
@@ -449,11 +443,11 @@ marker: "talks"
 
     function flashCopied() {
         if (!copyBtn) return;
-        const original = copyBtn.innerHTML;
-        copyBtn.innerHTML = '<span class="icon" aria-hidden="true">✓</span>Copied';
+        const original = copyBtn.textContent;
+        copyBtn.textContent = 'Copied';
         copyBtn.dataset.state = 'copied';
         setTimeout(() => {
-            copyBtn.innerHTML = original;
+            copyBtn.textContent = original;
             delete copyBtn.dataset.state;
         }, 1800);
     }

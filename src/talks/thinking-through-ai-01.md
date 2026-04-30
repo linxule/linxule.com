@@ -14,7 +14,6 @@ keywords:
   - thinking through AI
   - engagement design
   - interpretive orchestration
-  - masterclass
   - New Scholars
   - AI configurations
 ---
