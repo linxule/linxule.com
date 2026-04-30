@@ -312,6 +312,26 @@ marker: "talks"
             {% endif %}
         </header>
 
+        {% if slides %}
+        <figure class="talk-media" data-slides-figure>
+            <div class="media-container">
+                <iframe
+                    src="{{ slides }}"
+                    title="{{ title }} — slides"
+                    allowfullscreen
+                    loading="lazy"
+                    data-slides-frame
+                    data-slides-src="{{ slides }}">
+                </iframe>
+            </div>
+            <figcaption class="media-caption">Slide deck</figcaption>
+            <div class="media-actions">
+                <button type="button" class="media-action" data-slides-fullscreen aria-label="Open slides fullscreen">Fullscreen</button>
+                <button type="button" class="media-action" data-slides-copy aria-label="Copy link to share">Copy link</button>
+            </div>
+        </figure>
+        {% endif %}
+
         {% if youtube %}
         <figure class="talk-media">
             <div class="media-container">
@@ -336,26 +356,6 @@ marker: "talks"
                 </iframe>
             </div>
             <figcaption class="media-caption">Recording</figcaption>
-        </figure>
-        {% endif %}
-
-        {% if slides %}
-        <figure class="talk-media" data-slides-figure>
-            <div class="media-container">
-                <iframe
-                    src="{{ slides }}"
-                    title="{{ title }} — slides"
-                    allowfullscreen
-                    loading="lazy"
-                    data-slides-frame
-                    data-slides-src="{{ slides }}">
-                </iframe>
-            </div>
-            <figcaption class="media-caption">Slide deck</figcaption>
-            <div class="media-actions">
-                <button type="button" class="media-action" data-slides-fullscreen aria-label="Open slides fullscreen">Fullscreen</button>
-                <button type="button" class="media-action" data-slides-copy aria-label="Copy link to share">Copy link</button>
-            </div>
         </figure>
         {% endif %}
 
