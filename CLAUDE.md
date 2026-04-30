@@ -47,6 +47,7 @@ Full list in `.claude/docs/gotchas.md`.
 5. **Guard undefined arrays** — `contextExcerpt`, `prompt`, `images` can be undefined
 6. **ESM project** — all JS uses `import`/`export default`
 7. **`keywords` is the standard** frontmatter field (not `tags`), both feed `tagPages`
+8. **FOUC cloak in `base.njk`** hides the body until `document.fonts.ready` resolves (1.5s fallback timer). Don't move it, don't remove the timer, and remember it doesn't propagate into iframes — embedded slide decks need their own cloak. Detail in `.claude/rules/font-loading.md`
 
 ## Commands
 
