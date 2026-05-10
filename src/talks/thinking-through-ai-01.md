@@ -31,4 +31,6 @@ Suggested companion reading:
 - [Research with AI #1: The Foreclosure Problem](/writing/research-with-ai-01-the-foreclosure-problem/)
 - [LOOM XVI: Are You Climbing the Right Hill?](/writing/loom-xvi-are-you-climbing-the-right-hill/)
 
+Follow-up: [Research with AI #4: The Prompt Is the Work](/writing/research-with-ai-04-the-prompt-is-the-work/) — the longer answers to the questions ninety minutes couldn't hold (reproducibility stack, governance and coverage, AI-mediated reading, what survives the window).
+
 Part of the [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0).
