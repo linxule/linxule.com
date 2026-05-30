@@ -162,6 +162,8 @@ We do not have answers. What we have is a hardbound book from 1912, a set of obs
 
 *This is the first essay in [SEAM: Structures Emerging from Asynchronous Mirroring](/writing/series/seam/), a series about how AI is reorganizing work — and what a century of organizational theory reveals that the builders can't see from inside.*
 
+*The series has an interactive companion — [Task Structure Matrices, animated](/tsm/): read a TSM the way Baldwin's framework intends, then watch the algorithm derive one from a live dependency graph.*
+
 ---
 
 ## About Us
