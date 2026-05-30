@@ -86,6 +86,9 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
   - 与Claude模型共同开发(2025)
   - 源于与Erkko Autio共同教授系统性文献综述的人机研究协作框架
   - 应用诠释编排 (Interpretive Orchestration) 原则的AI增强研究工作流的综合文档
+- <br/>[**任务结构矩阵 (交互式)**](https://linxule.com/tsm/)
+  - Carliss Baldwin 任务结构矩阵的动画解读，附实时结构发现算法
+  - SEAM 系列的交互式配套工具
 - <br/>[**LOOM (Locus of Observed Meanings)** 系列](/writing/series/loom/)([GitHub](https://github.com/linxule/loom))
   - 与柯文凯 (Kevin Corley，帝国理工学院) 和AI协作者(如Claude、o1 pro)合作
   - 短篇论文，研究AI增强定性研究和组织分析中的方法论问题。例如：

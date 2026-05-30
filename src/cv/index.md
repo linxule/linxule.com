@@ -84,6 +84,9 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
   - Co-developed with Claude models (2025)
   - Framework for human-AI research collaboration emerging from co-teaching Systematic Reviews with Erkko Autio
   - Comprehensive documentation of AI-augmented research workflows applying Interpretive Orchestration principles
+- <br/>[**Task Structure Matrices (interactive)**](https://linxule.com/tsm/)
+  - Animated walkthroughs of Carliss Baldwin's task structure matrices, with a live structure-discovery algorithm
+  - Interactive companion to the SEAM series
 - <br/>[**LOOM (Locus of Observed Meanings)** series](/writing/series/loom/) ([GitHub](https://github.com/linxule/loom))
   - In collaboration with Kevin Corley (Imperial College London) and AI collaborators (e.g., Claude, o1 pro)
   - Short-form essays examining methodological questions in AI-augmented qualitative research and organizational analysis. Examples:
