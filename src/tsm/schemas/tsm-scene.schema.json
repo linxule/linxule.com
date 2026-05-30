@@ -1,0 +1,437 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://linxule.com/tsm/schemas/tsm-scene.schema.json",
+  "title": "TSM Scene (v0.4)",
+  "description": "Renderer input. Authored figures (Path A) or algorithm-derived TSMs (Path B output). See ARCHITECTURE.md and the current SPEC-LENSES.md for spec.\n\nv0.4 adds the emphasis-driven rendering layer (current SPEC-LENSES §3): `rendering.emphasis` is the visibility mechanism (primary | secondary; default render shows only primary, show-all reveals all); `rendering.lens` is the pedagogical naming tag from the canonical lens vocabulary (pure label, does not drive rendering). Scene-level `lenses` declares which lens entries this scene references.\n\nCanonical lens vocabulary (6 entries, current SPEC-LENSES §2):\n - cyclic-flow: Backward transfers route work back to earlier stages by design.\n - coordinator-dispatch: A coordinator pushes work outward to many stations in parallel.\n - forward-handoff: Linear hand-off down the production line.\n - modularity-boundary: Module borders divide the diagonal into information-hiding zones.\n - cross-region-edge: A transfer crosses a modularity boundary.\n - core-periphery-boundary: A Core (largest cyclic group) sits with Control/Shared/Peripheral around it.\n\nv1.6.4 D5.3 dropped the prior `label-only` lens. Items whose label IS the load-bearing claim (knife/money transfers, contract arrows, delivery/order transactions) now carry `rendering.labelStyle: \"load-bearing\"` — a display directive orthogonal to the lens vocabulary that never surfaces as an Explore chip (current SPEC-LENSES §3.5).\n\nv0.3 scenes still validate (specVersion enum accepts both); the back-compat adapter at core/scene-adapter.js injects emphasis:primary on v0.3 transfers with rendering.arrow:true so existing scenes keep rendering identically.",
+  "type": "object",
+  "required": ["specVersion", "kind", "id", "title", "matrices"],
+  "additionalProperties": false,
+  "properties": {
+    "specVersion": {
+      "type": "string",
+      "enum": ["0.3", "0.4.0"],
+      "description": "Schema version this scene targets. 0.3 = pre-lenses; 0.4.0 = current SPEC-LENSES (emphasis + lens vocabulary). The adapter back-fills emphasis:primary on arrowed transfers for 0.3 so older scenes render unchanged."
+    },
+    "kind": { "type": "string", "const": "tsm-scene" },
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "source": { "type": "string" },
+    "narrative": { "$ref": "#/$defs/narrative" },
+    "matrices": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/matrix" }
+    },
+    "arrows": {
+      "type": "array",
+      "description": "Scene-level cross-matrix arrows. Used by multi-matrix scenes (e.g. Fig 18.1 upstream-downstream) to encode arrows that route between two matrices — typically a contract or transaction crossing a firm boundary. Per-matrix intra-cell arrows still live on transfer.rendering.arrow (matrix.transfers[].rendering.arrow); this array is exclusively for inter-matrix endpoints.",
+      "items": { "$ref": "#/$defs/crossMatrixArrow" }
+    },
+    "lenses": {
+      "type": "array",
+      "description": "Lenses referenced by items in this scene; derived from rendering.lens references if omitted. Order in the array determines Explore-mode chip display order. Each entry must be a canonical vocabulary id (see top-level description for the 6).",
+      "items": {
+        "type": "string",
+        "enum": [
+          "cyclic-flow",
+          "coordinator-dispatch",
+          "forward-handoff",
+          "modularity-boundary",
+          "cross-region-edge",
+          "core-periphery-boundary"
+        ]
+      }
+    },
+    "provenance": { "$ref": "#/$defs/provenance" }
+  },
+  "$defs": {
+    "renderingEmphasis": {
+      "type": "string",
+      "enum": ["primary", "secondary"],
+      "default": "secondary",
+      "description": "Visibility tier. Default render shows only primary items; show-all reveals all. Current SPEC-LENSES §3.1. v0.3 scenes pass through the back-compat adapter which injects emphasis:primary on transfers with rendering.arrow:true so old scenes keep rendering identically."
+    },
+    "emphasisCriteria": {
+      "type": "object",
+      "description": "Selector criteria for walkthrough setEmphasis. See the current SPEC-LENSES §4. At least one of byLens/byId/byMark must be provided and at least one selector array must be non-empty — empty objects and empty selector arrays are silent no-ops at runtime, so the schema rejects them.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "anyOf": [
+        { "required": ["byLens"] },
+        { "required": ["byId"] },
+        { "required": ["byMark"] }
+      ],
+      "properties": {
+        "byLens": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Canonical lens ids (any of the 6). Items whose rendering.lens contains any listed id match. V-LENS-5 validates vocabulary because JSON Schema leaves this string[] open for step-local diagnostics."
+        },
+        "byId": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Item identifiers. For transfers: 'from→to' (only matches when the transfer's rendering.arrow === true). For overlays: regionId for module-border overlays or 'firm-boundary:${overlayIndex}' for firm-boundary overlays. For annotations: annotation index (the annotation object has no id field in the current schema). For cross-matrix arrows: arrow.id or composite '${fromMatrix}:${fromTaskId}→${toMatrix}:${toTaskId}' fallback. Validator intentionally accepts any string here; existence depends on renderer-local keys and is not checked by V-LENS-6. See SPEC-LENSES §4."
+        },
+        "byMark": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Mark values (e.g. 'x', 's'). Targets transfers/marks by their mark field."
+        }
+      }
+    },
+    "renderingLens": {
+      "description": "Optional pedagogical naming tag from the canonical vocabulary (one of 6; see schema top-level description). Pure label — does not drive rendering. Accepts a single string or an array of strings (e.g. a transfer carrying both coordinator-dispatch and cross-region-edge tags). Current SPEC-LENSES §3.2.",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "cyclic-flow",
+            "coordinator-dispatch",
+            "forward-handoff",
+            "modularity-boundary",
+            "cross-region-edge",
+            "core-periphery-boundary"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "cyclic-flow",
+              "coordinator-dispatch",
+              "forward-handoff",
+              "modularity-boundary",
+              "cross-region-edge",
+              "core-periphery-boundary"
+            ]
+          }
+        }
+      ]
+    },
+    "renderingLabelStyle": {
+      "type": "string",
+      "enum": ["load-bearing"],
+      "description": "Display directive for items whose label IS the load-bearing claim (knife/money transfers in Fig 4, delivery/order transactions in Fig 6, contract arrows in Fig 18.1) rather than encoding a recurring concept that warrants a lens. Orthogonal to rendering.lens — labelStyle never participates in the lens vocabulary check, never surfaces as an Explore chip, and never drives emphasis or visibility. Renderers stamp the value to the DOM as `data-label-style` for CSS hooks and debugging only. Closed enum (currently \"load-bearing\" only); new values require a SPEC bump. Current SPEC-LENSES §3.5 (v1.6.4 D5.3)."
+    },
+    "narrative": {
+      "type": "object",
+      "required": ["mode", "steps"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["walkthrough", "static", "algorithm"] },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["caption"],
+            "additionalProperties": false,
+            "properties": {
+              "caption": { "type": "string" },
+              "reveal": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "include": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              },
+              "setEmphasis": {
+                "type": "object",
+                "description": "Current SPEC-LENSES §4: per-step emphasis transitions. Items matching `primary.byLens / byId / byMark` become rendering.emphasis:primary for this step; items matching `secondary.*` become secondary. Items not mentioned retain their JSON-declared emphasis. Reset between steps. At least one of primary/secondary must be provided — empty setEmphasis objects are silent no-ops at runtime, so the schema rejects them.",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "anyOf": [
+                  { "required": ["primary"] },
+                  { "required": ["secondary"] }
+                ],
+                "properties": {
+                  "primary": { "$ref": "#/$defs/emphasisCriteria" },
+                  "secondary": { "$ref": "#/$defs/emphasisCriteria" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "matrix": {
+      "type": "object",
+      "required": ["id", "architectureType", "tasks", "transfers"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "architectureType": {
+          "enum": [
+            "integral",
+            "proto-modular",
+            "modular",
+            "flow",
+            "job-shop",
+            "platform",
+            "core-periphery",
+            "multi-core",
+            "hierarchical"
+          ]
+        },
+        "narrative": {
+          "$ref": "#/$defs/narrative",
+          "description": "Optional per-matrix narrative. Resolution depends on mount mode. In single-matrix mounts (mountTSM), this takes precedence over scene.narrative for the mounted matrix — used by multi-matrix scenes (e.g. Fig 4 store-household, Fig 18.1 upstream-downstream) so a single-matrix view of the chosen matrix carries the matrix-specific walkthrough. In multi-matrix mounts (mountAllMatrices, side-by-side), matrix.narrative is DORMANT: the walkthrough fans scene.narrative out to all matrices as a unit and per-matrix narratives are not surfaced. mountAllMatrices logs a console.warn at mount when matrix.narrative is present so the dormancy is loud. Resolution chain: mountTSM = matrix.narrative ?? scene.narrative ?? null; mountAllMatrices = scene.narrative ?? matrix-0.narrative as a last-resort fallback."
+        },
+        "regions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/region" }
+        },
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/task" }
+        },
+        "transfers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/transfer" }
+        },
+        "overlays": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/overlay" }
+        },
+        "annotations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/annotation" }
+        }
+      }
+    },
+    "region": {
+      "type": "object",
+      "required": ["id", "layoutKind"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "layoutKind": {
+          "enum": [
+            "left-band",
+            "diagonal-block",
+            "bottom-band",
+            "top-row",
+            "corner-wrapping",
+            "external-cell",
+            "nested-block"
+          ]
+        },
+        "semanticKind": {
+          "enum": [
+            "design-rules",
+            "module",
+            "integration",
+            "coordinator",
+            "external-actor",
+            "core",
+            "control",
+            "shared",
+            "peripheral",
+            "task"
+          ],
+          "default": "task"
+        },
+        "label": { "type": "string" }
+      }
+    },
+    "task": {
+      "type": "object",
+      "required": ["id", "label", "region"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string" },
+        "shortLabel": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional terse display label for the diagonal cell. The renderer shows this when present and falls back to label otherwise; the cell's title and aria-label attributes always carry the full label. Useful for dense matrices where the specific name overwhelms the partition shape. Empty strings are rejected because they would render a blank cell."
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional free-form category label used to group tasks in a category-grouped legend or palette. Authors pick a vocabulary that fits the domain (e.g. cli/runtime/sdk/tools/mcp/coder for an agent system). The renderer does not interpret this field; it is consumed by legend/palette tracks. Mirrors dependency-observation node.category so derive() can round-trip the value onto the synthesized task."
+        },
+        "region": { "type": "string", "minLength": 1 },
+        "placeholder": { "type": "boolean", "default": false }
+      }
+    },
+    "transfer": {
+      "type": "object",
+      "required": ["from", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "mark": {
+          "enum": ["x", "s", "bullet"],
+          "default": "x"
+        },
+        "rendering": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "arrow": { "type": "boolean", "default": false },
+            "label": { "type": "string" },
+            "emphasis": { "$ref": "#/$defs/renderingEmphasis" },
+            "lens": { "$ref": "#/$defs/renderingLens" },
+            "labelStyle": { "$ref": "#/$defs/renderingLabelStyle" }
+          }
+        }
+      }
+    },
+    "overlay": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": ["module-border", "nested-modules", "firm-boundary"]
+        },
+        "regionId": { "type": "string" },
+        "regionIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "excludedTaskIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "label": { "type": "string" },
+        "rendering": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "emphasis": { "$ref": "#/$defs/renderingEmphasis" },
+            "lens": { "$ref": "#/$defs/renderingLens" },
+            "labelStyle": { "$ref": "#/$defs/renderingLabelStyle" }
+          }
+        }
+      }
+    },
+    "annotation": {
+      "type": "object",
+      "required": ["position", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "position": {
+          "enum": [
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "external-NE",
+            "external-SE",
+            "external-NW",
+            "external-SW"
+          ]
+        },
+        "label": { "type": "string" },
+        "rendering": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "emphasis": { "$ref": "#/$defs/renderingEmphasis" },
+            "lens": { "$ref": "#/$defs/renderingLens" },
+            "labelStyle": { "$ref": "#/$defs/renderingLabelStyle" }
+          }
+        },
+        "pointer": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "regionId": { "type": "string" },
+            "taskId": { "type": "string" },
+            "rowRange": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": { "type": "string" }
+            },
+            "columnRange": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "crossMatrixArrow": {
+      "type": "object",
+      "required": ["from", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "from": { "$ref": "#/$defs/crossMatrixEndpoint" },
+        "to": { "$ref": "#/$defs/crossMatrixEndpoint" },
+        "label": { "type": "string" },
+        "kind": {
+          "enum": ["transaction", "forward", "backward"],
+          "default": "transaction",
+          "description": "Visual styling hint. `transaction` is the contract/ecosystem arrow Fig 18.1 needs; `forward`/`backward` reuse the intra-matrix arrow palette."
+        },
+        "rendering": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "emphasis": { "$ref": "#/$defs/renderingEmphasis" },
+            "lens": { "$ref": "#/$defs/renderingLens" },
+            "labelStyle": { "$ref": "#/$defs/renderingLabelStyle" }
+          }
+        }
+      }
+    },
+    "crossMatrixEndpoint": {
+      "type": "object",
+      "required": ["matrix", "taskId"],
+      "additionalProperties": false,
+      "properties": {
+        "matrix": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Index into scene.matrices identifying which matrix the endpoint lives in."
+        },
+        "taskId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Task id within the referenced matrix. The renderer anchors the arrow to that task's diagonal cell."
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "inputObservationId": { "type": "string" },
+        "algorithm": { "type": "string" },
+        "algorithmVersion": { "type": "string" },
+        "vfivfo": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "vfi": { "type": "integer" },
+              "vfo": { "type": "integer" }
+            }
+          }
+        },
+        "cyclicGroups": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

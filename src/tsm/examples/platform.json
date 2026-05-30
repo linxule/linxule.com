@@ -1,0 +1,88 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "platform",
+  "title": "A basic platform system",
+  "source": "Adapted from Baldwin (2026), <em>A theory of technology and organizations</em>, Figure 8",
+  "lenses": ["cross-region-edge"],
+
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> A platform decomposes into three parts on the diagonal — design rules first, then two modules each with their own internal tasks, then system integration at the bottom.",
+        "reveal": { "include": ["diagonal"] }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Design rules dispatch downward to <em>every</em> module. Specifying the interfaces once, in advance, is what lets the modules be developed independently. Notice the DR region never receives anything back.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward"] }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Inside each module, the local recipe runs with its own forward and backward transfers. Module A's internals are invisible to Module B and vice versa — <em>that's</em> the information hiding the design rules paid for.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> Each module hands its finished output to system integration through a <em>single thin transfer</em> — one summary arrow per module. The hidden internals stay hidden; only the interface contract crosses. Compare to Fig 1's integral laptop, where every component had to talk to every other component.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      }
+    ]
+  },
+
+  "matrices": [
+    {
+      "id": "platform",
+      "architectureType": "platform",
+
+      "regions": [
+        { "id": "dr",          "layoutKind": "left-band",      "semanticKind": "design-rules", "label": "Design Rules" },
+        { "id": "modA",        "layoutKind": "diagonal-block", "semanticKind": "module",       "label": "Module A" },
+        { "id": "modB",        "layoutKind": "diagonal-block", "semanticKind": "module",       "label": "Module B" },
+        { "id": "integration", "layoutKind": "bottom-band",    "semanticKind": "integration",  "label": "Integration" }
+      ],
+
+      "tasks": [
+        { "id": "DR1", "label": "Interface contract",   "shortLabel": "DR1", "region": "dr" },
+        { "id": "DR2", "label": "Shared conventions",   "shortLabel": "DR2", "region": "dr" },
+
+        { "id": "A1",  "label": "Module A — spec",      "shortLabel": "A1",  "region": "modA" },
+        { "id": "A2",  "label": "Module A — design",    "shortLabel": "A2",  "region": "modA" },
+        { "id": "A3",  "label": "Module A — test",      "shortLabel": "A3",  "region": "modA" },
+
+        { "id": "B1",  "label": "Module B — spec",      "shortLabel": "B1",  "region": "modB" },
+        { "id": "B2",  "label": "Module B — design",    "shortLabel": "B2",  "region": "modB" },
+        { "id": "B3",  "label": "Module B — test",      "shortLabel": "B3",  "region": "modB" },
+
+        { "id": "INT", "label": "System integration",   "shortLabel": "INT", "region": "integration" }
+      ],
+
+      "transfers": [
+        { "from": "DR1", "to": "A1", "mark": "x" },
+        { "from": "DR1", "to": "B1", "mark": "x" },
+        { "from": "DR2", "to": "A1", "mark": "x" },
+        { "from": "DR2", "to": "B1", "mark": "x" },
+
+        { "from": "A1", "to": "A2", "mark": "x" },
+        { "from": "A2", "to": "A3", "mark": "x" },
+        { "from": "A3", "to": "A2", "mark": "x", "rendering": { "arrow": true, "label": "iterate", "emphasis": "secondary" } },
+
+        { "from": "B1", "to": "B2", "mark": "x" },
+        { "from": "B2", "to": "B3", "mark": "x" },
+        { "from": "B3", "to": "B2", "mark": "x", "rendering": { "arrow": true, "label": "iterate", "emphasis": "secondary" } },
+
+        { "from": "A3", "to": "INT", "mark": "x", "rendering": { "arrow": true, "label": "module A output", "emphasis": "primary", "lens": "cross-region-edge" } },
+        { "from": "B3", "to": "INT", "mark": "x", "rendering": { "arrow": true, "label": "module B output", "emphasis": "primary", "lens": "cross-region-edge" } }
+      ],
+
+      "annotations": [
+        { "position": "top",   "label": "Specify once, hide forever", "pointer": { "regionId": "dr" } },
+        { "position": "right", "label": "Single thin crossing",       "pointer": { "regionId": "integration" } }
+      ]
+    }
+  ]
+}

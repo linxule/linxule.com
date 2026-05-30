@@ -1,0 +1,797 @@
+/* Page chrome: body, main, header, two-column layout, narrative pane,
+   captions, controls, progress bar, legend, footer. Anything that's NOT
+   the matrix itself or its overlays.
+
+   Aligned to linxule.com (see theme.css): two voices in counterpoint —
+   Cormorant (human) carries prose + titles; IBM Plex Mono (machine) carries
+   labels, controls, metadata. The violet bloom is earned on hover/focus. */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Living-paper texture. The site generates this per session from simplex
+   noise (assets/js/paper.js); here we ship the site's static SVG-turbulence
+   fallback so the demo stays self-contained and subpath-safe — same stock,
+   same feel. opacity + no z-index mirrors the site exactly: the textured
+   ::before paints behind the (later, opaque) content. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.35;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Cormorant tops out at 500 in the loaded set — pin bold so the browser
+   never synthesizes a heavy faux-bold. */
+strong,
+b {
+  font-weight: 500;
+}
+
+:focus-visible {
+  outline: 2px solid var(--bloom);
+  outline-offset: 3px;
+}
+
+/* Reduced motion: the animated BUILD is the demo's pedagogy, so we don't
+   suppress the result — we collapse tweens to ~instant so the page JUMPS to each
+   end state (region tints, transfer marks, the final TSM stay visible) instead
+   of animating between them. Also kill the cross-cell scale pop. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .cell.transfer.cross.highlighted {
+    transform: none;
+  }
+}
+
+/* Spine — the book's binding. A standalone doc (not wrapped by the site's
+   base.njk), so the demo carries its own. Deliberately WITHOUT the wandering
+   accident dot: that dot is the site's load-bearing singleton resident and
+   must remain alone. */
+.spine {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.6rem 2.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  background: linear-gradient(
+    to bottom,
+    rgba(244, 241, 235, 0.96) 0%,
+    rgba(244, 241, 235, 0.85) 45%,
+    rgba(244, 241, 235, 0.55) 72%,
+    transparent 100%
+  );
+}
+
+.spine-name {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-light);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.spine-name:hover {
+  color: var(--bloom);
+}
+
+/* The one accident — cyan that "leaked through from somewhere else" (site
+   convention: one per page; the cyan-square favicon carries the identity).
+   The site's spine dot is the algorithmic presence you can't see — wandering,
+   breathing, flickering in the binding. Here, on the page where that algorithm
+   is laid bare and watched build a structure, it comes to rest. Still: no
+   animation, so it is not a second resident (residents are defined by
+   persistent motion; this is inert). The accident, at rest. */
+.spine-name::after {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 0.7em;
+  border-radius: 50%;
+  background: var(--accident);
+  box-shadow: 0 0 8px var(--accident), 0 0 16px rgba(78, 225, 212, 0.3);
+  vertical-align: middle;
+}
+
+.spine-marker {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+
+main {
+  /* Wide-canvas (2026-05-29): widened + compressed side padding so the 3-column
+     "print plate with marginalia" (index | matrix | cockpit) uses the width and
+     the centre plate reads large. 1500 balances a wide canvas against the plate
+     floating with big side gaps on ultra-wide screens. */
+  max-width: 1500px;
+  margin: 0 auto;
+  /* Top padding clears the fixed spine. */
+  padding: 84px 28px 64px;
+}
+
+@media (max-width: 600px) {
+  main {
+    padding: 72px 16px 48px;
+  }
+}
+
+header {
+  /* Trimmed 2026-05-29 (32→20 / 24→16) to recover vertical room for the matrix
+     viewport cap — the chrome above the grid is what forced the zoom-out. */
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 16px;
+}
+
+header h1 {
+  /* Human voice. Cormorant is a display serif — it wants a light weight and a
+     generous size, not bold + tight tracking. Trimmed 2.9→2.2rem max + tighter
+     margin (2026-05-29) to recover vertical room for the matrix cap. */
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  margin: 0 0 6px;
+}
+
+header p.subtitle {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--ink-light);
+  font-style: italic;
+  font-size: 1rem;
+}
+
+/* ----- Mode bar: the persistent view toggle ---------------------------------
+   The one affordance that survives both views (it must stay visible when the
+   rail hides in algorithm mode), so it sits under the header outside .layout.
+   Box-less, machine-voice. (The .view-toggle button itself is styled in
+   algorithm.css, which loads last and wins; see the box-less rule there.) */
+.mode-bar {
+  margin: 0 0 18px;
+}
+
+/* ----- Scene index: the demo's machine-voice "contents" ---------------------
+   Replaces the native <select>. linxule.com idiom: a quiet index on bare paper,
+   structure from typography + placement, no form control, no box. Grouped by
+   provenance; the current scene wears the cyan accident dot. Lives at the top of
+   the left-margin rail. */
+/* Left margin: the static reference column — sticky, holds the scene index +
+   the transfer legend. Stays in view while a tall matrix scrolls; caps to the
+   viewport with internal scroll if it ever outgrows it. `top` clears the spine. */
+.rail-left {
+  position: sticky;
+  top: 84px;
+  max-height: calc(100vh - 104px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.scene-index {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+}
+
+.scene-index-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.scene-index-heading {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin: 0 0 5px;
+}
+
+.scene-index-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+  /* Box-less text control: no fill, no border, no radius. The left padding is
+     the gutter the .current accident dot sits in. */
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 3px 0 3px 16px;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  color: var(--ink-light);
+  transition: color 160ms ease;
+}
+
+.scene-index-item:hover {
+  color: var(--bloom);
+}
+
+.scene-index-item.current {
+  color: var(--ink);
+  font-weight: 500; /* non-colour cue so "you are here" doesn't rest on hue alone */
+}
+
+/* The current scene wears an INK dot — NOT the cyan accident. The page's one
+   accident lives in the spine (base.css .spine-name::after); marking the current
+   scene cyan too put two accidents on the page at once. Ink-on-paper is high
+   contrast and pairs with the weight bump above. */
+.scene-index-item.current::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.52em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.scene-index-name {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Multi-matrix trait tag — replaces the old "Multi-matrix examples" group.
+   Faint machine-voice marker, no box. */
+.scene-index-tag {
+  flex: none;
+  font-size: 0.52rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+/* Matrix-index switcher. Only visible when a scene exposes more than one
+   matrix. Mirrors the .scene-selector visual register — small uppercase
+   label + a row of segmented buttons. */
+.matrix-switcher {
+  display: flex;
+  align-items: center;
+  /* Wrap (2026-05-29): in the 300px right cockpit the focus buttons + the
+     Show-all toggles overflow a single row. (Dropped the stray margin-left:8px
+     left over from when this sat inline next to a top-bar label.) */
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.matrix-switcher[hidden] {
+  display: none;
+}
+
+.matrix-switcher-label {
+  font-family: var(--font-mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.65rem;
+  font-weight: 400;
+}
+
+/* Box-less resting (2026-05-29): padded mono text; padding + radius retained so
+   the .active ink fill reads as a clean pill (the focused matrix). */
+.matrix-switcher-btn {
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 200ms ease, color 200ms ease;
+}
+
+.matrix-switcher-btn:hover {
+  color: var(--bloom);
+}
+
+.matrix-switcher-btn.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Two-column layout (wide viewports): a sticky narrative rail beside a matrix
+   that fills the rest of the width, with a full-width decode-key row beneath
+   both.
+
+   WHY a fixed-width rail and not a fractional split: an earlier two-column
+   attempt used a 1.4fr/1fr split that CHOKED the matrix to ~565px regardless
+   of viewport — n=19+ derived scenes were illegible, which is why it was
+   reverted to a single column. The lesson encoded here: the matrix is the
+   primary artifact and must get the *flexible* track. The rail is a fixed
+   360px; the matrix takes `minmax(0, 1fr)` (everything else), so on a 1560px
+   page it renders ~1100px — LARGER than the old single-column 900px cap, and
+   starting at the top of the viewport instead of below a stack of controls.
+   This is the fix for the "zoom to 80% to see the matrix + the step text + the
+   Next button at once" trap.
+
+   Flicker-safety: #tsm and the rail are grid SIBLINGS. The arrow/overlay SVG
+   layers position at gridEl.offsetTop WITHIN #tsm; a sibling rail reflowing
+   (Explore strip expanding, caption changing length) never moves #tsm's
+   internals, so the arrow layers never rebuild. */
+.layout {
+  /* 3-column "print plate with marginalia": scene index (left) | matrix plate
+     (centre, flexible) | walkthrough cockpit (right). DOM order matches. Both
+     margins are sticky (below). The <1024px fallback collapses this to one
+     flex column. The single-mount square cap lives in matrix.css. */
+  display: grid;
+  /* Cockpit widened 300→340 (2026-05-29) for a more comfortable caption measure
+     — the matrix is height-bound (min(col, 100vh-chrome)), so taking width from
+     the flexible centre track doesn't shrink the plate. */
+  grid-template-columns: 220px minmax(0, 1fr) 340px;
+  gap: 0 40px;
+  align-items: start;
+}
+
+.layout .narrative {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* Sticky so the step caption + Back/Restart/Next stay in view while the
+     reader scrolls a tall matrix — the "Next is always clickable" guarantee.
+     `top` clears the fixed spine. */
+  position: sticky;
+  top: 88px;
+  /* Cap to the viewport and scroll internally if the rail itself is taller
+     than the screen (short laptop + long caption + open Explore strip).
+     Without this the rail's bottom clips with no way to reach it, defeating
+     the sticky guarantee (post-layout audit M4). 88px clears the spine; the
+     extra 16px is breathing room. In the <1024px fallback .narrative becomes
+     display:contents (no box), so these are inert there. */
+  max-height: calc(100vh - 104px);
+  overflow-y: auto;
+}
+
+.layout #tsm {
+  /* Fill the flexible column — the grid track caps the width, not a 900px
+     wrapper rule (which still governs embeds + the single-column fallback).
+     Overridden to fit-content for the single-mount viewport cap below. */
+  max-width: none;
+}
+
+/* Matrix metadata (decode key + provenance) — full content width, BELOW the
+   rail+matrix layout (outside .layout, so the sticky rail can't overlap it and
+   the decode key keeps the full page width to flow its columns). */
+.matrix-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+/* Scene provenance/source — moved out of the matrix card (it was squashed below
+   a capped matrix). Same collapsible register as the decode key. app.js writes
+   scene.source into .provenance-body and hides the <details> when there's none. */
+.provenance[hidden] {
+  display: none;
+}
+
+.provenance-summary {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.provenance-body {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--ink-light);
+  font-style: italic;
+  padding: 8px 0 4px;
+}
+
+/* In the app layout the in-card scene title + source are redundant/relocated:
+   the title repeats the dropdown label; the source now lives in
+   .matrix-meta > .provenance. Hide both inside the single-mount card. (Embeds,
+   which have no .layout, keep document order.) */
+.layout #tsm:not(.multi-mount) .tsm-title,
+.layout #tsm:not(.multi-mount) .tsm-source {
+  display: none;
+}
+
+/* Single-mount composition (the grid-level square cap is in matrix.css).
+
+   THE SCALING FIX (2026-05-29): the matrix column is now DEFINITE —
+   minmax(0,1fr) = the remaining width after the 360px rail — not `auto` with a
+   `fit-content` #tsm. The old auto/fit-content combo made the grid shrink to its
+   own max-content (the sum of its longest labels), so matrix SIZE tracked label
+   length, not the viewport: job-shop rendered at 139px while Fig 1 hit 432px,
+   same n. With a definite track, the grid (matrix.css) sizes to
+   min(track-width, viewport-height) — every single-mount matrix is the SAME
+   square at a given viewport. #tsm fills the track and left-aligns the capped
+   grid (align-items:flex-start on its flex column), so the freed width on the
+   right reads as intentional document margin (linxule.com negative space).
+   Scoped single-mount / non-algorithm / wide; multi-mount + <1024 keep theirs. */
+/* Centre the single-mount square plate within the (flexible) matrix column —
+   #tsm is a flex column (matrix.css), so align-items centres the capped grid. */
+@media (min-width: 1025px) {
+  body:not(.view-algorithm) .layout #tsm:not(.multi-mount) {
+    align-items: center;
+  }
+}
+
+/* In the rail, the step caption sizes to its content — no 120px min-height
+   box (that empty padding was part of the "everything's too big" read). The
+   rail's own `gap` handles spacing, so zero the stacked margins. */
+.layout .narrative .step-caption {
+  min-height: 0;
+  margin-bottom: 0;
+}
+
+.layout .narrative .controls,
+.layout .narrative #progress {
+  margin-bottom: 0;
+}
+
+/* Empty Explore mount (lens-less scenes / algorithm view) takes no space. */
+#explore-mount:empty {
+  display: none;
+}
+
+/* Algorithm view: app.js sets .narrative display:none and fills #tsm with the
+   algorithm view's own chrome. Drop the grid so #tsm spans the full width with
+   no empty rail column, and hide the (now-stale) decode key. */
+.view-algorithm .layout {
+  display: block;
+}
+
+.view-algorithm .layout #tsm {
+  max-width: none;
+  width: 100%;
+  /* Reset the single-mount flex column from matrix.css — the algorithm view
+     fills #tsm with its own block content (post-layout audit L11; harmless
+     either way, but keeps #tsm's display honest in algorithm mode). */
+  display: block;
+}
+
+.view-algorithm .matrix-meta {
+  display: none;
+}
+
+/* The left reference column (scene index + transfer legend) is figure-walkthrough
+   only — the algorithm view runs on a fixed observation and brings its own
+   per-step keys, so the nav + legend are noise there. Hide the whole left rail
+   in algorithm mode (.narrative, the right cockpit, is hidden by app.js). */
+.view-algorithm .rail-left {
+  display: none;
+}
+
+/* Single-column fallback (narrow viewports). Collapse the 3-column grid to one
+   flex column. BOTH rails get `display: contents` so their children lift into
+   the flex and per-child `order` applies — otherwise .rail-left (the 15-item
+   scene index + legend) would render as one block ABOVE the matrix, pushing it
+   far below the fold. Reading order: caption → controls → switcher → Explore →
+   matrix → legend → provenance → scene index (nav last); the decode key
+   (.matrix-meta) is a block after .layout and naturally trails. */
+@media (max-width: 1024px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: stretch;
+  }
+  .layout .narrative,
+  .layout .rail-left {
+    display: contents;
+  }
+  .narrative .step-caption {
+    order: 1;
+  }
+  .narrative .controls,
+  .narrative #progress {
+    order: 2;
+  }
+  .narrative #matrix-switcher {
+    order: 3;
+  }
+  .layout #explore-mount {
+    order: 4;
+  }
+  .layout #tsm {
+    order: 5;
+    max-width: min(100%, 900px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+  /* Static reference + secondary metadata sit below the matrix on narrow screens:
+     the symbol legend (read against the matrix), then provenance, then the scene
+     index (navigation is least urgent on mobile). */
+  .rail-left .legend {
+    order: 6;
+    /* In the column the divider rule above the legend reads oddly — drop it here. */
+    border-top: 0;
+    padding-top: 0;
+  }
+  .narrative .provenance {
+    order: 7;
+  }
+  .rail-left .scene-index {
+    order: 8;
+  }
+  /* .matrix-meta (decode key) is a block after .layout, so it stacks below all
+     of the above in the single-column flow. */
+}
+
+/* Narrative pane
+
+   Note: `.narrative` is the sticky rail in the two-column grid — a real flex
+   container (see `.layout .narrative` above). Only in the <1024px fallback
+   does it become `display: contents`, lifting its children into the .layout
+   flex column so per-child `order` applies. */
+
+/* Box-less (2026-05-29): the step caption is the walkthrough's running
+   commentary — human voice (Cormorant) on bare paper, no card. The card +
+   120px min-height were part of the "everything's too boxed/too big" read. */
+.step-caption {
+  font-family: var(--font-body);
+  font-size: 1.18rem;
+  /* 1.72 matches linxule.com's reading prose (≈18px / 1.7). Cormorant is a
+     display serif — it needs the leading, especially at the cockpit's narrow
+     measure where multi-line captions were reading choppy. */
+  line-height: 1.72;
+  color: var(--ink);
+}
+
+/* Pin the controls + progress ABOVE the caption in the cockpit so they hold a
+   FIXED position — the caption's per-step length varies, and a stable control
+   cluster keeps Back/Restart/Next from jumping (Xule, 2026-05-29). CSS `order`
+   (not DOM order) so the screen-reader reading order stays caption-first. The
+   <1024 fallback sets its own order (caption first) in the @media block. */
+.layout .narrative .controls {
+  order: -2;
+}
+
+.layout .narrative #progress {
+  order: -1;
+}
+
+.step-caption em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+.step-caption strong {
+  font-weight: 500;
+}
+
+.controls {
+  display: flex;
+  gap: 20px;
+  align-items: baseline;
+}
+
+/* Box-less text controls (2026-05-29): no fills, no borders. Next is the one
+   emphasized action (ink + arrow); Back/Restart are quieter (muted). Machine
+   voice. A walkthrough needs page-turn affordances, but they're controls, not
+   content — so they read as quiet links on paper, never as buttons-in-a-box. */
+.controls button {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  cursor: pointer;
+  transition: color 200ms ease, opacity 200ms ease;
+}
+
+.controls button:hover:not(:disabled) {
+  color: var(--bloom);
+}
+
+.controls button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.controls button.secondary {
+  color: var(--muted);
+}
+
+.controls button.secondary:hover:not(:disabled) {
+  color: var(--bloom);
+}
+
+.progress {
+  display: flex;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.progress .dot {
+  flex: 1;
+  height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  transition: background 300ms ease;
+}
+
+.progress .dot.active {
+  background: var(--bloom);
+}
+
+/* Transfer legend — global reference, so it sits at the top of the page (under
+   the example picker) as a compact horizontal strip: the prose and the two
+   glyph keys flow on one line and wrap on narrow viewports. The bottom rule
+   separates it from the matrix layout below. */
+/* Transfer legend — now in the left reference column under the nav (2026-05-29).
+   Vertical stack, smaller, with a hairline divider separating it from the nav. */
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--ink-light);
+}
+
+.legend p {
+  margin: 0;
+}
+
+.legend dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 8px;
+  margin: 0;
+  align-items: baseline;
+}
+
+.legend dt {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  margin: 0;
+}
+
+.legend dd {
+  margin: 0;
+}
+
+.legend dt.forward {
+  color: var(--forward);
+}
+
+.legend dt.backward {
+  color: var(--backward);
+}
+
+/* Colophon — machine-voice margin furniture (2026-05-30), echoing linxule.com's
+   lower-left identity block + lower-right page marker. A book device: structure
+   from typography on bare paper. The lower-right "tsm / 000" mirrors the site's
+   page-number placement (decorative, aria-hidden). */
+.colophon {
+  margin-top: 64px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  font-family: var(--font-mono);
+  color: var(--muted);
+}
+
+.colophon-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.colophon-line {
+  margin: 0;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.colophon-cite {
+  margin: 8px 0 0;
+  max-width: 72ch;
+  font-size: 0.66rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.colophon-cite em {
+  font-style: italic;
+}
+
+.colophon a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  text-underline-offset: 0.15em;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.colophon a:hover {
+  color: var(--bloom);
+  border-bottom-color: var(--bloom);
+}
+
+.colophon-page {
+  margin: 0;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .colophon {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+/* Embed (<tsm-scene>) styles. Layout matches the standalone app's
+   .narrative pane so the embed slots into any host page without
+   needing additional CSS beyond the four tsm-demo stylesheets. */
+
+.tsm-embed {
+  display: block;
+}
+
+.tsm-embed .tsm-embed-chrome {
+  margin-top: 16px;
+}
+
+.tsm-embed-error {
+  padding: 16px;
+  border: 1px dashed var(--warm);
+  border-radius: 2px;
+  color: var(--warm);
+  font-size: 13px;
+}

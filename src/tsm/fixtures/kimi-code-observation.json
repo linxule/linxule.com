@@ -1,0 +1,587 @@
+{
+  "specVersion": "0.3",
+  "kind": "dependency-observation",
+  "id": "kimi-code-cli-native-agent",
+  "title": "Kimi Code CLI-native coding agent architecture (v0.2.0 refresh, May 2026)",
+  "source": "Extracted 2026-05-26 from MoonshotAI/kimi-code tag @moonshot-ai/kimi-code@0.2.0 commit d496fd40b649ddec1226b8f44cf1556c51178aff source tree, package manifests, and docs/en. Exact v0.2.0 tag/branch name was absent from the remote branch probe; GitHub DNS then blocked ls-remote, so the tagged local MoonshotAI/kimi-code checkout was cloned into research/repos/kimi-code. System: kimi-code. Version: 0.2.0. Edge convention: X depends on Y = X talks to, loads, invokes, configures, gates, or receives runtime results/events from Y. The schema v0.3 used by this repository forbids an extra top-level system field, so system identity is recorded here.",
+  "nodes": [
+    {
+      "id": "kimi-cli",
+      "label": "Kimi Code CLI",
+      "entityType": "cli app",
+      "category": "cli",
+      "shortLabel": "CLI1"
+    },
+    {
+      "id": "prompt-runner",
+      "label": "Prompt/print runner",
+      "entityType": "client",
+      "category": "cli",
+      "shortLabel": "CLI2"
+    },
+    {
+      "id": "tui-client",
+      "label": "Kimi TUI client",
+      "entityType": "client",
+      "category": "cli",
+      "shortLabel": "CLI3"
+    },
+    {
+      "id": "sdk-harness",
+      "label": "KimiHarness SDK",
+      "entityType": "sdk",
+      "category": "sdk",
+      "shortLabel": "SDK1"
+    },
+    {
+      "id": "sdk-rpc",
+      "label": "SDK/Core RPC bridge",
+      "entityType": "protocol",
+      "category": "sdk",
+      "shortLabel": "SDK2"
+    },
+    {
+      "id": "kimi-core",
+      "label": "KimiCore",
+      "entityType": "agent runtime",
+      "category": "runtime",
+      "shortLabel": "RT1"
+    },
+    {
+      "id": "session-runtime",
+      "label": "Session runtime",
+      "entityType": "session",
+      "category": "runtime",
+      "shortLabel": "RT2"
+    },
+    {
+      "id": "main-agent",
+      "label": "Main agent",
+      "entityType": "primary agent",
+      "category": "runtime",
+      "shortLabel": "RT3"
+    },
+    {
+      "id": "loop-engine",
+      "label": "Turn/loop engine",
+      "entityType": "runtime component",
+      "category": "runtime",
+      "shortLabel": "RT4"
+    },
+    {
+      "id": "provider-layer",
+      "label": "Kosong provider layer",
+      "entityType": "model provider",
+      "category": "runtime",
+      "shortLabel": "RT5"
+    },
+    {
+      "id": "tool-manager",
+      "label": "Tool manager",
+      "entityType": "tool runtime",
+      "category": "tools",
+      "shortLabel": "TL1"
+    },
+    {
+      "id": "builtin-tools",
+      "label": "Built-in tools",
+      "entityType": "tool set",
+      "category": "tools",
+      "shortLabel": "TL2"
+    },
+    {
+      "id": "permission-system",
+      "label": "Permission system",
+      "entityType": "policy",
+      "category": "tools",
+      "shortLabel": "TL3"
+    },
+    {
+      "id": "hook-engine",
+      "label": "Hook engine",
+      "entityType": "extension hook",
+      "category": "tools",
+      "shortLabel": "TL4"
+    },
+    {
+      "id": "mcp-manager",
+      "label": "MCP connection manager",
+      "entityType": "tool integration",
+      "category": "mcp",
+      "shortLabel": "MCP1"
+    },
+    {
+      "id": "mcp-servers",
+      "label": "External MCP servers",
+      "entityType": "external tool server",
+      "category": "mcp",
+      "shortLabel": "MCP2"
+    },
+    {
+      "id": "background-manager",
+      "label": "Background task manager",
+      "entityType": "runtime component",
+      "category": "runtime",
+      "shortLabel": "RT6"
+    },
+    {
+      "id": "kaos-runtime",
+      "label": "Kaos execution environment",
+      "entityType": "execution environment",
+      "category": "runtime",
+      "shortLabel": "RT7"
+    },
+    {
+      "id": "subagent-host",
+      "label": "Subagent host",
+      "entityType": "agent orchestration",
+      "category": "coder",
+      "shortLabel": "COD1"
+    },
+    {
+      "id": "coder-subagent",
+      "label": "coder subagent",
+      "entityType": "subagent",
+      "category": "coder",
+      "shortLabel": "COD2"
+    },
+    {
+      "id": "explore-subagent",
+      "label": "explore subagent",
+      "entityType": "subagent",
+      "category": "coder",
+      "shortLabel": "COD3"
+    },
+    {
+      "id": "plan-subagent",
+      "label": "plan subagent",
+      "entityType": "subagent",
+      "category": "coder",
+      "shortLabel": "COD4"
+    },
+    {
+      "id": "skill-registry",
+      "label": "Skill registry",
+      "entityType": "skill runtime",
+      "category": "tools",
+      "shortLabel": "TL5"
+    },
+    {
+      "id": "session-store",
+      "label": "Session store",
+      "entityType": "persistence",
+      "category": "runtime",
+      "shortLabel": "RT8"
+    },
+    {
+      "id": "oauth-manager",
+      "label": "OAuth/token manager",
+      "entityType": "policy",
+      "category": "runtime",
+      "shortLabel": "RT9"
+    },
+    {
+      "id": "migration-legacy",
+      "label": "Legacy migration flow",
+      "entityType": "runtime component",
+      "category": "runtime",
+      "shortLabel": "RT10"
+    }
+  ],
+  "edges": [
+    {
+      "from": "kimi-cli",
+      "to": "prompt-runner",
+      "relation": "delegates-print-mode",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/main.ts:49-55 routes print mode to runPrompt and shell mode to runShell."
+    },
+    {
+      "from": "kimi-cli",
+      "to": "tui-client",
+      "relation": "starts",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/cli/run-shell.ts:88-97 constructs KimiTUI with harness, options, workDir, theme, and migration state."
+    },
+    {
+      "from": "kimi-cli",
+      "to": "migration-legacy",
+      "relation": "starts",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/main.ts:57-59 routes the kimi migrate subcommand through shell mode; research/repos/kimi-code/apps/kimi-code/src/cli/run-shell.ts:77-83 detects pending legacy migration before TUI startup."
+    },
+    {
+      "from": "kimi-cli",
+      "to": "sdk-harness",
+      "relation": "constructs",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/cli/run-shell.ts:54-67 constructs KimiHarness for shell/TUI mode."
+    },
+    {
+      "from": "prompt-runner",
+      "to": "sdk-harness",
+      "relation": "constructs",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/cli/run-prompt.ts:62-74 constructs KimiHarness with identity, print uiMode, skills, telemetry, and OAuth refresh handling."
+    },
+    {
+      "from": "prompt-runner",
+      "to": "session-runtime",
+      "relation": "creates-or-resumes",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/cli/run-prompt.ts:154-210 resolves prompt sessions by resume, continue, or createSession before running the prompt."
+    },
+    {
+      "from": "tui-client",
+      "to": "sdk-harness",
+      "relation": "uses",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/tui/kimi-tui.ts:560-573 stores a KimiHarness and session event unsubscribe state; research/repos/kimi-code/apps/kimi-code/src/tui/kimi-tui.ts:603-619 receives the harness in the KimiTUI constructor and records migration startup state."
+    },
+    {
+      "from": "tui-client",
+      "to": "session-runtime",
+      "relation": "creates-resumes-prompts",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/tui/kimi-tui.ts:840-855 creates or resumes sessions through the harness; research/repos/kimi-code/apps/kimi-code/src/tui/kimi-tui.ts:1580-1601 sends prompts to Session.prompt."
+    },
+    {
+      "from": "tui-client",
+      "to": "sdk-rpc",
+      "relation": "registers-handlers",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/tui/kimi-tui.ts:2004-2011 registers approval and question handlers on the active Session; research/repos/kimi-code/packages/node-sdk/src/session.ts:64-72 forwards those handlers to the SDK RPC client."
+    },
+    {
+      "from": "tui-client",
+      "to": "migration-legacy",
+      "relation": "uses",
+      "evidence": "research/repos/kimi-code/apps/kimi-code/src/tui/kimi-tui.ts:581-584 stores first-launch migration plan state; research/repos/kimi-code/apps/kimi-code/src/tui/kimi-tui.ts:3893-3911 mounts MigrationScreenComponent with source and target homes."
+    },
+    {
+      "from": "sdk-rpc",
+      "to": "tui-client",
+      "relation": "streams-events-and-approvals-to",
+      "evidence": "research/repos/kimi-code/packages/node-sdk/src/rpc.ts:434-445 stores event listeners and fans received events to them (TUI subscribes at research/repos/kimi-code/apps/kimi-code/src/tui/kimi-tui.ts:2158-2174); research/repos/kimi-code/packages/node-sdk/src/rpc.ts:447-480 stores approval handlers and calls the matching session handler for requestApproval. Single edge collapses the event-streaming and approval-routing pair into one bidirectional-bridge dependency."
+    },
+    {
+      "from": "sdk-harness",
+      "to": "sdk-rpc",
+      "relation": "owns",
+      "evidence": "research/repos/kimi-code/packages/node-sdk/src/kimi-harness.ts:64-71 constructs SDKRpcClient with home/config/auth/skills/telemetry options."
+    },
+    {
+      "from": "sdk-harness",
+      "to": "oauth-manager",
+      "relation": "owns",
+      "evidence": "research/repos/kimi-code/packages/node-sdk/src/kimi-harness.ts:58-71 constructs KimiAuthFacade and passes its OAuth token resolver into SDKRpcClient; research/repos/kimi-code/packages/node-sdk/src/auth.ts:50-68 wraps KimiOAuthToolkit for config-backed OAuth lifecycle."
+    },
+    {
+      "from": "sdk-harness",
+      "to": "session-runtime",
+      "relation": "creates-resumes",
+      "evidence": "research/repos/kimi-code/packages/node-sdk/src/kimi-harness.ts:100-161 creates, resumes, and forks Session wrappers through the RPC client."
+    },
+    {
+      "from": "sdk-rpc",
+      "to": "kimi-core",
+      "relation": "embeds",
+      "evidence": "research/repos/kimi-code/packages/node-sdk/src/rpc.ts:111-128 creates the RPC pair, constructs KimiCore, and initializes the SDK RPC."
+    },
+    {
+      "from": "kimi-core",
+      "to": "sdk-rpc",
+      "relation": "calls-sdk-api",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/rpc/core-impl.ts:137-138 binds the core to the SDK RPC client; research/repos/kimi-code/packages/node-sdk/src/rpc.ts:530-552 implements SDK API event, approval, question, and custom tool callbacks."
+    },
+    {
+      "from": "kimi-core",
+      "to": "session-store",
+      "relation": "persists-sessions-in",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/rpc/core-impl.ts:130-135 constructs ProviderManager and SessionStore; research/repos/kimi-code/packages/agent-core/src/rpc/core-impl.ts:152-155 creates a persisted session record."
+    },
+    {
+      "from": "kimi-core",
+      "to": "session-runtime",
+      "relation": "creates",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/rpc/core-impl.ts:140-177 resolves config/MCP, creates a Session, and passes runtime, hooks, permission rules, skills, MCP config, and telemetry; research/repos/kimi-code/packages/agent-core/src/rpc/core-impl.ts:227-254 resumes sessions through the same runtime construction path."
+    },
+    {
+      "from": "kimi-core",
+      "to": "mcp-manager",
+      "relation": "loads-config-for",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/rpc/core-impl.ts:148-151 resolves session MCP config for new sessions; research/repos/kimi-code/packages/agent-core/src/mcp/session-config.ts:14-23 loads MCP servers and returns session MCP config."
+    },
+    {
+      "from": "kimi-core",
+      "to": "provider-layer",
+      "relation": "configures",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/rpc/core-impl.ts:143-147 resolves model, thinking level, and permission mode from ProviderManager/config for new sessions."
+    },
+    {
+      "from": "kimi-core",
+      "to": "kaos-runtime",
+      "relation": "configures-runtime",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/rpc/core-impl.ts:622-649 creates runtime config with localKaos, environment, URL fetcher, web searcher, and OAuth-aware service credentials."
+    },
+    {
+      "from": "session-runtime",
+      "to": "main-agent",
+      "relation": "creates",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/index.ts:145-149 creates the main agent from the default agent profile and triggers session start; research/repos/kimi-code/packages/agent-core/src/session/index.ts:209-230 instantiates an Agent, stores it in the session agents map, and records metadata. Single edge collapses the two construction sites into one creation dependency."
+    },
+    {
+      "from": "session-runtime",
+      "to": "mcp-manager",
+      "relation": "owns",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/index.ts:126-132 constructs McpConnectionManager and subscribes to its status changes."
+    },
+    {
+      "from": "session-runtime",
+      "to": "skill-registry",
+      "relation": "loads",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/index.ts:320-332 resolves skill roots, loads them, and registers built-in skills."
+    },
+    {
+      "from": "session-runtime",
+      "to": "hook-engine",
+      "relation": "owns",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/index.ts:120-123 constructs HookEngine with session cwd and session id."
+    },
+    {
+      "from": "session-runtime",
+      "to": "subagent-host",
+      "relation": "injects-into-agents",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/index.ts:398-418 instantiates agents with SessionSubagentHost, MCP, background settings, permission options, and telemetry."
+    },
+    {
+      "from": "main-agent",
+      "to": "loop-engine",
+      "relation": "owns",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/index.ts:149-158 constructs FullCompaction, ContextMemory, ConfigState, TurnFlow, InjectionManager, PermissionManager, PlanMode, UsageRecorder, ToolManager, and BackgroundManager."
+    },
+    {
+      "from": "main-agent",
+      "to": "tool-manager",
+      "relation": "owns",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/index.ts:149-158 constructs ToolManager as part of the Agent."
+    },
+    {
+      "from": "main-agent",
+      "to": "permission-system",
+      "relation": "owns",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/index.ts:149-155 constructs PermissionManager and PlanMode for the Agent."
+    },
+    {
+      "from": "main-agent",
+      "to": "hook-engine",
+      "relation": "uses",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/index.ts:127-130 stores the injected HookEngine on the Agent."
+    },
+    {
+      "from": "main-agent",
+      "to": "background-manager",
+      "relation": "owns",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/index.ts:158-161 constructs BackgroundManager with max running tasks and session directory."
+    },
+    {
+      "from": "main-agent",
+      "to": "provider-layer",
+      "relation": "uses",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/index.ts:165-183 resolves provider request auth and calls the raw generate function through the provider manager."
+    },
+    {
+      "from": "main-agent",
+      "to": "skill-registry",
+      "relation": "uses",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/index.ts:119-121 wraps the session SkillRegistry in a SkillManager when skills are configured."
+    },
+    {
+      "from": "loop-engine",
+      "to": "provider-layer",
+      "relation": "calls",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/turn/index.ts:360-388 resolves provider/model, constructs KosongLLM, and passes it into runTurn."
+    },
+    {
+      "from": "provider-layer",
+      "to": "loop-engine",
+      "relation": "streams-results-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/turn/kosong-llm.ts:87-135 calls generate, forwards streaming callbacks, and returns normalized tool calls, finish reasons, and usage."
+    },
+    {
+      "from": "provider-layer",
+      "to": "tool-manager",
+      "relation": "requests-tool-calls",
+      "evidence": "research/repos/kimi-code/packages/kosong/src/generate.ts:58-89 documents generate with provider, tools, history, callbacks, and options; research/repos/kimi-code/packages/kosong/src/generate.ts:122-163 assembles streamed tool calls into message.toolCalls."
+    },
+    {
+      "from": "provider-layer",
+      "to": "oauth-manager",
+      "relation": "uses",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/providers/provider-manager.ts:74-86 resolves provider config with OAuth support; research/repos/kimi-code/packages/agent-core/src/providers/runtime-provider.ts:163-178 obtains access tokens from the configured OAuth token provider."
+    },
+    {
+      "from": "loop-engine",
+      "to": "tool-manager",
+      "relation": "uses-tools-from",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/turn/index.ts:373-388 passes agent.tools.loopTools into runTurn."
+    },
+    {
+      "from": "loop-engine",
+      "to": "permission-system",
+      "relation": "gates-tool-calls",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/turn/index.ts:429-459 runs PreToolUse hooks then calls agent.permission.beforeToolCall before tool execution."
+    },
+    {
+      "from": "permission-system",
+      "to": "sdk-rpc",
+      "relation": "requests-approval-through",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/permission/index.ts:141-177 turns ask decisions into agent.rpc.requestApproval calls."
+    },
+    {
+      "from": "loop-engine",
+      "to": "hook-engine",
+      "relation": "runs-hooks",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/turn/index.ts:305-357 triggers UserPromptSubmit hooks and emits hook.result events; research/repos/kimi-code/packages/agent-core/src/agent/turn/index.ts:429-483 triggers PreToolUse, Stop, PostToolUse, and PostToolUseFailure hooks."
+    },
+    {
+      "from": "hook-engine",
+      "to": "loop-engine",
+      "relation": "blocks-or-continues",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/hooks/engine.ts:44-49 computes blocking decisions from hook results; research/repos/kimi-code/docs/en/customization/hooks.md:77-80 documents PreToolUse and Stop as control-flow hooks."
+    },
+    {
+      "from": "loop-engine",
+      "to": "builtin-tools",
+      "relation": "executes",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/loop/tool-call.ts:103-149 validates, prepares, schedules, executes, and emits results for provider tool calls."
+    },
+    {
+      "from": "builtin-tools",
+      "to": "loop-engine",
+      "relation": "returns-results-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/loop/tool-call.ts:129-141 awaits pending tool execution results and dispatches terminal tool.result events in provider order."
+    },
+    {
+      "from": "tool-manager",
+      "to": "builtin-tools",
+      "relation": "owns",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/tools/builtin/index.ts:1-19 exports background, collaboration, file, planning, shell, state, and web built-in tools."
+    },
+    {
+      "from": "tool-manager",
+      "to": "mcp-manager",
+      "relation": "attaches-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/tool/index.ts:58-72 reads connected MCP servers and subscribes to MCP status changes."
+    },
+    {
+      "from": "mcp-manager",
+      "to": "tool-manager",
+      "relation": "notifies-tool-list-changes",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/mcp/connection-manager.ts:359-375 emits status changes to listeners; research/repos/kimi-code/packages/agent-core/src/agent/tool/index.ts:190-218 handles MCP status changes by registering or unregistering tools and emitting tool.list.updated."
+    },
+    {
+      "from": "mcp-manager",
+      "to": "mcp-servers",
+      "relation": "connects-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/mcp/connection-manager.ts:170-187 connects configured MCP servers in parallel and isolates per-server failures."
+    },
+    {
+      "from": "mcp-servers",
+      "to": "mcp-manager",
+      "relation": "provides-tools-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/mcp/connection-manager.ts:329-337 connects an MCP client, lists tools, and maps MCP tool schemas into Tool objects."
+    },
+    {
+      "from": "tool-manager",
+      "to": "mcp-servers",
+      "relation": "calls-tools-on",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/tool/index.ts:153-169 wraps MCP tools so execution calls client.callTool and converts the MCP result."
+    },
+    {
+      "from": "builtin-tools",
+      "to": "kaos-runtime",
+      "relation": "executes-through",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/tools/builtin/shell/bash.ts:1-24 documents BashTool execution through Kaos; research/repos/kimi-code/packages/agent-core/src/tools/builtin/shell/bash.ts:180-205 spawns shell commands with kaos.execWithEnv."
+    },
+    {
+      "from": "kaos-runtime",
+      "to": "background-manager",
+      "relation": "supplies-processes-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/tools/background/manager.ts:1-13 manages background bash tasks using KaosProcess and wait() lifecycle detection."
+    },
+    {
+      "from": "builtin-tools",
+      "to": "background-manager",
+      "relation": "registers-background-tasks",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/tools/builtin/shell/bash.ts:345-445 runs Bash in background by reserving a slot, spawning a KaosProcess, registering it, and returning a task id."
+    },
+    {
+      "from": "background-manager",
+      "to": "main-agent",
+      "relation": "notifies-results-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/background/index.ts:45-78 emits background task lifecycle events; research/repos/kimi-code/packages/agent-core/src/agent/background/index.ts:98-103 steers terminal task notifications back into the agent turn."
+    },
+    {
+      "from": "tool-manager",
+      "to": "subagent-host",
+      "relation": "invokes",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/tools/builtin/collaboration/agent.ts:108-148 defines AgentTool with injected SessionSubagentHost and resolves execution for subagent launch."
+    },
+    {
+      "from": "subagent-host",
+      "to": "coder-subagent",
+      "relation": "spawns-default",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/tools/builtin/collaboration/agent.ts:36-83 defaults subagent_type to coder when omitted; research/repos/kimi-code/packages/agent-core/src/profile/default/coder.yaml:1-18 defines the coder subagent profile and tools."
+    },
+    {
+      "from": "subagent-host",
+      "to": "explore-subagent",
+      "relation": "spawns",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/subagent-host.ts:188-196 resolves requested subagent profiles from DEFAULT_AGENT_PROFILES; research/repos/kimi-code/packages/agent-core/src/profile/default/explore.yaml:1-36 defines the explore profile and read-only-oriented toolset."
+    },
+    {
+      "from": "subagent-host",
+      "to": "plan-subagent",
+      "relation": "spawns",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/subagent-host.ts:188-196 resolves requested subagent profiles from DEFAULT_AGENT_PROFILES; research/repos/kimi-code/packages/agent-core/src/profile/default/plan.yaml:1-19 defines the plan profile and narrowed toolset."
+    },
+    {
+      "from": "main-agent",
+      "to": "subagent-host",
+      "relation": "uses",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/index.ts:127-128 stores the injected subagentHost on the Agent; research/repos/kimi-code/packages/agent-core/src/agent/turn/index.ts:151-158 cancels active subagents when the parent turn is cancelled."
+    },
+    {
+      "from": "subagent-host",
+      "to": "session-runtime",
+      "relation": "creates-child-agents-in",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/subagent-host.ts:63-76 spawns a child by calling session.createAgent with type sub and the owner agent id."
+    },
+    {
+      "from": "subagent-host",
+      "to": "main-agent",
+      "relation": "reports-results-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/subagent-host.ts:206-219 emits subagent.spawned and telemetry on the parent; research/repos/kimi-code/packages/agent-core/src/session/subagent-host.ts:252-269 emits subagent.completed or subagent.failed back to the parent."
+    },
+    {
+      "from": "main-agent",
+      "to": "session-store",
+      "relation": "records-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/index.ts:135-148 initializes AgentRecords with FileSystemAgentRecordPersistence under the agent homedir when present."
+    },
+    {
+      "from": "session-runtime",
+      "to": "session-store",
+      "relation": "writes-metadata-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/index.ts:289-300 serializes metadata and writes it via runtime.kaos.writeText; research/repos/kimi-code/packages/agent-core/src/session/index.ts:309-312 flushes metadata and agent records."
+    },
+    {
+      "from": "skill-registry",
+      "to": "tool-manager",
+      "relation": "adds-skill-tooling-to",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/session/index.ts:133-139 refreshes agent built-in tools after skills load; research/repos/kimi-code/packages/agent-core/src/profile/default/agent.yaml:20-27 includes Skill and mcp__* in the default agent tool list."
+    },
+    {
+      "from": "tool-manager",
+      "to": "skill-registry",
+      "relation": "invokes-skills-from",
+      "evidence": "research/repos/kimi-code/packages/agent-core/src/agent/tool/index.ts:376-378 constructs SkillTool only when agent.skills.registry.listInvocableSkills() is non-empty; research/repos/kimi-code/packages/agent-core/src/tools/builtin/collaboration/skill-tool.ts:103-115 reads agent.skills.registry.getSkill(args.skill) during tool execution to invoke skills."
+    }
+  ],
+  "derive": {
+    "algorithm": "hidden-structure",
+    "outputArchitectureType": "core-periphery"
+  }
+}

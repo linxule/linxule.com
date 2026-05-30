@@ -1,0 +1,81 @@
+/* Theme tokens. Custom properties for color, typography, and component
+   palettes. Single source for any visual constants the renderer/views read.
+
+   Aligned to the linxule.com "book" design system (see the site's
+   .claude/docs/design-system.md): two typographic voices in counterpoint
+   (Cormorant Garamond = human/prose, IBM Plex Mono = machine/structure),
+   the paper+ink palette, and "color as event" — the violet bloom is EARNED
+   on interaction, never resting. The matrix's own colors are the exception
+   the site's philosophy explicitly allows: legitimate *states* (dependency
+   direction, partition membership) that carry information, not decoration. */
+
+:root {
+  /* ---- Ground: the book's paper + ink ---------------------------------- */
+  --paper: #f4f1eb;          /* site --paper */
+  --paper-dark: #e8e4dc;     /* site --paper-dark — inset callouts */
+  --bg: var(--paper);        /* matrix cells, tile fills, page ground */
+  --card: #fbf9f4;           /* raised-paper card surfaces (was stark white) */
+  --ink: #1a1a1a;            /* site --ink (already matched) */
+  --ink-light: #6b6b6b;      /* site --ink-light — body-adjacent secondary */
+  --muted: #6e6e6e;          /* labels, metadata. #888 → #767676 → #6e6e6e: the
+                                middle value was actually 4.03:1 on --paper (the
+                                "4.5:1" claim was wrong); #6e6e6e measures 4.52:1.
+                                De-boxing made muted text the SOLE signal for the
+                                cockpit controls/indicator + rail, so AA matters. */
+  --rule: #c8c8c8;           /* site --ink-ghost — borders, gridlines */
+
+  /* ---- Interaction: the bloom (earned on hover/focus, never at rest) --- */
+  --bloom: #8b7089;          /* site interactive violet */
+  --bloom-glow: rgba(139, 112, 137, 0.15);
+  --accent: var(--bloom);    /* chrome accent = bloom. (rust is now --warm) */
+
+  /* ---- The accident: one cyan "wrongness" per page (site convention) --- */
+  --accident: #4ee1d4;
+
+  /* ---- Semantic warm: the system's core. Freed from chrome duty so it
+          survives only as meaning (core partition, backward/feedback). ---- */
+  --warm: #b85c2e;
+  --warm-tint-1: color-mix(in srgb, var(--warm) 6%, transparent);
+  --warm-tint-2: color-mix(in srgb, var(--warm) 9%, transparent);
+  --warm-tint-3: color-mix(in srgb, var(--warm) 13%, transparent);
+
+  /* Cell palette (matrix dependency directions) */
+  --diagonal-bg: #2a2a2a;        /* near-ink — the task cell */
+  --diagonal-ink: #f4f1eb;       /* paper, for label contrast on the dark cell */
+  --forward: #6b6b6b;            /* neutral gray — forward transfer */
+  --backward: var(--warm);       /* warm — feedback / rework / cyclic */
+
+  /* Module overlay tint */
+  --module-bg: var(--warm-tint-1);
+
+  /* Group palette (authored Path A scenes). Normalizer maps region.id →
+     --color-<id>; unmapped regions fall back to var(--rule). Kept distinct
+     because module identity is semantic; harmonized to the warmer paper. */
+  --color-screen: #4a7fa7;
+  --color-mobo: var(--warm);
+  --color-drive: #5a8a5a;
+  --color-case: #8a6a3a;
+  --color-dr: #2a2a2a;
+  --color-integration: #888888;
+
+  /* Algorithm-output regions (Hidden Structure four-square) — keep-and-retune.
+     Four distinct hues are required (this is the algorithm's payoff); they're
+     harmonized to the book palette. Warm = the cyclic core (the heart of the
+     system); bloom is reserved for interaction so it never competes. */
+  --color-shared: #5a8a5a;       /* shared / integration — green */
+  --color-core: var(--warm);     /* the cyclic core — warm */
+  --color-control: #4a7fa7;      /* control — blue */
+  --color-peripheral: #9a9488;   /* warm gray — sits on the paper */
+
+  /* Job-shop regions */
+  --color-cg: #2a2a2a;
+  --color-shop: #4a7fa7;
+  --color-ext: var(--warm);
+
+  /* ---- Voices: the site's counterpoint --------------------------------- */
+  /* Human voice — prose, headings, reading. Cormorant is a display serif:
+     reserve it for prose + titles, not dense small labels (those go mono). */
+  --font-body: "Cormorant Garamond", "Noto Serif SC", Georgia, "Times New Roman", serif;
+  /* Machine voice — labels, metadata, controls, data, code. */
+  --font-mono: "IBM Plex Mono", "SF Mono", "JetBrains Mono", "Menlo", monospace;
+}

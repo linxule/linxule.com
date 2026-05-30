@@ -1,0 +1,78 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "flow-central",
+  "title": "Synchronized flow with a central coordinator",
+  "source": "Adapted from Baldwin (2026), <em>A theory of technology and organizations</em>, Figure 7A",
+  "lenses": ["forward-handoff", "coordinator-dispatch"],
+
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> A coordinator (C) and five operators (O1–O5) line up along the diagonal. The placeholder (…) marks the spot where additional operators would slot in. Synchronized flow assumes a fixed sequence; every operator depends on the previous one.",
+        "reveal": { "include": ["diagonal"] }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> The coordinator dispatches work to each operator. C wraps the top row — every column below C carries a forward transfer. A central computer or foreman issues the instructions; the operators execute. The dispatch arrows are loud here; the hand-offs along the line wait their turn.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward"] },
+        "setEmphasis": {
+          "primary": { "byLens": ["coordinator-dispatch"] },
+          "secondary": { "byLens": ["forward-handoff"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Work flows forward along the diagonal — O1 hands the in-progress unit to O2, O2 to O3, and so on. The assembly line is visible as the sub-diagonal of forward transfers below the main diagonal.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward"] },
+        "setEmphasis": {
+          "primary": { "byLens": ["forward-handoff"] },
+          "secondary": { "byLens": ["coordinator-dispatch"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> Notice what isn't here: <em>no backward transfers</em>. Fig 7A contains no rework and no signals — the coordinator absorbed the control problem at the top. Compare Fig 7B, which keeps the same forward layout but adds kanban pull signals back upstream as a separate coordination layer.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward"] }
+      }
+    ]
+  },
+
+  "matrices": [
+    {
+      "id": "flow-central",
+      "architectureType": "flow",
+
+      "regions": [
+        { "id": "coord", "layoutKind": "corner-wrapping", "semanticKind": "coordinator", "label": "Coordinator" },
+        { "id": "line",  "layoutKind": "diagonal-block",  "semanticKind": "task",        "label": "Production line" }
+      ],
+
+      "tasks": [
+        { "id": "C",   "label": "Coordinator",   "shortLabel": "C",  "region": "coord" },
+        { "id": "O1",  "label": "Operator 1",    "shortLabel": "O1", "region": "line" },
+        { "id": "O2",  "label": "Operator 2",    "shortLabel": "O2", "region": "line" },
+        { "id": "O3",  "label": "Operator 3",    "shortLabel": "O3", "region": "line" },
+        { "id": "DOT", "label": "…",             "shortLabel": "…",  "region": "line", "placeholder": true },
+        { "id": "O4",  "label": "Operator 4",    "shortLabel": "O4", "region": "line" },
+        { "id": "O5",  "label": "Operator 5",    "shortLabel": "O5", "region": "line" }
+      ],
+
+      "transfers": [
+        { "from": "C", "to": "O1", "mark": "x", "rendering": { "arrow": true, "label": "dispatch", "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "C", "to": "O2", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "C", "to": "O3", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "C", "to": "O4", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "C", "to": "O5", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+
+        { "from": "O1", "to": "O2", "mark": "x", "rendering": { "arrow": true, "label": "hand-off", "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "O2", "to": "O3", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "O3", "to": "O4", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "O4", "to": "O5", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } }
+      ],
+
+      "annotations": [
+        { "position": "top",   "label": "Central coordination",          "pointer": { "regionId": "coord" } },
+        { "position": "right", "label": "Forward-only production line",  "pointer": { "regionId": "line" } }
+      ]
+    }
+  ]
+}

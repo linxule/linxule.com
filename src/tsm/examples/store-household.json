@@ -1,0 +1,148 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "store-household",
+  "title": "Store and household linked by a transaction",
+  "source": "Adapted from Baldwin (2026), <em>A theory of technology and organizations</em>, Figure 4",
+  "lenses": ["coordinator-dispatch", "modularity-boundary"],
+
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> A single TSM holds two transaction-free zones — a Store (S1–S5) and a Household (H1–H5) — with a coordinator (CG) at the top. Each zone runs its own internal recipe; the diagonal lays them out side by side.",
+        "reveal": { "include": ["diagonal"] }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> The coordinator dispatches downward. CG seeds every task in both zones; <em>inside</em> each zone, tasks transfer freely to one another the way a job shop does. No formal accounting required — these are transfers, not transactions.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward"] },
+        "setEmphasis": {
+          "primary": { "byLens": ["coordinator-dispatch"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> The off-diagonal regions between Store and Household are mostly empty. <em>That</em> is the transaction-free-zone insight: firms are dense inside and sparse at the boundary. Two single marks bridge the zones — one knife transfer below the diagonal (S5 → H1) and one money transfer above it (H1 → S5).",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] },
+        "setEmphasis": {
+          "primary": { "byId": ["S5→H1", "H1→S5"] },
+          "secondary": { "byLens": ["coordinator-dispatch"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> The cluster borders make the two transaction-free zones visible. The thin crossing point between them is where the transaction lives — defining what's exchanged, counting the items, compensating for them. Modularization is what created the thinness; the transaction is what the thinness now affords.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border",
+            "highlight:cross-region"
+          ]
+        },
+        "setEmphasis": {
+          "primary": { "byLens": ["modularity-boundary"] }
+        }
+      }
+    ]
+  },
+
+  "matrices": [
+    {
+      "id": "store-household",
+      "architectureType": "proto-modular",
+
+      "regions": [
+        { "id": "cg",        "layoutKind": "diagonal-block", "semanticKind": "coordinator", "label": "Coordinator" },
+        { "id": "store",     "layoutKind": "diagonal-block", "semanticKind": "module",      "label": "Store" },
+        { "id": "household", "layoutKind": "diagonal-block", "semanticKind": "module",      "label": "Household" }
+      ],
+
+      "tasks": [
+        { "id": "CG", "label": "Coordinator", "shortLabel": "CG", "region": "cg" },
+
+        { "id": "S1", "label": "Store — receiving",  "shortLabel": "S1", "region": "store" },
+        { "id": "S2", "label": "Store — stocking",   "shortLabel": "S2", "region": "store" },
+        { "id": "S3", "label": "Store — display",    "shortLabel": "S3", "region": "store" },
+        { "id": "S4", "label": "Store — checkout",   "shortLabel": "S4", "region": "store" },
+        { "id": "S5", "label": "Store — handover",   "shortLabel": "S5", "region": "store" },
+
+        { "id": "H1", "label": "Household — intake",   "shortLabel": "H1", "region": "household" },
+        { "id": "H2", "label": "Household — storage",  "shortLabel": "H2", "region": "household" },
+        { "id": "H3", "label": "Household — prep",     "shortLabel": "H3", "region": "household" },
+        { "id": "H4", "label": "Household — cook",     "shortLabel": "H4", "region": "household" },
+        { "id": "H5", "label": "Household — serve",    "shortLabel": "H5", "region": "household" }
+      ],
+
+      "transfers": [
+        { "from": "CG", "to": "S1", "mark": "x", "rendering": { "arrow": true, "label": "dispatch", "emphasis": "primary", "lens": "coordinator-dispatch" } },
+        { "from": "CG", "to": "S2", "mark": "x" },
+        { "from": "CG", "to": "S3", "mark": "x" },
+        { "from": "CG", "to": "S4", "mark": "x" },
+        { "from": "CG", "to": "S5", "mark": "x" },
+        { "from": "CG", "to": "H1", "mark": "x" },
+        { "from": "CG", "to": "H2", "mark": "x" },
+        { "from": "CG", "to": "H3", "mark": "x" },
+        { "from": "CG", "to": "H4", "mark": "x" },
+        { "from": "CG", "to": "H5", "mark": "x" },
+
+        { "from": "S1", "to": "S2", "mark": "x" },
+        { "from": "S1", "to": "S3", "mark": "x" },
+        { "from": "S1", "to": "S4", "mark": "x" },
+        { "from": "S1", "to": "S5", "mark": "x" },
+        { "from": "S2", "to": "S1", "mark": "x" },
+        { "from": "S2", "to": "S3", "mark": "x" },
+        { "from": "S2", "to": "S4", "mark": "x" },
+        { "from": "S2", "to": "S5", "mark": "x" },
+        { "from": "S3", "to": "S1", "mark": "x" },
+        { "from": "S3", "to": "S2", "mark": "x" },
+        { "from": "S3", "to": "S4", "mark": "x" },
+        { "from": "S3", "to": "S5", "mark": "x" },
+        { "from": "S4", "to": "S1", "mark": "x" },
+        { "from": "S4", "to": "S2", "mark": "x" },
+        { "from": "S4", "to": "S3", "mark": "x" },
+        { "from": "S4", "to": "S5", "mark": "x" },
+        { "from": "S5", "to": "S1", "mark": "x" },
+        { "from": "S5", "to": "S2", "mark": "x" },
+        { "from": "S5", "to": "S3", "mark": "x" },
+        { "from": "S5", "to": "S4", "mark": "x" },
+
+        { "from": "H1", "to": "H2", "mark": "x" },
+        { "from": "H1", "to": "H3", "mark": "x" },
+        { "from": "H1", "to": "H4", "mark": "x" },
+        { "from": "H1", "to": "H5", "mark": "x" },
+        { "from": "H2", "to": "H1", "mark": "x" },
+        { "from": "H2", "to": "H3", "mark": "x" },
+        { "from": "H2", "to": "H4", "mark": "x" },
+        { "from": "H2", "to": "H5", "mark": "x" },
+        { "from": "H3", "to": "H1", "mark": "x" },
+        { "from": "H3", "to": "H2", "mark": "x" },
+        { "from": "H3", "to": "H4", "mark": "x" },
+        { "from": "H3", "to": "H5", "mark": "x" },
+        { "from": "H4", "to": "H1", "mark": "x" },
+        { "from": "H4", "to": "H2", "mark": "x" },
+        { "from": "H4", "to": "H3", "mark": "x" },
+        { "from": "H4", "to": "H5", "mark": "x" },
+        { "from": "H5", "to": "H1", "mark": "x" },
+        { "from": "H5", "to": "H2", "mark": "x" },
+        { "from": "H5", "to": "H3", "mark": "x" },
+        { "from": "H5", "to": "H4", "mark": "x" },
+
+        { "from": "S5", "to": "H1", "mark": "x", "rendering": { "arrow": true, "label": "knife transfer", "emphasis": "secondary", "labelStyle": "load-bearing" } },
+        { "from": "H1", "to": "S5", "mark": "x", "rendering": { "arrow": true, "label": "money transfer", "emphasis": "secondary", "labelStyle": "load-bearing" } }
+      ],
+
+      "overlays": [
+        { "kind": "module-border", "regionId": "store",     "label": "Store",     "rendering": { "lens": "modularity-boundary" } },
+        { "kind": "module-border", "regionId": "household", "label": "Household", "rendering": { "lens": "modularity-boundary" } }
+      ],
+
+      "annotations": [
+        { "position": "top",   "label": "Store",          "pointer": { "regionId": "store" } },
+        { "position": "top",   "label": "Household",      "pointer": { "regionId": "household" } },
+        { "position": "left",  "label": "Coordinator",    "pointer": { "regionId": "cg" } },
+        { "position": "right", "label": "Knife transfer", "pointer": { "taskId": "S5" } },
+        { "position": "right", "label": "Money transfer", "pointer": { "taskId": "H1" } }
+      ]
+    }
+  ]
+}

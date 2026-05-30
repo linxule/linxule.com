@@ -1,0 +1,4 @@
+# Standalone static sub-apps are passthrough-copied verbatim (see eleventy.config.js)
+# and must NOT be run through the Nunjucks template pipeline (htmlTemplateEngine: njk),
+# which would otherwise pick up their .html files as templates.
+src/tsm

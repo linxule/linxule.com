@@ -1,0 +1,143 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "laptop-modular",
+  "title": "Designing a modular laptop computer",
+  "source": "Adapted from Baldwin (2026), <em>A theory of technology and organizations</em>, Figure 3",
+  "lenses": ["coordinator-dispatch", "cross-region-edge", "modularity-boundary"],
+
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> All the tasks line up along the diagonal — design rules first, then the four component modules, then system integration.",
+        "reveal": { "include": ["diagonal"] }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Design rules dispatch downward to every module. Specifying interfaces in advance — once — replaces the criss-cross coordination that integral systems require. All three rows of dispatch arrows fire from the design-rule region.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward"] },
+        "setEmphasis": {
+          "primary": { "byLens": ["coordinator-dispatch"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Inside each module, the local recipe runs: spec, design, test, with feedback. Each module is its own self-contained TSM. The dispatch arrows fade back to context.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> The finished modules feed system integration. Notice what isn't here: <em>no transfers between modules</em>. The design rules absorbed all the coordination work upfront, so the modules don't need to talk to each other. The module boundaries become loud.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border"
+          ]
+        },
+        "setEmphasis": {
+          "primary": { "byLens": ["modularity-boundary"] }
+        }
+      }
+    ]
+  },
+
+  "matrices": [
+    {
+      "id": "laptop",
+      "architectureType": "modular",
+
+      "regions": [
+        { "id": "dr",          "layoutKind": "left-band",      "semanticKind": "design-rules", "label": "Design Rules" },
+        { "id": "screen",      "layoutKind": "diagonal-block", "semanticKind": "module",       "label": "Screen" },
+        { "id": "mobo",        "layoutKind": "diagonal-block", "semanticKind": "module",       "label": "Motherboard" },
+        { "id": "drive",       "layoutKind": "diagonal-block", "semanticKind": "module",       "label": "Drive" },
+        { "id": "case",        "layoutKind": "diagonal-block", "semanticKind": "module",       "label": "Casing" },
+        { "id": "integration", "layoutKind": "bottom-band",    "semanticKind": "integration",  "label": "Integration" }
+      ],
+
+      "tasks": [
+        { "id": "dr1", "label": "DR1", "region": "dr" },
+        { "id": "dr2", "label": "DR2", "region": "dr" },
+        { "id": "dr3", "label": "DR3", "region": "dr" },
+
+        { "id": "s-spec",   "label": "Spec",   "region": "screen" },
+        { "id": "s-design", "label": "Design", "region": "screen" },
+        { "id": "s-test",   "label": "Test",   "region": "screen" },
+
+        { "id": "m-spec",   "label": "Spec",   "region": "mobo" },
+        { "id": "m-design", "label": "Design", "region": "mobo" },
+        { "id": "m-layout", "label": "Layout", "region": "mobo" },
+        { "id": "m-test",   "label": "Test",   "region": "mobo" },
+
+        { "id": "d-spec",   "label": "Spec",   "region": "drive" },
+        { "id": "d-design", "label": "Design", "region": "drive" },
+        { "id": "d-test",   "label": "Test",   "region": "drive" },
+
+        { "id": "c-spec",   "label": "Spec",   "region": "case" },
+        { "id": "c-design", "label": "Design", "region": "case" },
+        { "id": "c-test",   "label": "Test",   "region": "case" },
+
+        { "id": "i-spec",  "label": "Spec",  "region": "integration" },
+        { "id": "i-build", "label": "Build", "region": "integration" },
+        { "id": "i-test",  "label": "Test",  "region": "integration" }
+      ],
+
+      "transfers": [
+        { "from": "dr1", "to": "s-spec", "mark": "x", "rendering": { "arrow": true, "label": "design-rule dispatch", "emphasis": "primary", "lens": "coordinator-dispatch" } },
+        { "from": "dr1", "to": "m-spec", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "coordinator-dispatch" } },
+        { "from": "dr1", "to": "d-spec", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "coordinator-dispatch" } },
+        { "from": "dr1", "to": "c-spec", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "coordinator-dispatch" } },
+
+        { "from": "dr2", "to": "s-design", "mark": "x", "rendering": { "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "dr2", "to": "m-design", "mark": "x", "rendering": { "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "dr2", "to": "d-design", "mark": "x", "rendering": { "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "dr2", "to": "c-design", "mark": "x", "rendering": { "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+
+        { "from": "dr3", "to": "s-test", "mark": "x", "rendering": { "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "dr3", "to": "m-test", "mark": "x", "rendering": { "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "dr3", "to": "d-test", "mark": "x", "rendering": { "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "dr3", "to": "c-test", "mark": "x", "rendering": { "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "dr3", "to": "i-spec", "mark": "x", "rendering": { "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+
+        { "from": "s-spec",   "to": "s-design", "mark": "x" },
+        { "from": "s-design", "to": "s-test",   "mark": "x" },
+        { "from": "s-test",   "to": "s-design", "mark": "x" },
+
+        { "from": "m-spec",   "to": "m-design", "mark": "x" },
+        { "from": "m-design", "to": "m-layout", "mark": "x" },
+        { "from": "m-layout", "to": "m-test",   "mark": "x" },
+        { "from": "m-test",   "to": "m-layout", "mark": "x" },
+        { "from": "m-layout", "to": "m-design", "mark": "x" },
+
+        { "from": "d-spec",   "to": "d-design", "mark": "x" },
+        { "from": "d-design", "to": "d-test",   "mark": "x" },
+        { "from": "d-test",   "to": "d-design", "mark": "x" },
+
+        { "from": "c-spec",   "to": "c-design", "mark": "x" },
+        { "from": "c-design", "to": "c-test",   "mark": "x" },
+        { "from": "c-test",   "to": "c-design", "mark": "x" },
+
+        { "from": "s-test", "to": "i-spec", "mark": "x", "rendering": { "arrow": true, "label": "module → integration", "emphasis": "primary", "lens": "cross-region-edge" } },
+        { "from": "m-test", "to": "i-spec", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cross-region-edge" } },
+        { "from": "d-test", "to": "i-spec", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cross-region-edge" } },
+        { "from": "c-test", "to": "i-spec", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cross-region-edge" } },
+
+        { "from": "i-spec",  "to": "i-build", "mark": "x" },
+        { "from": "i-build", "to": "i-test",  "mark": "x" },
+        { "from": "i-test",  "to": "i-build", "mark": "x" }
+      ],
+
+      "overlays": [
+        { "kind": "module-border", "regionId": "screen", "rendering": { "lens": "modularity-boundary" } },
+        { "kind": "module-border", "regionId": "mobo",   "rendering": { "lens": "modularity-boundary" } },
+        { "kind": "module-border", "regionId": "drive",  "rendering": { "lens": "modularity-boundary" } },
+        { "kind": "module-border", "regionId": "case",   "rendering": { "lens": "modularity-boundary" } }
+      ],
+
+      "annotations": [
+        { "position": "left",   "label": "Design Rules",        "pointer": { "regionId": "dr" } },
+        { "position": "bottom", "label": "System Integration",  "pointer": { "regionId": "integration" } }
+      ]
+    }
+  ]
+}

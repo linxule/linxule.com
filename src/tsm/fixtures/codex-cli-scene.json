@@ -1,0 +1,752 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "codex-cli-native-agent-derived",
+  "title": "OpenAI Codex CLI architecture (May 2026) (Hidden Structure)",
+  "source": "Derived via Hidden Structure from codex-cli-native-agent. Source observation: Extracted 2026-05-25 from openai/codex public repository manifests and official Codex docs. Edge convention: X depends on Y = X links to, talks to, invokes, configures, gates, bundles, or receives runtime results/events from Y. Pinned to commit 8a94430bb273623be42b68f144f1ab1df343bb53.",
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> Hidden Structure has sorted the system. Every node sits on the diagonal in a position that reveals its structural role.",
+        "reveal": {
+          "include": [
+            "diagonal"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward transfers show the dependency flow as it actually runs. Below the diagonal, each mark is a direct invocation or load.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> The four-square partition.<br/>Core: 3 nodes in a mutually-dependent cycle.<br/>Shared: 15 nodes the core depends on.<br/>Control: 4 nodes that depend on the core.<br/><em>Architecture: core-periphery.</em>",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border"
+          ]
+        }
+      }
+    ]
+  },
+  "matrices": [
+    {
+      "id": "codex-cli-native-agent",
+      "architectureType": "core-periphery",
+      "regions": [
+        {
+          "id": "shared",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "shared",
+          "label": "Shared"
+        },
+        {
+          "id": "core",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core"
+        },
+        {
+          "id": "control",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "control",
+          "label": "Control"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "shell-exec",
+          "label": "Shell/exec tools",
+          "region": "shared",
+          "shortLabel": "T1",
+          "category": "tools"
+        },
+        {
+          "id": "sandboxing",
+          "label": "Sandboxing",
+          "region": "shared",
+          "shortLabel": "T2",
+          "category": "tools"
+        },
+        {
+          "id": "permission-profiles",
+          "label": "Permission profiles",
+          "region": "shared",
+          "shortLabel": "T3",
+          "category": "tools"
+        },
+        {
+          "id": "subagent-workflows",
+          "label": "Subagent workflows",
+          "region": "shared",
+          "shortLabel": "C1",
+          "category": "coder"
+        },
+        {
+          "id": "child-agents",
+          "label": "Child agent threads",
+          "region": "shared",
+          "shortLabel": "C2",
+          "category": "coder"
+        },
+        {
+          "id": "app-server-protocol",
+          "label": "App-server protocol",
+          "region": "shared",
+          "shortLabel": "V1",
+          "category": "server"
+        },
+        {
+          "id": "mcp-manager",
+          "label": "MCP manager",
+          "region": "shared",
+          "shortLabel": "M1",
+          "category": "mcp"
+        },
+        {
+          "id": "external-mcp-servers",
+          "label": "External MCP servers",
+          "region": "shared",
+          "shortLabel": "M2",
+          "category": "mcp"
+        },
+        {
+          "id": "app-connectors",
+          "label": "App connectors",
+          "region": "shared",
+          "shortLabel": "T4",
+          "category": "tools"
+        },
+        {
+          "id": "hooks",
+          "label": "Hooks",
+          "region": "shared",
+          "shortLabel": "T5",
+          "category": "tools"
+        },
+        {
+          "id": "rollout-store",
+          "label": "Rollout/session store",
+          "region": "shared",
+          "shortLabel": "R1",
+          "category": "runtime"
+        },
+        {
+          "id": "model-provider",
+          "label": "Model provider",
+          "region": "shared",
+          "shortLabel": "R2",
+          "category": "runtime"
+        },
+        {
+          "id": "tool-runtime",
+          "label": "Tool runtime",
+          "region": "shared",
+          "shortLabel": "T6",
+          "category": "tools"
+        },
+        {
+          "id": "config-layers",
+          "label": "Config layers",
+          "region": "shared",
+          "shortLabel": "R3",
+          "category": "runtime"
+        },
+        {
+          "id": "thread-manager",
+          "label": "Thread manager",
+          "region": "shared",
+          "shortLabel": "R4",
+          "category": "runtime"
+        },
+        {
+          "id": "codex-core",
+          "label": "codex-core",
+          "region": "core",
+          "shortLabel": "R5",
+          "category": "runtime"
+        },
+        {
+          "id": "skills-system",
+          "label": "Skills system",
+          "region": "core",
+          "shortLabel": "T7",
+          "category": "tools"
+        },
+        {
+          "id": "plugin-system",
+          "label": "Plugin system",
+          "region": "core",
+          "shortLabel": "T8",
+          "category": "tools"
+        },
+        {
+          "id": "codex-tui",
+          "label": "Codex TUI",
+          "region": "control",
+          "shortLabel": "L1",
+          "category": "cli"
+        },
+        {
+          "id": "app-server",
+          "label": "Codex app-server",
+          "region": "control",
+          "shortLabel": "V2",
+          "category": "server"
+        },
+        {
+          "id": "codex-mcp-crate",
+          "label": "codex-mcp crate",
+          "region": "control",
+          "shortLabel": "M3",
+          "category": "mcp"
+        },
+        {
+          "id": "codex-cli",
+          "label": "Codex CLI",
+          "region": "control",
+          "shortLabel": "L2",
+          "category": "cli"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "codex-tui",
+          "to": "codex-cli",
+          "mark": "x"
+        },
+        {
+          "from": "app-server",
+          "to": "codex-cli",
+          "mark": "x"
+        },
+        {
+          "from": "codex-core",
+          "to": "codex-cli",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "codex-mcp-crate",
+          "to": "codex-cli",
+          "mark": "x"
+        },
+        {
+          "from": "app-server-protocol",
+          "to": "codex-tui",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "app-server",
+          "to": "codex-tui",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "codex-tui",
+          "to": "app-server",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "app-server-protocol",
+          "to": "app-server",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "codex-core",
+          "to": "app-server",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "tool-runtime",
+          "to": "app-server",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "plugin-system",
+          "to": "app-server",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "thread-manager",
+          "to": "codex-core",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "subagent-workflows",
+          "to": "thread-manager",
+          "mark": "x"
+        },
+        {
+          "from": "child-agents",
+          "to": "subagent-workflows",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "subagent-workflows",
+          "to": "child-agents",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "permission-profiles",
+          "to": "child-agents",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "config-layers",
+          "to": "codex-core",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "permission-profiles",
+          "to": "config-layers",
+          "mark": "x"
+        },
+        {
+          "from": "sandboxing",
+          "to": "permission-profiles",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "shell-exec",
+          "to": "sandboxing",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "shell-exec",
+          "to": "tool-runtime",
+          "mark": "x"
+        },
+        {
+          "from": "tool-runtime",
+          "to": "codex-core",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "app-server-protocol",
+          "to": "tool-runtime",
+          "mark": "x"
+        },
+        {
+          "from": "mcp-manager",
+          "to": "codex-core",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "external-mcp-servers",
+          "to": "mcp-manager",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "mcp-manager",
+          "to": "external-mcp-servers",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "skills-system",
+          "to": "codex-core",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "codex-core",
+          "to": "skills-system",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "skills-system",
+          "to": "plugin-system",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "app-connectors",
+          "to": "plugin-system",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "external-mcp-servers",
+          "to": "plugin-system",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "plugin-system",
+          "to": "codex-core",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "hooks",
+          "to": "codex-core",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "rollout-store",
+          "to": "codex-core",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "model-provider",
+          "to": "codex-core",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "mcp-manager",
+          "to": "codex-mcp-crate",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "plugin-system",
+          "to": "codex-mcp-crate",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        }
+      ],
+      "overlays": [
+        {
+          "kind": "module-border",
+          "regionId": "shared",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "control",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        }
+      ],
+      "annotations": []
+    }
+  ],
+  "lenses": [
+    "cyclic-flow",
+    "cross-region-edge",
+    "core-periphery-boundary"
+  ],
+  "provenance": {
+    "inputObservationId": "codex-cli-native-agent",
+    "algorithm": "hidden-structure",
+    "algorithmVersion": "0.1.0",
+    "vfivfo": {
+      "codex-cli": {
+        "vfi": 0,
+        "vfo": 21
+      },
+      "codex-tui": {
+        "vfi": 2,
+        "vfo": 19
+      },
+      "app-server": {
+        "vfi": 2,
+        "vfo": 19
+      },
+      "app-server-protocol": {
+        "vfi": 8,
+        "vfo": 0
+      },
+      "codex-core": {
+        "vfi": 6,
+        "vfo": 17
+      },
+      "thread-manager": {
+        "vfi": 7,
+        "vfo": 5
+      },
+      "subagent-workflows": {
+        "vfi": 9,
+        "vfo": 4
+      },
+      "child-agents": {
+        "vfi": 9,
+        "vfo": 4
+      },
+      "config-layers": {
+        "vfi": 7,
+        "vfo": 3
+      },
+      "permission-profiles": {
+        "vfi": 11,
+        "vfo": 2
+      },
+      "sandboxing": {
+        "vfi": 12,
+        "vfo": 1
+      },
+      "tool-runtime": {
+        "vfi": 7,
+        "vfo": 2
+      },
+      "shell-exec": {
+        "vfi": 14,
+        "vfo": 0
+      },
+      "mcp-manager": {
+        "vfi": 8,
+        "vfo": 1
+      },
+      "external-mcp-servers": {
+        "vfi": 8,
+        "vfo": 1
+      },
+      "skills-system": {
+        "vfi": 6,
+        "vfo": 17
+      },
+      "plugin-system": {
+        "vfi": 6,
+        "vfo": 17
+      },
+      "app-connectors": {
+        "vfi": 7,
+        "vfo": 0
+      },
+      "hooks": {
+        "vfi": 7,
+        "vfo": 0
+      },
+      "rollout-store": {
+        "vfi": 7,
+        "vfo": 0
+      },
+      "model-provider": {
+        "vfi": 7,
+        "vfo": 0
+      },
+      "codex-mcp-crate": {
+        "vfi": 1,
+        "vfo": 18
+      }
+    },
+    "cyclicGroups": [
+      [
+        "codex-core",
+        "skills-system",
+        "plugin-system"
+      ],
+      [
+        "codex-tui",
+        "app-server"
+      ],
+      [
+        "subagent-workflows",
+        "child-agents"
+      ],
+      [
+        "mcp-manager",
+        "external-mcp-servers"
+      ]
+    ]
+  }
+}

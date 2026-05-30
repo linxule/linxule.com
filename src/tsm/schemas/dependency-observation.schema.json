@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://linxule.com/tsm/schemas/dependency-observation.schema.json",
+  "title": "Dependency Observation (v0.4)",
+  "description": "Raw extracted dependencies before TSM ordering. Path B input. Produced by AI agents, extraction scripts, or human field-mapping. See ARCHITECTURE.md v0.3.",
+  "type": "object",
+  "required": ["specVersion", "kind", "id", "nodes", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "specVersion": { "type": "string", "enum": ["0.3", "0.4"] },
+    "kind": { "type": "string", "const": "dependency-observation" },
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string" },
+    "source": { "type": "string" },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string" },
+          "shortLabel": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional terse display label propagated to the derived task. When absent, the synthesis layer may derive one from entityType."
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional free-form category for grouping in a category-grouped legend. Round-trips through derive() onto task.category in the derived scene. Authors pick a domain-appropriate vocabulary (e.g. cli/runtime/sdk/tools/mcp/coder)."
+          },
+          "entityType": {
+            "type": "string",
+            "description": "Caller's typology. The engine does not interpret it; the synthesis layer may use it to derive presentation hints like shortLabel."
+          },
+          "metadata": { "type": "object" }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to"],
+        "additionalProperties": false,
+        "properties": {
+          "from": { "type": "string", "minLength": 1 },
+          "to": { "type": "string", "minLength": 1 },
+          "relation": {
+            "type": "string",
+            "description": "calls | invokes | depends-on | references | imports | configures — caller's choice; not interpreted by the algorithm."
+          },
+          "weight": { "type": "number", "minimum": 0 },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "matrices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "nodeIds"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "nodeIds": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "architectureType": {
+            "description": "Optional per-matrix architecture hint. Derive may use it to bias which architecture plugin applies within this matrix. If omitted, derive's existing classifyArchitecture(partition) logic decides per-matrix. Mirrors the 9-value enum in schemas/tsm-scene.schema.json matrices[].architectureType and the registered plugins in core/concept/index.js.",
+            "enum": [
+              "integral",
+              "proto-modular",
+              "modular",
+              "flow",
+              "job-shop",
+              "platform",
+              "core-periphery",
+              "multi-core",
+              "hierarchical"
+            ]
+          }
+        }
+      }
+    },
+    "crossMatrixArrows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to"],
+        "additionalProperties": false,
+        "properties": {
+          "from": { "type": "string", "minLength": 1 },
+          "to": { "type": "string", "minLength": 1 },
+          "kind": {
+            "description": "Semantic kind for the cross-matrix arrow. 'transaction' for inter-firm contracts (e.g. Fig 18.1 goods/payment); 'forward' / 'backward' for directional handoffs. Matches tsm-scene.schema.json $defs.crossMatrixArrow.kind. Optional; derive defaults to 'transaction' when label is present and no kind is declared.",
+            "enum": ["transaction", "forward", "backward"]
+          },
+          "label": { "type": "string" }
+        }
+      }
+    },
+    "derive": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": { "enum": ["hidden-structure"] },
+        "outputArchitectureType": {
+          "enum": ["core-periphery", "multi-core", "hierarchical"]
+        }
+      }
+    }
+  }
+}

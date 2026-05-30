@@ -1,0 +1,448 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "upstream-downstream-derive-derived",
+  "title": "Derived upstream/downstream contract fixture (Hidden Structure)",
+  "source": "Derived via Hidden Structure from upstream-downstream-derive. Source observation: Synthetic v1.7 Wave 3 fixture modeled on Fig 18.1. Exercises two firm-bounded matrices, cyclic intra-firm structure, and derived contract arrows.",
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> 2 systems, each its own boundary-bounded TSM. Every node sits on its own matrix's diagonal in a position that reveals its structural role.",
+        "reveal": {
+          "include": [
+            "diagonal"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward transfers — below each diagonal — show the dependency flow as it actually runs inside each system. Each mark is a direct invocation or load.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Backward transfers — above each diagonal — show where a system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> The four-square partition in each system.<br/><em>Architecture — Upstream supplier: core-periphery; Downstream buyer: core-periphery.</em><br/>The 2 arrows crossing between the matrices are the contracts — the transactions that link otherwise-separate systems.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border"
+          ]
+        }
+      }
+    ]
+  },
+  "matrices": [
+    {
+      "id": "upstream",
+      "architectureType": "core-periphery",
+      "regions": [
+        {
+          "id": "shared",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "shared",
+          "label": "Shared"
+        },
+        {
+          "id": "core",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core"
+        },
+        {
+          "id": "control",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "control",
+          "label": "Control"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "U4",
+          "label": "Upstream dispatch",
+          "region": "shared",
+          "shortLabel": "U1",
+          "category": "upstream"
+        },
+        {
+          "id": "U1",
+          "label": "Upstream coordination",
+          "region": "core",
+          "shortLabel": "U2",
+          "category": "upstream"
+        },
+        {
+          "id": "U2",
+          "label": "Upstream fabrication",
+          "region": "core",
+          "shortLabel": "U3",
+          "category": "upstream"
+        },
+        {
+          "id": "U3",
+          "label": "Upstream supplier intake",
+          "region": "control",
+          "shortLabel": "U4",
+          "category": "upstream"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "U2",
+          "to": "U1",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "U1",
+          "to": "U2",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "U2",
+          "to": "U3",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "U4",
+          "to": "U1",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        }
+      ],
+      "overlays": [
+        {
+          "kind": "module-border",
+          "regionId": "shared",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "control",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "downstream",
+      "architectureType": "core-periphery",
+      "regions": [
+        {
+          "id": "shared",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "shared",
+          "label": "Shared"
+        },
+        {
+          "id": "core",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core"
+        },
+        {
+          "id": "control",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "control",
+          "label": "Control"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "D4",
+          "label": "Downstream payment release",
+          "region": "shared",
+          "shortLabel": "D1",
+          "category": "downstream"
+        },
+        {
+          "id": "D1",
+          "label": "Downstream receipt",
+          "region": "core",
+          "shortLabel": "D2",
+          "category": "downstream"
+        },
+        {
+          "id": "D2",
+          "label": "Downstream assembly",
+          "region": "core",
+          "shortLabel": "D3",
+          "category": "downstream"
+        },
+        {
+          "id": "D3",
+          "label": "Downstream market planning",
+          "region": "control",
+          "shortLabel": "D4",
+          "category": "downstream"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "D2",
+          "to": "D1",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "D1",
+          "to": "D2",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "D2",
+          "to": "D3",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "D4",
+          "to": "D1",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        }
+      ],
+      "overlays": [
+        {
+          "kind": "module-border",
+          "regionId": "shared",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "control",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        }
+      ],
+      "annotations": []
+    }
+  ],
+  "arrows": [
+    {
+      "id": "cross-upstream-U4-downstream-D1-transaction",
+      "from": {
+        "matrix": 0,
+        "taskId": "U4"
+      },
+      "to": {
+        "matrix": 1,
+        "taskId": "D1"
+      },
+      "kind": "transaction",
+      "label": "Contract: goods",
+      "rendering": {
+        "emphasis": "primary",
+        "labelStyle": "load-bearing"
+      }
+    },
+    {
+      "id": "cross-downstream-D4-upstream-U1-transaction",
+      "from": {
+        "matrix": 1,
+        "taskId": "D4"
+      },
+      "to": {
+        "matrix": 0,
+        "taskId": "U1"
+      },
+      "kind": "transaction",
+      "label": "Contract: payment",
+      "rendering": {
+        "emphasis": "primary",
+        "labelStyle": "load-bearing"
+      }
+    }
+  ],
+  "lenses": [
+    "cyclic-flow",
+    "cross-region-edge",
+    "core-periphery-boundary"
+  ],
+  "provenance": {
+    "inputObservationId": "upstream-downstream-derive",
+    "algorithm": "hidden-structure",
+    "algorithmVersion": "0.1.0",
+    "splitModel": "observation-seeded",
+    "matrices": {
+      "upstream": {
+        "vfivfo": {
+          "U1": {
+            "vfi": 2,
+            "vfo": 2
+          },
+          "U2": {
+            "vfi": 2,
+            "vfo": 2
+          },
+          "U3": {
+            "vfi": 0,
+            "vfo": 3
+          },
+          "U4": {
+            "vfi": 3,
+            "vfo": 0
+          }
+        },
+        "cyclicGroups": [
+          [
+            "U1",
+            "U2"
+          ]
+        ]
+      },
+      "downstream": {
+        "vfivfo": {
+          "D1": {
+            "vfi": 2,
+            "vfo": 2
+          },
+          "D2": {
+            "vfi": 2,
+            "vfo": 2
+          },
+          "D3": {
+            "vfi": 0,
+            "vfo": 3
+          },
+          "D4": {
+            "vfi": 3,
+            "vfo": 0
+          }
+        },
+        "cyclicGroups": [
+          [
+            "D1",
+            "D2"
+          ]
+        ]
+      }
+    },
+    "crossBoundaryEdges": [],
+    "crossMatrixArrows": [
+      {
+        "fromNodeId": "U4",
+        "toNodeId": "D1",
+        "fromMatrixId": "upstream",
+        "toMatrixId": "downstream",
+        "fromMatrixIdx": 0,
+        "toMatrixIdx": 1,
+        "kind": "transaction",
+        "label": "Contract: goods",
+        "emittedArrowId": "cross-upstream-U4-downstream-D1-transaction"
+      },
+      {
+        "fromNodeId": "D4",
+        "toNodeId": "U1",
+        "fromMatrixId": "downstream",
+        "toMatrixId": "upstream",
+        "fromMatrixIdx": 1,
+        "toMatrixIdx": 0,
+        "kind": "transaction",
+        "label": "Contract: payment",
+        "emittedArrowId": "cross-downstream-D4-upstream-U1-transaction"
+      }
+    ]
+  }
+}

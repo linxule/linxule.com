@@ -1,0 +1,703 @@
+/* Module overlays + future overlay kinds (firm-boundary, region tints).
+   Overlay positioning is set inline by render/overlays.js since it depends
+   on the matrix's rendered dimensions; only static styling lives here. */
+
+/* The overlay itself is just a positioning shell; it has no blend-mode of
+   its own. The bg-tint + border live in ::before with mix-blend-mode so
+   they cooperate with the matrix cells beneath. The label (.module-label)
+   is a normal child and so renders at full opacity — that's the whole
+   reason for the split. Previously the overlay had mix-blend-mode and
+   bled through to the label, making the cluster name look semi-transparent. */
+.module-overlay {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.module-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  background: var(--module-bg);
+  mix-blend-mode: multiply;
+}
+
+.module-overlay.visible {
+  opacity: 1;
+}
+
+/* Cluster labels render as fully-opaque filled badges in the region's color
+   so they read at a glance against any matrix background. The bg-tint +
+   border now live in .module-overlay::before with the mix-blend-mode, so
+   the label sits as a normal child rendered without any blend interference.
+   --region-color is published by render/overlays.js so the badge background
+   tracks the region color even though the badge's own `color` is white for
+   text contrast (currentColor on the badge would resolve to its own color). */
+.module-overlay .module-label {
+  position: absolute;
+  top: -12px;
+  left: 12px;
+  background: var(--region-color, currentColor);
+  color: var(--paper);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22);
+  /* Lift above sibling overlays so adjacent badges don't get clipped. */
+  z-index: 2;
+}
+
+/* ----- firm-boundary overlay (SO paper Fig 6 — Job Shop) -----
+
+   A dashed perimeter around the included-task bounding box. Always visible
+   while the matrix renders (no reveal token) — the firm boundary is part of
+   the matrix's identity, not a progressive disclosure. */
+
+.firm-boundary-overlay {
+  position: absolute;
+  pointer-events: none;
+  border: 2px dashed var(--firm-boundary, rgba(60, 60, 60, 0.55));
+  border-radius: 6px;
+  /* Push slightly outside the included-cells block so the dashes sit between
+     the firm cells and the external row/column. */
+  margin: -4px 0 0 -4px;
+  padding: 4px;
+  box-sizing: content-box;
+  /* Lift above the grid cells but below module-overlay labels and arrows. */
+  z-index: 1;
+}
+
+/* The boundary label that used to float above the perimeter at top:-14px
+   now renders as a `.tsm-matrix-header` line above the grid (see
+   styles/matrix.css). The pill overlapped the scene's source paragraph in
+   multi-matrix scenes (Fig 18.1) where title + source sat close above. */
+
+/* ----- annotations (peripheral labels with optional pointers) -----
+
+   Drawn by render/annotations.js. Positions are top / right / bottom / left
+   for adjacent-to-matrix placement, and external-NE/SE/NW/SW for the
+   external-cell corners that pair with firm-boundary overlays. */
+
+.tsm-annotation {
+  position: absolute;
+  pointer-events: none;
+  font-size: 12px;
+  color: var(--annotation-ink, var(--muted));
+  background: var(--card);
+  border: 1px solid var(--annotation-rule, var(--rule));
+  border-radius: 3px;
+  padding: 4px 8px;
+  white-space: nowrap;
+  z-index: 3;
+}
+
+/* Position-specific offsets are set inline by render/annotations.js (the
+   label is absolutely positioned against the grid's offsetLeft/offsetTop +
+   getBoundingClientRect). The `data-position` attribute is retained on the
+   element as a selector hook for tests + debugging, but does not drive any
+   CSS-side offset rules — inline styles would win regardless. */
+
+.tsm-annotation-pointer {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
+}
+
+.tsm-annotation-pointer line {
+  stroke: var(--annotation-rule, var(--rule));
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+
+/* Annotation progressive disclosure (v1.5 Phase 4).
+
+   Gating: the renderer adds `.has-many-annotations` to the matrix wrapper
+   only when annotations.length >= 3. Scenes with 1–2 annotations don't get
+   the class and so don't get the ghost rule — they remain always-visible.
+
+   Ghost opacity for annotations is intentionally higher than the arrow
+   ghost (0.18). Annotations are labels readers may want to skim without
+   hovering; 0.25 is faint enough to recede but legible enough that the
+   margins still parse as labeled. Pointer lines drop further (0.20) since
+   the dashed line reads as decoration without its label. */
+.has-many-annotations .tsm-annotation:not(.spotlight-highlighted) {
+  opacity: 0.25;
+  transition: opacity 200ms ease-out;
+}
+
+.has-many-annotations .tsm-annotation.spotlight-highlighted {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+}
+
+.has-many-annotations .tsm-annotation-pointer:not(.spotlight-highlighted) line {
+  opacity: 0.2;
+  transition: opacity 200ms ease-out;
+}
+
+.has-many-annotations .tsm-annotation-pointer.spotlight-highlighted line {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+}
+
+/* "Show all annotations" toggle (currently unused — matrix-wrapper hover
+   provides the same surface for free). Kept for parity with the v1.4
+   show-all-cross-arrows and v1.5 Phase 1 show-all-intra-arrow toggles in
+   case a future iteration wires a button.
+
+   Both classes co-exist on the SAME wrapper (no descendant combinator) so
+   the show-all selector beats the ghost rule above
+   (`.has-many-annotations .tsm-annotation:not(.spotlight-highlighted)`)
+   on specificity. Without compounding the two classes on the wrapper the
+   ghost rule (0,3,1) would shadow the show-all (0,2,1) and the toggle
+   would silently no-op. */
+.has-many-annotations.spotlight-show-all-annotation .tsm-annotation {
+  opacity: 1;
+}
+
+.has-many-annotations.spotlight-show-all-annotation .tsm-annotation-pointer line {
+  opacity: 1;
+}
+
+/* ----- explicit transfer arrows (transfer.rendering.arrow === true) -----
+
+   SVG layer drawn by render/arrows.js over the matrix grid. Each arrow goes
+   from one cell center to another, with a subtle arrowhead. Visibility
+   follows the same reveal token as the underlying transfer (forward or
+   backward). */
+
+.tsm-arrows {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  overflow: visible;
+}
+
+.tsm-arrows .tsm-arrow {
+  fill: none;
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.tsm-arrows .tsm-arrow.visible {
+  opacity: 0.85;
+}
+
+.tsm-arrows .tsm-arrow.forward {
+  stroke: var(--forward, #2b6cb0);
+}
+
+.tsm-arrows .tsm-arrow.backward {
+  stroke: var(--backward, #c53030);
+}
+
+/* Intra-arrow progressive disclosure (v1.5).
+
+   Gating: both the ghost and the highlight selectors require `.visible` —
+   the reveal-token contract. Without it (v1.5.0), hovering during step 1
+   (which reveals only `"diagonal"`) would surface unrevealed arrows because
+   `.spotlight-highlighted` matched alone. The matched selector also has to
+   beat `.tsm-arrows .tsm-arrow.visible`'s specificity (0,2,1) — including
+   the parent `.tsm-arrows` here in both rules keeps the cascade honest. */
+.tsm-arrows .tsm-arrow.visible:not(.spotlight-highlighted) {
+  opacity: 0.18;
+  transition: opacity 200ms ease-out;
+}
+
+.tsm-arrows .tsm-arrow.visible.spotlight-highlighted {
+  opacity: 1.0;
+  /* 80ms engage delay = CSS hover-intent: a fast sweep across diagonal cells
+     loses the hover before the delay elapses, so the highlight never strobes
+     (the dominant "finicky" cause). Disengage stays instant — the
+     :not(.spotlight-highlighted) rule above has no delay. Same technique as the
+     diagonal tooltip (matrix.css). The class still toggles synchronously, so
+     the hover unit tests are unaffected; only the paint is intent-gated. */
+  transition: opacity 200ms ease-out 80ms;
+}
+
+.spotlight-show-all-intra-arrow .tsm-arrow.visible {
+  opacity: 1.0;
+}
+
+.cell.diagonal.spotlight-partner {
+  outline: 2px solid var(--accent, #4a90e2);
+}
+
+/* ----- SPEC-LENSES v0.2 emphasis gating ------------------------------------
+ *
+ * Items carry `data-emphasis="primary"` (loud, shown by default) or
+ * `data-emphasis="secondary"` (hidden by default, surfaced only on Show All
+ * or per Explore-chip filter). The gate composes with the reveal-token
+ * `.visible` class — a secondary item is invisible no matter the reveal
+ * state until Show All is on. Per SPEC §4 the composition is binary, not
+ * a vocabulary.
+ *
+ * Implementation: when the wrapper carries `.tsm-show-all-emphasis` the
+ * secondary items render at the same opacity as primary. Without that
+ * class, secondary intra-arrows + cross-arrows + module overlays drop to 0.
+ * Hover-spotlight still works on whatever is currently visible. */
+
+.tsm-arrows .tsm-arrow.visible[data-emphasis="secondary"] {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.tsm-show-all-emphasis .tsm-arrows .tsm-arrow.visible[data-emphasis="secondary"] {
+  opacity: 0.85;
+}
+
+/* Primary-emphasis arrows are visible by default (not ghosted). The v1.5
+ * ghost-until-spotlight pattern from above (`.tsm-arrow.visible:not(.spotlight-highlighted)
+ * → opacity 0.18`) was the v1.5 exploration UX; in v0.2 the lens model promotes
+ * primary items to full saturation by default and uses Show All for the rest.
+ * Specificity 0,3,2 (parent + .visible + [data-emphasis="primary"] + :not(...))
+ * beats the 0,3,1 ghost rule above. Spotlight-highlighted still boosts to 1.0
+ * for cell-hover focal exploration. */
+.tsm-arrows .tsm-arrow.visible[data-emphasis="primary"]:not(.spotlight-highlighted) {
+  opacity: 0.85;
+  transition: opacity 200ms ease-out;
+}
+
+.tsm-arrows .tsm-arrow.visible[data-emphasis="primary"].spotlight-highlighted {
+  opacity: 1.0;
+  transition: opacity 200ms ease-out 80ms; /* engage delay — hover-intent (see above) */
+}
+
+.tsm-show-all-emphasis .tsm-arrows .tsm-arrow.visible[data-emphasis="secondary"].spotlight-highlighted {
+  opacity: 1.0;
+}
+
+.tsm-arrow-label[data-emphasis="secondary"] {
+  display: none;
+}
+
+.tsm-show-all-emphasis .tsm-arrow-label[data-emphasis="secondary"] {
+  display: revert;
+}
+
+/* v1.6.3 Batch C1 Fix 2 — removed `!important` from the hide rule so the
+ * `.tsm-show-all-emphasis` release below can actually win via specificity.
+ * Specificity here is (0,2,1); the release rule's (0,3,1) — wrapper class +
+ * .module-overlay + .visible + [data-emphasis] — beats it cleanly. The
+ * `!important` was a pre-Batch-A vestige from when no release rule existed
+ * and animation transitions could re-show secondary overlays mid-fade. The
+ * Show All gate replaces that role; the priority lift is unnecessary. */
+.module-overlay[data-emphasis="secondary"] {
+  opacity: 0;
+}
+
+.tsm-show-all-emphasis .module-overlay.visible[data-emphasis="secondary"] {
+  opacity: 0.5;
+}
+
+/* Firm-boundary emphasis gating (SPEC-LENSES §3.1 firm-boundary carve-out).
+ *
+ * Firm boundaries are part of the matrix identity (always-visible by default),
+ * so the schema admits emphasis as a lens-filter knob: primary is the loud
+ * state; secondary dims the perimeter to a ghost when an Explore chip filters
+ * AWAY from `modularity-boundary`. Show all releases the dim.
+ *
+ * Adapter contract: `core/scene-adapter.js#decorateMatrix` injects
+ * `emphasis: "primary"` on any firm-boundary overlay missing an explicit
+ * emphasis value. Authors don't need to remember the carve-out at authoring
+ * time — but they CAN still override with explicit `rendering.emphasis:
+ * "secondary"` to opt the perimeter into lens filtering. The unconditional
+ * `[data-emphasis="secondary"]` dim rule below therefore only fires when (a)
+ * an author opted in explicitly, OR (b) the runtime override Map (chip click
+ * via `buildLensFilter` writing `firm-boundary:${i}` → "secondary") pushed
+ * secondary into `applyEmphasisToElements`. Both paths are intentional;
+ * neither is the default-render footgun r4 M1 flagged.
+ *
+ * Without these rules, a chip click would update the override Map and the
+ * runtime applyEmphasisToElements would update the dataset attribute, but
+ * no style would respond — the dim would be invisible. */
+.firm-boundary-overlay[data-emphasis="secondary"]:not(.firm-boundary-overlay--error) {
+  opacity: 0.25;
+  transition: opacity 200ms ease-out;
+}
+
+.firm-boundary-overlay[data-emphasis="primary"] {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+}
+
+.tsm-show-all-emphasis .firm-boundary-overlay[data-emphasis="secondary"]:not(.firm-boundary-overlay--error) {
+  opacity: 0.6;
+}
+
+.tsm-annotation[data-emphasis="secondary"] {
+  display: none;
+}
+
+.tsm-show-all-emphasis .tsm-annotation[data-emphasis="secondary"] {
+  display: revert;
+  opacity: 0.6;
+}
+
+/* v1.6.3 Batch C1 Fix 3 — pointer SVGs gate alongside their labels.
+ * Pre-v1.6.3 only the label surface was hidden; the resolved
+ * `.tsm-annotation-pointer` SVG stayed visible as a stranded line. Now
+ * `render/annotations.js#applyEmphasisToElements` writes data-emphasis to
+ * both surfaces and these rules mirror the label's hide/release contract.
+ * The pointer is `display: none` when secondary, restored when the wrapper
+ * carries `.tsm-show-all-emphasis`. */
+.tsm-annotation-pointer[data-emphasis="secondary"] {
+  display: none;
+}
+
+.tsm-show-all-emphasis .tsm-annotation-pointer[data-emphasis="secondary"] {
+  display: revert;
+  opacity: 0.6;
+}
+
+.tsm-cross-arrows .tsm-cross-arrow.visible[data-emphasis="secondary"] {
+  opacity: 0;
+}
+
+.tsm-show-all-emphasis .tsm-cross-arrows .tsm-cross-arrow.visible[data-emphasis="secondary"] {
+  opacity: 0.6;
+}
+
+/* Primary-emphasis cross-matrix arrows mirror the intra-arrow rules at L260+.
+ * Without these, the v1.5 ghost rule at L474 (`.tsm-cross-arrow.visible:not(
+ * .spotlight-highlighted) → 0.18`) wins over the declared-primary attribute
+ * and Fig 18.1's two transactions render as faint ghosts instead of as the
+ * headline. Specificity (0,5,0) beats the ghost's (0,4,0). */
+.tsm-cross-arrows .tsm-cross-arrow.visible[data-emphasis="primary"]:not(.spotlight-highlighted) {
+  opacity: 0.85;
+  transition: opacity 200ms ease-out;
+}
+
+.tsm-cross-arrows .tsm-cross-arrow.visible[data-emphasis="primary"].spotlight-highlighted {
+  opacity: 1;
+  transition: opacity 200ms ease-out 80ms; /* engage delay — hover-intent (see intra-arrow rule) */
+}
+
+.tsm-show-all-emphasis .tsm-cross-arrows .tsm-cross-arrow.visible[data-emphasis="secondary"].spotlight-highlighted {
+  opacity: 1;
+}
+
+/* ----- Explore disclosure (SPEC §7.2) --------------------------------------
+ *
+ * Unobtrusive button in the corner of the matrix wrapper; chip strip below
+ * the matrix when opened. Per SPEC §7.1 the default reader view is chip-
+ * free; this surface only appears when the reader opts into Explore. */
+
+/* Explore mount. In the app the disclosure mounts into #explore-mount in the
+   narrative rail (index.html) — a grid SIBLING of #tsm, so expanding the strip
+   grows the rail, never shifting gridEl WITHIN #tsm (no arrow-layer rebuild).
+   The empty-mount collapse lives in base.css (`#explore-mount:empty`). */
+.tsm-explore-disclosure {
+  position: relative;
+  margin-top: 0.5rem;
+  font-size: 13px;
+  /* Right-align the (in-flow) Explore toggle below the matrix — the embed
+     placement (bottom of the matrix wrapper). The rail mount overrides this. */
+  text-align: right;
+}
+
+/* Rail mount (app): the disclosure leads its rail slot, so it reads
+   left-aligned and flush with the top — no below-matrix offset. */
+.narrative .tsm-explore-disclosure {
+  margin-top: 0;
+  text-align: left;
+}
+
+/* In-flow (was position:absolute; top:-2rem, which floated up over the matrix
+   bottom-right and covered cells). Sits cleanly below the matrix, machine
+   voice. The discoverability question Xule raised — what this is FOR and what
+   it reveals — is addressed by the label ("Highlight patterns", was "Explore"),
+   the hover title naming the lenses, and the disclosure caret below. */
+.tsm-explore-button {
+  position: static;
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  /* Box-less (2026-05-29): no card, no border — a quiet machine-voice toggle on
+     paper, matching the rest of the cockpit. Bloom on hover/expanded. */
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: var(--muted, #4a5568);
+  cursor: pointer;
+}
+
+/* Disclosure caret — telegraphs that the button opens a strip (part of the
+   "why is it there" fix). Rotates when the disclosure root is open. */
+.tsm-explore-button::after {
+  content: "\00a0\25BE";
+  display: inline-block;
+  transition: transform 200ms ease;
+}
+
+.tsm-explore-disclosure[data-open="true"] .tsm-explore-button::after {
+  transform: rotate(180deg);
+}
+
+.tsm-explore-button:hover,
+.tsm-explore-button[aria-expanded="true"] {
+  color: var(--bloom);
+}
+
+.tsm-explore-strip {
+  display: none;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.5rem 0;
+}
+
+.tsm-explore-strip[data-visible="true"] {
+  display: flex;
+  align-items: center;
+}
+
+/* Strip header — names the purpose + signals single-select ("one"). Full
+   width so the chip row sits beneath it; left-aligned against the right-
+   aligned disclosure block. Machine voice, like the other small labels. */
+.explore-strip-label {
+  flex-basis: 100%;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted, #4a5568);
+  margin-bottom: 2px;
+}
+
+/* Box-less (2026-05-29): the faint tray is gone — the "HIGHLIGHT ONE PATTERN"
+   label already signals the pick-one set, so the chips sit directly on paper. */
+.explore-lens-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* "Speak the lens" — plain-words name + claim for the active pattern.
+   Left-aligned readable prose (not the tiny mono), appears only when a
+   chip is active. Answers "what did clicking do / what am I looking at." */
+.explore-claim {
+  text-align: left;
+  margin: 0.5rem 0 0;
+  max-width: 60ch;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.explore-claim[hidden] {
+  display: none;
+}
+
+.explore-claim-label {
+  font-weight: 600;
+}
+
+.explore-claim-text {
+  color: var(--muted, #4a5568);
+}
+
+.explore-chip {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  /* Box-less resting (2026-05-29): padded mono text, no border/fill. Padding +
+     radius are retained so the EARNED aria-pressed bloom fill below renders as a
+     clean pill (color-as-event) without shifting layout. */
+  padding: 4px 10px;
+  background: none;
+  border: 0;
+  border-radius: 2px;
+  color: var(--muted, #4a5568);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.explore-chip:hover {
+  color: var(--bloom);
+}
+
+.explore-chip[aria-pressed="true"] {
+  background: var(--accent, #3b6cd1);
+  border-color: var(--accent, #3b6cd1);
+  color: var(--paper);
+}
+
+.explore-chip.explore-reset {
+  /* An action, not a pattern choice — pushed to the right, away from the lenses. */
+  margin-left: auto;
+}
+
+/* The Explore strip's own "Show all" button was removed (2026-05-29 UX pass):
+   the lens strip is a pick-one tool, Reset reverts the dim, and a global
+   un-dim duplicated the app-level matrix-switcher "Show hidden (N)" with a
+   second, drifting count. The matrix-switcher toggle (.cross-arrows-toggle /
+   .intra-arrows-toggle) is now the single reveal control. */
+
+/* Floating arrow labels (v1.5.2).
+
+   render/arrows.js emits a <div class="tsm-arrow-label"> sibling of the SVG
+   for every transfer carrying `rendering.label`. The label sits at the
+   midpoint of the visible Bezier path and surfaces only when the arrow is
+   spotlight-highlighted (hovered source cell / target cell / path) or when
+   the "Show all arrows" toggle is on. Default opacity 0 keeps the matrix
+   clean; the label answers the user's "why this arrow?" question only when
+   they ask. `text-transform: capitalize` upper-cases the first letter of
+   each word without mutating the JSON's lower-case label text. */
+.tsm-arrow-label {
+  position: absolute;
+  pointer-events: none;
+  font-size: 11px;
+  background: var(--card);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--rule, #cbd5e0);
+  color: var(--ink, #1a202c);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 150ms ease-out;
+  text-transform: capitalize;
+  z-index: 5;
+}
+
+.tsm-arrow-label.spotlight-highlighted {
+  opacity: 1;
+  transition: opacity 150ms ease-out 80ms; /* engage delay — hover-intent (see intra-arrow rule) */
+}
+
+.spotlight-show-all-intra-arrow .tsm-arrow-label {
+  opacity: 1;
+}
+
+/* ----- cross-matrix arrows (Fig 18.1 upstream-downstream contracts) -----
+
+   Cross-matrix arrows route through the whitespace BETWEEN two matrices —
+   solid Bezier paths drawn by render/cross-matrix-arrows.js. The default
+   state is intentionally faint ("ghost" lines): visible enough that the
+   reader knows the connections exist, low enough that they don't dominate
+   the visual field. Progressive disclosure surfaces specific arrows on
+   hover (cell or matrix-wrapper) via the shared hover-spotlight component;
+   the .spotlight-show-all-cross-arrow wrapper class lights every arrow at
+   once. Partner endpoint cells reuse the .cell.diagonal.spotlight-partner
+   rule already defined for intra-arrows above. */
+
+.tsm-cross-arrows {
+  /* SVG container positioning is set inline by the renderer; this rule
+     keeps the layer above the matrix grid backgrounds so faint arrows still
+     read against white. */
+  z-index: 5;
+  overflow: visible;
+}
+
+.tsm-cross-arrow {
+  fill: none;
+  stroke: var(--cross-arrow, #555);
+  stroke-width: 1.5;
+  /* Pre-reveal: opacity 0. The renderer toggles `.visible` once the reveal
+     dispatcher accepts the cross-arrow's token (today: any transfer-directed
+     token surfaces the contract). Until then the path is invisible — hover
+     can't surface an unrevealed contract. */
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.tsm-cross-arrow.transaction {
+  stroke: var(--cross-arrow, #555);
+}
+
+.tsm-cross-arrow.forward {
+  stroke: var(--forward, #2b6cb0);
+}
+
+.tsm-cross-arrow.backward {
+  stroke: var(--backward, #c53030);
+}
+
+/* Ghost (revealed but not hovered): faint enough to recede, present enough
+   that the reader knows connections exist. Matches the intra-arrow ghost
+   opacity (0.18). */
+.tsm-cross-arrows .tsm-cross-arrow.visible:not(.spotlight-highlighted) {
+  opacity: 0.18;
+}
+
+/* Hover-driven highlight: the shared spotlight component stamps
+   .spotlight-highlighted on the path when one of its anchors (endpoint
+   cell, matrix wrapper, or the path itself) is hovered. The `.visible`
+   requirement honors the reveal-token gating — unrevealed cross-arrows
+   cannot be lit by hover. v1.6.1: restricted to `[data-emphasis="primary"]`
+   so hovering a cell adjacent to a hidden secondary cross-arrow does NOT
+   surface that arrow (closes audit M3 cross-arrow leg). Show-all-secondary
+   is handled by the dedicated rule at L320 in the emphasis-gating block. */
+.tsm-cross-arrows .tsm-cross-arrow.visible[data-emphasis="primary"].spotlight-highlighted {
+  opacity: 1;
+  transition: opacity 200ms ease-out 80ms; /* engage delay — hover-intent (see intra-arrow rule) */
+}
+
+/* "Show all transactions" toggle: when the wrapper carries the spotlight
+   group's show-all class every REVEALED cross-matrix arrow renders at full
+   opacity. Unrevealed arrows stay invisible — show-all is "show all of the
+   revealed surface", not "force-reveal everything". */
+.spotlight-show-all-cross-arrow .tsm-cross-arrow.visible {
+  opacity: 1;
+}
+
+/* Toggle button, lives next to the matrix-switcher when multi-matrix UI
+   is visible. Vanilla button styling matched to .matrix-switcher-btn so
+   the two read as a single control cluster. */
+/* Box-less resting (2026-05-29): padded mono text, no border/fill; padding +
+   radius retained so the .active bloom fill reads as a clean pill (color-as-
+   event). Matches the de-boxed Explore chips + figure controls. */
+.cross-arrows-toggle {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  padding: 4px 10px;
+  background: none;
+  border: 0;
+  border-radius: 2px;
+  color: var(--muted, #4a5568);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.cross-arrows-toggle:hover {
+  color: var(--bloom);
+}
+
+.cross-arrows-toggle.active {
+  background: var(--bloom);
+  color: var(--paper);
+}
+
+/* Disabled ("All revealed items shown.", N=0) — faint, no box. */
+.cross-arrows-toggle:disabled,
+.cross-arrows-toggle[aria-disabled="true"] {
+  background: none;
+  color: var(--muted, #4a5568);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.cross-arrows-toggle:disabled:hover,
+.cross-arrows-toggle[aria-disabled="true"]:hover {
+  color: var(--muted, #4a5568);
+}

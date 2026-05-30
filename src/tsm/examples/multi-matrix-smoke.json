@@ -1,0 +1,89 @@
+{
+  "specVersion": "0.3",
+  "kind": "tsm-scene",
+  "id": "multi-matrix-smoke",
+  "title": "Multi-matrix smoke test",
+  "source": "Synthetic two-matrix fixture for Playwright snapshot coverage of the matrixIndex routing contract. Not a pedagogical figure.",
+
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Scene-level fallback.</strong> Diagonal, both transfer directions, and module-border overlay revealed. This narrative is the fallback when a matrix has no per-matrix narrative of its own.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border"
+          ]
+        }
+      }
+    ]
+  },
+
+  "matrices": [
+    {
+      "id": "m0-modular",
+      "architectureType": "modular",
+
+      "narrative": {
+        "mode": "walkthrough",
+        "steps": [
+          {
+            "caption": "<strong>Matrix 0 (modular).</strong> Per-matrix narrative wins over the scene-level fallback — reveals only the diagonal and forward transfer for the modular shape.",
+            "reveal": {
+              "include": [
+                "diagonal",
+                "transfer:directed:forward"
+              ]
+            }
+          }
+        ]
+      },
+
+      "regions": [
+        { "id": "dr",  "layoutKind": "left-band",      "semanticKind": "design-rules", "label": "Design Rules" },
+        { "id": "mod", "layoutKind": "diagonal-block", "semanticKind": "module",       "label": "Module A" }
+      ],
+
+      "tasks": [
+        { "id": "dr1", "label": "DR1", "region": "dr" },
+        { "id": "a-spec",   "label": "Spec",   "region": "mod" },
+        { "id": "a-design", "label": "Design", "region": "mod" },
+        { "id": "a-test",   "label": "Test",   "region": "mod" }
+      ],
+
+      "transfers": [
+        { "from": "a-spec",   "to": "a-design", "mark": "x" }
+      ],
+
+      "overlays": [
+        { "kind": "module-border", "regionId": "mod" }
+      ]
+    },
+    {
+      "id": "m1-integral",
+      "architectureType": "integral",
+
+      "regions": [
+        { "id": "core", "layoutKind": "diagonal-block", "semanticKind": "module", "label": "Integral core" }
+      ],
+
+      "tasks": [
+        { "id": "t0", "label": "T0", "region": "core" },
+        { "id": "t1", "label": "T1", "region": "core" },
+        { "id": "t2", "label": "T2", "region": "core" }
+      ],
+
+      "transfers": [
+        { "from": "t0", "to": "t1", "mark": "x" },
+        { "from": "t2", "to": "t1", "mark": "x" }
+      ],
+
+      "overlays": [
+        { "kind": "module-border", "regionId": "core" }
+      ]
+    }
+  ]
+}

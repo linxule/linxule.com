@@ -1,0 +1,256 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "upstream-downstream",
+  "title": "A minimal ecosystem — two firms linked by a contract",
+  "source": "Adapted from Baldwin &amp; Holgersson (2026), <em>Ecosystem evolution: contracts, modules, and standards</em>, Figure 18.1",
+  "lenses": ["cyclic-flow", "forward-handoff", "modularity-boundary"],
+
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1 — Two firms, two architectures.</strong> An Upstream job shop and a Downstream flow line, each its own TSM with its own internal architecture. The boundary circles mark each firm. Transfers <em>inside</em> a boundary are paperwork-free; the thin crossing between them is where transactions happen.",
+        "reveal": {
+          "include": ["diagonal", "overlay:firm-boundary"]
+        }
+      },
+      {
+        "caption": "<strong>Step 2 — Production inside each firm.</strong> Downstream runs a clean flow line: forward hand-offs down the diagonal, kanban pull signals above (the <code>s</code> marks). Upstream is denser — its cell marks fill the matrix, showing that any task there can hand to any other. The contract arrows fade to context.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:firm-boundary"
+          ]
+        },
+        "setEmphasis": {
+          "primary": { "byLens": ["forward-handoff"], "byMark": ["s"] },
+          "secondary": { "byId": ["contract-goods", "contract-payment"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 3 — The contract is the boundary.</strong> Inside each firm, transfers flow without paperwork. Between firms, the contract is the single thin crossing where transactions get recorded. The two contract arrows — goods one way, payment the other — are the headline of this figure; everything else fades.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:firm-boundary"
+          ]
+        },
+        "setEmphasis": {
+          "primary": { "byId": ["contract-goods", "contract-payment"] },
+          "secondary": { "byLens": ["forward-handoff", "cyclic-flow"], "byMark": ["s"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 4 — Together: bilateral exchange under contract.</strong> Internal coordination and the cross-firm contract, both visible. The ecosystem is two firms that could each evolve independently, held in relation by one bilateral agreement. Switch to a single matrix to walk through either firm's internal pattern.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:firm-boundary"
+          ]
+        }
+      }
+    ]
+  },
+
+  "matrices": [
+    {
+      "id": "upstream",
+      "architectureType": "job-shop",
+
+      "narrative": {
+        "mode": "walkthrough",
+        "steps": [
+          {
+            "caption": "<strong>Upstream — Step 1.</strong> Six tasks (U1–U6) line up on the diagonal. The firm boundary draws a circle around the whole matrix; no task sits outside.",
+            "reveal": { "include": ["diagonal", "overlay:firm-boundary"] }
+          },
+          {
+            "caption": "<strong>Upstream — Step 2.</strong> Forward transfers fill every cell below the diagonal. Every task can hand work to every later task — this is a classic job-shop pattern. Roles inside the firm are fluid; any actor may pick up any task.",
+            "reveal": {
+              "include": [
+                "diagonal",
+                "transfer:directed:forward",
+                "overlay:firm-boundary"
+              ]
+            }
+          },
+          {
+            "caption": "<strong>Upstream — Step 3.</strong> Backward transfers fill the rest. The matrix is now fully populated — every off-diagonal cell carries an <code>x</code>. <em>Job-shops are cyclic by design</em>; the validator's flow-dominance check is opted out here.",
+            "reveal": {
+              "include": [
+                "diagonal",
+                "transfer:directed:forward",
+                "transfer:directed:backward",
+                "overlay:firm-boundary"
+              ]
+            }
+          },
+          {
+            "caption": "<strong>Upstream — Step 4.</strong> The boundary circle marks the firm's edge. Everything inside is a transaction-free zone where transfers flow without paperwork. The single arrow leaving the firm (to Downstream) is the contract — that is where transactions live. Switch to <em>Downstream</em> to see what receives.",
+            "reveal": {
+              "include": [
+                "diagonal",
+                "transfer:directed:forward",
+                "transfer:directed:backward",
+                "overlay:firm-boundary"
+              ]
+            }
+          }
+        ]
+      },
+
+      "regions": [
+        { "id": "upstream-firm", "layoutKind": "diagonal-block", "semanticKind": "task", "label": "Upstream (job shop)" }
+      ],
+
+      "tasks": [
+        { "id": "U1", "label": "Upstream task 1", "shortLabel": "U1", "region": "upstream-firm" },
+        { "id": "U2", "label": "Upstream task 2", "shortLabel": "U2", "region": "upstream-firm" },
+        { "id": "U3", "label": "Upstream task 3", "shortLabel": "U3", "region": "upstream-firm" },
+        { "id": "U4", "label": "Upstream task 4", "shortLabel": "U4", "region": "upstream-firm" },
+        { "id": "U5", "label": "Upstream task 5", "shortLabel": "U5", "region": "upstream-firm" },
+        { "id": "U6", "label": "Upstream task 6", "shortLabel": "U6", "region": "upstream-firm" }
+      ],
+
+      "transfers": [
+        { "from": "U1", "to": "U2", "mark": "x" },
+        { "from": "U1", "to": "U3", "mark": "x" },
+        { "from": "U1", "to": "U4", "mark": "x" },
+        { "from": "U1", "to": "U5", "mark": "x" },
+        { "from": "U1", "to": "U6", "mark": "x" },
+        { "from": "U2", "to": "U1", "mark": "x", "rendering": { "arrow": true, "label": "rework", "emphasis": "primary", "lens": "cyclic-flow" } },
+        { "from": "U2", "to": "U3", "mark": "x" },
+        { "from": "U2", "to": "U4", "mark": "x" },
+        { "from": "U2", "to": "U5", "mark": "x" },
+        { "from": "U2", "to": "U6", "mark": "x" },
+        { "from": "U3", "to": "U1", "mark": "x", "rendering": { "lens": "cyclic-flow" } },
+        { "from": "U3", "to": "U2", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cyclic-flow" } },
+        { "from": "U3", "to": "U4", "mark": "x" },
+        { "from": "U3", "to": "U5", "mark": "x" },
+        { "from": "U3", "to": "U6", "mark": "x" },
+        { "from": "U4", "to": "U1", "mark": "x", "rendering": { "lens": "cyclic-flow" } },
+        { "from": "U4", "to": "U2", "mark": "x", "rendering": { "lens": "cyclic-flow" } },
+        { "from": "U4", "to": "U3", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cyclic-flow" } },
+        { "from": "U4", "to": "U5", "mark": "x" },
+        { "from": "U4", "to": "U6", "mark": "x" },
+        { "from": "U5", "to": "U1", "mark": "x", "rendering": { "lens": "cyclic-flow" } },
+        { "from": "U5", "to": "U2", "mark": "x", "rendering": { "lens": "cyclic-flow" } },
+        { "from": "U5", "to": "U3", "mark": "x", "rendering": { "lens": "cyclic-flow" } },
+        { "from": "U5", "to": "U4", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cyclic-flow" } },
+        { "from": "U5", "to": "U6", "mark": "x" },
+        { "from": "U6", "to": "U1", "mark": "x", "rendering": { "arrow": true, "label": "long cycle", "emphasis": "primary", "lens": "cyclic-flow" } },
+        { "from": "U6", "to": "U2", "mark": "x", "rendering": { "lens": "cyclic-flow" } },
+        { "from": "U6", "to": "U3", "mark": "x", "rendering": { "lens": "cyclic-flow" } },
+        { "from": "U6", "to": "U4", "mark": "x", "rendering": { "lens": "cyclic-flow" } },
+        { "from": "U6", "to": "U5", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cyclic-flow" } }
+      ],
+
+      "overlays": [
+        { "kind": "firm-boundary", "rendering": { "emphasis": "primary", "lens": "modularity-boundary" } }
+      ]
+    },
+    {
+      "id": "downstream",
+      "architectureType": "flow",
+
+      "narrative": {
+        "mode": "walkthrough",
+        "steps": [
+          {
+            "caption": "<strong>Downstream — Step 1.</strong> Six tasks (D1–D6) on the diagonal, wrapped in a firm boundary. Same firm-as-circle convention as Upstream; different architecture inside.",
+            "reveal": { "include": ["diagonal", "overlay:firm-boundary"] }
+          },
+          {
+            "caption": "<strong>Downstream — Step 2.</strong> Forward transfers run straight down the line. Each task hands its output to the next station — D1→D2, D2→D3, and so on. No criss-crossing, no rework: that is what makes this a synchronized flow rather than a job shop.",
+            "reveal": {
+              "include": [
+                "diagonal",
+                "transfer:directed:forward",
+                "overlay:firm-boundary"
+              ]
+            }
+          },
+          {
+            "caption": "<strong>Downstream — Step 3.</strong> Backward marks appear above the diagonal — but these are <code>s</code>, not <code>x</code>. Each station signals upstream when it is ready for the next unit: D2 signals D1, D3 signals D2, and so on. Kanban pull, not rework.",
+            "reveal": {
+              "include": [
+                "diagonal",
+                "transfer:directed:forward",
+                "transfer:directed:backward",
+                "overlay:firm-boundary"
+              ]
+            }
+          },
+          {
+            "caption": "<strong>Downstream — Step 4.</strong> The contract with Upstream feeds raw goods to D1 and sends payment in return. Inside the firm boundary, transfers are free; the contract is the single thin crossing point where transactions are recorded.",
+            "reveal": {
+              "include": [
+                "diagonal",
+                "transfer:directed:forward",
+                "transfer:directed:backward",
+                "overlay:firm-boundary"
+              ]
+            }
+          }
+        ]
+      },
+
+      "regions": [
+        { "id": "downstream-firm", "layoutKind": "diagonal-block", "semanticKind": "task", "label": "Downstream (flow)" }
+      ],
+
+      "tasks": [
+        { "id": "D1", "label": "Downstream task 1", "shortLabel": "D1", "region": "downstream-firm" },
+        { "id": "D2", "label": "Downstream task 2", "shortLabel": "D2", "region": "downstream-firm" },
+        { "id": "D3", "label": "Downstream task 3", "shortLabel": "D3", "region": "downstream-firm" },
+        { "id": "D4", "label": "Downstream task 4", "shortLabel": "D4", "region": "downstream-firm" },
+        { "id": "D5", "label": "Downstream task 5", "shortLabel": "D5", "region": "downstream-firm" },
+        { "id": "D6", "label": "Downstream task 6", "shortLabel": "D6", "region": "downstream-firm" }
+      ],
+
+      "transfers": [
+        { "from": "D1", "to": "D2", "mark": "x", "rendering": { "arrow": true, "label": "flow", "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "D2", "to": "D3", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "D3", "to": "D4", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "D4", "to": "D5", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "D5", "to": "D6", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } },
+
+        { "from": "D2", "to": "D1", "mark": "s", "rendering": { "arrow": true, "label": "pull signal", "emphasis": "primary" } },
+        { "from": "D3", "to": "D2", "mark": "s", "rendering": { "arrow": true, "emphasis": "primary" } },
+        { "from": "D4", "to": "D3", "mark": "s", "rendering": { "arrow": true, "emphasis": "primary" } },
+        { "from": "D5", "to": "D4", "mark": "s", "rendering": { "arrow": true, "emphasis": "primary" } },
+        { "from": "D6", "to": "D5", "mark": "s", "rendering": { "arrow": true, "emphasis": "primary" } }
+      ],
+
+      "overlays": [
+        { "kind": "firm-boundary", "rendering": { "emphasis": "primary", "lens": "modularity-boundary" } }
+      ]
+    }
+  ],
+
+  "arrows": [
+    {
+      "id": "contract-goods",
+      "from": { "matrix": 0, "taskId": "U6" },
+      "to":   { "matrix": 1, "taskId": "D1" },
+      "label": "Contract: goods",
+      "kind": "transaction",
+      "rendering": { "emphasis": "primary", "labelStyle": "load-bearing" }
+    },
+    {
+      "id": "contract-payment",
+      "from": { "matrix": 1, "taskId": "D6" },
+      "to":   { "matrix": 0, "taskId": "U1" },
+      "label": "Contract: payment",
+      "kind": "transaction",
+      "rendering": { "emphasis": "primary", "labelStyle": "load-bearing" }
+    }
+  ]
+}

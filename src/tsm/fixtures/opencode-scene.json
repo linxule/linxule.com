@@ -1,0 +1,724 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "opencode-cli-native-agent-derived",
+  "title": "opencode CLI-native coding agent architecture (May 2026) (Hidden Structure)",
+  "source": "Derived via Hidden Structure from opencode-cli-native-agent. Source observation: Extracted 2026-05-25 from anomalyco/opencode public README, package manifests, and opencode.ai docs. Edge convention: X depends on Y = X talks to, loads, invokes, configures, gates, or receives runtime results/events from Y.",
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> Hidden Structure has sorted the system. Every node sits on the diagonal in a position that reveals its structural role.",
+        "reveal": {
+          "include": [
+            "diagonal"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward transfers show the dependency flow as it actually runs. Below the diagonal, each mark is a direct invocation or load.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> The four-square partition.<br/>Core: 5 nodes in a mutually-dependent cycle.<br/>Shared: 16 nodes the core depends on.<br/>Control: 1 nodes that depend on the core.<br/><em>Architecture: core-periphery.</em>",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border"
+          ]
+        }
+      }
+    ]
+  },
+  "matrices": [
+    {
+      "id": "opencode-cli-native-agent",
+      "architectureType": "core-periphery",
+      "regions": [
+        {
+          "id": "shared",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "shared",
+          "label": "Shared"
+        },
+        {
+          "id": "core",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core"
+        },
+        {
+          "id": "control",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "control",
+          "label": "Control"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "builtin-tools",
+          "label": "Built-in tools",
+          "region": "shared",
+          "shortLabel": "T1",
+          "category": "tools"
+        },
+        {
+          "id": "lsp-servers",
+          "label": "LSP servers",
+          "region": "shared",
+          "shortLabel": "T2",
+          "category": "tools"
+        },
+        {
+          "id": "tool-registry",
+          "label": "Tool registry",
+          "region": "shared",
+          "shortLabel": "T3",
+          "category": "tools"
+        },
+        {
+          "id": "mcp-servers",
+          "label": "MCP servers",
+          "region": "shared",
+          "shortLabel": "M1",
+          "category": "mcp"
+        },
+        {
+          "id": "permission-system",
+          "label": "Permission system",
+          "region": "shared",
+          "shortLabel": "T4",
+          "category": "tools"
+        },
+        {
+          "id": "subagent-explore",
+          "label": "explore subagent",
+          "region": "shared",
+          "shortLabel": "C1",
+          "category": "coder"
+        },
+        {
+          "id": "subagent-scout",
+          "label": "scout subagent",
+          "region": "shared",
+          "shortLabel": "C2",
+          "category": "coder"
+        },
+        {
+          "id": "provider-layer",
+          "label": "AI provider layer",
+          "region": "shared",
+          "shortLabel": "R1",
+          "category": "runtime"
+        },
+        {
+          "id": "agent-plan",
+          "label": "plan agent",
+          "region": "shared",
+          "shortLabel": "R2",
+          "category": "runtime"
+        },
+        {
+          "id": "session-api",
+          "label": "Session API",
+          "region": "shared",
+          "shortLabel": "V1",
+          "category": "server"
+        },
+        {
+          "id": "agent-system",
+          "label": "Agent system",
+          "region": "shared",
+          "shortLabel": "R3",
+          "category": "runtime"
+        },
+        {
+          "id": "agent-build",
+          "label": "build agent",
+          "region": "shared",
+          "shortLabel": "R4",
+          "category": "runtime"
+        },
+        {
+          "id": "subagent-general",
+          "label": "general subagent",
+          "region": "shared",
+          "shortLabel": "C3",
+          "category": "coder"
+        },
+        {
+          "id": "child-sessions",
+          "label": "Child sessions",
+          "region": "shared",
+          "shortLabel": "R5",
+          "category": "runtime"
+        },
+        {
+          "id": "custom-tools",
+          "label": "Plugin custom tools",
+          "region": "shared",
+          "shortLabel": "T5",
+          "category": "tools"
+        },
+        {
+          "id": "config-system",
+          "label": "Config system",
+          "region": "shared",
+          "shortLabel": "R6",
+          "category": "runtime"
+        },
+        {
+          "id": "tui-client",
+          "label": "TUI client",
+          "region": "core",
+          "shortLabel": "L1",
+          "category": "cli"
+        },
+        {
+          "id": "http-server",
+          "label": "OpenCode HTTP server",
+          "region": "core",
+          "shortLabel": "V2",
+          "category": "server"
+        },
+        {
+          "id": "sdk-client",
+          "label": "JS/TS SDK client",
+          "region": "core",
+          "shortLabel": "V3",
+          "category": "server"
+        },
+        {
+          "id": "plugin-system",
+          "label": "Plugin system",
+          "region": "core",
+          "shortLabel": "T6",
+          "category": "tools"
+        },
+        {
+          "id": "plugin-hooks",
+          "label": "Plugin hooks/events",
+          "region": "core",
+          "shortLabel": "T7",
+          "category": "tools"
+        },
+        {
+          "id": "opencode-cli",
+          "label": "opencode CLI",
+          "region": "control",
+          "shortLabel": "L2",
+          "category": "cli"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "tui-client",
+          "to": "opencode-cli",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "http-server",
+          "to": "opencode-cli",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "http-server",
+          "to": "tui-client",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "tui-client",
+          "to": "http-server",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "http-server",
+          "to": "sdk-client",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "sdk-client",
+          "to": "http-server",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "session-api",
+          "to": "http-server",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-system",
+          "to": "session-api",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "config-system",
+          "to": "http-server",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-system",
+          "to": "config-system",
+          "mark": "x"
+        },
+        {
+          "from": "agent-build",
+          "to": "agent-system",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "agent-plan",
+          "to": "agent-system",
+          "mark": "x"
+        },
+        {
+          "from": "subagent-general",
+          "to": "agent-system",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "subagent-explore",
+          "to": "agent-system",
+          "mark": "x"
+        },
+        {
+          "from": "subagent-scout",
+          "to": "agent-system",
+          "mark": "x"
+        },
+        {
+          "from": "tool-registry",
+          "to": "agent-build",
+          "mark": "x"
+        },
+        {
+          "from": "permission-system",
+          "to": "agent-plan",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "tool-registry",
+          "to": "agent-plan",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "subagent-general",
+          "to": "agent-build",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "subagent-explore",
+          "to": "agent-build",
+          "mark": "x"
+        },
+        {
+          "from": "subagent-scout",
+          "to": "agent-build",
+          "mark": "x"
+        },
+        {
+          "from": "child-sessions",
+          "to": "subagent-general",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "session-api",
+          "to": "child-sessions",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "builtin-tools",
+          "to": "tool-registry",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "mcp-servers",
+          "to": "tool-registry",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "tool-registry",
+          "to": "mcp-servers",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "lsp-servers",
+          "to": "tool-registry",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "tool-registry",
+          "to": "permission-system",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "plugin-system",
+          "to": "http-server",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "plugin-hooks",
+          "to": "plugin-system",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "http-server",
+          "to": "plugin-hooks",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "sdk-client",
+          "to": "plugin-system",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "custom-tools",
+          "to": "plugin-system",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "tool-registry",
+          "to": "custom-tools",
+          "mark": "x"
+        },
+        {
+          "from": "provider-layer",
+          "to": "agent-system",
+          "mark": "x"
+        },
+        {
+          "from": "mcp-servers",
+          "to": "config-system",
+          "mark": "x"
+        }
+      ],
+      "overlays": [
+        {
+          "kind": "module-border",
+          "regionId": "shared",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "control",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        }
+      ],
+      "annotations": []
+    }
+  ],
+  "lenses": [
+    "cyclic-flow",
+    "cross-region-edge",
+    "core-periphery-boundary"
+  ],
+  "provenance": {
+    "inputObservationId": "opencode-cli-native-agent",
+    "algorithm": "hidden-structure",
+    "algorithmVersion": "0.1.0",
+    "vfivfo": {
+      "opencode-cli": {
+        "vfi": 0,
+        "vfo": 21
+      },
+      "tui-client": {
+        "vfi": 5,
+        "vfo": 20
+      },
+      "http-server": {
+        "vfi": 5,
+        "vfo": 20
+      },
+      "sdk-client": {
+        "vfi": 5,
+        "vfo": 20
+      },
+      "session-api": {
+        "vfi": 11,
+        "vfo": 13
+      },
+      "config-system": {
+        "vfi": 6,
+        "vfo": 14
+      },
+      "agent-system": {
+        "vfi": 11,
+        "vfo": 13
+      },
+      "agent-build": {
+        "vfi": 11,
+        "vfo": 13
+      },
+      "agent-plan": {
+        "vfi": 12,
+        "vfo": 5
+      },
+      "subagent-general": {
+        "vfi": 11,
+        "vfo": 13
+      },
+      "subagent-explore": {
+        "vfi": 12,
+        "vfo": 0
+      },
+      "subagent-scout": {
+        "vfi": 12,
+        "vfo": 0
+      },
+      "permission-system": {
+        "vfi": 13,
+        "vfo": 4
+      },
+      "tool-registry": {
+        "vfi": 16,
+        "vfo": 3
+      },
+      "builtin-tools": {
+        "vfi": 17,
+        "vfo": 0
+      },
+      "mcp-servers": {
+        "vfi": 16,
+        "vfo": 3
+      },
+      "plugin-system": {
+        "vfi": 5,
+        "vfo": 20
+      },
+      "plugin-hooks": {
+        "vfi": 5,
+        "vfo": 20
+      },
+      "custom-tools": {
+        "vfi": 6,
+        "vfo": 4
+      },
+      "lsp-servers": {
+        "vfi": 17,
+        "vfo": 0
+      },
+      "provider-layer": {
+        "vfi": 12,
+        "vfo": 0
+      },
+      "child-sessions": {
+        "vfi": 11,
+        "vfo": 13
+      }
+    },
+    "cyclicGroups": [
+      [
+        "tui-client",
+        "http-server",
+        "sdk-client",
+        "plugin-system",
+        "plugin-hooks"
+      ],
+      [
+        "session-api",
+        "agent-system",
+        "agent-build",
+        "subagent-general",
+        "child-sessions"
+      ],
+      [
+        "tool-registry",
+        "mcp-servers"
+      ]
+    ]
+  }
+}

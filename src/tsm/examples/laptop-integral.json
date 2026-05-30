@@ -1,0 +1,120 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "laptop-integral",
+  "title": "Designing a laptop computer",
+  "source": "Adapted from Baldwin (2026), <em>A theory of technology and organizations</em>, Figure 1",
+  "lenses": ["cross-region-edge", "modularity-boundary"],
+
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> Tasks line up along the diagonal. Each cell on the diagonal is a single task the recipe requires.",
+        "reveal": { "include": ["diagonal"] }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward transfers — outputs flowing from one task to a later one — appear below the diagonal. Each mark is a dependency.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward"] }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Marks above the diagonal are backward transfers. They signal feedback loops and rework — the technology is not strictly sequential.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> Dense clusters of marks reveal the product's natural components: screen, motherboard, drive, casing. The clusters become visible as <em>proto-modules</em>.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border"
+          ]
+        },
+        "setEmphasis": {
+          "primary": { "byLens": ["modularity-boundary"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 5.</strong> The transfers that <em>cross</em> the cluster boundaries (highlighted) are the leakage that keeps the components from being fully modular. To make them true modules, these dependencies must be removed or replaced with shared design rules.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border",
+            "highlight:cross-region"
+          ]
+        },
+        "setEmphasis": {
+          "primary": { "byLens": ["modularity-boundary"] }
+        }
+      }
+    ]
+  },
+
+  "matrices": [
+    {
+      "id": "laptop",
+      "architectureType": "proto-modular",
+
+      "regions": [
+        { "id": "screen", "layoutKind": "diagonal-block", "semanticKind": "module", "label": "Screen" },
+        { "id": "mobo",   "layoutKind": "diagonal-block", "semanticKind": "module", "label": "Motherboard" },
+        { "id": "drive",  "layoutKind": "diagonal-block", "semanticKind": "module", "label": "Drive" },
+        { "id": "case",   "layoutKind": "diagonal-block", "semanticKind": "module", "label": "Casing" }
+      ],
+
+      "tasks": [
+        { "id": "s-spec",   "label": "Spec",   "region": "screen" },
+        { "id": "s-design", "label": "Design", "region": "screen" },
+        { "id": "s-test",   "label": "Test",   "region": "screen" },
+        { "id": "m-spec",   "label": "Spec",   "region": "mobo" },
+        { "id": "m-design", "label": "Design", "region": "mobo" },
+        { "id": "m-layout", "label": "Layout", "region": "mobo" },
+        { "id": "m-test",   "label": "Test",   "region": "mobo" },
+        { "id": "d-spec",   "label": "Spec",   "region": "drive" },
+        { "id": "d-design", "label": "Design", "region": "drive" },
+        { "id": "d-test",   "label": "Test",   "region": "drive" },
+        { "id": "c-spec",   "label": "Spec",   "region": "case" },
+        { "id": "c-design", "label": "Design", "region": "case" },
+        { "id": "c-test",   "label": "Test",   "region": "case" }
+      ],
+
+      "transfers": [
+        { "from": "s-spec",   "to": "s-design", "mark": "x" },
+        { "from": "s-design", "to": "s-test",   "mark": "x" },
+        { "from": "s-test",   "to": "s-design", "mark": "x" },
+
+        { "from": "m-spec",   "to": "m-design", "mark": "x" },
+        { "from": "m-design", "to": "m-layout", "mark": "x" },
+        { "from": "m-layout", "to": "m-test",   "mark": "x" },
+        { "from": "m-test",   "to": "m-layout", "mark": "x" },
+        { "from": "m-layout", "to": "m-design", "mark": "x" },
+
+        { "from": "d-spec",   "to": "d-design", "mark": "x" },
+        { "from": "d-design", "to": "d-test",   "mark": "x" },
+        { "from": "d-test",   "to": "d-design", "mark": "x" },
+
+        { "from": "c-spec",   "to": "c-design", "mark": "x" },
+        { "from": "c-design", "to": "c-test",   "mark": "x" },
+        { "from": "c-test",   "to": "c-design", "mark": "x" },
+
+        { "from": "m-design", "to": "s-spec",   "mark": "x", "rendering": { "lens": "cross-region-edge" } },
+        { "from": "m-design", "to": "d-spec",   "mark": "x", "rendering": { "lens": "cross-region-edge" } },
+        { "from": "s-design", "to": "c-spec",   "mark": "x", "rendering": { "lens": "cross-region-edge" } },
+        { "from": "d-design", "to": "c-spec",   "mark": "x", "rendering": { "lens": "cross-region-edge" } },
+        { "from": "m-layout", "to": "c-design", "mark": "x", "rendering": { "lens": "cross-region-edge" } }
+      ],
+
+      "overlays": [
+        { "kind": "module-border", "regionId": "screen", "rendering": { "lens": "modularity-boundary" } },
+        { "kind": "module-border", "regionId": "mobo",   "rendering": { "lens": "modularity-boundary" } },
+        { "kind": "module-border", "regionId": "drive",  "rendering": { "lens": "modularity-boundary" } },
+        { "kind": "module-border", "regionId": "case",   "rendering": { "lens": "modularity-boundary" } }
+      ],
+
+      "annotations": []
+    }
+  ]
+}

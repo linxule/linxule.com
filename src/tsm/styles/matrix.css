@@ -1,0 +1,389 @@
+/* The matrix surface: wrapper, title, source, the NxN grid of cells, and
+   every cell variant. Reveal-state classes (.hidden, .highlighted) are
+   defined here so the matrix renderer's class toggles produce visible
+   effects without any JS-side style manipulation.
+
+   Fluid typography: render/matrix.js publishes --cell-size on the wrapper
+   after each layout (initial mount + resize). All cell font-sizes use
+   clamp(min, calc(--cell-size * factor), max) so labels scale with the
+   matrix density without ever vanishing or exploding.
+
+   Voice: the title/header lines are machine voice (Plex Mono); the diagonal
+   task labels are human voice (Cormorant) since they're names; transfer
+   glyphs are mono. */
+
+.tsm-wrapper {
+  position: relative;
+  /* Box-less (2026-05-29, "full site idiom"): no card, no border, no padding.
+     The grid floats on bare paper like everything on linxule.com — only the
+     hairline gridlines (.tsm-grid gap) bound it. */
+
+  /* Embeds + the <1024 single-column fallback still cap their own width here;
+     in the app's two-column layout the grid track governs (`.layout #tsm`
+     max-width:none + the @media composition in base.css). */
+  max-width: min(100%, 900px);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+
+  /* Fallback used until render/matrix.js measures and overwrites it. */
+  --cell-size: 40px;
+}
+
+.tsm-title {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  margin: 0 0 4px;
+}
+
+.tsm-source {
+  font-size: 13px;
+  color: var(--ink-light);
+  margin: 0 0 16px;
+  font-style: italic;
+}
+
+/* App single-mount: move the scene "source" provenance line BELOW the grid.
+   It was a ~5-line italic block ABOVE the grid (commit SHAs, DNS-probe notes
+   on derived scenes), eating vertical space inside the matrix card and pushing
+   the grid down the page. Flex-order keeps it in the card but reads as a figure
+   caption beneath the matrix. gridEl's offsetTop SHRINKS (the source no longer
+   sits above it) — safe for the arrow/overlay/annotation layers, which read
+   offsetTop at draw time. Scoped to the app's #tsm: embeds keep document order;
+   multi-mount already hides title + source (no reorder needed there). */
+.layout #tsm:not(.multi-mount) {
+  display: flex;
+  flex-direction: column;
+}
+
+.layout #tsm:not(.multi-mount) .tsm-title {
+  order: 0;
+}
+
+.layout #tsm:not(.multi-mount) .tsm-matrix-header {
+  order: 1;
+}
+
+.layout #tsm:not(.multi-mount) .tsm-grid {
+  order: 2;
+}
+
+.layout #tsm:not(.multi-mount) .tsm-source {
+  order: 3;
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-size: 12px;
+}
+
+/* Empty source (scene.source === "") → no caption, no divider rule. */
+.layout #tsm:not(.multi-mount) .tsm-source:empty {
+  display: none;
+}
+
+/* ----- single-mount deterministic square (2026-05-29) -----
+
+   The matrix size is now a function of the VIEWPORT, not the labels. With the
+   matrix column made definite in base.css (360px + minmax(0,1fr)), the grid
+   fills the track width (width:100%) but is capped by the viewport height
+   (max-width = 100vh − chrome); aspect-ratio:1 turns that bounded width into a
+   square. Net: side = min(track-width, viewport-height). Every single-mount
+   matrix renders the SAME square at a given viewport — no more label-driven
+   max-content shrink (job-shop 139px vs Fig 1 432px at the same n). The
+   minmax(0,1fr) rows divide the square so cells scale to fit; the resize→
+   measure() path re-publishes --cell-size so clamp typography stays live.
+
+   --matrix-chrome = everything stacked above the grid top (spine + header +
+   mode bar + legend + breathing). One tunable in one place; verified live.
+
+   Scoped single-mount / non-algorithm / wide. Multi-mount (Fig 18.1, the
+   smoke test) is excluded via :not(.multi-mount) — those grids are square via
+   the cells' own aspect-ratio inside each flex cell, and already fit. Fig 4 is
+   single-mount (one matrices[] entry) so it DOES get this cap. The algorithm
+   view uses its own grid class (excluded via body:not(.view-algorithm)); the
+   <1024 fallback keeps min(100%,900px) (this @media doesn't reach it). */
+@media (min-width: 1025px) {
+  body:not(.view-algorithm) .layout #tsm:not(.multi-mount) .tsm-grid {
+    /* = grid top offset + bottom breathing. The caption + legend moved to the
+       margins (2026-05-29), so only the header + mode bar sit above the plate
+       now — the plate grows accordingly. Tuned live. The grid never grows past
+       the viewport, so the page never scrolls just to see one matrix whole. */
+    --matrix-chrome: 312px;
+    width: 100%;
+    max-width: calc(100vh - var(--matrix-chrome));
+    aspect-ratio: 1 / 1;
+  }
+}
+
+/* Per-matrix header line. Sits between .tsm-source and the grid; replaces
+   the old floating .firm-boundary-label pill (which overlapped the source
+   in multi-matrix scenes like Fig 18.1). Resolution lives in
+   render/matrix.js's resolveMatrixHeaderLabel — firm-boundary overlay label
+   wins over the primary region label. */
+.tsm-matrix-header {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.tsm-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  /* No outer frame (2026-05-29 "full site idiom"): the 1px gap paints the
+     internal hairline gridlines; the grid floats on bare paper, unframed. */
+}
+
+.cell {
+  background: var(--bg);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Generic text fallback for any non-diagonal, non-transfer cell.
+     Bumped 2026-05-29 (0.22→0.26, 9–13 → 10–15px): diagonal labels were
+     hitting the 9px floor on dense derived matrices and reading faint.
+     Cormorant caps at weight 500 (it's the human voice; see base.css), so
+     legibility comes from size + less label padding, not a heavier stroke. */
+  font-size: clamp(10px, calc(var(--cell-size) * 0.26), 15px);
+  position: relative;
+  transition:
+    background-color 400ms ease,
+    color 400ms ease,
+    transform 200ms ease;
+}
+
+.cell.diagonal {
+  background: var(--diagonal-bg);
+  color: var(--diagonal-ink);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  /* Diagonal cells hold task labels (e.g., "Motherboard", "voice-team-reviewer")
+     that frequently exceed cell width in dense matrices. The .diagonal-label
+     span (set by render/matrix.js) carries the ellipsis treatment; the cell
+     itself stays as a flex centerer. */
+  padding: 0;
+}
+
+.diagonal-label {
+  display: block;
+  flex: 1;
+  min-width: 0;            /* allow flex item to shrink below text width */
+  text-align: center;
+  padding: 0 2px;          /* trimmed 4→3→2px — max room for short codes in capped cells */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(10px, calc(var(--cell-size) * 0.26), 15px);
+}
+
+/* Full-name tooltip on diagonal cells. The diagonal label is ellipsis-truncated
+   on dense matrices, so hovering reveals the full "Group: name". Replaces the
+   native title= (whose ~500ms OS delay clashed with the instant spotlight — the
+   "finicky" two-speed feel). The transition-delay on :hover is a CSS hover-intent:
+   a quick sweep loses :hover before the 90ms delay elapses, so the tooltip never
+   flashes — only a deliberate rest reveals it, matching the spotlight's ~80ms
+   engage. Machine voice (mono), ink-on-paper, lifted above neighbors on hover.
+   position:absolute keeps the ::after out of the cell's flex flow. */
+.cell.diagonal[data-fullname]:hover {
+  z-index: 10;
+}
+
+.cell.diagonal[data-fullname]::after {
+  content: attr(data-fullname);
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  padding: 3px 7px;
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.cell.diagonal[data-fullname]:hover::after {
+  opacity: 1;
+  transition: opacity 120ms ease-out 90ms; /* 90ms hover-intent delay before fade-in */
+}
+
+.cell.transfer {
+  font-family: var(--font-mono);
+  /* Arrow glyphs (→, ↑) read better slightly larger than text labels. */
+  font-size: clamp(11px, calc(var(--cell-size) * 0.42), 20px);
+  font-weight: 700;
+  color: transparent;
+  transition:
+    color 400ms ease,
+    background-color 400ms ease,
+    transform 300ms ease;
+}
+
+.cell.transfer.forward {
+  color: var(--forward);
+}
+
+.cell.transfer.backward {
+  color: var(--backward);
+}
+
+.cell.transfer.hidden {
+  color: transparent !important;
+}
+
+.cell.transfer.cross.highlighted {
+  background: var(--backward);
+  color: var(--paper);
+  transform: scale(1.08);
+  z-index: 2;
+  border-radius: 2px;
+}
+
+/* ----- corner-wrapping (SO paper Fig 7A / 7B) -----
+
+   The coordinator region's row + column visually "wrap" the operator block.
+   The cells stay in their original geometry — only the background and border
+   change. The anchor (diagonal) cell carries both classes so corner styling
+   doesn't double-apply. Tint harmonized to the book's shared-green
+   (--color-shared) rather than the prior bright lime. */
+
+.cell.corner-wrap-row,
+.cell.corner-wrap-col {
+  background: var(--corner-wrap-bg, rgba(90, 138, 90, 0.12));
+}
+
+.cell.corner-wrap-row {
+  border-top: 1px solid var(--corner-wrap-rule, rgba(90, 138, 90, 0.5));
+  border-bottom: 1px solid var(--corner-wrap-rule, rgba(90, 138, 90, 0.5));
+}
+
+.cell.corner-wrap-col {
+  border-left: 1px solid var(--corner-wrap-rule, rgba(90, 138, 90, 0.5));
+  border-right: 1px solid var(--corner-wrap-rule, rgba(90, 138, 90, 0.5));
+}
+
+.cell.corner-wrap-anchor {
+  /* Diagonal cell of the coordinator. Keep the region color from the inline
+     style so the diagonal still reads as the canonical task cell, but
+     emphasize the border to mark the wrap-corner. */
+  box-shadow: inset 0 0 0 2px var(--corner-wrap-rule, rgba(90, 138, 90, 0.6));
+}
+
+/* ----- external-cell (SO paper Fig 6 — CS) -----
+
+   The customer task sits visually outside the firm boundary. We can't take
+   it off the CSS Grid (that would change the geometry the renderer relies
+   on), but we can mute the cells on its row + column so the perimeter the
+   firm-boundary overlay draws reads as enclosing only the firm. */
+
+.cell.external-actor {
+  background: var(--external-bg, rgba(155, 155, 155, 0.12)) !important;
+  color: var(--external-ink, var(--muted));
+  font-style: italic;
+}
+
+.cell.external-row,
+.cell.external-col {
+  background: var(--external-bg, rgba(155, 155, 155, 0.08));
+}
+
+/* ----- multi-mount layout (mountAllMatrices) -----
+
+   Multi-matrix scenes (Fig 4 store-household, Fig 18.1 upstream-downstream,
+   multi-matrix-smoke) mount EVERY matrix side-by-side under #tsm. The
+   parent wrapper gains `.multi-mount`; each matrix is wrapped in a
+   `.tsm-matrix-cell` div carrying `data-matrix-index="N"`.
+
+   The cross-matrix-arrows SVG is a position:absolute child of #tsm and
+   spans the whole wrapper including the gap — so the gap needs to be
+   wide enough for the Bezier curves to read as crossing whitespace
+   rather than colliding with grid edges. The clamp() formula gives
+   2rem on narrow viewports and up to 4rem on wide, while still letting
+   the matrices breathe.
+
+   Each `.tsm-matrix-cell` is its own boxed matrix (border, padding,
+   card background) — visually it reads as two independent matrices
+   sharing one wrapper. The outer `.tsm-wrapper` keeps its border so
+   the surrounding chrome (caption, controls) doesn't shift; an
+   alternative would have been transparent-outer + boxed cells, but the
+   uniform "page-card" look matches single-matrix scenes. */
+
+.tsm-wrapper.multi-mount {
+  display: flex;
+  flex-direction: row;
+  gap: clamp(2rem, 6vw, 4rem);
+  align-items: flex-start;
+  /* Override the single-mount 900px cap — two matrices need more room.
+     min(100%, …) keeps narrow viewports honest. */
+  /* NOTE: in the app's two-column layout this cap is superseded by base.css
+     `.layout #tsm { max-width: none }` (ID specificity beats this class rule),
+     so the grid track governs multi-mount width there. This binds only for
+     embeds and the <1024px single-column fallback (post-layout audit L3). */
+  max-width: min(100%, 1400px);
+}
+
+.tsm-wrapper.multi-mount .tsm-matrix-cell {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 200ms ease, filter 200ms ease;
+}
+
+/* Each matrix cell renders its own scene title + source (both come from
+   the scene-level metadata; they're identical across all matrices in a
+   scene). Showing them N times is visual repetition AND misaligns the
+   grids (the first cell's title+source pushes its grid down; subsequent
+   cells start their grid at the top). Hide on all cells in multi-mount.
+   The scene title is conveyed by the dropdown label + step caption; the
+   per-matrix `.tsm-matrix-header` (firm name) is distinct and stays. */
+.tsm-wrapper.multi-mount .tsm-matrix-cell .tsm-title,
+.tsm-wrapper.multi-mount .tsm-matrix-cell .tsm-source {
+  display: none;
+}
+
+/* Focus mode: clicking a matrix-switcher button in multi-mount adds
+   `--focused` to the selected cell and `--unfocused` to the others.
+   Cross-matrix arrows stay drawn so endpoints remain visible; the
+   non-focused matrices fade so the focused one carries the eye. */
+.tsm-wrapper.multi-mount .tsm-matrix-cell--focused {
+  /* Subtle highlight ring — outline, not border, so it doesn't shift
+     layout. Matches the cross-arrow partner-highlight register. */
+  outline: 2px solid var(--accent, #3b6cd1);
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+
+.tsm-wrapper.multi-mount .tsm-matrix-cell--unfocused {
+  opacity: 0.55;
+  filter: saturate(0.7);
+}
+
+/* Responsive fallback: side-by-side becomes unusable on narrow viewports.
+   Below 800px the cells stack vertically; cross-matrix arrows still draw
+   between them because the SVG renderer computes endpoint positions from
+   bounding rects on every redraw — the geometry change is transparent
+   to it. */
+@media (max-width: 800px) {
+  .tsm-wrapper.multi-mount {
+    flex-direction: column;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+}

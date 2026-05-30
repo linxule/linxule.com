@@ -1,0 +1,334 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "langchain-oss-python-derived",
+  "title": "LangChain Python package architecture (May 2026) (Hidden Structure)",
+  "source": "Derived via Hidden Structure from langchain-oss-python. Source observation: Extracted 2026-05-25 from LangChain and LangGraph public repository manifests plus current LangChain docs. Edge convention: 'X depends on Y' = X imports, requires, or declares Y as an optional integration. Pinned to commit 33875fde2acf6ffb717915a895638274a6098ec2. langgraph companion-repo edges are not clone-grounded (langgraph not cloned in research/repos/); they are downgraded to docs-tier and pinned to langgraph repo commit add269632bb32c57f3252b7a7006c8115b579fb4 (tag 1.2.2).",
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> Hidden Structure has sorted the system. Every node sits on the diagonal in a position that reveals its structural role.",
+        "reveal": {
+          "include": [
+            "diagonal"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward transfers show the dependency flow as it actually runs. Below the diagonal, each mark is a direct invocation or load.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> No cyclic core was found — the system is fully hierarchical, so it sorts into dependency layers rather than a core-periphery partition.<br/><em>Architecture: hierarchical.</em>",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      }
+    ]
+  },
+  "matrices": [
+    {
+      "id": "langchain-oss-python",
+      "architectureType": "hierarchical",
+      "regions": [
+        {
+          "id": "task",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "task",
+          "label": "Tasks"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "langchain-core",
+          "label": "langchain-core",
+          "region": "task",
+          "shortLabel": "C1",
+          "category": "core"
+        },
+        {
+          "id": "langgraph-checkpoint",
+          "label": "langgraph-checkpoint",
+          "region": "task",
+          "shortLabel": "G1",
+          "category": "graph"
+        },
+        {
+          "id": "langgraph-prebuilt",
+          "label": "langgraph-prebuilt",
+          "region": "task",
+          "shortLabel": "G2",
+          "category": "graph"
+        },
+        {
+          "id": "langgraph-sdk",
+          "label": "langgraph-sdk",
+          "region": "task",
+          "shortLabel": "G3",
+          "category": "graph"
+        },
+        {
+          "id": "langchain-community",
+          "label": "langchain-community",
+          "region": "task",
+          "shortLabel": "I1",
+          "category": "integrations"
+        },
+        {
+          "id": "langgraph",
+          "label": "langgraph",
+          "region": "task",
+          "shortLabel": "G4",
+          "category": "graph"
+        },
+        {
+          "id": "langchain-text-splitters",
+          "label": "langchain-text-splitters",
+          "region": "task",
+          "shortLabel": "C2",
+          "category": "core"
+        },
+        {
+          "id": "langchain-openai",
+          "label": "langchain-openai",
+          "region": "task",
+          "shortLabel": "P1",
+          "category": "partners"
+        },
+        {
+          "id": "langchain-anthropic",
+          "label": "langchain-anthropic",
+          "region": "task",
+          "shortLabel": "P2",
+          "category": "partners"
+        },
+        {
+          "id": "langchain-mistralai",
+          "label": "langchain-mistralai",
+          "region": "task",
+          "shortLabel": "P3",
+          "category": "partners"
+        },
+        {
+          "id": "langsmith",
+          "label": "langsmith",
+          "region": "task",
+          "shortLabel": "F1",
+          "category": "platform"
+        },
+        {
+          "id": "langchain",
+          "label": "langchain",
+          "region": "task",
+          "shortLabel": "C3",
+          "category": "core"
+        },
+        {
+          "id": "langchain-classic",
+          "label": "langchain-classic",
+          "region": "task",
+          "shortLabel": "C4",
+          "category": "core"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "langchain-core",
+          "to": "langchain",
+          "mark": "x"
+        },
+        {
+          "from": "langgraph",
+          "to": "langchain",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-community",
+          "to": "langchain",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-openai",
+          "to": "langchain",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-anthropic",
+          "to": "langchain",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-mistralai",
+          "to": "langchain",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-core",
+          "to": "langchain-classic",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-text-splitters",
+          "to": "langchain-classic",
+          "mark": "x"
+        },
+        {
+          "from": "langsmith",
+          "to": "langchain-classic",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-community",
+          "to": "langchain-classic",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-core",
+          "to": "langchain-text-splitters",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-core",
+          "to": "langchain-community",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "langchain-core",
+          "to": "langchain-openai",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-core",
+          "to": "langchain-anthropic",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-core",
+          "to": "langchain-mistralai",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-core",
+          "to": "langgraph",
+          "mark": "x"
+        },
+        {
+          "from": "langgraph-checkpoint",
+          "to": "langgraph",
+          "mark": "x"
+        },
+        {
+          "from": "langgraph-sdk",
+          "to": "langgraph",
+          "mark": "x"
+        },
+        {
+          "from": "langgraph-prebuilt",
+          "to": "langgraph",
+          "mark": "x"
+        },
+        {
+          "from": "langchain-core",
+          "to": "langgraph-prebuilt",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "langgraph-checkpoint",
+          "to": "langgraph-prebuilt",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        }
+      ],
+      "overlays": [],
+      "annotations": []
+    }
+  ],
+  "provenance": {
+    "inputObservationId": "langchain-oss-python",
+    "algorithm": "hidden-structure",
+    "algorithmVersion": "0.1.0",
+    "vfivfo": {
+      "langchain": {
+        "vfi": 0,
+        "vfo": 9
+      },
+      "langchain-core": {
+        "vfi": 9,
+        "vfo": 0
+      },
+      "langgraph": {
+        "vfi": 1,
+        "vfo": 4
+      },
+      "langgraph-prebuilt": {
+        "vfi": 2,
+        "vfo": 2
+      },
+      "langgraph-checkpoint": {
+        "vfi": 3,
+        "vfo": 0
+      },
+      "langgraph-sdk": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "langchain-classic": {
+        "vfi": 0,
+        "vfo": 4
+      },
+      "langchain-text-splitters": {
+        "vfi": 1,
+        "vfo": 1
+      },
+      "langchain-community": {
+        "vfi": 2,
+        "vfo": 1
+      },
+      "langchain-openai": {
+        "vfi": 1,
+        "vfo": 1
+      },
+      "langchain-anthropic": {
+        "vfi": 1,
+        "vfo": 1
+      },
+      "langchain-mistralai": {
+        "vfi": 1,
+        "vfo": 1
+      },
+      "langsmith": {
+        "vfi": 1,
+        "vfo": 0
+      }
+    },
+    "cyclicGroups": []
+  }
+}

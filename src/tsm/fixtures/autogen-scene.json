@@ -1,0 +1,338 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "autogen-oss-python-derived",
+  "title": "Microsoft AutoGen Python package architecture (May 2026) (Hidden Structure)",
+  "source": "Derived via Hidden Structure from autogen-oss-python. Source observation: Extracted 2026-05-25 from Microsoft AutoGen public repository and docs. Edge convention: 'X depends on Y' = X imports, requires, owns, or builds on Y. Package dependency edges come from pyproject.toml; component ownership edges come from python/README.md. Pinned to commit 027ecf0a379bcc1d09956d46d12d44a3ad9cee14.",
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> Hidden Structure has sorted the system. Every node sits on the diagonal in a position that reveals its structural role.",
+        "reveal": {
+          "include": [
+            "diagonal"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward transfers show the dependency flow as it actually runs. Below the diagonal, each mark is a direct invocation or load.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> No cyclic core was found — the system is fully hierarchical, so it sorts into dependency layers rather than a core-periphery partition.<br/><em>Architecture: hierarchical.</em>",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      }
+    ]
+  },
+  "matrices": [
+    {
+      "id": "autogen-oss-python",
+      "architectureType": "hierarchical",
+      "regions": [
+        {
+          "id": "task",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "task",
+          "label": "Tasks"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "core-agent-runtime",
+          "label": "agent runtime",
+          "region": "task",
+          "shortLabel": "C1",
+          "category": "core"
+        },
+        {
+          "id": "core-models",
+          "label": "model abstractions",
+          "region": "task",
+          "shortLabel": "C2",
+          "category": "core"
+        },
+        {
+          "id": "core-tools-workbench",
+          "label": "tools/workbench",
+          "region": "task",
+          "shortLabel": "C3",
+          "category": "core"
+        },
+        {
+          "id": "core-memory",
+          "label": "memory",
+          "region": "task",
+          "shortLabel": "C4",
+          "category": "core"
+        },
+        {
+          "id": "core-tracing",
+          "label": "tracing",
+          "region": "task",
+          "shortLabel": "C5",
+          "category": "core"
+        },
+        {
+          "id": "autogen-core",
+          "label": "autogen-core",
+          "region": "task",
+          "shortLabel": "C6",
+          "category": "core"
+        },
+        {
+          "id": "agentchat-agents",
+          "label": "agents",
+          "region": "task",
+          "shortLabel": "H1",
+          "category": "chat"
+        },
+        {
+          "id": "agentchat-teams",
+          "label": "teams",
+          "region": "task",
+          "shortLabel": "H2",
+          "category": "chat"
+        },
+        {
+          "id": "agentchat-conditions",
+          "label": "conditions",
+          "region": "task",
+          "shortLabel": "H3",
+          "category": "chat"
+        },
+        {
+          "id": "agentchat-ui",
+          "label": "UI",
+          "region": "task",
+          "shortLabel": "H4",
+          "category": "chat"
+        },
+        {
+          "id": "ext-openai",
+          "label": "OpenAI extension",
+          "region": "task",
+          "shortLabel": "E1",
+          "category": "ext"
+        },
+        {
+          "id": "ext-mcp",
+          "label": "MCP extension",
+          "region": "task",
+          "shortLabel": "E2",
+          "category": "ext"
+        },
+        {
+          "id": "ext-file-surfer",
+          "label": "file-surfer extension",
+          "region": "task",
+          "shortLabel": "E3",
+          "category": "ext"
+        },
+        {
+          "id": "autogen-agentchat",
+          "label": "autogen-agentchat",
+          "region": "task",
+          "shortLabel": "H5",
+          "category": "chat"
+        },
+        {
+          "id": "autogen-ext",
+          "label": "autogen-ext",
+          "region": "task",
+          "shortLabel": "E4",
+          "category": "ext"
+        },
+        {
+          "id": "autogen-studio",
+          "label": "autogen-studio",
+          "region": "task",
+          "shortLabel": "A1",
+          "category": "app"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "core-agent-runtime",
+          "to": "autogen-core",
+          "mark": "x"
+        },
+        {
+          "from": "core-models",
+          "to": "autogen-core",
+          "mark": "x"
+        },
+        {
+          "from": "core-tools-workbench",
+          "to": "autogen-core",
+          "mark": "x"
+        },
+        {
+          "from": "core-memory",
+          "to": "autogen-core",
+          "mark": "x"
+        },
+        {
+          "from": "core-tracing",
+          "to": "autogen-core",
+          "mark": "x"
+        },
+        {
+          "from": "autogen-core",
+          "to": "autogen-agentchat",
+          "mark": "x"
+        },
+        {
+          "from": "agentchat-agents",
+          "to": "autogen-agentchat",
+          "mark": "x"
+        },
+        {
+          "from": "agentchat-teams",
+          "to": "autogen-agentchat",
+          "mark": "x"
+        },
+        {
+          "from": "agentchat-conditions",
+          "to": "autogen-agentchat",
+          "mark": "x"
+        },
+        {
+          "from": "agentchat-ui",
+          "to": "autogen-agentchat",
+          "mark": "x"
+        },
+        {
+          "from": "autogen-core",
+          "to": "autogen-ext",
+          "mark": "x"
+        },
+        {
+          "from": "ext-openai",
+          "to": "autogen-ext",
+          "mark": "x"
+        },
+        {
+          "from": "ext-mcp",
+          "to": "autogen-ext",
+          "mark": "x"
+        },
+        {
+          "from": "ext-file-surfer",
+          "to": "autogen-ext",
+          "mark": "x"
+        },
+        {
+          "from": "autogen-core",
+          "to": "autogen-studio",
+          "mark": "x"
+        },
+        {
+          "from": "autogen-agentchat",
+          "to": "autogen-studio",
+          "mark": "x"
+        },
+        {
+          "from": "autogen-ext",
+          "to": "autogen-studio",
+          "mark": "x"
+        }
+      ],
+      "overlays": [],
+      "annotations": []
+    }
+  ],
+  "provenance": {
+    "inputObservationId": "autogen-oss-python",
+    "algorithm": "hidden-structure",
+    "algorithmVersion": "0.1.0",
+    "vfivfo": {
+      "autogen-core": {
+        "vfi": 3,
+        "vfo": 5
+      },
+      "core-agent-runtime": {
+        "vfi": 4,
+        "vfo": 0
+      },
+      "core-models": {
+        "vfi": 4,
+        "vfo": 0
+      },
+      "core-tools-workbench": {
+        "vfi": 4,
+        "vfo": 0
+      },
+      "core-memory": {
+        "vfi": 4,
+        "vfo": 0
+      },
+      "core-tracing": {
+        "vfi": 4,
+        "vfo": 0
+      },
+      "autogen-agentchat": {
+        "vfi": 1,
+        "vfo": 10
+      },
+      "agentchat-agents": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "agentchat-teams": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "agentchat-conditions": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "agentchat-ui": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "autogen-ext": {
+        "vfi": 1,
+        "vfo": 9
+      },
+      "ext-openai": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "ext-mcp": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "ext-file-surfer": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "autogen-studio": {
+        "vfi": 0,
+        "vfo": 15
+      }
+    },
+    "cyclicGroups": []
+  }
+}

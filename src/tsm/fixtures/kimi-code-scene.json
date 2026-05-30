@@ -1,0 +1,1192 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "kimi-code-cli-native-agent-derived",
+  "title": "Kimi Code CLI-native coding agent architecture (v0.2.0 refresh, May 2026) (Hidden Structure)",
+  "source": "Derived via Hidden Structure from kimi-code-cli-native-agent. Source observation: Extracted 2026-05-26 from MoonshotAI/kimi-code tag @moonshot-ai/kimi-code@0.2.0 commit d496fd40b649ddec1226b8f44cf1556c51178aff source tree, package manifests, and docs/en. Exact v0.2.0 tag/branch name was absent from the remote branch probe; GitHub DNS then blocked ls-remote, so the tagged local MoonshotAI/kimi-code checkout was cloned into research/repos/kimi-code. System: kimi-code. Version: 0.2.0. Edge convention: X depends on Y = X talks to, loads, invokes, configures, gates, or receives runtime results/events from Y. The schema v0.3 used by this repository forbids an extra top-level system field, so system identity is recorded here.",
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> Hidden Structure has sorted the system. Every node sits on the diagonal in a position that reveals its structural role.",
+        "reveal": {
+          "include": [
+            "diagonal"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward transfers show the dependency flow as it actually runs. Below the diagonal, each mark is a direct invocation or load.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> The four-square partition.<br/>Core: 18 nodes in a mutually-dependent cycle.<br/>Shared: 6 nodes the core depends on.<br/>Control: 2 nodes that depend on the core.<br/><em>Architecture: core-periphery.</em>",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border"
+          ]
+        }
+      }
+    ]
+  },
+  "matrices": [
+    {
+      "id": "kimi-code-cli-native-agent",
+      "architectureType": "core-periphery",
+      "regions": [
+        {
+          "id": "shared",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "shared",
+          "label": "Shared"
+        },
+        {
+          "id": "core",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core"
+        },
+        {
+          "id": "control",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "control",
+          "label": "Control"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "coder-subagent",
+          "label": "coder subagent",
+          "region": "shared",
+          "shortLabel": "C1",
+          "category": "coder"
+        },
+        {
+          "id": "explore-subagent",
+          "label": "explore subagent",
+          "region": "shared",
+          "shortLabel": "C2",
+          "category": "coder"
+        },
+        {
+          "id": "plan-subagent",
+          "label": "plan subagent",
+          "region": "shared",
+          "shortLabel": "C3",
+          "category": "coder"
+        },
+        {
+          "id": "session-store",
+          "label": "Session store",
+          "region": "shared",
+          "shortLabel": "R1",
+          "category": "runtime"
+        },
+        {
+          "id": "oauth-manager",
+          "label": "OAuth/token manager",
+          "region": "shared",
+          "shortLabel": "R2",
+          "category": "runtime"
+        },
+        {
+          "id": "migration-legacy",
+          "label": "Legacy migration flow",
+          "region": "shared",
+          "shortLabel": "R3",
+          "category": "runtime"
+        },
+        {
+          "id": "tui-client",
+          "label": "Kimi TUI client",
+          "region": "core",
+          "shortLabel": "L1",
+          "category": "cli"
+        },
+        {
+          "id": "sdk-harness",
+          "label": "KimiHarness SDK",
+          "region": "core",
+          "shortLabel": "S1",
+          "category": "sdk"
+        },
+        {
+          "id": "sdk-rpc",
+          "label": "SDK/Core RPC bridge",
+          "region": "core",
+          "shortLabel": "S2",
+          "category": "sdk"
+        },
+        {
+          "id": "kimi-core",
+          "label": "KimiCore",
+          "region": "core",
+          "shortLabel": "R4",
+          "category": "runtime"
+        },
+        {
+          "id": "session-runtime",
+          "label": "Session runtime",
+          "region": "core",
+          "shortLabel": "R5",
+          "category": "runtime"
+        },
+        {
+          "id": "main-agent",
+          "label": "Main agent",
+          "region": "core",
+          "shortLabel": "R6",
+          "category": "runtime"
+        },
+        {
+          "id": "loop-engine",
+          "label": "Turn/loop engine",
+          "region": "core",
+          "shortLabel": "R7",
+          "category": "runtime"
+        },
+        {
+          "id": "provider-layer",
+          "label": "Kosong provider layer",
+          "region": "core",
+          "shortLabel": "R8",
+          "category": "runtime"
+        },
+        {
+          "id": "tool-manager",
+          "label": "Tool manager",
+          "region": "core",
+          "shortLabel": "T1",
+          "category": "tools"
+        },
+        {
+          "id": "builtin-tools",
+          "label": "Built-in tools",
+          "region": "core",
+          "shortLabel": "T2",
+          "category": "tools"
+        },
+        {
+          "id": "permission-system",
+          "label": "Permission system",
+          "region": "core",
+          "shortLabel": "T3",
+          "category": "tools"
+        },
+        {
+          "id": "hook-engine",
+          "label": "Hook engine",
+          "region": "core",
+          "shortLabel": "T4",
+          "category": "tools"
+        },
+        {
+          "id": "mcp-manager",
+          "label": "MCP connection manager",
+          "region": "core",
+          "shortLabel": "M1",
+          "category": "mcp"
+        },
+        {
+          "id": "mcp-servers",
+          "label": "External MCP servers",
+          "region": "core",
+          "shortLabel": "M2",
+          "category": "mcp"
+        },
+        {
+          "id": "background-manager",
+          "label": "Background task manager",
+          "region": "core",
+          "shortLabel": "R9",
+          "category": "runtime"
+        },
+        {
+          "id": "kaos-runtime",
+          "label": "Kaos execution environment",
+          "region": "core",
+          "shortLabel": "R10",
+          "category": "runtime"
+        },
+        {
+          "id": "subagent-host",
+          "label": "Subagent host",
+          "region": "core",
+          "shortLabel": "C4",
+          "category": "coder"
+        },
+        {
+          "id": "skill-registry",
+          "label": "Skill registry",
+          "region": "core",
+          "shortLabel": "T5",
+          "category": "tools"
+        },
+        {
+          "id": "prompt-runner",
+          "label": "Prompt/print runner",
+          "region": "control",
+          "shortLabel": "L2",
+          "category": "cli"
+        },
+        {
+          "id": "kimi-cli",
+          "label": "Kimi Code CLI",
+          "region": "control",
+          "shortLabel": "L3",
+          "category": "cli"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "prompt-runner",
+          "to": "kimi-cli",
+          "mark": "x"
+        },
+        {
+          "from": "tui-client",
+          "to": "kimi-cli",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "migration-legacy",
+          "to": "kimi-cli",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "sdk-harness",
+          "to": "kimi-cli",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "sdk-harness",
+          "to": "prompt-runner",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "session-runtime",
+          "to": "prompt-runner",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "sdk-harness",
+          "to": "tui-client",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "session-runtime",
+          "to": "tui-client",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "sdk-rpc",
+          "to": "tui-client",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "migration-legacy",
+          "to": "tui-client",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "tui-client",
+          "to": "sdk-rpc",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "sdk-rpc",
+          "to": "sdk-harness",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "oauth-manager",
+          "to": "sdk-harness",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "session-runtime",
+          "to": "sdk-harness",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "kimi-core",
+          "to": "sdk-rpc",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "sdk-rpc",
+          "to": "kimi-core",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "session-store",
+          "to": "kimi-core",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "session-runtime",
+          "to": "kimi-core",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "mcp-manager",
+          "to": "kimi-core",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "provider-layer",
+          "to": "kimi-core",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "kaos-runtime",
+          "to": "kimi-core",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "main-agent",
+          "to": "session-runtime",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "mcp-manager",
+          "to": "session-runtime",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "skill-registry",
+          "to": "session-runtime",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "hook-engine",
+          "to": "session-runtime",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "subagent-host",
+          "to": "session-runtime",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "loop-engine",
+          "to": "main-agent",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "tool-manager",
+          "to": "main-agent",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "permission-system",
+          "to": "main-agent",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "hook-engine",
+          "to": "main-agent",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "background-manager",
+          "to": "main-agent",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "provider-layer",
+          "to": "main-agent",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "skill-registry",
+          "to": "main-agent",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "provider-layer",
+          "to": "loop-engine",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "loop-engine",
+          "to": "provider-layer",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "tool-manager",
+          "to": "provider-layer",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "oauth-manager",
+          "to": "provider-layer",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "tool-manager",
+          "to": "loop-engine",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "permission-system",
+          "to": "loop-engine",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "sdk-rpc",
+          "to": "permission-system",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "hook-engine",
+          "to": "loop-engine",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "loop-engine",
+          "to": "hook-engine",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "builtin-tools",
+          "to": "loop-engine",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "loop-engine",
+          "to": "builtin-tools",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "builtin-tools",
+          "to": "tool-manager",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "mcp-manager",
+          "to": "tool-manager",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "tool-manager",
+          "to": "mcp-manager",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "mcp-servers",
+          "to": "mcp-manager",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "mcp-manager",
+          "to": "mcp-servers",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "mcp-servers",
+          "to": "tool-manager",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "kaos-runtime",
+          "to": "builtin-tools",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "background-manager",
+          "to": "kaos-runtime",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "background-manager",
+          "to": "builtin-tools",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "main-agent",
+          "to": "background-manager",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "subagent-host",
+          "to": "tool-manager",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "coder-subagent",
+          "to": "subagent-host",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "explore-subagent",
+          "to": "subagent-host",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "plan-subagent",
+          "to": "subagent-host",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "subagent-host",
+          "to": "main-agent",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "session-runtime",
+          "to": "subagent-host",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "main-agent",
+          "to": "subagent-host",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "session-store",
+          "to": "main-agent",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "session-store",
+          "to": "session-runtime",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "tool-manager",
+          "to": "skill-registry",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "skill-registry",
+          "to": "tool-manager",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        }
+      ],
+      "overlays": [
+        {
+          "kind": "module-border",
+          "regionId": "shared",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "control",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        }
+      ],
+      "annotations": []
+    }
+  ],
+  "lenses": [
+    "cyclic-flow",
+    "cross-region-edge",
+    "core-periphery-boundary"
+  ],
+  "provenance": {
+    "inputObservationId": "kimi-code-cli-native-agent",
+    "algorithm": "hidden-structure",
+    "algorithmVersion": "0.1.0",
+    "vfivfo": {
+      "kimi-cli": {
+        "vfi": 0,
+        "vfo": 25
+      },
+      "prompt-runner": {
+        "vfi": 1,
+        "vfo": 24
+      },
+      "tui-client": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "sdk-harness": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "sdk-rpc": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "kimi-core": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "session-runtime": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "main-agent": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "loop-engine": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "provider-layer": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "tool-manager": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "builtin-tools": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "permission-system": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "hook-engine": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "mcp-manager": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "mcp-servers": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "background-manager": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "kaos-runtime": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "subagent-host": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "coder-subagent": {
+        "vfi": 20,
+        "vfo": 0
+      },
+      "explore-subagent": {
+        "vfi": 20,
+        "vfo": 0
+      },
+      "plan-subagent": {
+        "vfi": 20,
+        "vfo": 0
+      },
+      "skill-registry": {
+        "vfi": 19,
+        "vfo": 23
+      },
+      "session-store": {
+        "vfi": 20,
+        "vfo": 0
+      },
+      "oauth-manager": {
+        "vfi": 20,
+        "vfo": 0
+      },
+      "migration-legacy": {
+        "vfi": 20,
+        "vfo": 0
+      }
+    },
+    "cyclicGroups": [
+      [
+        "tui-client",
+        "sdk-harness",
+        "sdk-rpc",
+        "kimi-core",
+        "session-runtime",
+        "main-agent",
+        "loop-engine",
+        "provider-layer",
+        "tool-manager",
+        "builtin-tools",
+        "permission-system",
+        "hook-engine",
+        "mcp-manager",
+        "mcp-servers",
+        "background-manager",
+        "kaos-runtime",
+        "subagent-host",
+        "skill-registry"
+      ]
+    ]
+  }
+}

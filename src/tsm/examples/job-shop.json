@@ -1,0 +1,103 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "job-shop",
+  "title": "Job shop (cyclic flow with a coordinator)",
+  "source": "Adapted from Baldwin (2026), <em>A theory of technology and organizations</em>, Figure 6",
+  "lenses": ["cyclic-flow", "coordinator-dispatch"],
+
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> A coordinator (CG), five work stations (S1–S5), and the customer (CS) line up along the diagonal. Each station can do any kind of work — they're not a fixed sequence.",
+        "reveal": { "include": ["diagonal"] }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> The coordinator routes work to the right station at the right time — and every station reports back. The fan from CG is the figure's mechanism.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward"] },
+        "setEmphasis": {
+          "primary": { "byLens": ["coordinator-dispatch"] },
+          "secondary": { "byLens": ["cyclic-flow"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Backward transfers — above the diagonal — show how jobs cycle. A station reports up to CG; CG re-routes; a job may pass through the same station several times. <em>Job-shops are cyclic by design.</em>",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] },
+        "setEmphasis": {
+          "primary": { "byLens": ["cyclic-flow"] },
+          "secondary": { "byLens": ["coordinator-dispatch"], "byId": ["CG→CS", "CS→CG"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> The customer sits outside the firm boundary. The shop receives an order, runs the work, and delivers — every customer interaction crosses the firm boundary as a transaction, not a coordinated step.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] },
+        "setEmphasis": {
+          "primary": { "byId": ["CG→CS", "CS→CG"] },
+          "secondary": { "byLens": ["cyclic-flow", "coordinator-dispatch"] }
+        }
+      }
+    ]
+  },
+
+  "matrices": [
+    {
+      "id": "job-shop",
+      "architectureType": "job-shop",
+
+      "regions": [
+        { "id": "cg",     "layoutKind": "diagonal-block",  "semanticKind": "coordinator",     "label": "Coordinator" },
+        { "id": "shop",   "layoutKind": "diagonal-block",  "semanticKind": "task",            "label": "Shop floor" },
+        { "id": "ext",    "layoutKind": "external-cell",   "semanticKind": "external-actor",  "label": "Customer" }
+      ],
+
+      "tasks": [
+        { "id": "CG", "label": "CG", "region": "cg" },
+        { "id": "S1", "label": "S1", "region": "shop" },
+        { "id": "S2", "label": "S2", "region": "shop" },
+        { "id": "S3", "label": "S3", "region": "shop" },
+        { "id": "S4", "label": "S4", "region": "shop" },
+        { "id": "S5", "label": "S5", "region": "shop" },
+        { "id": "CS", "label": "CS", "region": "ext" }
+      ],
+
+      "transfers": [
+        { "from": "CG", "to": "S1", "mark": "x", "rendering": { "arrow": true, "label": "dispatch", "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "CG", "to": "S2", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "CG", "to": "S3", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "CG", "to": "S4", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "CG", "to": "S5", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+
+        { "from": "S1", "to": "CG", "mark": "x", "rendering": { "arrow": true, "label": "report", "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "S2", "to": "CG", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "S3", "to": "CG", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "S4", "to": "CG", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "S5", "to": "CG", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+
+        { "from": "S1", "to": "S2", "mark": "x" },
+        { "from": "S2", "to": "S3", "mark": "x" },
+        { "from": "S3", "to": "S4", "mark": "x" },
+        { "from": "S4", "to": "S5", "mark": "x" },
+
+        { "from": "S2", "to": "S1", "mark": "x", "rendering": { "arrow": true, "label": "rework", "emphasis": "primary", "lens": "cyclic-flow" } },
+        { "from": "S3", "to": "S2", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cyclic-flow" } },
+        { "from": "S4", "to": "S3", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cyclic-flow" } },
+        { "from": "S5", "to": "S4", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "cyclic-flow" } },
+        { "from": "S5", "to": "S1", "mark": "x", "rendering": { "arrow": true, "label": "long cycle", "emphasis": "primary", "lens": "cyclic-flow" } },
+
+        { "from": "CG", "to": "CS", "mark": "x", "rendering": { "arrow": true, "label": "delivery", "emphasis": "secondary", "labelStyle": "load-bearing" } },
+        { "from": "CS", "to": "CG", "mark": "x", "rendering": { "arrow": true, "label": "order placed", "emphasis": "secondary", "labelStyle": "load-bearing" } }
+      ],
+
+      "overlays": [
+        { "kind": "firm-boundary", "excludedTaskIds": ["CS"], "label": "Job Shop", "rendering": { "emphasis": "primary" } }
+      ],
+
+      "annotations": [
+        { "position": "top",          "label": "Job Shop",                    "pointer": { "regionId": "shop" } },
+        { "position": "right",        "label": "Order Placed",                "pointer": { "taskId": "CG" } },
+        { "position": "external-SE",  "label": "Customer Delivery & Payment", "pointer": { "taskId": "CS" } }
+      ]
+    }
+  ]
+}

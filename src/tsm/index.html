@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Load-bearing on linxule.com: vercel.json sets trailingSlash:false, so the
+         page is served at /tsm (no slash) and /tsm/ 308-redirects to it. Without a
+         <base>, relative asset + fetch() URLs would resolve against / and 404.
+         This anchors resolution to the sub-app dir however the URL is normalized.
+         Same pattern as the slide decks — see .claude/rules/talks-deck-hosting.md.
+         (Added on copy into the site; not present in the source tsm-demo repo.) -->
+    <base href="/tsm/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TSM Demo — Task Structure Matrices, animated</title>
+
+    <!-- Favicon: the cyan-square accident. On the site, "the accident IS the
+         identity" — the same mark ties this tab to linxule.com. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%234ee1d4'/%3E%3C/svg%3E"
+      type="image/svg+xml"
+    />
+    <meta
+      name="description"
+      content="An interactive walkthrough of Task Structure Matrices from Carliss Baldwin's work."
+    />
+
+    <!-- Open Graph — so a link shared from the SEAM essay (or anywhere) renders
+         a basic preview card. og:image is intentionally omitted: the demo has no
+         cover image yet (the favicon is just the cyan-square accident), and a
+         card with no image degrades cleanly to title + description. Add og:image
+         here if/when a demo cover exists. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Task Structure Matrices, animated" />
+    <meta
+      property="og:description"
+      content="An interactive walkthrough of Task Structure Matrices from Carliss Baldwin's work."
+    />
+    <meta property="og:url" content="https://www.linxule.com/tsm/" />
+
+    <!-- FOUC cloak — hide the body until the web fonts resolve (1.5s fallback
+         so the page never stays hidden if a font request hangs). Inline and
+         before the font <link> so it runs before first paint. Mirrors the
+         linxule.com base.njk cloak; a standalone doc needs its own (the
+         site's cloak does not propagate here). -->
+    <style>
+      html.fonts-loading body {
+        visibility: hidden;
+      }
+      /* No-JS fallback note (see <noscript> in body). Self-styled inline so it
+         reads as intentional even though it only appears with scripting off. */
+      .noscript-note {
+        max-width: 40rem;
+        margin: 2rem auto;
+        padding: 0.9rem 1.2rem;
+        border: 1px solid #d8d2c4;
+        border-radius: 5px;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.82rem;
+        line-height: 1.65;
+        text-align: center;
+        color: #3a3a3a;
+      }
+    </style>
+    <script>
+      (function () {
+        var h = document.documentElement;
+        h.classList.add("fonts-loading");
+        function reveal() {
+          h.classList.remove("fonts-loading");
+        }
+        var fb = setTimeout(reveal, 1500);
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () {
+            clearTimeout(fb);
+            reveal();
+          });
+        }
+      })();
+    </script>
+
+    <!-- The book's two voices: Cormorant Garamond (human) + IBM Plex Mono
+         (machine), plus Noto Serif SC for CJK. Same families + weights the
+         site loads, so the demo reads as the same typographic instrument. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;400;500&display=swap"
+    />
+
+    <link rel="stylesheet" href="styles/theme.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/matrix.css" />
+    <link rel="stylesheet" href="styles/overlays.css" />
+    <link rel="stylesheet" href="styles/legend.css" />
+    <link rel="stylesheet" href="styles/algorithm.css" />
+  </head>
+  <body>
+    <nav class="spine">
+      <a href="https://www.linxule.com/" class="spine-name">XULE LIN</a>
+      <span class="spine-marker">tsm</span>
+    </nav>
+    <main>
+      <header>
+        <h1>Task Structure Matrices, animated</h1>
+        <p class="subtitle">
+          A walkthrough of how a TSM is read — tasks, transfers, proto-modules,
+          and the cross-cluster leakage that keeps real systems from full
+          modularity.
+        </p>
+      </header>
+
+      <!-- No-JS fallback. The FOUC cloak that hides the body is applied BY
+           JavaScript, so with scripting off the class is never added, the body
+           stays visible, and this note shows in place of the (JS-driven) demo. -->
+      <noscript>
+        <p class="noscript-note">
+          This is an interactive demo — it animates Task Structure Matrices, so it
+          needs JavaScript. Enable it to walk through the figures, or read the
+          written series at
+          <a href="https://www.threadcounts.org/t/seam">threadcounts.org/t/seam</a>.
+        </p>
+      </noscript>
+
+      <!-- Mode toggle — the one affordance that must persist across BOTH views
+           (it survives the rail hiding in algorithm mode), so it sits here under
+           the header, outside .layout. A quiet machine-voice line, not a boxed
+           button. app.js flips ?view=algorithm and relabels it. -->
+      <div class="mode-bar">
+        <button id="view-toggle" type="button" class="view-toggle">
+          Watch the algorithm build a TSM →
+        </button>
+      </div>
+
+      <!-- Wide-canvas layout (wide viewports): a 3-column "print plate with
+           marginalia" — the scene index in the LEFT margin, the matrix as the
+           dominant CENTER plate, the walkthrough cockpit (caption, controls,
+           progress, Explore, transfer legend) in a sticky RIGHT margin. Both
+           margins are sticky so the controls + index stay visible while a tall
+           matrix scrolls — which is what lets the plate grow. Outer page margins
+           are compressed (base.css `main`). Collapses to one column on narrow
+           viewports. Decode key + provenance are full-width below (.matrix-meta).
+           Flicker-safe: #tsm is a grid SIBLING of the rails, so a rail reflowing
+           (caption length, Explore expanding) never moves gridEl WITHIN #tsm. -->
+      <div class="layout">
+        <!-- LEFT margin: STATIC reference — the scene index (machine-voice
+             "contents", built by app.js#buildSceneIndex from SCENE_REGISTRY,
+             grouped by provenance; current scene wears the cyan accident dot)
+             plus the transfer legend beneath it. Both are reference that doesn't
+             change as you walk the steps; grouping them keeps the left side
+             purely static and the right side purely live. Sticky. -->
+        <aside class="rail-left">
+          <nav class="scene-index" aria-label="Examples"></nav>
+
+          <!-- Transfer legend — the forward/backward key. Static reference, so
+               it lives in the left margin under the nav (hidden in algo mode). -->
+          <div class="legend">
+            <p>
+              <strong>Legend.</strong> Every task sits on the diagonal;
+              off-diagonal marks are transfers — material, energy, or information
+              moving between tasks.
+            </p>
+            <dl>
+              <dt class="forward">→</dt>
+              <dd>Forward (an earlier task's output flows to a later one)</dd>
+              <dt class="backward">↑</dt>
+              <dd>Backward (feedback, rework, cyclic dependency)</dd>
+            </dl>
+          </div>
+        </aside>
+
+        <!-- CENTER: the matrix plate. -->
+        <div id="tsm" class="tsm-wrapper"></div>
+
+        <!-- RIGHT margin: the walkthrough cockpit. Sticky so caption + Next stay
+             in view while a tall matrix scrolls. Hidden in algorithm mode (app.js
+             sets .narrative display:none; the algorithm view brings its own
+             chrome). -->
+        <aside class="narrative">
+          <!-- aria-live: the step caption is the walkthrough's running
+               commentary; Next/Back swap its text, so announce changes to
+               screen readers (post-layout audit M6). -->
+          <div id="caption" class="step-caption" role="status" aria-live="polite" aria-atomic="true"></div>
+          <div class="controls">
+            <button id="prev-btn" class="secondary">← Back</button>
+            <button id="restart-btn" class="secondary">Restart</button>
+            <button id="next-btn">Next step →</button>
+          </div>
+          <div id="progress" class="progress"></div>
+
+          <!-- Multi-matrix focus / show-all switcher (multi-matrix scenes only;
+               app.js unhides it). -->
+          <div id="matrix-switcher" class="matrix-switcher" hidden></div>
+
+          <!-- Explore (lens-highlight) "Highlight patterns" disclosure mount.
+               Empty for lens-less scenes + the algorithm view → collapses via
+               #explore-mount:empty (base.css). -->
+          <div id="explore-mount"></div>
+
+          <!-- Source & provenance — secondary per-scene metadata (citations,
+               commit SHAs, derive notes). In the live cockpit margin; app.js
+               writes scene.source into .provenance-body and hides the <details>
+               when empty. Collapsed by default. -->
+          <details class="provenance">
+            <summary class="provenance-summary">Source &amp; provenance</summary>
+            <div class="provenance-body" id="provenance-body"></div>
+          </details>
+        </aside>
+      </div>
+
+      <!-- Decode key — full content width BELOW the layout. The label key can
+           run 26 rows (kimi-code), so it needs the full page width to flow into
+           columns rather than a cramped margin slot — that's why it stays here,
+           not in a side margin. Hidden for authored scenes (empty #task-legend)
+           and in the algorithm view (base.css). app.js writes the category-
+           grouped legend into #task-legend. -->
+      <div class="matrix-meta">
+        <details class="code-key" open>
+          <summary class="code-key-summary">Label key — what the diagonal codes mean</summary>
+          <div id="task-legend"></div>
+        </details>
+      </div>
+
+      <!-- Colophon — machine-voice "margin furniture" echoing linxule.com's
+           lower-left identity block + lower-right page marker, so the demo reads
+           as a numbered page IN the book rather than merely styled like the site.
+           Outside .layout, so it persists across both the figure + algorithm
+           views (not hidden in algorithm mode). -->
+      <footer class="colophon">
+        <div class="colophon-block">
+          <p class="colophon-line">TSM · Demo — SEAM Series</p>
+          <p class="colophon-line">
+            <a href="https://www.threadcounts.org/t/seam">threadcounts.org/t/seam</a>
+          </p>
+          <p class="colophon-cite">
+            TSM concept and worked examples adapted from Baldwin (2026),
+            <em>A theory of technology and organizations</em>, <em>Strategic Organization</em>.
+          </p>
+        </div>
+        <p class="colophon-page" aria-hidden="true">tsm / 000</p>
+      </footer>
+    </main>
+
+    <script type="module" src="app.js"></script>
+
+    <!-- Living paper — generated per session (workshop stock). Deferred; the
+         flat --paper + SVG-noise fallback paint first, then the tile replaces
+         them. Vendored from the site so the demo's paper is the site's paper. -->
+    <script defer src="paper.js"></script>
+  </body>
+</html>

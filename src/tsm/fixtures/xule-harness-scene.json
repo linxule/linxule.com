@@ -1,0 +1,712 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "xule-agent-harness-derived",
+  "title": "Xule's AI agent harness (May 2026) (Hidden Structure)",
+  "source": "Derived via Hidden Structure from xule-agent-harness. Source observation: Captured 2026-05-25 from ~/.claude/ (plugins, agents, skills, MCPs) plus project .mcp.json files. Edge convention: 'X depends on Y' = X invokes/loads/calls Y.",
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> Hidden Structure has sorted the system. Every node sits on the diagonal in a position that reveals its structural role.",
+        "reveal": {
+          "include": [
+            "diagonal"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward transfers show the dependency flow as it actually runs. Below the diagonal, each mark is a direct invocation or load.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> The four-square partition.<br/>Core: 4 nodes in a mutually-dependent cycle.<br/>Shared: 3 nodes the core depends on.<br/>Control: 2 nodes that depend on the core.<br/>Peripheral: 12 unrelated nodes.<br/><em>Architecture: core-periphery.</em>",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border"
+          ]
+        }
+      }
+    ]
+  },
+  "matrices": [
+    {
+      "id": "xule-agent-harness",
+      "architectureType": "core-periphery",
+      "regions": [
+        {
+          "id": "shared",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "shared",
+          "label": "Shared"
+        },
+        {
+          "id": "core",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core"
+        },
+        {
+          "id": "control",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "control",
+          "label": "Control"
+        },
+        {
+          "id": "peripheral",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "peripheral",
+          "label": "Peripheral"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mcp-lotus",
+          "label": "lotus-wisdom (MCP)",
+          "region": "shared",
+          "shortLabel": "M1",
+          "category": "mcp"
+        },
+        {
+          "id": "mcp-revise",
+          "label": "revise (MCP)",
+          "region": "shared",
+          "shortLabel": "M2",
+          "category": "mcp"
+        },
+        {
+          "id": "skill-voice-rigor",
+          "label": "voice-and-rigor",
+          "region": "shared",
+          "shortLabel": "K1",
+          "category": "skill"
+        },
+        {
+          "id": "agent-voice-team",
+          "label": "voice-team-reviewer",
+          "region": "core",
+          "shortLabel": "A1",
+          "category": "agent"
+        },
+        {
+          "id": "agent-rigor-team",
+          "label": "rigor-team-reviewer",
+          "region": "core",
+          "shortLabel": "A2",
+          "category": "agent"
+        },
+        {
+          "id": "agent-continuity",
+          "label": "continuity-team-reviewer",
+          "region": "core",
+          "shortLabel": "A3",
+          "category": "agent"
+        },
+        {
+          "id": "agent-writer",
+          "label": "writing-team-writer",
+          "region": "core",
+          "shortLabel": "A4",
+          "category": "agent"
+        },
+        {
+          "id": "plugin-writing-team",
+          "label": "writing-team",
+          "region": "control",
+          "shortLabel": "P1",
+          "category": "plugin"
+        },
+        {
+          "id": "claude-code",
+          "label": "Claude Code",
+          "region": "control",
+          "shortLabel": "R1",
+          "category": "runtime"
+        },
+        {
+          "id": "mcp-zotero",
+          "label": "zotero (MCP)",
+          "region": "peripheral",
+          "shortLabel": "M3",
+          "category": "mcp"
+        },
+        {
+          "id": "agent-codex-rescue",
+          "label": "codex-rescue",
+          "region": "peripheral",
+          "shortLabel": "A5",
+          "category": "agent"
+        },
+        {
+          "id": "agent-kimi-review",
+          "label": "kimi-review",
+          "region": "peripheral",
+          "shortLabel": "A6",
+          "category": "agent"
+        },
+        {
+          "id": "skill-memo",
+          "label": "memo-writing",
+          "region": "peripheral",
+          "shortLabel": "K2",
+          "category": "skill"
+        },
+        {
+          "id": "skill-cite",
+          "label": "cite",
+          "region": "peripheral",
+          "shortLabel": "K3",
+          "category": "skill"
+        },
+        {
+          "id": "agent-lrs",
+          "label": "lrs-writing-reviser",
+          "region": "peripheral",
+          "shortLabel": "A7",
+          "category": "agent"
+        },
+        {
+          "id": "mcp-mineru",
+          "label": "mineru (MCP)",
+          "region": "peripheral",
+          "shortLabel": "M4",
+          "category": "mcp"
+        },
+        {
+          "id": "plugin-codex",
+          "label": "codex",
+          "region": "peripheral",
+          "shortLabel": "P2",
+          "category": "plugin"
+        },
+        {
+          "id": "plugin-kimi",
+          "label": "kimi",
+          "region": "peripheral",
+          "shortLabel": "P3",
+          "category": "plugin"
+        },
+        {
+          "id": "plugin-memex",
+          "label": "memex",
+          "region": "peripheral",
+          "shortLabel": "P4",
+          "category": "plugin"
+        },
+        {
+          "id": "plugin-collab",
+          "label": "collab",
+          "region": "peripheral",
+          "shortLabel": "P5",
+          "category": "plugin"
+        },
+        {
+          "id": "plugin-scholarly",
+          "label": "scholarly",
+          "region": "peripheral",
+          "shortLabel": "P6",
+          "category": "plugin"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "plugin-scholarly",
+          "to": "claude-code",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "plugin-collab",
+          "to": "claude-code",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "plugin-writing-team",
+          "to": "claude-code",
+          "mark": "x"
+        },
+        {
+          "from": "plugin-codex",
+          "to": "claude-code",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "plugin-kimi",
+          "to": "claude-code",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "plugin-memex",
+          "to": "claude-code",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "skill-cite",
+          "to": "plugin-scholarly",
+          "mark": "x"
+        },
+        {
+          "from": "skill-voice-rigor",
+          "to": "plugin-scholarly",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-voice-team",
+          "to": "plugin-writing-team",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-rigor-team",
+          "to": "plugin-writing-team",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-continuity",
+          "to": "plugin-writing-team",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-writer",
+          "to": "plugin-writing-team",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-lrs",
+          "to": "plugin-collab",
+          "mark": "x"
+        },
+        {
+          "from": "agent-codex-rescue",
+          "to": "plugin-codex",
+          "mark": "x"
+        },
+        {
+          "from": "agent-kimi-review",
+          "to": "plugin-kimi",
+          "mark": "x"
+        },
+        {
+          "from": "skill-memo",
+          "to": "plugin-memex",
+          "mark": "x"
+        },
+        {
+          "from": "skill-voice-rigor",
+          "to": "agent-voice-team",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "skill-voice-rigor",
+          "to": "agent-rigor-team",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "skill-voice-rigor",
+          "to": "agent-lrs",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-rigor-team",
+          "to": "agent-voice-team",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "agent-voice-team",
+          "to": "agent-rigor-team",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "agent-writer",
+          "to": "agent-voice-team",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "agent-writer",
+          "to": "agent-rigor-team",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "agent-voice-team",
+          "to": "agent-writer",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "agent-rigor-team",
+          "to": "agent-writer",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "agent-writer",
+          "to": "agent-continuity",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "agent-continuity",
+          "to": "agent-writer",
+          "mark": "x",
+          "rendering": {
+            "arrow": true,
+            "emphasis": "primary",
+            "lens": [
+              "cyclic-flow"
+            ]
+          }
+        },
+        {
+          "from": "mcp-zotero",
+          "to": "skill-cite",
+          "mark": "x"
+        },
+        {
+          "from": "mcp-revise",
+          "to": "skill-voice-rigor",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "mcp-lotus",
+          "to": "skill-voice-rigor",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "mcp-lotus",
+          "to": "mcp-revise",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary"
+          }
+        },
+        {
+          "from": "mcp-mineru",
+          "to": "claude-code",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "mcp-zotero",
+          "to": "claude-code",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-codex-rescue",
+          "to": "claude-code",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        },
+        {
+          "from": "agent-kimi-review",
+          "to": "claude-code",
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
+        }
+      ],
+      "overlays": [
+        {
+          "kind": "module-border",
+          "regionId": "shared",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "control",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        }
+      ],
+      "annotations": []
+    }
+  ],
+  "lenses": [
+    "cyclic-flow",
+    "cross-region-edge",
+    "core-periphery-boundary"
+  ],
+  "provenance": {
+    "inputObservationId": "xule-agent-harness",
+    "algorithm": "hidden-structure",
+    "algorithmVersion": "0.1.0",
+    "vfivfo": {
+      "claude-code": {
+        "vfi": 0,
+        "vfo": 20
+      },
+      "plugin-scholarly": {
+        "vfi": 1,
+        "vfo": 5
+      },
+      "plugin-collab": {
+        "vfi": 1,
+        "vfo": 4
+      },
+      "plugin-writing-team": {
+        "vfi": 1,
+        "vfo": 7
+      },
+      "plugin-codex": {
+        "vfi": 1,
+        "vfo": 1
+      },
+      "plugin-kimi": {
+        "vfi": 1,
+        "vfo": 1
+      },
+      "plugin-memex": {
+        "vfi": 1,
+        "vfo": 1
+      },
+      "agent-voice-team": {
+        "vfi": 5,
+        "vfo": 6
+      },
+      "agent-rigor-team": {
+        "vfi": 5,
+        "vfo": 6
+      },
+      "agent-continuity": {
+        "vfi": 5,
+        "vfo": 6
+      },
+      "agent-writer": {
+        "vfi": 5,
+        "vfo": 6
+      },
+      "agent-lrs": {
+        "vfi": 2,
+        "vfo": 3
+      },
+      "agent-codex-rescue": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "agent-kimi-review": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "skill-voice-rigor": {
+        "vfi": 9,
+        "vfo": 2
+      },
+      "skill-cite": {
+        "vfi": 2,
+        "vfo": 1
+      },
+      "skill-memo": {
+        "vfi": 2,
+        "vfo": 0
+      },
+      "mcp-revise": {
+        "vfi": 10,
+        "vfo": 1
+      },
+      "mcp-lotus": {
+        "vfi": 11,
+        "vfo": 0
+      },
+      "mcp-zotero": {
+        "vfi": 3,
+        "vfo": 0
+      },
+      "mcp-mineru": {
+        "vfi": 1,
+        "vfo": 0
+      }
+    },
+    "cyclicGroups": [
+      [
+        "agent-voice-team",
+        "agent-rigor-team",
+        "agent-continuity",
+        "agent-writer"
+      ]
+    ]
+  }
+}

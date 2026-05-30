@@ -1,0 +1,148 @@
+/* Task legend. Category-grouped mapping from shortLabel → full label,
+   rendered into #task-legend (see index.html). Visible only for derived
+   scenes whose tasks carry `category` fields — render/legend.js returns
+   no element when the matrix has no categories.
+
+   Visual register matches `.legend` (the static forward/backward block
+   in base.css): small, muted, scannable. Category titles use the machine
+   voice (Plex Mono, tracked, uppercase) like `.scene-selector label`. */
+
+/* Collapsible decode key (.code-key) — the disclosure that wraps
+   #task-legend. Full-width BELOW the matrix (base.css grid-area: below) and
+   OPEN by default (index.html `<details open>`): the two-column layout lets the
+   matrix fit the viewport, so the key no longer steals space above it, and the
+   full page width flows 26 codes into several columns. Hidden for authored
+   scenes (and the algorithm view), where #task-legend renders empty. The grid
+   row-gap separates it from the matrix; the border-top is the divider rule. */
+.code-key {
+  margin-top: 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+/* No codes to decode → no disclosure. renderTaskLegend leaves #task-legend
+   empty (no children) when no task carries a `category`. */
+.code-key:has(#task-legend:empty) {
+  display: none;
+}
+
+.code-key-summary {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+  transition: color 0.2s ease;
+}
+
+.code-key-summary:hover {
+  color: var(--bloom);
+}
+
+/* Replace the default disclosure triangle with our own rotating caret so
+   the marker matches the machine-voice register. */
+.code-key-summary::-webkit-details-marker {
+  display: none;
+}
+
+.code-key-summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 0.6em;
+  transition: transform 0.2s ease;
+}
+
+.code-key[open] .code-key-summary::before {
+  transform: rotate(90deg);
+}
+
+/* Inside the disclosure, drop the standalone block's top rule/margin (the
+   disclosure frames it) and flow categories into compact responsive columns
+   so 26 entries don't stack into one tall column — same approach as the
+   algorithm-view Label key (styles/algorithm.css). */
+.code-key .task-legend {
+  margin-top: 16px;
+  padding-top: 0;
+  border-top: none;
+  column-width: 240px;
+  column-gap: 40px;
+}
+
+.code-key .task-legend-category {
+  break-inside: avoid;
+}
+
+.task-legend {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  color: var(--muted);
+  width: 100%;
+  max-width: min(100%, 900px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.task-legend-category {
+  margin: 0 0 16px;
+}
+
+.task-legend-category:last-child {
+  margin-bottom: 0;
+}
+
+.task-legend-category-title {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.task-legend-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 0;
+}
+
+.task-legend-list dt {
+  margin: 0;
+}
+
+.task-legend-list dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.task-legend-short {
+  display: inline-block;
+  min-width: 2.4em;
+  padding: 1px 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--diagonal-ink);
+  background: var(--diagonal-bg);
+  border-radius: 2px;
+  letter-spacing: 0.02em;
+}
+
+.task-legend-short.spotlight-highlighted {
+  color: var(--paper);
+  background: var(--accent);
+  outline: 1px solid var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.task-legend-full {
+  font-size: 13px;
+  line-height: 1.4;
+}

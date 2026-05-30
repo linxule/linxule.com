@@ -1,0 +1,225 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "multi-matrix-derive-smoke-derived",
+  "title": "Synthetic two-firm dependency observation smoke (Hidden Structure)",
+  "source": "Derived via Hidden Structure from multi-matrix-derive-smoke. Source observation: Synthetic v1.7 fixture. Exercises dependency-observation v0.4 matrices[] plus minimal derived cross-matrix arrow emission.",
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> 2 systems, each its own boundary-bounded TSM. Every node sits on its own matrix's diagonal in a position that reveals its structural role.",
+        "reveal": {
+          "include": [
+            "diagonal"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward transfers — below each diagonal — show the dependency flow as it actually runs inside each system. Each mark is a direct invocation or load.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> Backward transfers — above each diagonal — show where a system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward"
+          ]
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> The four-square partition in each system.<br/><em>Architecture — Upstream supplier: job-shop; Downstream buyer: flow.</em><br/>The one arrow crossing between the matrices is the contract — the transaction that links otherwise-separate systems.",
+        "reveal": {
+          "include": [
+            "diagonal",
+            "transfer:directed:forward",
+            "transfer:directed:backward",
+            "overlay:module-border"
+          ]
+        }
+      }
+    ]
+  },
+  "matrices": [
+    {
+      "id": "upstream",
+      "architectureType": "job-shop",
+      "regions": [
+        {
+          "id": "task",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "task",
+          "label": "Tasks"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "U1",
+          "label": "Upstream intake",
+          "region": "task",
+          "shortLabel": "U1",
+          "category": "upstream"
+        },
+        {
+          "id": "U2",
+          "label": "Upstream transform",
+          "region": "task",
+          "shortLabel": "U2",
+          "category": "upstream"
+        },
+        {
+          "id": "U3",
+          "label": "Upstream dispatch",
+          "region": "task",
+          "shortLabel": "U3",
+          "category": "upstream"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "U1",
+          "to": "U2",
+          "mark": "x"
+        },
+        {
+          "from": "U2",
+          "to": "U3",
+          "mark": "x"
+        }
+      ],
+      "overlays": [],
+      "annotations": []
+    },
+    {
+      "id": "downstream",
+      "architectureType": "flow",
+      "regions": [
+        {
+          "id": "task",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "task",
+          "label": "Tasks"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "D1",
+          "label": "Downstream receipt",
+          "region": "task",
+          "shortLabel": "D1",
+          "category": "downstream"
+        },
+        {
+          "id": "D2",
+          "label": "Downstream assembly",
+          "region": "task",
+          "shortLabel": "D2",
+          "category": "downstream"
+        },
+        {
+          "id": "D3",
+          "label": "Downstream payment",
+          "region": "task",
+          "shortLabel": "D3",
+          "category": "downstream"
+        }
+      ],
+      "transfers": [
+        {
+          "from": "D1",
+          "to": "D2",
+          "mark": "x"
+        },
+        {
+          "from": "D2",
+          "to": "D3",
+          "mark": "x"
+        }
+      ],
+      "overlays": [],
+      "annotations": []
+    }
+  ],
+  "arrows": [
+    {
+      "id": "cross-upstream-U3-downstream-D1-transaction",
+      "from": {
+        "matrix": 0,
+        "taskId": "U3"
+      },
+      "to": {
+        "matrix": 1,
+        "taskId": "D1"
+      },
+      "kind": "transaction",
+      "label": "Contract: goods",
+      "rendering": {
+        "emphasis": "primary",
+        "labelStyle": "load-bearing"
+      }
+    }
+  ],
+  "provenance": {
+    "inputObservationId": "multi-matrix-derive-smoke",
+    "algorithm": "hidden-structure",
+    "algorithmVersion": "0.1.0",
+    "splitModel": "observation-seeded",
+    "matrices": {
+      "upstream": {
+        "vfivfo": {
+          "U1": {
+            "vfi": 2,
+            "vfo": 0
+          },
+          "U2": {
+            "vfi": 1,
+            "vfo": 1
+          },
+          "U3": {
+            "vfi": 0,
+            "vfo": 2
+          }
+        },
+        "cyclicGroups": []
+      },
+      "downstream": {
+        "vfivfo": {
+          "D1": {
+            "vfi": 2,
+            "vfo": 0
+          },
+          "D2": {
+            "vfi": 1,
+            "vfo": 1
+          },
+          "D3": {
+            "vfi": 0,
+            "vfo": 2
+          }
+        },
+        "cyclicGroups": []
+      }
+    },
+    "crossBoundaryEdges": [],
+    "crossMatrixArrows": [
+      {
+        "fromNodeId": "U3",
+        "toNodeId": "D1",
+        "fromMatrixId": "upstream",
+        "toMatrixId": "downstream",
+        "fromMatrixIdx": 0,
+        "toMatrixIdx": 1,
+        "kind": "transaction",
+        "label": "Contract: goods",
+        "emittedArrowId": "cross-upstream-U3-downstream-D1-transaction"
+      }
+    ]
+  }
+}

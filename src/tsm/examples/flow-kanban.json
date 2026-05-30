@@ -1,0 +1,83 @@
+{
+  "specVersion": "0.4.0",
+  "kind": "tsm-scene",
+  "id": "flow-kanban",
+  "title": "Synchronized flow with kanban pull signals",
+  "source": "Adapted from Baldwin (2026), <em>A theory of technology and organizations</em>, Figure 7B",
+  "lenses": ["forward-handoff", "coordinator-dispatch"],
+
+  "narrative": {
+    "mode": "walkthrough",
+    "steps": [
+      {
+        "caption": "<strong>Step 1.</strong> Same starting layout as Fig 7A — a coordinator (C) and five operators (O1–O5) on the diagonal. A kanban variant changes the coordination mechanism, not the production sequence.",
+        "reveal": { "include": ["diagonal"] }
+      },
+      {
+        "caption": "<strong>Step 2.</strong> Forward production still runs the same way: C dispatches initial work, and operators hand off the in-progress unit downstream.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward"] },
+        "setEmphasis": {
+          "primary": { "byLens": ["forward-handoff"] },
+          "secondary": { "byLens": ["coordinator-dispatch"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 3.</strong> The new beat: <em>signal marks above the diagonal</em>. Downstream operators pull from upstream when they're ready. O2 signals O1 (\"I'm ready for the next unit\"), O3 signals O2, and so on. The marks read as <code>s</code> rather than <code>x</code> — the signal lives in the visual vocabulary, not the work flow.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] },
+        "setEmphasis": {
+          "primary": { "byMark": ["s"] },
+          "secondary": { "byLens": ["forward-handoff", "coordinator-dispatch"] }
+        }
+      },
+      {
+        "caption": "<strong>Step 4.</strong> Same forward production line as Fig 7A; pull-mode coordination added on top. The signals don't increase the work — they reorganize when it happens. The validator counts the <code>s</code> marks as infrastructure rather than rework (I7), so forward-dominance still holds.",
+        "reveal": { "include": ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] }
+      }
+    ]
+  },
+
+  "matrices": [
+    {
+      "id": "flow-kanban",
+      "architectureType": "flow",
+
+      "regions": [
+        { "id": "coord", "layoutKind": "corner-wrapping", "semanticKind": "coordinator", "label": "Coordinator" },
+        { "id": "line",  "layoutKind": "diagonal-block",  "semanticKind": "task",        "label": "Production line" }
+      ],
+
+      "tasks": [
+        { "id": "C",   "label": "Coordinator",   "shortLabel": "C",  "region": "coord" },
+        { "id": "O1",  "label": "Operator 1",    "shortLabel": "O1", "region": "line" },
+        { "id": "O2",  "label": "Operator 2",    "shortLabel": "O2", "region": "line" },
+        { "id": "O3",  "label": "Operator 3",    "shortLabel": "O3", "region": "line" },
+        { "id": "DOT", "label": "…",             "shortLabel": "…",  "region": "line", "placeholder": true },
+        { "id": "O4",  "label": "Operator 4",    "shortLabel": "O4", "region": "line" },
+        { "id": "O5",  "label": "Operator 5",    "shortLabel": "O5", "region": "line" }
+      ],
+
+      "transfers": [
+        { "from": "C", "to": "O1", "mark": "x", "rendering": { "arrow": true, "label": "dispatch", "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "C", "to": "O2", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "C", "to": "O3", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "C", "to": "O4", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+        { "from": "C", "to": "O5", "mark": "x", "rendering": { "arrow": true, "emphasis": "secondary", "lens": "coordinator-dispatch" } },
+
+        { "from": "O1", "to": "O2", "mark": "x", "rendering": { "arrow": true, "label": "hand-off", "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "O2", "to": "O3", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "O3", "to": "O4", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } },
+        { "from": "O4", "to": "O5", "mark": "x", "rendering": { "arrow": true, "emphasis": "primary", "lens": "forward-handoff" } },
+
+        { "from": "O2", "to": "O1", "mark": "s", "rendering": { "arrow": true, "label": "pull signal", "emphasis": "primary" } },
+        { "from": "O3", "to": "O2", "mark": "s", "rendering": { "arrow": true, "emphasis": "primary" } },
+        { "from": "O4", "to": "O3", "mark": "s", "rendering": { "arrow": true, "emphasis": "primary" } },
+        { "from": "O5", "to": "O4", "mark": "s", "rendering": { "arrow": true, "emphasis": "primary" } }
+      ],
+
+      "annotations": [
+        { "position": "top",   "label": "Central dispatch",          "pointer": { "regionId": "coord" } },
+        { "position": "right", "label": "Forward + kanban pull",     "pointer": { "regionId": "line" } }
+      ]
+    }
+  ]
+}
