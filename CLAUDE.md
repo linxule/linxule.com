@@ -16,6 +16,7 @@ The website repo is `xule-site/`, not the parent `personal-website/` directory. 
 - **Inline `<style>` per page** — intentional, not debt. Global styles in `main.css`
 - Image pipeline details in `.claude/rules/architecture.md`
 - Concept propagation and departure infrastructure in `.claude/rules/concept-propagation.md`
+- Standalone interactive sub-apps at a root subpath (e.g. `/tsm/`) — vendoring, base-href, privacy allowlist, linking — in `.claude/rules/interactive-subapps.md`. A fourth content shape, distinct from slide decks at `/assets/slides/`.
 
 ### Key Files
 ```
@@ -48,6 +49,7 @@ Full list in `.claude/docs/gotchas.md`.
 6. **ESM project** — all JS uses `import`/`export default`
 7. **`keywords` is the standard** frontmatter field (not `tags`), both feed `tagPages`
 8. **FOUC cloak in `base.njk`** hides the body until `document.fonts.ready` resolves (1.5s fallback timer). Don't move it, don't remove the timer, and remember it doesn't propagate into iframes — embedded slide decks need their own cloak. Detail in `.claude/rules/font-loading.md`
+9. **Pre-commit secret scanner — `sk-` false positive (fixed 2026-05-31)** — `.git/hooks/pre-commit` used `sk-[a-zA-Z0-9]` (no word boundary), matching `task-`, `ask-`, `risk-`, etc. Now split into `sk-ant-` + `sk-[a-zA-Z0-9]\{20,\}` (catches Anthropic + legacy OpenAI; modern `sk-proj-` an accepted gap, noted in-hook). The hook lives in `.git/` — untracked, local-only (not shared via clone). If a fresh false positive appears, `--no-verify` after verifying no real keys. See `.claude/rules/interactive-subapps.md`
 
 ## Commands
 
