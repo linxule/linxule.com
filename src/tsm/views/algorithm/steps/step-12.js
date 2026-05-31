@@ -27,7 +27,7 @@
 // detail payload.
 
 // Stable URLs for the three resource links.
-//   - seam-essay: canonical Substack landing per project CLAUDE.md.
+//   - seam-series: the on-site SEAM series page (linxule.com/writing/series/seam/).
 //   - hidden-structure-paper: HBS article page for Baldwin / MacCormack /
 //     Rusnak, "Hidden Structure: Using Network Methods to Map System
 //     Architecture," Research Policy 43 (8), 2014. Considered alternatives:
@@ -42,7 +42,7 @@ const RESOURCE_LINKS = [
   {
     resource: "seam-essay",
     label: "SEAM essay — what TSMs reveal about AI systems",
-    href: "https://www.threadcounts.org/t/seam",
+    href: "https://linxule.com/writing/series/seam/",
     todo: false,
   },
   {
