@@ -61,6 +61,27 @@
     </section>
     {% endfor %}
 
+    {# Series companion slot — a closing "colophon" spread, opt-in per series via
+       companionLink (set in series.njk). Renders nowhere else (writing index, tag
+       pages) since the var is undefined there. #}
+    {% if companionLink %}
+    <section class="essay-spread companion-spread" data-spread="{{ (essays | length) + 1 }}">
+        <span class="spread-position">◆</span>
+
+        <div class="essay-series">companion</div>
+
+        <h2 class="essay-title">{{ companionLabel }}</h2>
+
+        <div class="essay-horizon"></div>
+
+        <p class="essay-opening">
+            "{{ companionNote }}"
+        </p>
+
+        <a href="{{ companionLink }}" class="essay-read-link companion-link">{{ companionCta | default('open the companion') }} →</a>
+    </section>
+    {% endif %}
+
 </div>
 
 <!-- Navigation Dots -->
@@ -69,6 +90,9 @@
     {% for essay in essays %}
     <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ essay.data.title }}"></button>
     {% endfor %}
+    {% if companionLink %}
+    <button class="book-nav-dot companion-dot" data-target="{{ (essays | length) + 1 }}" aria-label="Go to {{ companionLabel }}"></button>
+    {% endif %}
 </nav>
 
 <script>
