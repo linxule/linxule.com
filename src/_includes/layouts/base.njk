@@ -6,7 +6,7 @@
     <title>{% if seoTitle %}{{ seoTitle }} · {{ site.title }}{% elif title %}{{ title }} · {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
 
     {# Meta Description - seoDescription override, then per-page description, then portrait/artifact fallbacks #}
-    {%- set metaDescription = seoDescription | default(description) -%}
+    {%- set metaDescription = seoDescription or description -%}
     {%- if not metaDescription and layout == 'layouts/portrait.njk' -%}
       {%- if images and images[0] and images[0].alt -%}
         {%- set metaDescription = images[0].alt -%}
