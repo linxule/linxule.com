@@ -746,8 +746,12 @@ marker: "making"
             </div>
         </div>
 
-        <div class="spread-specimens{% if not artifact.data.images %} single{% endif %}">
-            {% if artifact.data.images %}
+        <div class="spread-specimens{% if artifact.data.thumbnail or not artifact.data.images %} single{% endif %}">
+            {% if artifact.data.thumbnail %}
+            <a href="{{ artifact.url }}" class="specimen">
+                <img src="{{ artifact.data.thumbnail }}" alt="{{ artifact.data.title }}">
+            </a>
+            {% elif artifact.data.images %}
             {%- for image in artifact.data.images -%}
             {% if image.src | isHTMLFile %}
             <a href="{{ artifact.url }}" class="specimen specimen--interactive">
@@ -762,10 +766,6 @@ marker: "making"
             </figure>
             {% endif %}
             {%- endfor -%}
-            {% elif artifact.data.thumbnail %}
-            <a href="{{ artifact.url }}" class="specimen">
-                <img src="{{ artifact.data.thumbnail }}" alt="{{ artifact.data.title }}">
-            </a>
             {% elif artifact.data.src | isHTMLFile %}
             <a href="{{ artifact.url }}" class="specimen specimen--interactive">
                 <iframe src="{{ artifact.data.src }}" title="{{ artifact.data.title }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>

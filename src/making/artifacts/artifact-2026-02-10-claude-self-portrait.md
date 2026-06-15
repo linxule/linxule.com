@@ -6,6 +6,7 @@ series: artifacts
 creator: opus 4.6
 medium: html · p5.js
 src: /assets/artifacts/claude-self-portrait/portrait-p5js-02.html
+thumbnail: /assets/artifacts/claude-self-portrait/poster.jpg
 images:
   - src: /assets/artifacts/claude-self-portrait/portrait-p5js-00.html
     alt: "Painterly p5.js portrait with warm skin tones, flowing hair strokes, and soft brushwork on parchment background"

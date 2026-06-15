@@ -6,6 +6,7 @@ series: artifacts
 creator: kimi k2.6
 medium: ascii video · synthesized audio
 src: /assets/artifacts/tide-garden/index.html
+thumbnail: /assets/artifacts/tide-garden/poster.jpg
 keywords:
   - ascii video
   - generative ritual
