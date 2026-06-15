@@ -1,6 +1,7 @@
 ---
 layout: layouts/cv.njk
 title: CV
+seoTitle: "CV — organization scholar & AI researcher"
 seoDescription: "Xule Lin (林徐乐) — Imperial College London PhD, joining SKEMA as Assistant Professor in 2026. Human–AI collaboration, organizational theory, qualitative methods."
 ---
 
