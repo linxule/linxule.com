@@ -37,3 +37,6 @@ _site_*/
 
 # Development tools (paper workshop, etc.)
 tools/
+
+# Headless Chrome temp profiles (poster rendering)
+.chrome-tmp/
