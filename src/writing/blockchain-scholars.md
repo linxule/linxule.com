@@ -17,7 +17,7 @@ keywords:
 
 > **Note:** This resource was last updated in December 2022. Some links may be outdated.
 
-(Growing) List of scholars working on blockchain-related studies in the field of management and adjacent fields (e.g., finance, law, information system). Feel free to suggest any edits by [emailing me](mailto:xule.lin@imperial.ac.uk).
+(Growing) List of scholars working on blockchain-related studies in the field of management and adjacent fields (e.g., finance, law, information system). Feel free to suggest any edits by [emailing me](mailto:x@linxule.com).
 
 See this list in [table view at Airtable](https://airtable.com/shrtzKsnRrlZvLxbP).
 

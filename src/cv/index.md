@@ -7,7 +7,7 @@ title: CV
 
 ### Imperial College London South Kensington Campus, London SW7 2AZ, UK
 
-### [xule.lin@imperial.ac.uk](mailto:xule.lin@imperial.ac.uk) | [linxule.com](https://linxule.com/)
+### [x@linxule.com](mailto:x@linxule.com) | [linxule.com](https://linxule.com/)
 
 # Academic Appointments
 
