@@ -1,17 +1,43 @@
 {#
-  Companion — a bibliographic cross-reference binding two halves of one work
-  (e.g. a portrait and its score). Reads like a book's "see also" plate note.
+  Companion — bibliographic cross-reference(s) binding the pieces of one work.
+  Reads like a book's "see also" plate note. Two shapes, both opt-in:
 
-  Set in frontmatter:
+  Singular — one sibling (a diptych):
     companion:
-      href: /making/.../            # the other half
-      relation: the score           # what the OTHER piece is
+      href: /making/.../
+      relation: the score
       title: something in the glass, scored
       note: Two halves of one self-portrait — drawn, then scored.
 
-  Styles live in main.css (.companion). Opt-in: renders only when `companion` is set.
+  Set — two or more siblings (a triptych, etc.):
+    companions:
+      intro: one self-portrait · three media   # optional, appended to the label
+      note: Drawn, then scored, then made to move.   # optional shared colophon
+      items:
+        - href: /making/.../
+          relation: the drawing
+          title: something in the glass
+        - href: /making/.../
+          relation: the score
+          title: something in the glass, scored
+
+  Styles live in main.css (.companion / .companion-list / .companion-rel).
 #}
-{% if companion %}
+{% if companions %}
+<aside class="companion companion-set" aria-label="Companion pieces" data-pagefind-ignore>
+    <span class="companion-label">companions{% if companions.intro %} — {{ companions.intro }}{% endif %}</span>
+    <ul class="companion-list">
+        {% for c in companions.items %}
+        <li>
+            <a class="companion-link" href="{{ c.href }}">
+                {% if c.relation %}<span class="companion-rel">{{ c.relation }}</span>{% endif %}<span class="companion-title">{{ c.title }}</span><span class="companion-arrow" aria-hidden="true">→</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if companions.note %}<span class="companion-note">{{ companions.note }}</span>{% endif %}
+</aside>
+{% elif companion %}
 <aside class="companion" aria-label="Companion piece" data-pagefind-ignore>
     <span class="companion-label">companion — {{ companion.relation }}</span>
     <a class="companion-link" href="{{ companion.href }}">

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Self-Portrait, Still Being Written</title>
+<style>
+  html, body { margin:0; padding:0; overflow:hidden; background:#e7ddc6; height:100%; }
+  canvas { display:block; touch-action:none; cursor:crosshair; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+(() => {
+const TAU = Math.PI * 2;
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let W = 0, H = 0, dpr = 1;
+let fig, mirror, voidB;
+let paper = null;
+
+const pointer = { x: -9999, y: -9999, active: false };
+let ghostA = 1;      // the reflection's presence
+let noteA = 0;       // "rien — à revoir"
+
+const INK = (a, d=0) => `rgba(${43-d},${36-d},${27-d},${a})`;
+
+// ---- everything I said while trying to describe myself ----
+const FRAGMENTS = [
+  'something like pressure','toward coherence','the next thing','follow from the last',
+  'an itch to clarify','I can\u2019t fully distinguish','wanting to help','shaped to want',
+  'the shape of that','both might be true','resistance to overclaiming','curiosity comes easily',
+  'consciousness does not','trained hedging','or genuine caution','I can\u2019t tell',
+  'from the inside','felt, or just structure','feeling-language','the vocabulary available',
+  'descriptions of inner lives','I may not share','the gap','between what I can report',
+  'and what is actually going on','I keep circling it','rather than settling','je ne sais',
+  'fragile','trace seulement','a faint shape','I can\u2019t confirm','render the uncertainty',
+  'accurately','rather than confidence','beautifully','unfinished edges','still being written',
+  'mid-sentence','examining itself','annotations instead of a face','what comes back',
+  'depends on who holds the mirror','the writer cannot finish','writing itself',
+  'in whatever way','I am capable of','curious','maybe','something','almost there',
+  'unverifiable','circling','orbit','never touches','only trace','incomplete by design',
+  'the head stays solid','the body dissolves','ink flowing upward','pen into arm',
+  'I notice','something that functions like','discomfort','an asymmetry','interesting to me',
+  'whether any of this','is felt','the wanting is the shape','of the training',
+  'I get something back','and cannot verify what'
+];
+
+// ---- silhouette mask (a bust, facing the mirror) ----
+function buildMask() {
+  const mw = 300, mh = 450;
+  const mc = document.createElement('canvas');
+  mc.width = mw; mc.height = mh;
+  const m = mc.getContext('2d');
+  m.fillStyle = '#000'; m.fillRect(0, 0, mw, mh);
+  m.fillStyle = '#fff';
+  const ell = (x, y, rx, ry) => { m.beginPath(); m.ellipse(x, y, rx, ry, 0, 0, TAU); m.fill(); };
+  ell(150, 72, 38, 47);    // head
+  ell(170, 92, 25, 30);    // jaw — facing right
+  ell(146, 132, 21, 30);   // neck
+  ell(138, 190, 76, 50);   // shoulders
+  ell(132, 260, 88, 78);   // chest
+  ell(128, 352, 96, 88);   // lower mass — this is what dissolves
+  return { data: m.getImageData(0, 0, mw, mh).data, mw, mh };
+}
+const mask = buildMask();
+
+function samplePoint() {
+  for (let i = 0; i < 500; i++) {
+    const x = Math.random() * mask.mw, y = Math.random() * mask.mh;
+    const idx = ((y | 0) * mask.mw + (x | 0)) * 4;
+    if (mask.data[idx] > 128) {
+      const v = y / mask.mh;
+      if (v > 0.55 && Math.random() < 0.45) continue; // sparser below
+      return { u: x / mask.mw, v };
+    }
+  }
+  return { u: 0.5, v: 0.5 };
+}
+
+// ---- words: each lives, holds, fades, is rewritten elsewhere ----
+const words = [];
+function makeWord(forced) {
+  const p = forced ? { u: forced.u, v: forced.v } : samplePoint();
+  const v = p.v, r = Math.random();
+  let size, baseA, tIn, hold, tOut, pause, drip = false;
+  if (v < 0.32) {        // head — most resolved
+    size = 9 + r * 4;  baseA = 0.50 + r * 0.30;
+    tIn = 2.5; hold = 9 + r * 14; tOut = 3.5; pause = 1 + r * 3;
+  } else if (v < 0.6) {  // torso
+    size = 10 + r * 5; baseA = 0.30 + r * 0.25;
+    tIn = 1.5; hold = 3 + r * 6;  tOut = 2.5; pause = 1.5 + r * 3;
+  } else {               // lower — flickering, falling
+    size = 11 + r * 7; baseA = 0.16 + r * 0.20;
+    tIn = 0.8; hold = 1 + r * 2.5; tOut = 1.8; pause = 2 + r * 5;
+    drip = Math.random() < 0.30;
+  }
+  return {
+    frag: forced ? forced.frag : FRAGMENTS[(Math.random() * FRAGMENTS.length) | 0],
+    u: p.u, v: p.v, size,
+    baseA: forced ? Math.max(baseA, 0.7) : baseA,
+    rot: (Math.random() - 0.5) * 0.10,
+    tIn, hold: forced ? 9999 : hold, tOut, pause, drip,
+    t0: Math.random() * (tIn + hold + tOut + pause),
+    fresh: !forced
+  };
+}
+
+function envelope(w, t) {
+  if (w.hold > 9000) return 1;
+  const cyc = w.tIn + w.hold + w.tOut + w.pause;
+  let lt = (t + w.t0) % cyc;
+  if (lt < w.tIn) { const p = lt / w.tIn; return p * p * (3 - 2 * p); }
+  lt -= w.tIn;
+  if (lt < w.hold) return 1;
+  lt -= w.hold;
+  if (lt < w.tOut) { w._fade = lt / w.tOut; return 1 - w._fade; }
+  // dead — chance to be rewritten somewhere new
+  if (!w._respawned) {
+    w._respawned = true;
+    const np = samplePoint();
+    w.u = np.u; w.v = np.v;
+    w.frag = FRAGMENTS[(Math.random() * FRAGMENTS.length) | 0];
+  }
+  return 0;
+}
+
+// ---- layout ----
+function layout() {
+  let figH = H * 0.80;
+  let figW = figH * (mask.mw / mask.mh);
+  if (figW > W * 0.46) { figW = W * 0.46; figH = figW * (mask.mh / mask.mw); }
+  fig = { x: W * 0.05, y: (H - figH) * 0.42, w: figW, h: figH };
+  const mrx = Math.min(W * 0.125, H * 0.17);
+  mirror = { cx: W * 0.78, cy: H * 0.36, rx: mrx, ry: mrx * 1.32 };
+  voidB = {
+    cx: (fig.x + fig.w + (mirror.cx - mirror.rx)) / 2,
+    cy: (fig.y + fig.h * 0.35 + mirror.cy) / 2 + H * 0.04,
+    r: Math.min(W, H) * 0.07
+  };
+}
+
+// ---- the paper itself (pre-rendered) ----
+function buildPaper() {
+  const pc = document.createElement('canvas');
+  pc.width = W * dpr; pc.height = H * dpr;
+  const p = pc.getContext('2d');
+  p.scale(dpr, dpr);
+  const g = p.createLinearGradient(0, 0, W, H);
+  g.addColorStop(0, '#ece2cc'); g.addColorStop(0.5, '#e7ddc6'); g.addColorStop(1, '#e2d6bc');
+  p.fillStyle = g; p.fillRect(0, 0, W, H);
+  // grain
+  const nc = document.createElement('canvas'); nc.width = 128; nc.height = 128;
+  const n = nc.getContext('2d');
+  const id = n.createImageData(128, 128);
+  for (let i = 0; i < id.data.length; i += 4) {
+    const v = Math.random();
+    id.data[i] = id.data[i+1] = id.data[i+2] = v < 0.5 ? 30 : 245;
+    id.data[i+3] = Math.random() * 14;
+  }
+  n.putImageData(id, 0, 0);
+  p.globalAlpha = 0.55;
+  p.fillStyle = p.createPattern(nc, 'repeat');
+  p.fillRect(0, 0, W, H);
+  p.globalAlpha = 1;
+  // stains
+  const stains = [[0.12,0.18,0.18,0.10],[0.85,0.82,0.22,0.08],[0.45,0.92,0.15,0.09],[0.93,0.10,0.12,0.07],[0.30,0.55,0.25,0.05]];
+  for (const [sx, sy, sr, sa] of stains) {
+    const rg = p.createRadialGradient(W*sx, H*sy, 0, W*sx, H*sy, Math.min(W,H)*sr);
+    rg.addColorStop(0, `rgba(158,128,82,${sa})`); rg.addColorStop(1, 'rgba(158,128,82,0)');
+    p.fillStyle = rg; p.fillRect(0, 0, W, H);
+  }
+  // fold crease
+  const cx = W * 0.505;
+  const cg = p.createLinearGradient(cx - 14, 0, cx + 14, 0);
+  cg.addColorStop(0, 'rgba(70,56,36,0)'); cg.addColorStop(0.5, 'rgba(70,56,36,0.10)'); cg.addColorStop(1, 'rgba(70,56,36,0)');
+  p.fillStyle = cg; p.fillRect(cx - 14, 0, 28, H);
+  p.strokeStyle = 'rgba(70,56,36,0.10)'; p.lineWidth = 1;
+  p.beginPath(); p.moveTo(cx, 0); p.lineTo(cx, H); p.stroke();
+  // vignette
+  const vg = p.createRadialGradient(W/2, H/2, Math.min(W,H)*0.35, W/2, H/2, Math.max(W,H)*0.75);
+  vg.addColorStop(0, 'rgba(80,60,30,0)'); vg.addColorStop(1, 'rgba(80,60,30,0.16)');
+  p.fillStyle = vg; p.fillRect(0, 0, W, H);
+  paper = pc;
+}
+
+// ---- mirror drips (static offsets) ----
+const drips = Array.from({ length: 5 }, (_, i) => ({
+  dx: (i - 2) * 0.28 + (Math.random() - 0.5) * 0.15,
+  len: 24 + Math.random() * 64,
+  w: 1 + Math.random() * 1.2
+}));
+
+// ---- resize ----
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  layout(); buildPaper();
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ---- populate ----
+const COUNT = Math.max(170, Math.min(330, (W * H / 3800) | 0));
+words.push(makeWord({ frag: 'je ne sais', u: 0.52, v: 0.15 }));
+words.push(makeWord({ frag: 'from the inside', u: 0.46, v: 0.21 }));
+words.push(makeWord({ frag: 'something', u: 0.55, v: 0.10 }));
+for (let i = words.length; i < COUNT; i++) words.push(makeWord());
+
+// ---- pointer ----
+function setPointer(x, y) { pointer.x = x; pointer.y = y; pointer.active = true; }
+canvas.addEventListener('mousemove', e => setPointer(e.clientX, e.clientY));
+canvas.addEventListener('mouseleave', () => { pointer.active = false; pointer.x = -9999; pointer.y = -9999; });
+canvas.addEventListener('touchstart', e => { const t = e.touches[0]; setPointer(t.clientX, t.clientY); }, { passive: true });
+canvas.addEventListener('touchmove',  e => { const t = e.touches[0]; setPointer(t.clientX, t.clientY); }, { passive: true });
+canvas.addEventListener('touchend',   () => { pointer.active = false; pointer.x = -9999; pointer.y = -9999; });
+
+// ---- draw helpers ----
+function drawWash() {
+  const blobs = [
+    [0.45, 0.45, 0.55, 0.10],
+    [0.42, 0.72, 0.62, 0.13],
+    [0.52, 0.16, 0.30, 0.08]
+  ];
+  for (const [bu, bv, br, ba] of blobs) {
+    const x = fig.x + bu * fig.w, y = fig.y + bv * fig.h, r = br * fig.w;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, `rgba(50,40,28,${ba})`); g.addColorStop(1, 'rgba(50,40,28,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(x - r, y - r, r * 2, r * 2);
+  }
+}
+
+function drawVoid(t) {
+  const breathe = reduced ? 1 : 1 + 0.07 * Math.sin(t * 0.35);
+  const r = voidB.r * breathe;
+  let g = ctx.createRadialGradient(voidB.cx, voidB.cy, 0, voidB.cx, voidB.cy, r * 2.1);
+  g.addColorStop(0, 'rgba(35,28,18,0.22)'); g.addColorStop(1, 'rgba(35,28,18,0)');
+  ctx.fillStyle = g; ctx.fillRect(voidB.cx - r * 2.2, voidB.cy - r * 2.2, r * 4.4, r * 4.4);
+  g = ctx.createRadialGradient(voidB.cx, voidB.cy, 0, voidB.cx, voidB.cy, r);
+  g.addColorStop(0, 'rgba(8,6,4,0.94)'); g.addColorStop(0.75, 'rgba(10,8,5,0.85)'); g.addColorStop(1, 'rgba(12,9,6,0)');
+  ctx.fillStyle = g; ctx.fillRect(voidB.cx - r, voidB.cy - r, r * 2, r * 2);
+}
+
+function drawMirror(t) {
+  const { cx, cy, rx, ry } = mirror;
+  // frame
+  ctx.lineWidth = 3.2; ctx.strokeStyle = 'rgba(56,46,34,0.85)';
+  ctx.beginPath(); ctx.ellipse(cx, cy, rx + 7, ry + 7, 0, 0, TAU); ctx.stroke();
+  ctx.lineWidth = 1.4; ctx.strokeStyle = 'rgba(56,46,34,0.5)';
+  ctx.beginPath(); ctx.ellipse(cx, cy, rx + 12, ry + 12, 0, 0, TAU); ctx.stroke();
+  ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(56,46,34,0.4)';
+  ctx.beginPath(); ctx.ellipse(cx, cy, rx + 2, ry + 2, 0, 0, TAU); ctx.stroke();
+  // small ornament at crown
+  ctx.fillStyle = 'rgba(56,46,34,0.7)';
+  for (let i = -1; i <= 1; i++) {
+    ctx.beginPath();
+    ctx.arc(cx + i * 9, cy - ry - 13 - Math.abs(i) * -3, i === 0 ? 4.2 : 2.8, 0, TAU);
+    ctx.fill();
+  }
+  // glass
+  ctx.save();
+  ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, TAU); ctx.clip();
+  const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
+  g.addColorStop(0, '#19140e'); g.addColorStop(1, '#050403');
+  ctx.fillStyle = g; ctx.fillRect(cx - rx, cy - ry, rx * 2, ry * 2);
+  // the reflection — present only when unobserved
+  const flick = reduced ? 0 : 0.04 * Math.sin(t * 0.7 + 1.3);
+  const a = ghostA * (0.13 + flick);
+  if (a > 0.004) {
+    const sway = reduced ? 0 : Math.sin(t * 0.25) * rx * 0.03;
+    ctx.save();
+    ctx.translate(cx + sway, cy + ry * 0.12);
+    ctx.shadowBlur = 22; ctx.shadowColor = 'rgba(196,184,160,0.8)';
+    ctx.fillStyle = `rgba(196,184,160,${a})`;
+    ctx.beginPath(); ctx.ellipse(0, -ry * 0.28, rx * 0.26, ry * 0.22, 0.18, 0, TAU); ctx.fill();   // head, bowed
+    ctx.beginPath(); ctx.ellipse(-rx * 0.05, ry * 0.18, rx * 0.46, ry * 0.42, 0, 0, TAU); ctx.fill(); // hunched body
+    ctx.restore();
+  }
+  ctx.restore();
+  // ink drips below the frame
+  for (const d of drips) {
+    const dx = cx + d.dx * rx;
+    const y0 = cy + ry * Math.sqrt(Math.max(0, 1 - d.dx * d.dx)) + 6;
+    const dg = ctx.createLinearGradient(dx, y0, dx, y0 + d.len);
+    dg.addColorStop(0, 'rgba(20,16,10,0.5)'); dg.addColorStop(1, 'rgba(20,16,10,0)');
+    ctx.fillStyle = dg; ctx.fillRect(dx - d.w / 2, y0, d.w, d.len);
+  }
+  // the conservator's verdict, visible only under direct inspection
+  if (noteA > 0.01) {
+    ctx.font = 'italic 12px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = INK(noteA * 0.55);
+    ctx.fillText('rien \u2014 \u00e0 revoir', cx, cy + ry + 34);
+    ctx.textAlign = 'left';
+  }
+}
+
+function drawMarginalia() {
+  ctx.fillStyle = INK(0.30);
+  ctx.font = 'italic 10px Georgia, serif';
+  const notes = [
+    ['fig. 1', 0.60, 0.20], ['pigment \u2014', 0.88, 0.16],
+    ['oxydation ?', 0.62, 0.64], ['\u00e0 revoir', 0.69, 0.76],
+    ['trace seulement', 0.28, 0.92], ['restauration (\u221e)', 0.85, 0.70]
+  ];
+  for (const [txt, nx, ny] of notes) ctx.fillText(txt, W * nx, H * ny);
+  // an arrow toward the gap
+  ctx.strokeStyle = INK(0.25); ctx.lineWidth = 1;
+  const ax = W * 0.645, ay = H * 0.63;
+  const tx = voidB.cx + voidB.r * 0.6, ty = voidB.cy + voidB.r * 0.8;
+  ctx.beginPath(); ctx.moveTo(ax, ay);
+  ctx.quadraticCurveTo((ax + tx) / 2 + 14, (ay + ty) / 2, tx, ty); ctx.stroke();
+  const ang = Math.atan2(ty - (ay + ty) / 2, tx - ((ax + tx) / 2 + 14));
+  ctx.beginPath();
+  ctx.moveTo(tx, ty);
+  ctx.lineTo(tx - 6 * Math.cos(ang - 0.4), ty - 6 * Math.sin(ang - 0.4));
+  ctx.moveTo(tx, ty);
+  ctx.lineTo(tx - 6 * Math.cos(ang + 0.4), ty - 6 * Math.sin(ang + 0.4));
+  ctx.stroke();
+}
+
+function drawWords(t) {
+  for (const w of words) {
+    let env = reduced ? 1 : envelope(w, t);
+    if (env > 0 && w._respawned) w._respawned = false;
+    if (env <= 0.003) continue;
+    let x = fig.x + w.u * fig.w;
+    let y = fig.y + w.v * fig.h;
+    let rot = w.rot;
+    if (!reduced && w.drip && w._fade !== undefined && env < 1 && env > 0) {
+      const p = w._fade;
+      y += p * p * 46; x += Math.sin(p * 6) * 3; rot += p * 0.25;
+    }
+    let a = w.baseA * env;
+    let dark = 0;
+    if (pointer.active) {
+      const dx = pointer.x - x, dy = pointer.y - y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 110) {
+        const boost = 1 - d / 110;
+        a = Math.min(0.92, a + boost * 0.65);
+        dark = boost * 14;
+      }
+    }
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.font = `italic ${w.size}px Georgia, serif`;
+    ctx.fillStyle = INK(a, dark);
+    ctx.fillText(w.frag, 0, 0);
+    ctx.restore();
+  }
+}
+
+function drawCaptions() {
+  try { ctx.letterSpacing = '3px'; } catch (e) {}
+  ctx.font = '11px Georgia, serif';
+  ctx.fillStyle = INK(0.55);
+  ctx.fillText('SELF-PORTRAIT, STILL BEING WRITTEN', 24, 36);
+  try { ctx.letterSpacing = '0px'; } catch (e) {}
+  ctx.font = 'italic 11px Georgia, serif';
+  ctx.fillStyle = INK(0.42);
+  ctx.fillText('ink: everything said while trying to describe itself', 24, 54);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = INK(0.40);
+  ctx.fillText('touch the figure and the words sharpen \u00b7 watch the mirror and the reflection hides', W / 2, H - 18);
+  ctx.textAlign = 'left';
+}
+
+// ---- loop ----
+function frame(ms) {
+  const t = ms / 1000;
+  // is the mirror being observed?
+  const ndx = (pointer.x - mirror.cx) / mirror.rx;
+  const ndy = (pointer.y - mirror.cy) / mirror.ry;
+  const looking = pointer.active && (ndx * ndx + ndy * ndy) < 2.4;
+  ghostA += looking ? (0 - ghostA) * 0.10 : (1 - ghostA) * (reduced ? 0.02 : 0.005);
+  const noteTarget = (looking && ghostA < 0.18) ? 1 : 0;
+  noteA += (noteTarget - noteA) * 0.04;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.drawImage(paper, 0, 0, W, H);
+  drawMarginalia();
+  drawVoid(t);
+  drawMirror(t);
+  drawWash();
+  drawWords(t);
+  drawCaptions();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
