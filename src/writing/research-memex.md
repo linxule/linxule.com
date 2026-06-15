@@ -114,3 +114,28 @@ The project lives at **[research-memex.org](https://research-memex.org)**. Start
 ---
 
 **Meta-note**: This announcement is collaborative human-AI writing. Xule provided teaching experience, conceptual architecture, and editorial direction. Claude 4.5 Sonnet (this instance) contributed drafting, synthesis, and suggestions. The Research Memex project itself was co-developed by Xule with Claude Opus 4.1 and another Claude Sonnet 4.5 instance. Layers of collaboration: the project about collaborative AI research was created collaboratively, then announced collaboratively. The post embodies what it describes. Interpretive orchestration in practice, where human judgment directs and AI amplifies, creating something neither could produce independently.
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "@id": "https://doi.org/10.1177/14761270261448645",
+  "url": "https://doi.org/10.1177/14761270261448645",
+  "mainEntityOfPage": "https://doi.org/10.1177/14761270261448645",
+  "name": "Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence",
+  "headline": "Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence",
+  "author": [
+    { "@type": "Person", "name": "Xule Lin", "url": "https://linxule.com/", "sameAs": "https://orcid.org/0000-0001-7885-4194" },
+    { "@type": "Person", "name": "Kevin G. Corley" }
+  ],
+  "datePublished": "2026",
+  "isPartOf": { "@type": "Periodical", "name": "Strategic Organization" },
+  "publisher": { "@type": "Organization", "name": "SAGE Publications" },
+  "identifier": { "@type": "PropertyValue", "propertyID": "DOI", "value": "10.1177/14761270261448645" },
+  "sameAs": [
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679",
+    "https://github.com/linxule/interpretive-orchestration-paper"
+  ],
+  "license": "https://creativecommons.org/licenses/by/4.0/"
+}
+</script>

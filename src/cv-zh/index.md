@@ -9,7 +9,7 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 
 ### 英国伦敦帝国理工学院 (Imperial College London) 南肯辛顿校区，伦敦 SW7 2AZ
 
-### [xule.lin@imperial.ac.uk](mailto:xule.lin@imperial.ac.uk) | [linxule.com](https://linxule.com/)
+### [x@linxule.com](mailto:x@linxule.com) | [linxule.com](https://linxule.com/)
 
 # 学术任职
 
