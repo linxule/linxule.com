@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if title %}{{ title }} · {% endif %}{{ site.title }}</title>
+    <title>{% if seoTitle %}{{ seoTitle }} · {{ site.title }}{% elif title %}{{ title }} · {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
 
-    {# Meta Description - with portrait/artifact fallbacks #}
-    {%- set metaDescription = description -%}
+    {# Meta Description - seoDescription override, then per-page description, then portrait/artifact fallbacks #}
+    {%- set metaDescription = seoDescription | default(description) -%}
     {%- if not metaDescription and layout == 'layouts/portrait.njk' -%}
       {%- if images and images[0] and images[0].alt -%}
         {%- set metaDescription = images[0].alt -%}
@@ -271,6 +271,7 @@
     </nav>
     
     <main id="main-content">
+        {% if seoH1 %}<h1 class="sr-only">{{ seoH1 }}</h1>{% endif %}
         {{ content | safe }}
     </main>
     
