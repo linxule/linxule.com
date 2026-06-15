@@ -1,0 +1,22 @@
+{#
+  Companion — a bibliographic cross-reference binding two halves of one work
+  (e.g. a portrait and its score). Reads like a book's "see also" plate note.
+
+  Set in frontmatter:
+    companion:
+      href: /making/.../            # the other half
+      relation: the score           # what the OTHER piece is
+      title: something in the glass, scored
+      note: Two halves of one self-portrait — drawn, then scored.
+
+  Styles live in main.css (.companion). Opt-in: renders only when `companion` is set.
+#}
+{% if companion %}
+<aside class="companion" aria-label="Companion piece" data-pagefind-ignore>
+    <span class="companion-label">companion — {{ companion.relation }}</span>
+    <a class="companion-link" href="{{ companion.href }}">
+        <span class="companion-title">{{ companion.title }}</span><span class="companion-arrow" aria-hidden="true">→</span>
+    </a>
+    {% if companion.note %}<span class="companion-note">{{ companion.note }}</span>{% endif %}
+</aside>
+{% endif %}

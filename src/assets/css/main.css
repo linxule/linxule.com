@@ -1223,3 +1223,64 @@ a:focus-visible {
         left: auto !important;
     }
 }
+
+/* ========================================
+   Companion — paired cross-reference
+   Binds two halves of one work (e.g. a portrait and its score).
+   Rendered by components/companion.njk when `companion` is set in frontmatter.
+   Book idiom: mono caption + italic-serif title link, bloom on hover.
+   ======================================== */
+.companion {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ink-ghost);
+    max-width: 38rem;
+}
+
+.companion-label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-ghost);
+    margin-bottom: 0.7rem;
+}
+
+.companion-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    text-decoration: none;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--ink-light);
+    transition: color 0.25s ease;
+}
+
+.companion-link:hover,
+.companion-link:focus-visible {
+    color: var(--bloom);
+}
+
+.companion-arrow {
+    font-style: normal;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    transition: transform 0.25s ease;
+}
+
+.companion-link:hover .companion-arrow,
+.companion-link:focus-visible .companion-arrow {
+    transform: translateX(0.25rem);
+}
+
+.companion-note {
+    display: block;
+    margin-top: 0.7rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.03em;
+    line-height: 1.7;
+    color: var(--ink-faint);
+}

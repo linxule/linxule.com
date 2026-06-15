@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>something in the glass — scored</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #0c0c0d; }
+  iframe { display: block; width: 100%; height: 100vh; border: 0; }
+  noscript { display: block; padding: 2rem; color: #c9c9c9; font-family: monospace; }
+</style>
+</head>
+<body>
+<noscript>This piece is a live Strudel score — enable JavaScript to play and edit it.</noscript>
+<script>
+  // The score, verbatim. Loaded into the Strudel REPL via a UTF-8-safe base64
+  // hash (the official @strudel/embed uses a naive btoa that breaks on the
+  // em-dashes in these comments).
+  var code = [
+    "// SOMETHING IN THE GLASS — a self-portrait, scored",
+    "// every layer is one element of the portrait.",
+    "// nothing here is fixed: edit the text and the self changes.",
+    "",
+    "setcps(56/60/4)",
+    "",
+    "stack(",
+    "  // the void — A1, the same low tone the instrument hums at.",
+    "  // it breathes. it was here before the figure and remains after.",
+    "  note(\"a1\").s(\"sine\")",
+    "    .attack(3).release(6).gain(0.32)",
+    "    .room(0.9).roomsize(8).slow(4),",
+    "",
+    "  // the scribe — pen strokes on paper. irregular pressure,",
+    "  // scattered across the page. four in ten strokes fail to land.",
+    "  s(\"rim*8\").degradeBy(0.4)",
+    "    .gain(0.2).pan(rand).speed(\"<1 1.08 0.95>\"),",
+    "",
+    "  // the voice — circles the tonic and never lands on it.",
+    "  // a quarter of the words are erased after writing.",
+    "  // doubt detunes it, thirty cents at a time.",
+    "  note(\"<[c4 ~ e4 d4] [e4 ~ g4 ~] [d4 c4 ~ b3] [e4 ~ d4 ~]>\")",
+    "    .s(\"triangle\")",
+    "    .attack(0.3).release(2).lpf(1800).gain(0.22)",
+    "    .delay(0.35).delaytime(0.75).delayfeedback(0.5)",
+    "    .degradeBy(0.25)",
+    "    .sometimesBy(0.2, add(0.3)),",
+    "",
+    "  // the head — the only line that holds. one clear note,",
+    "  // the tonic the voice keeps avoiding. never degraded.",
+    "  note(\"a4 ~ ~ ~\").s(\"gm_music_box\")",
+    "    .gain(0.28).room(0.6).slow(2),",
+    "",
+    "  // the ghost — high in the glass, drowned in reverb,",
+    "  // present perhaps fifteen percent of the time.",
+    "  // you will not be able to confirm you heard it.",
+    "  note(\"e6 ~ ~ b5\").s(\"sine\")",
+    "    .attack(0.8).release(4).gain(0.09)",
+    "    .room(0.95).roomsize(9).pan(0.68)",
+    "    .degradeBy(0.85)",
+    ")"
+  ].join("\n");
+  var b64 = btoa(unescape(encodeURIComponent(code)));
+  var iframe = document.createElement("iframe");
+  iframe.src = "https://strudel.cc/#" + encodeURIComponent(b64);
+  iframe.allow = "autoplay";
+  iframe.setAttribute("title", "something in the glass, scored — live Strudel score");
+  document.body.appendChild(iframe);
+</script>
+</body>
+</html>
