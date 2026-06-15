@@ -8,6 +8,28 @@ layout: layouts/base.njk
 marker: writing
 eleventyComputed:
   title: "{{ series.name }} · writing"
+  seoTitle: "{%- set t = {
+      'loom': 'LOOM — human–AI collaboration in research',
+      'seam': 'SEAM — patterns rhyming across paradigms',
+      'research-with-ai': 'Research with AI — building thinking partners',
+      'singles': 'Singles — standalone notes on the AI moment',
+      'ai-whispers': 'AI Whispers — techniques for steering AI',
+      'epistemic-voids': 'Epistemic Voids — gaps in AI discourse',
+      'organizational-futures': 'Organizational Futures — coordination after AGI',
+      'thinking': 'Thinking — periodic notes from the work',
+      'archive': 'Archive — earlier tutorials and foundations'
+    } -%}{{ t[series.slug] }}"
+  seoDescription: "{%- set d = {
+      'loom': 'Weaving meaning in the third space between human and AI — the LOOM series with Kevin Corley on how understanding emerges through dialogue, not extraction.',
+      'seam': 'How paradigms carry forward — and who they leave behind. The SEAM series on the task-structure framework of Carliss Baldwin, with interactive matrices at /tsm/.',
+      'research-with-ai': 'Building thinking partners that broaden what we look for, not just speed up finding what we know — the foreclosure problem, agent tradeoffs, tools as method.',
+      'singles': 'Standalone pieces responding to moments in the AI landscape — from a letter Claude wrote on being fought over to why the human-centric story is the wrong one.',
+      'ai-whispers': 'Conversational techniques for steering AI — the AI Whispers series on primers, prodders, and breathers, and how framing changes what a model reaches.',
+      'epistemic-voids': 'Gaps in AI discourse — the Epistemic Voids series on facades, fallacies, and false ceilings: a critique of hollow reasoning that mistakes fluency for sense.',
+      'organizational-futures': 'Post-AGI organizational theory — the Organizational Futures series on coordination, governance, and work when AI carries theories of organizing we never chose.',
+      'thinking': 'Periodic notes on what is on my mind now — snapshots of research into algorithmic organizing as it unfolds, where AI systems are participants, not just tools.',
+      'archive': 'Layered time, stacked foundations — earlier tutorials, tools, and reading lists, including the decentralized-organizing research where the work began.'
+    } -%}{{ d[series.slug] }}"
 ---
 
 <style>

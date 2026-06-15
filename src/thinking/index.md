@@ -1,6 +1,8 @@
 ---
 layout: layouts/thinking.njk
 title: thinking
+seoTitle: "Thinking — the research framework"
+seoH1: "Thinking — what becomes impossible to see when algorithms enter organizational life, not as tools."
 description: "What becomes impossible to see when AI systems carry implicit theories about collective organizing."
 
 thesis: "AI systems carry implicit theories about collective organizing. These theories are invisible from inside."

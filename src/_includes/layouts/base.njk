@@ -19,6 +19,13 @@
         {%- set metaDescription = contextExcerpt[0].text | default(contextExcerpt[0]) -%}
       {%- endif -%}
     {%- endif -%}
+    {%- if not metaDescription and layout == 'layouts/talk.njk' -%}
+      {%- if event -%}
+        {%- set metaDescription = title ~ ' — presented at ' ~ event ~ '.' -%}
+      {%- else -%}
+        {%- set metaDescription = title ~ ' — a ' ~ (type | default('talk')) ~ ' by ' ~ site.author ~ '.' -%}
+      {%- endif -%}
+    {%- endif -%}
     <meta name="description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     {%- if robots %}
     <meta name="robots" content="{{ robots }}">
@@ -51,7 +58,7 @@
       {%- set ogImg = src -%}
     {%- endif -%}
     {%- set ogImg = ogImg | default('/assets/og-image.png') -%}
-    <meta property="og:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
+    <meta property="og:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta property="og:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
     <meta property="og:url" content="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
@@ -62,7 +69,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@linxule">
     <meta name="twitter:creator" content="@linxule">
-    <meta name="twitter:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
+    <meta name="twitter:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta name="twitter:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     <meta name="twitter:image" content="{{ site.url }}{{ ogImg }}">
 
