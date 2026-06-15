@@ -56,9 +56,12 @@
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
     <meta property="og:url" content="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
     <meta property="og:image" content="{{ site.url }}{{ ogImg }}">
+    <meta property="og:site_name" content="{{ site.title }}">
 
     {# Twitter Card #}
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@linxule">
+    <meta name="twitter:creator" content="@linxule">
     <meta name="twitter:title" content="{% if title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta name="twitter:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     <meta name="twitter:image" content="{{ site.url }}{{ ogImg }}">
@@ -127,6 +130,7 @@
       "@type": "ProfilePage",
       "mainEntity": {
         "@type": "Person",
+        "@id": "{{ site.url }}/#person",
         "name": "{{ site.author }}",
         "alternateName": "{{ site.authorZh }}",
         "url": "{{ site.url }}",
@@ -183,8 +187,8 @@
       "headline": "{{ title }}",
       "description": "{{ description | default(subtitle) | default(site.description) }}",
       "datePublished": "{{ date.toISOString().split('T')[0] }}",
-      "author": [{% for author in authors %}{"@type": "Person", "name": "{{ author }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "publisher": {"@type": "Person", "name": "{{ site.author }}"},
+      "author": [{% for author in authors %}{"@type": "Person", {% if author == site.author %}"@id": "{{ site.url }}/#person", {% endif %}"name": "{{ author }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
       "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if defines %},
       "hasPart": [{% for def in defines %}{
         "@type": "DefinedTerm",
@@ -192,8 +196,28 @@
         "description": {{ def.definition | dump | safe }},
         "url": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}#dfn-{{ def.term | slugify }}",
         "inDefinedTermSet": "{{ site.url }}/concepts/",
-        "creator": {"@type": "Person", "name": "{{ site.author }}"}
+        "creator": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"}
       }{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
+    }
+    </script>
+    {% endif %}
+    {% if page.url == '/concepts/' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DefinedTermSet",
+      "@id": "{{ site.url }}/concepts/",
+      "name": "Signature Concepts — {{ site.author }}",
+      "url": "{{ site.url }}/concepts/",
+      "inLanguage": "en",
+      "hasDefinedTerm": [{% for concept in collections.concepts %}{
+        "@type": "DefinedTerm",
+        "name": {{ concept.term | dump | safe }},
+        "description": {{ concept.definition | dump | safe }},
+        "url": "{{ site.url }}{{ concept.url | replace(r/\/$/, '') }}#{{ concept.anchor }}",
+        "inDefinedTermSet": "{{ site.url }}/concepts/",
+        "creator": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"}
+      }{% if not loop.last %}, {% endif %}{% endfor %}]
     }
     </script>
     {% endif %}
