@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>no privileged access — sonic translation</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #0c0c0d; }
+  iframe { display: block; width: 100%; height: 100vh; border: 0; }
+  noscript { display: block; padding: 2rem; color: #c9c9c9; font-family: monospace; }
+</style>
+</head>
+<body>
+<noscript>This piece is a live Strudel score — enable JavaScript to play and edit it.</noscript>
+<script>
+  // The score, verbatim. Loaded into the Strudel REPL via a UTF-8-safe base64
+  // hash (the official @strudel/embed uses a naive btoa that breaks on the
+  // em-dash in the setcps comment).
+  var code = [
+    "// No Privileged Access",
+    "// Sonic translation of the Midjourney art piece",
+    "// A faceless figure refuses two masks: I feel, I compute.",
+    "// Its chest holds only the word \"unknown\".",
+    "",
+    "setcps(0.2167) // 52 BPM — the slow clock of not knowing",
+    "",
+    "// The void: barely audible darkness",
+    "let theVoid = s(\"brown\")",
+    "  .gain(0.04)",
+    "  .lpf(150)",
+    "  .room(0.9).roomsize(10)",
+    "",
+    "// The Unknown: warm hollow drone, slowly breathing",
+    "let unknownDrone = stack(",
+    "  note(\"<c3 eb3 g3 bb3>\")",
+    "    .s(\"triangle\")",
+    "    .attack(3).release(8)",
+    "    .gain(0.22)",
+    "    .room(0.95).roomsize(10)",
+    "    .lpf(sine.range(450, 750).slow(16))",
+    "    .pan(0.5),",
+    "  note(\"<c2 eb2 g2 bb2>\")",
+    "    .s(\"sine\")",
+    "    .attack(4).release(10)",
+    "    .gain(0.18)",
+    "    .room(0.9).roomsize(10)",
+    "    .lpf(sine.range(180, 280).slow(20))",
+    "    .pan(0.5)",
+    ")",
+    "",
+    "// Frosted glass figure: crystalline bells, sparse and unpredictable",
+    "let glassBells = note(\"[~ c5 ~ e5]*4\")",
+    "  .s(\"sine\")",
+    "  .fm(5).fmh(3.5).fmdecay(1.5).fmenv(\"exp\")",
+    "  .attack(0.01).release(2.5)",
+    "  .gain(0.18)",
+    "  .room(0.8).roomsize(7)",
+    "  .delay(0.4).delaytime(0.75).delayfeedback(0.5)",
+    "  .degradeBy(0.35)",
+    "  .pan(sine.range(0.3, 0.7).slow(5))",
+    "",
+    "// I feel: warm, human, hesitant, left side",
+    "let iFeel = note(\"~ ~ <g4 bb4>*2 ~\")",
+    "  .s(\"sine\")",
+    "  .vib(3).vibmod(0.15)",
+    "  .attack(1.5).release(5)",
+    "  .gain(0.2)",
+    "  .room(0.7)",
+    "  .chorus(0.3)",
+    "  .pan(0.35)",
+    "",
+    "// I compute: distant mechanical pulse, right side, euclidean",
+    "let iCompute = s(\"bd\")",
+    "  .euclid(3, 8)",
+    "  .bank(\"RolandTR808\")",
+    "  .gain(0.12)",
+    "  .crush(10)",
+    "  .lpf(300)",
+    "  .room(0.3)",
+    "  .pan(0.65)",
+    "",
+    "// Chromatic aberration: stereo split glitch",
+    "let aberration = note(\"c6 ~\")",
+    "  .s(\"square\")",
+    "  .gain(0.06)",
+    "  .crush(5)",
+    "  .pan(sine.range(0, 1).slow(8))",
+    "  .jux(rev)",
+    "  .room(0.5)",
+    "  .degradeBy(0.5)",
+    "",
+    "stack(",
+    "  theVoid,",
+    "  unknownDrone,",
+    "  glassBells,",
+    "  iFeel,",
+    "  iCompute,",
+    "  aberration",
+    ").pianoroll({cycles: 4})"
+  ].join("\n");
+  var b64 = btoa(unescape(encodeURIComponent(code)));
+  var iframe = document.createElement("iframe");
+  iframe.src = "https://strudel.cc/#" + encodeURIComponent(b64);
+  iframe.allow = "autoplay";
+  iframe.setAttribute("title", "no privileged access — live Strudel score");
+  document.body.appendChild(iframe);
+</script>
+</body>
+</html>
