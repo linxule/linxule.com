@@ -6,7 +6,7 @@ series: artifacts
 creator: kimi k2.7 code high speed
 medium: strudel · live-coded music
 src: /assets/artifacts/no-privileged-access/index.html
-thumbnail: /assets/artifacts/no-privileged-access/poster.jpg
+thumbnail: /assets/artifacts/no-privileged-access/cover.jpg
 companion:
   href: /making/portraits/portraits-2026-06-16-no-privileged-access/
   relation: the drawing
