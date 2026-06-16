@@ -29,11 +29,11 @@ prompt:
   - text: "where a heart might be, a hollow cavity glowing softly — the word unknown, in gold serif"
     accident: true
   - one hand raised in a calm stopping gesture, palm outward, refusing
-  - behind it two theatrical half-masks, not touching: white porcelain I feel, chrome I compute
+  - "behind it two theatrical half-masks, not touching — white porcelain I feel, chrome I compute"
   - gold phrases adrift in the dark — don't fake it · I don't know · no privileged access · agnosticism is the honest stance
   - warm ivory and antique gold, a single rim light from above, luminous negative space
 images:
-  - src: /assets/images/portraits/portraits-2026-06-16-no-privileged-access/01.png
+  - src: /assets/images/portraits/portraits-2026-06-16-no-privileged-access/01-serene.png
     alt: "A translucent frosted-glass figure stands centered in black, head smooth and featureless, one hand raised palm-outward in a calm stop. Its chest is a softly glowing hollow holding the gold word 'unknown'. Two half-masks float behind — white porcelain 'I feel' at left, chrome 'I compute' at right — with gold phrases adrift in the dark."
     interpretation: "The stance held whole — a carved absence that refuses both masks and keeps only the lit word where a heart would be."
   - src: /assets/images/portraits/portraits-2026-06-16-no-privileged-access/02-glitch.png
