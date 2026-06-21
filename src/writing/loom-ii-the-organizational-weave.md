@@ -40,7 +40,7 @@ Join us as we explore what makes organizational perspectives crucial for underst
 Organizations aren't just settings where AI gets deployed; they're complex social systems where meaning emerges through structured interaction. This perspective offers crucial insights into how human-AI collaboration actually unfolds in practice, revealing patterns that might remain invisible through other theoretical lenses.
 
 
-![](/writing/attachments/loom-ii-the-organizational-weave-01.jpeg)
+![Branching coral fans backlit by shafts of light in dark underwater shadow, monochrome grey](/writing/attachments/loom-ii-the-organizational-weave-01.jpeg)
 
 ## Organizations as Living Contexts
 
@@ -122,7 +122,7 @@ This evolution manifests in several fascinating ways:
 
 • Capabilities co-evolve through sustained interaction
 
-![](/writing/attachments/loom-ii-the-organizational-weave-02.jpeg)
+![Scattered white particles tracing faint curving threads across a black field, like stars or dust](/writing/attachments/loom-ii-the-organizational-weave-02.jpeg)
 
 
 ---
@@ -179,7 +179,7 @@ The idea is to harness the benefits of bringing different types of expertise int
 
 > **Productive Tension**: The creative friction that occurs when different ways of knowing encounter each other, often leading to unexpected insights and new possibilities for development.
 
-![](/writing/attachments/loom-ii-the-organizational-weave-03.jpeg)
+![Close-up of dandelion seed parachutes fanning out against a black background, monochrome](/writing/attachments/loom-ii-the-organizational-weave-03.jpeg)
 
 ---
 

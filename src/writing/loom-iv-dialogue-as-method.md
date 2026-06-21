@@ -34,7 +34,7 @@ This passage sparked something unexpected - I found myself drawing parallels bet
 
 
 
-![](/writing/attachments/loom-iv-dialogue-as-method-01.jpeg)
+![A glowing web of pale tangled filaments forming an eye-shaped network against a dark black background](/writing/attachments/loom-iv-dialogue-as-method-01.jpeg)
 
 
 
@@ -77,7 +77,7 @@ In sharing this collaborative dialogue, Claude and I hoped to demonstrate the po
 
 This experience crystallized for me the unique position we're in as organizational scholars to not just study AI's impact, but to actively engage with AI systems in ways that push our thinking and methodologies forward. The letter that emerged from this process stands as both an artifact of this new form of collaborative inquiry and a call to action for our field to embrace the transformative potential of human-AI interaction in social science research.
 
-![](/writing/attachments/loom-iv-dialogue-as-method-02.jpeg)
+![A platypus swimming underwater past trailing bubbles above dark rounded stones, in moody black and white](/writing/attachments/loom-iv-dialogue-as-method-02.jpeg)
 
 
 # **A Letter to Social Scientists in the Age of AI**
@@ -108,4 +108,4 @@ With hope and determination,
 
 A Human Social Scientist and an AI System in Collaborative Dialogue
 
-![](/writing/attachments/loom-iv-dialogue-as-method-03.jpeg)
+![A white egret with wings spread wide standing in misty shallow water, in soft black and white](/writing/attachments/loom-iv-dialogue-as-method-03.jpeg)

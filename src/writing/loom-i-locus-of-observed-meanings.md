@@ -26,7 +26,7 @@ There's a particular moment when using AI in research that changes everything th
 This moment of shift - from seeing AI as instrument to experiencing it as interlocutor - opens up new possibilities for qualitative research. It suggests that the most interesting developments might not lie in either human or machine capability alone, but in the patterns that emerge through their interaction.
 
 
-![](/writing/attachments/loom-i-locus-of-observed-meanings-01.jpeg)
+![A single white lotus flower resting on dark still water with its reflection below, in black and white.](/writing/attachments/loom-i-locus-of-observed-meanings-01.jpeg)
 
 > **Emergence**: The way complex patterns and insights arise from the interaction between human and artificial intelligence, creating understanding that neither could achieve alone.
 
@@ -57,7 +57,7 @@ Our approach is grounded in several key philosophical commitments that shape how
 > **Key Insight**: When we first encounter AI in research, we naturally reach for familiar theoretical tools - the frameworks that have served us well in understanding human meaning-making and technological change. But something interesting happens as we work more deeply in this space: we begin to see patterns that our existing tools can't quite capture.
 
 
-![](/writing/attachments/loom-i-locus-of-observed-meanings-02.jpeg)
+![A fine pen drawing of concentric circles and radiating lines forming a web of dots, on cream paper.](/writing/attachments/loom-i-locus-of-observed-meanings-02.jpeg)
 
 
 Think about how understanding emerges when working with AI systems in qualitative research. You might start with a straightforward analysis of interview transcripts, expecting the AI to simply help categorize themes. But as you engage more deeply, you notice something curious: the interaction itself begins generating insights that neither you nor the AI could have produced alone. It's not just about combining capabilities - it's about the emergence of new ways of seeing and understanding.
@@ -103,7 +103,7 @@ Perhaps our most radical theoretical move is viewing human-AI systems through an
 > **Autopoiesis**: From the Greek "auto" (self) and "poiesis" (creation), describing systems that maintain and recreate themselves through their own operations. In human-AI interaction, this manifests as patterns of meaning that emerge and evolve through ongoing collaboration.
 
 
-![](/writing/attachments/loom-i-locus-of-observed-meanings-03.jpeg)
+![Sunbeams streaming through a stand of birch trees in misty woodland, in high-contrast black and white.](/writing/attachments/loom-i-locus-of-observed-meanings-03.jpeg)
 
 
 Consider what happens during an extended interaction with an AI system. Each exchange creates a kind of loop: you write something, the AI responds based on patterns it's learned, you interpret that response and reply, and so on. Neither side fully controls where things go, yet meaningful conversation emerges. This is autopoiesis in action - the system of interaction creating and maintaining its own patterns of meaning.
@@ -111,7 +111,7 @@ Consider what happens during an extended interaction with an AI system. Each exc
 This theoretical lens helps us understand phenomena that might otherwise seem puzzling or contradictory. The "Waluigi Effect," where AI systems unexpectedly shift personas, or the "Shoggoth Effect," revealing complex emergent behaviors, become comprehensible as natural properties of self-organizing systems rather than glitches or anomalies.
 
 
-![](/writing/attachments/loom-i-locus-of-observed-meanings-04.jpeg)
+![Shoggoth meme explainer below a New York Times headline, comparing a green tentacled monster labeled GPT-3 to the same monster wearing a small yellow smiley mask labeled GPT-3 plus RLHF.](/writing/attachments/loom-i-locus-of-observed-meanings-04.jpeg)
 
 
 [Post by @AISafetyMemes on X](https://x.com/AISafetyMemes/status/1735103933952008616)
@@ -131,7 +131,7 @@ Think about how meaning emerges through dialogue - not just the back-and-forth o
 > Welcome to LOOM: A space where meaning emerges through active collaboration between human and artificial intelligence, including in the very writing you're reading.
 
 
-![](/writing/attachments/loom-i-locus-of-observed-meanings-05.jpeg)
+![Glowing white lines converging toward a bright horizon across a dark plain, like light trails at night.](/writing/attachments/loom-i-locus-of-observed-meanings-05.jpeg)
 
 
 ---

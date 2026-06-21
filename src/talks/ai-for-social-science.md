@@ -1,5 +1,6 @@
 ---
 title: "AI for Social Science: the evolution of AI in literature reviews and beyond"
+seoTitle: "AI for Social Science: Literature Reviews"
 type: talk
 date: 2024-09-20
 slides: https://www.canva.com/design/DAGQE-VHef4/yWU-mwe6Jmv_Cvl_hNZTGg/view?embed

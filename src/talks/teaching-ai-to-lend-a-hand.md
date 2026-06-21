@@ -1,5 +1,6 @@
 ---
 title: "Teaching AI to Lend a Hand: customizing large language models for data, writing & coding"
+seoTitle: "Teaching AI to Lend a Hand"
 type: talk
 date: 2023-12-08
 slides: https://www.canva.com/design/DAF2Y_P0OoU/myJ9SeJMtnyCTR7M8-K5QQ/view?embed

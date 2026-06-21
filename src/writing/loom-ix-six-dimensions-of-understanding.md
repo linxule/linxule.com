@@ -25,7 +25,7 @@ When we first ventured into AI's role in qualitative research in [LOOM I](/writi
 
 Just as each [Infinity Stone](https://en.wikipedia.org/wiki/Infinity_Stones) embodies a cosmic force in the Marvel universe, our partnership with AI reveals spaces where intelligence sparks, evolves, and transforms through practice. So regardless of whether you are a [Marvel fan](https://marvelcinematicuniverse.fandom.com/wiki/Infinity_Stones#Stones) or not, we believe the following framework for understanding what is created in the [Third Space](/writing/loom-v-the-third-space/) will resonate with those engaging with AI in their research.
 
-![](/writing/attachments/loom-ix-six-dimensions-of-understanding-01.png)
+![Flowing navy and cream waves with scattered golden circles and dashed flecks across a textured abstract landscape.](/writing/attachments/loom-ix-six-dimensions-of-understanding-01.png)
 
 # Six Stones, Six Dimensions
 
@@ -53,7 +53,7 @@ Consider a vast library where knowledge is segregated into separate rooms. Tradi
 
 This connects to our exploration of "**Epistemic Connectivity**" in [LOOM II](/writing/loom-ii-the-organizational-weave/), where we examined how organizational contexts shape emerging patterns of understanding.
 
-![](/writing/attachments/loom-ix-six-dimensions-of-understanding-02.png)
+![Rolling blue dunes under a pale cream ridge against a dark night sky, with small golden pools below.](/writing/attachments/loom-ix-six-dimensions-of-understanding-02.png)
 
 
 ## Power Stone: Amplifying Creative Potential
@@ -80,7 +80,7 @@ Imagine viewing organizational data through multiple theoretical lenses simultan
 
 This connects to [LOOM IV: Dialogue as Method](/writing/loom-iv-dialogue-as-method/), where we explored knowledge co-creation through structured interaction with AI systems.
 
-![](/writing/attachments/loom-ix-six-dimensions-of-understanding-03.png)
+![Sweeping golden-yellow forms curling like windblown cloth across a deep indigo, finely lined background.](/writing/attachments/loom-ix-six-dimensions-of-understanding-03.png)
 
 ## Mind Stone: Decoding Hidden Patterns
 
@@ -106,7 +106,7 @@ Think of navigating a wilderness with only two essential tools: a detailed map s
 
 This connects to [LOOM VII: Reading the Storm](/writing/loom-vii-reading-the-storm/), where we explored how to cultivate understanding in an increasingly mediated world.
 
-![](/writing/attachments/loom-ix-six-dimensions-of-understanding-04.png)
+![A pale cream wave spiraling into a curl over dark blue dunes against a near-black sky.](/writing/attachments/loom-ix-six-dimensions-of-understanding-04.png)
 
 ---
 
@@ -135,7 +135,7 @@ Similarly, overlapping scenario modeling (Time Stone) compels rigorous boundary 
 This connects to our discussion of "**Productive Friction**" in [LOOM V](/writing/loom-v-the-third-space/), where we explored how resistance in human-AI interaction might be a feature rather than a bug.
 
 
-![](/writing/attachments/loom-ix-six-dimensions-of-understanding-05.png)
+![Interlocking blue rounded mounds with a large pale cream cloud shape weaving through a dark sky.](/writing/attachments/loom-ix-six-dimensions-of-understanding-05.png)
 
 ---
 
@@ -196,7 +196,7 @@ Our framework translates directly into four actionable strategies:
 > **Quick Application**: Choose one dimension to strengthen. Before investing resources, map how development in this dimension might positively impact your capabilities in at least two other dimensions.
 
 
-![](/writing/attachments/loom-ix-six-dimensions-of-understanding-06.png)
+![Two glowing golden teardrop forms nestled among rolling dark blue waves under a night sky.](/writing/attachments/loom-ix-six-dimensions-of-understanding-06.png)
 
 ---
 
@@ -219,7 +219,7 @@ The path forward isn't about pursuing technological dominance or defending human
 
 **Your next dimension awaits.**
 
-![](/writing/attachments/loom-ix-six-dimensions-of-understanding-07.png)
+![Stippled cream and navy mountain shapes under a dark sky with two golden orbs, in a pointillist style.](/writing/attachments/loom-ix-six-dimensions-of-understanding-07.png)
 
 ---
 

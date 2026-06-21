@@ -1,6 +1,7 @@
 ---
 layout: layouts/writing.njk
 title: "Which AI Tool Should I Actually Use? A No-BS Guide for Social Science Researchers"
+seoTitle: "Which AI Tool Should I Actually Use?"
 subtitle: "How I learned to stop worrying and use multiple AIs"
 description: "ChatGPT vs Claude vs Gemini for social science research — a practical decision tree for literature reviews, coding, and analysis, with a memo method for model switching."
 authors:

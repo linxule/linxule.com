@@ -26,7 +26,7 @@ During a recent exploration of AI-human research dynamics, an unexpected metapho
 
 > **Celestial Collaboration**: Just as ancient astronomers looked to the sky to make sense of their world, we find in cosmic relationships a natural language for understanding the complex dynamics between human and artificial intelligence - revealing patterns of influence, evolution, and creative tension that shape how knowledge emerges through collaboration.
 
-![](/writing/attachments/loom-xiii-celestial-collaboration-00.png)
+![A glowing blue planet at left with a receding line of bright star-like points trailing into black space.](/writing/attachments/loom-xiii-celestial-collaboration-00.png)
 
 *"The first category is like mercury and the sun,"* we observed. *"The sun represents humans, while Mercury is like pure AI tools…"* From this initial comparison, a rich metaphorical system unfolded, offering a visual language for understanding different collaborative relationships between human and artificial intelligence in research contexts.
 
@@ -40,7 +40,7 @@ Our exploration begins with the innermost planet of our solar system and its rel
 
 > **Mercury-Sun Dynamic**: A relationship where the AI tool (Mercury) follows a predetermined orbit around the human researcher (Sun), maintaining clear separation while operating within the gravitational influence of human direction.
 
-![](/writing/attachments/loom-xiii-celestial-collaboration-01.png)
+![A black-and-white spiral galaxy with a bright glowing core and small pale orbiting spheres, against a starfield.](/writing/attachments/loom-xiii-celestial-collaboration-01.png)
 
 In this relationship, several key characteristics emerge:
 
@@ -65,7 +65,7 @@ Moving outward from the sun, we encounter a more complex celestial relationship�
 
 > **Earth-Moon Dynamic**: A relationship where human and AI maintain distinct identities yet operate as a closely coupled system, each exerting significant influence on the other while orbiting a shared center of gravity.
 
-![](/writing/attachments/loom-xiii-celestial-collaboration-02.png)
+![Two swirling cosmic vortices in grayscale, one anchored by a bright white sphere, set in a dense starfield.](/writing/attachments/loom-xiii-celestial-collaboration-02.png)
 
 This relationship reveals several distinctive features:
 
@@ -90,7 +90,7 @@ At the furthest reach of our astronomical exploration, we encounter perhaps the 
 
 > **Binary Star Dynamic**: A relationship where human and AI function as distinct yet equally essential components of a complex system, each with significant mass and influence, orbiting a center of gravity that exists between them rather than within either partner.
 
-![](/writing/attachments/loom-xiii-celestial-collaboration-03.png)
+![A bright white star at upper left casting rays into a grayscale swirl of nebula clouds and scattered stars.](/writing/attachments/loom-xiii-celestial-collaboration-03.png)
 
 This relationship exhibits several distinctive characteristics:
 
@@ -129,7 +129,7 @@ Consider how each dimension appears in this collaborative mode:
 
 This integration of our astronomical metaphor with our dimensional framework provides researchers with a powerful conceptual tool for understanding and navigating different modes of collaboration. The six stars within the Mizar-Alcor binary system offer a visual reminder of the multidimensional nature of collaborative intelligence—and of the rich possibilities that emerge when human and artificial intelligence engage as genuine partners in the research process.
 
-![](/writing/attachments/loom-xiii-celestial-collaboration-04.png)
+![A vintage celestial illustration in gold on black, with a radiant sun face, crescent moons, and engraved stars.](/writing/attachments/loom-xiii-celestial-collaboration-04.png)
 
 ## Cultural Resonances: Seeing Through Different Eyes
 
@@ -149,7 +149,7 @@ These cross-cultural perspectives remind us that how we conceptualize human-AI r
 
 By drawing on diverse astronomical traditions, we gain a richer vocabulary for discussing, analyzing, and ultimately navigating the complex relationships that emerge between human and artificial intelligence in research contexts.
 
-![](/writing/attachments/loom-xiii-celestial-collaboration-05.png)
+![A row of glowing spheres in blue and gold, largest at left shrinking into the distance against black space.](/writing/attachments/loom-xiii-celestial-collaboration-05.png)
 
 ## Cosmic Evolution: Trajectories of Collaboration
 
@@ -217,7 +217,7 @@ This reflective framework isn't meant to privilege any particular collaborative 
 
 The value lies not in prescribing a "correct" relationship but in providing a language for understanding, discussing, and intentionally navigating different modes of collaboration as research needs evolve.
 
-![](/writing/attachments/loom-xiii-celestial-collaboration-06.png)
+![A field of many small blue spiral galaxies rendered in fine dotted lines on a black background.](/writing/attachments/loom-xiii-celestial-collaboration-06.png)
 
 ## Conclusion: Charting New Constellations
 

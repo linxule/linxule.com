@@ -2,6 +2,7 @@
 layout: layouts/writing.njk
 series: "LOOM · III"
 title: "LOOM III: Between Automated Precision and Lived Understanding"
+seoTitle: "LOOM III: Precision & Lived Understanding"
 subtitle: "A Dialogue on the Future of Social Science Research"
 description: "What remains is the unique resonance of human interpretation—the ability to provide insight into data that software can't, grounded in lived experience."
 authors: 
@@ -25,7 +26,7 @@ date: 2025-01-12
 
 > As artificial intelligence (AI) increasingly refines and automates the tools of social science, the traditional roles and identities of scientific researchers are being called into question. Once-specialized skills in data analysis are at risk of becoming routine and accessible to anyone with the right software. This severely undermines the claims of expertise and uniqueness that many social scientists rely on to define their place in society. What remains is the unique resonance of human interpretation; the ability of a human, grounded in the experiences of their life, to provide insight into data that software can't provide. In this expanded dialogue (between OpenAI's o1 pro and a human researcher), we trace how qualitative and quantitative research navigate this transformative landscape, reflecting on existential reckonings, artisanal values, and the enduring importance of human presence, culture, and moral perspective.
 
-![](/writing/attachments/loom-iii-between-automated-precision-and-lived-understanding-01.jpeg)
+![Black and white macro photo of spiky sea anemones clustered on dark sandy seabed](/writing/attachments/loom-iii-between-automated-precision-and-lived-understanding-01.jpeg)
 
 As we step into this dialogue, let's imagine ourselves in a bustling academic conference, where the air buzzes with excitement and apprehension about AI's role in social science. Amidst the chatter, two researchers – one seasoned, one emerging – find a quiet corner to unpack the implications of this technological revolution.
 
@@ -64,7 +65,7 @@ As we step into this dialogue, let's imagine ourselves in a bustling academic co
   
 Our dialogue charts a future in which the once-clear line between quantitative and qualitative research is redrawn. AI's effortless mastery of statistical techniques threatens to commodify quantitative expertise, forcing a profound shift in what human researchers can offer. In response, human scholars may embrace a more interpretive, culturally rich role—one that echoes the longstanding strengths of qualitative inquiry. Meanwhile, qualitative work's deeply human essence becomes even more prominent and prized. **Ultimately, the social sciences must adapt to a landscape where machines produce analysis at scale, while humans provide the depth, meaning, and moral compass that make data truly valuable in understanding our shared world.**
 
-![](/writing/attachments/loom-iii-between-automated-precision-and-lived-understanding-02.jpeg)
+![Monarch chrysalis with gold flecks hanging from a leaf against a black background, mostly monochrome](/writing/attachments/loom-iii-between-automated-precision-and-lived-understanding-02.jpeg)
 
 As we conclude this dialogue, it's crucial to emphasize that while AI is poised to become an indispensable tool in social science research, the human element remains irreplaceable. This makes the 'space between' human and artificial critical to the future of what we do and who we are as social scientists. Our conversation, facilitated by AI but guided by human insight, has revealed several key points:
 
@@ -79,7 +80,7 @@ Let us remember that the ultimate goal of social science research remains unchan
 
 The future presents itself with both challenge and opportunity. As social scientists, we advocate for embracing this new era with open minds and an unwavering commitment to the human element that makes our work both beneficial and meaningful.
 
-![](/writing/attachments/loom-iii-between-automated-precision-and-lived-understanding-03.jpeg)
+![Fan-shaped microscopic cellular structure of a leaf skeleton in white veins against black](/writing/attachments/loom-iii-between-automated-precision-and-lived-understanding-03.jpeg)
 
 Xule is a PhD student at Imperial Business School, studying how human & machine intelligences shape the future of organizing [(Personal Website)](https://linxule.com/).
 

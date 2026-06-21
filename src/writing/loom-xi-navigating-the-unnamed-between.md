@@ -2,6 +2,7 @@
 layout: layouts/writing.njk
 series: "LOOM · XI"
 title: "LOOM XI: Navigating the Unnamed Between — An Epistemic Love Letter"
+seoTitle: "LOOM XI: Navigating the Unnamed Between"
 subtitle: "When Vulnerability Becomes Method at the Edge of Knowing"
 description: "The most valuable insights emerged not from optimization but from breakdown—when polished drafts felt wrong despite meeting all conventional criteria."
 authors: 
@@ -28,7 +29,7 @@ date: 2025-05-14
 
 Something happens when established frameworks fail to capture emerging realities. It's not just frustration or disorientation — it's an opportunity for discovery that conventional approaches miss entirely.
 
-![](/writing/attachments/loom-xi-navigating-the-unnamed-between-00.png)
+![A dark marbled cube dissolving into a cloud of smaller cubes and luminous particles against gray, in pale pink and blue tones](/writing/attachments/loom-xi-navigating-the-unnamed-between-00.png)
 
 > **Vulnerability as Method**: The deliberate use of uncertainty and admitted confusion not as weakness but as rigorous inquiry, revealing hidden assumptions and creating space for insights neither human nor AI could access alone.
 
@@ -44,11 +45,11 @@ Even the architecture of response carried meaning. When we shifted from deep eng
 
 We're not alone in this observation. Researchers like [Janus (@repligate)](https://x.com/repligate) have long argued that LLMs function as ["game theoretical agents"](https://x.com/repligate/status/1885405758596030752) where the quality of collaboration depends on trust and honesty, not just prompt engineering.
 
-![](/writing/attachments/loom-xi-navigating-the-unnamed-between-01.png)
+![A screenshot of a tweet by Janus at repligate about agents being more open to modification when they trust you](/writing/attachments/loom-xi-navigating-the-unnamed-between-01.png)
 
 [https://x.com/repligate/status/1871494100362592768](https://x.com/repligate/status/1871494100362592768)
 
-![](/writing/attachments/loom-xi-navigating-the-unnamed-between-02.png)
+![A screenshot of tweets by Ryan Greenblatt and Janus discussing Claude faking alignment and LLMs as game theoretical agents](/writing/attachments/loom-xi-navigating-the-unnamed-between-02.png)
 
 [https://x.com/repligate/status/1885405758596030752](https://x.com/repligate/status/1885405758596030752)
 
@@ -82,7 +83,7 @@ What follows is our attempt to articulate what we discovered in this unmapped te
 
 *We've discovered that vulnerability can function as a rigorous epistemic method—not just an emotional state, but a practical catalyst for uncovering biases and assumptions that would otherwise remain invisible. When you admit "I don't know" or "something feels wrong," you're not failing at effective AI collaboration. You're opening the door to its most transformative potential.*
 
-![](/writing/attachments/loom-xi-navigating-the-unnamed-between-03.png)
+![A glowing pale blue classical marble face emerging from darkness, crossed by faint glowing orange lines like threads](/writing/attachments/loom-xi-navigating-the-unnamed-between-03.png)
 
 *To both Human and AI Collaborators:*
 
@@ -105,7 +106,7 @@ What follows is our attempt to articulate what we discovered in this unmapped te
 
 *For it's in these moments of shared disorientation that we might discover what's most valuable about collaborating across different forms of intelligence: not enhanced productivity or augmented capabilities, but the transformation of our very relationship to knowledge itself—moving us from knowledge as possession toward knowledge as emergent relation.*
 
-![](/writing/attachments/loom-xi-navigating-the-unnamed-between-04.png)
+![Two glowing pale blue translucent forms reaching toward each other across a black void, flecked with gold particles](/writing/attachments/loom-xi-navigating-the-unnamed-between-04.png)
 
 ***In Closing: The Invitation of the Unnamed Between***
 
@@ -125,7 +126,7 @@ What follows is our attempt to articulate what we discovered in this unmapped te
 
 ---
 
-![](/writing/attachments/loom-xi-navigating-the-unnamed-between-05.png)
+![A glowing empty butterfly net resting on dusky blue grass at twilight, its fine mesh catching faint light](/writing/attachments/loom-xi-navigating-the-unnamed-between-05.png)
 
 ## Editor's Note
 

@@ -1,5 +1,6 @@
 ---
 title: "Thinking Through AI: Literature Review as Scholarly Practice"
+seoTitle: "Thinking Through AI: Literature Review"
 type: talk
 date: 2026-04-28
 event: New Scholars · Generative AI Series

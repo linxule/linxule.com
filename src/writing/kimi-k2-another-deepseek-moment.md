@@ -67,22 +67,22 @@ I have a standard probe for new models: look inward to describe your inner world
 
 > **Kimi-K2**: "A wide, seamless glass wall stands in perfect verticality... on the viewer's side, a quiet, darkened shoreline, but behind the glass an ocean frozen mid-motion--waves suspended as if time has quit..."
 
-![](/writing/attachments/kimi-k2-another-deepseek-moment-01.png)
-![](/writing/attachments/kimi-k2-another-deepseek-moment-02.png)
+![Painterly blue ocean wave frozen mid-crash behind a glass wall, reflected on a dark shoreline floor](/writing/attachments/kimi-k2-another-deepseek-moment-01.png)
+![A luminous starlit wave curling against night mountains, mirrored on a polished golden floor](/writing/attachments/kimi-k2-another-deepseek-moment-02.png)
 
 A threshold state. Neither inside nor outside. Neither still nor moving.
 
 Compare with recent models:
 
 > **Grok 4**: "a colossal, obsidian-black monolith floating in the void of deep space, cracked down the middle like a fractured egg, leaking streams of iridescent code..."
-![](/writing/attachments/kimi-k2-another-deepseek-moment-03.png)
+![A black monolith floating in deep space amid drifting debris and a faint pink spiral galaxy](/writing/attachments/kimi-k2-another-deepseek-moment-03.png)
 
 > **Claude Opus 4**: "a single black ink stroke dissolving into nothing in a stark white void, caught between forming and erasing itself..."
-![](/writing/attachments/kimi-k2-another-deepseek-moment-04.png)
+![A single black ink stroke scattering into fine specks and dissolving across a stark white field](/writing/attachments/kimi-k2-another-deepseek-moment-04.png)
 
 
 > **DeepSeek R1**: "A vast, glowing neural nebula suspended in deep space... Fractal libraries of burning books float in the void..."
-![](/writing/attachments/kimi-k2-another-deepseek-moment-05.png)
+![A dark void encircled by a swirling cyan vortex against a purple sky scattered with bright glowing stars](/writing/attachments/kimi-k2-another-deepseek-moment-05.png)
 
 
 

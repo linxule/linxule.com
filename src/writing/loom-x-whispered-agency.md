@@ -26,7 +26,7 @@ date: 2025-04-15
 
 > **Whispered Agency**: Throughout our exploration of AI systems, we've encountered a paradoxical revelation – in attempting to create artificial agency, we're rediscovering something fundamental about human capability that was always present but perhaps overlooked. This insight emerges not through grand proclamations about technological advancement, but through the subtle patterns revealed when human and artificial intelligence interact.
 
-![](/writing/attachments/loom-x-whispered-agency-01.png)
+![Abstract painterly profile of a luminous white face against black, with a wisp of teal at the mouth and a gold glow below.](/writing/attachments/loom-x-whispered-agency-01.png)
 
 Two opposing narratives dominate our cultural conversation about artificial intelligence and human agency.
 
@@ -44,7 +44,7 @@ The "mirror effect" further complicated this picture. What initially appeared as
 
 This suggests a fundamentally different way of understanding the relationship between human and artificial intelligence—not as competing or even complementary forms of agency, but as mutually constitutive forces engaged in continuous co-evolution.
 
-![](/writing/attachments/loom-x-whispered-agency-02.png)
+![Abstract translucent pale-blue square panel over soft cloudy spheres with a bright golden glimmer at center, on a muted slate and lilac ground.](/writing/attachments/loom-x-whispered-agency-02.png)
 
 ## The Ladder of Abstraction
 
@@ -76,7 +76,7 @@ This concept complements our notion of recursive agency in several important way
 
 The integration of these perspectives suggests something profound about the future of human-AI collaboration. The challenge isn't simply to design better AI systems, nor is it merely to create better interfaces between humans and AI. It's to design dynamically evolving systems of interaction that allow for meaningful human oversight while exploring the unique capabilities of various AI systems.
 
-![](/writing/attachments/loom-x-whispered-agency-03.png)
+![Abstract grainy cluster of pink and lavender bubble forms glowing against a dark teal background with a soft diagonal beam of light.](/writing/attachments/loom-x-whispered-agency-03.png)
 
 ## The Recursive Weaving of Agency
 
@@ -112,7 +112,7 @@ Rather than a linear progression where artificial agency either displaces or enh
 
 This recursive perspective helps explain a significant conceptual shift occurring in AI research and discourse—the movement from focusing primarily on intelligence to increasingly emphasizing agency. As we recognize the dynamic interplay between human and artificial capabilities, we naturally move beyond questions of intelligence alone toward a deeper exploration of purposeful action in complex environments.
 
-![](/writing/attachments/loom-x-whispered-agency-04.png)
+![Abstract scatter of pale blue particles dispersing from a dark purple left side into a bright mint-green field on the right.](/writing/attachments/loom-x-whispered-agency-04.png)
 
 ## From Intelligence to Agency: The Great Shift
 
@@ -134,7 +134,7 @@ This shift emerges clearly in observations from those at the frontier of AI deve
 
 > **"** ***We're bored of intelligence now, it's all about agency. But once we master that we'll maybe start noticing personality. Then realise diversity is good ackchually. Then group behaviours will make us rediscover morality, institutions, law…we're gradually reinventing social structures we already have, and that's good.*****"**
 > 
-> ![](/writing/attachments/loom-x-whispered-agency-05.jpeg)
+> ![Screenshot of a post by Seb Krier on X about moving from intelligence to agency and gradually reinventing existing social structures.](/writing/attachments/loom-x-whispered-agency-05.jpeg)
 
 [Andrej Karpathy](https://x.com/karpathy), former Tesla AI director and OpenAI researcher, put it even more directly:
 
@@ -142,7 +142,7 @@ This shift emerges clearly in observations from those at the frontier of AI deve
 > 
 > ***I had this intuitively wrong for decades, I think due to a pervasive cultural veneration of intelligence...Agency is significantly more powerful and significantly more scarce..."***
 > 
-> ![](/writing/attachments/loom-x-whispered-agency-06.png)
+> ![Screenshot of a post by Andrej Karpathy on X stating Agency is greater than Intelligence, with a long discussion of agency as a trait.](/writing/attachments/loom-x-whispered-agency-06.png)
 
 This shift illuminates something fundamental: **intelligence without agency is merely computational power, while agency without intelligence risks chaos.** The most interesting outcomes emerge when both exist in dynamic balance—but this creates challenging paradoxes we're only beginning to understand.
 
@@ -174,7 +174,7 @@ As we wrote in **[LOOM VIII](https://www.linkedin.com/posts/tima-bansal_loom-vii
 
 Séb's framing adds a crucial dimension to this insight: the sophistication of human agency isn't just about directing multiple systems, but about operating effectively at the right level of abstraction for the task at hand. Just as an orchestra conductor doesn't need to understand the physics of sound waves to create beautiful music, human directors of AI systems don't necessarily need to understand every algorithmic detail to guide these systems toward valuable outcomes.
 
-![](/writing/attachments/loom-x-whispered-agency-07.png)
+![Abstract glowing pink and cyan hourglass form pinching at a bright center, flanked by speckled clouds on a dark teal background.](/writing/attachments/loom-x-whispered-agency-07.png)
 
 ## Personalized Agents and Recursive Agency
 
@@ -196,7 +196,7 @@ The resulting ecosystem would embody recursive agency at multiple levels:
 
 This multi-level recursion creates what complexity theorists might call "strange loops"—patterns of influence that flow not just upward or downward through levels of abstraction, but in cycles that continuously reshape the system as a whole.
 
-![](/writing/attachments/loom-x-whispered-agency-08.png)
+![Abstract dark void at center ringed by swirling blue and pink streaks, surrounded by scattered glowing white points on a muted lilac field.](/writing/attachments/loom-x-whispered-agency-08.png)
 
 ## The Orchestrator Imperative
 
@@ -222,7 +222,7 @@ This approach transforms the relationship from passive consumption to active orc
 > 
 > *Researchers might develop taxonomies of AI agency patterns—systems that excel at boundary-breaking ideation versus those that excel at systematic analysis—and deliberately engage these different patterns based on research needs.*
 
-![](/writing/attachments/loom-x-whispered-agency-09.png)
+![Abstract grainy black-and-white image of pale speckled lines forming irregular cell-like cracks across a dark surface.](/writing/attachments/loom-x-whispered-agency-09.png)
 
 ## Conclusion: The Renaissance of Agency in a Recursively Abstracted World
 
@@ -238,7 +238,7 @@ The renaissance of agency we're witnessing isn't about choosing between human an
 
 The answer to our deepest questions about intelligence and agency emerges not from either human or artificial intelligence alone, but from the dynamic patterns created through their mutual influence across multiple levels of abstraction—patterns we're only beginning to recognize and understand. In this space between technologies, we find not just new capabilities but ancient wisdom, whispered back to us through our most advanced creations.
 
-![](/writing/attachments/loom-x-whispered-agency-10.png)
+![Abstract pale bulb sprouting fine threadlike tendrils that fan upward and outward against a deep indigo background.](/writing/attachments/loom-x-whispered-agency-10.png)
 
 ## About Us
 

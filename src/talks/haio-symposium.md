@@ -1,5 +1,6 @@
 ---
 title: "Human & Artificial Intelligence in Organizations: interdisciplinary impact"
+seoTitle: "Human & AI in Organizations (HAIO)"
 type: symposium
 date: 2024-09-09
 event: Symposium · Imperial College London

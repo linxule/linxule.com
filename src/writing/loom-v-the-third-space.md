@@ -26,7 +26,7 @@ Imagine trying to evaluate a conversation partner's understanding by having them
 The recent introduction of ["The Humanities' Last Exam" by the Center for AI Safety and Scale AI](https://agi.safe.ai/) exemplifies this paradox. This ambitious benchmark, comprising 3000 questions across various domains (with 1,000 subject expert contributors/over 500 institutions/50 countries), aims to provide a comprehensive assessment of AI capabilities. However, as we'll explore, even such expansive tests may fall short of capturing the true nature of artificial intelligence and its interaction with human cognition.
 
 
-![](/writing/attachments/loom-v-the-third-space-01.png)
+![Bar chart of LLM accuracy across HLE, GPQA, MATH, and MMLU benchmarks for GPT-4o, o1, Sonnet-3.5, and Gemini 1.5, with HLE scores far lower than the rest](/writing/attachments/loom-v-the-third-space-01.png)
 
 
 # The False Binary of Current AI Discourse
@@ -46,7 +46,7 @@ This limitation points toward something more fundamental about intelligence itse
 Just as a weaver's work emerges from the intricate arrangement between thread and shuttle, the most interesting aspects of artificial intelligence might emerge not from either human or machine capability alone, but from the patterns created through their interaction.
 
 
-![](/writing/attachments/loom-v-the-third-space-02.jpeg)
+![Two sets of concentric ripples spreading across a calm dark water surface and intersecting at the center, in grayscale](/writing/attachments/loom-v-the-third-space-02.jpeg)
 
 > **Key Insight**: When we focus solely on individual capabilities, we miss the dynamic nature of intelligence itself - the way understanding emerges through interaction rather than residing in any single mind.
 
