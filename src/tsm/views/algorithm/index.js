@@ -103,7 +103,7 @@ export function mountAlgorithmView(container, observation, options = {}) {
   const cyclicGroups = findCyclicGroups(V, vfivfo, nodes);
   const partition = partitionFourSquare(V, nodeIndex, nodes, cyclicGroups);
   const architectureType = partition
-    ? classifyArchitecture(partition, nodes.length)
+    ? classifyArchitecture(partition, nodes.length, cyclicGroups)
     : "hierarchical";
   // Derived tsm-scene — the full v0.3 document the algorithm produces from
   // the observation. Step 11 renders this directly as a "proper TSM" + an

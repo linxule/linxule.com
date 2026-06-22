@@ -32,7 +32,13 @@
 function getRegionColor(region) {
   // Convention: --color-<regionId> defined in styles/theme.css.
   // Fallback: --rule (matrix rule color).
-  return `var(--color-${region.id}, var(--rule))`;
+  // Multi-core declares several core regions (core-1, core-2, …) but the theme
+  // defines a single --color-core hue, so normalize core-N → core for the
+  // lookup; otherwise each core box falls back to the faint --rule color and
+  // stops reading as a core. The regions are spatially distinct diagonal blocks
+  // labelled "Core 1" / "Core 2", so sharing the warm core hue stays legible.
+  const colorKey = /^core-\d+$/.test(region.id) ? "core" : region.id;
+  return `var(--color-${colorKey}, var(--rule))`;
 }
 
 /**

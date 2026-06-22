@@ -13,9 +13,17 @@ export default {
   /**
    * Does this type fit the computed partition?
    * Returns { type, confidence } if yes, null otherwise.
+   *
+   * Bows out (returns null) when ≥2 cyclic groups each clear the 6% threshold —
+   * that is multi-core's case, and multi-core sits next in the pick-loop. This
+   * keeps single-core systems on core-periphery without reordering the loop.
    */
-  classify({ partition, totalNodes }) {
+  classify({ partition, totalNodes, cyclicGroups }) {
     if (!partition) return null;
+    const qualifyingCores = (cyclicGroups ?? []).filter(
+      (g) => g.length / totalNodes >= 0.06,
+    );
+    if (qualifyingCores.length >= 2) return null; // multi-core takes it
     return partition.core.length / totalNodes >= 0.06
       ? { type: "core-periphery", confidence: 1 }
       : null;

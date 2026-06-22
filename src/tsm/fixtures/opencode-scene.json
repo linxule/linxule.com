@@ -35,7 +35,7 @@
         }
       },
       {
-        "caption": "<strong>Step 4.</strong> The four-square partition.<br/>Core: 5 nodes in a mutually-dependent cycle.<br/>Shared: 16 nodes the core depends on.<br/>Control: 1 nodes that depend on the core.<br/><em>Architecture: core-periphery.</em>",
+        "caption": "<strong>Step 4.</strong> Three independent cyclic cores — no single core is large enough to organize the whole system, so it partitions around several rather than one. Cores: 5, 5 and 2 nodes.<br/>Shared: 5 nodes the cores depend on.<br/>Control: 5 nodes that depend on the cores.<br/><em>Architecture: multi-core.</em>",
         "reveal": {
           "include": [
             "diagonal",
@@ -50,7 +50,7 @@
   "matrices": [
     {
       "id": "opencode-cli-native-agent",
-      "architectureType": "core-periphery",
+      "architectureType": "multi-core",
       "regions": [
         {
           "id": "shared",
@@ -59,10 +59,22 @@
           "label": "Shared"
         },
         {
-          "id": "core",
+          "id": "core-1",
           "layoutKind": "diagonal-block",
           "semanticKind": "core",
-          "label": "Core"
+          "label": "Core 1"
+        },
+        {
+          "id": "core-2",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core 2"
+        },
+        {
+          "id": "core-3",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core 3"
         },
         {
           "id": "control",
@@ -87,27 +99,6 @@
           "category": "tools"
         },
         {
-          "id": "tool-registry",
-          "label": "Tool registry",
-          "region": "shared",
-          "shortLabel": "T3",
-          "category": "tools"
-        },
-        {
-          "id": "mcp-servers",
-          "label": "MCP servers",
-          "region": "shared",
-          "shortLabel": "M1",
-          "category": "mcp"
-        },
-        {
-          "id": "permission-system",
-          "label": "Permission system",
-          "region": "shared",
-          "shortLabel": "T4",
-          "category": "tools"
-        },
-        {
           "id": "subagent-explore",
           "label": "explore subagent",
           "region": "shared",
@@ -129,95 +120,116 @@
           "category": "runtime"
         },
         {
-          "id": "agent-plan",
-          "label": "plan agent",
-          "region": "shared",
-          "shortLabel": "R2",
-          "category": "runtime"
-        },
-        {
-          "id": "session-api",
-          "label": "Session API",
-          "region": "shared",
-          "shortLabel": "V1",
-          "category": "server"
-        },
-        {
-          "id": "agent-system",
-          "label": "Agent system",
-          "region": "shared",
-          "shortLabel": "R3",
-          "category": "runtime"
-        },
-        {
-          "id": "agent-build",
-          "label": "build agent",
-          "region": "shared",
-          "shortLabel": "R4",
-          "category": "runtime"
-        },
-        {
-          "id": "subagent-general",
-          "label": "general subagent",
-          "region": "shared",
-          "shortLabel": "C3",
-          "category": "coder"
-        },
-        {
-          "id": "child-sessions",
-          "label": "Child sessions",
-          "region": "shared",
-          "shortLabel": "R5",
-          "category": "runtime"
-        },
-        {
-          "id": "custom-tools",
-          "label": "Plugin custom tools",
-          "region": "shared",
-          "shortLabel": "T5",
-          "category": "tools"
-        },
-        {
-          "id": "config-system",
-          "label": "Config system",
-          "region": "shared",
-          "shortLabel": "R6",
-          "category": "runtime"
-        },
-        {
           "id": "tui-client",
           "label": "TUI client",
-          "region": "core",
+          "region": "core-1",
           "shortLabel": "L1",
           "category": "cli"
         },
         {
           "id": "http-server",
           "label": "OpenCode HTTP server",
-          "region": "core",
-          "shortLabel": "V2",
+          "region": "core-1",
+          "shortLabel": "V1",
           "category": "server"
         },
         {
           "id": "sdk-client",
           "label": "JS/TS SDK client",
-          "region": "core",
-          "shortLabel": "V3",
+          "region": "core-1",
+          "shortLabel": "V2",
           "category": "server"
         },
         {
           "id": "plugin-system",
           "label": "Plugin system",
-          "region": "core",
-          "shortLabel": "T6",
+          "region": "core-1",
+          "shortLabel": "T3",
           "category": "tools"
         },
         {
           "id": "plugin-hooks",
           "label": "Plugin hooks/events",
-          "region": "core",
+          "region": "core-1",
+          "shortLabel": "T4",
+          "category": "tools"
+        },
+        {
+          "id": "session-api",
+          "label": "Session API",
+          "region": "core-2",
+          "shortLabel": "V3",
+          "category": "server"
+        },
+        {
+          "id": "agent-system",
+          "label": "Agent system",
+          "region": "core-2",
+          "shortLabel": "R2",
+          "category": "runtime"
+        },
+        {
+          "id": "agent-build",
+          "label": "build agent",
+          "region": "core-2",
+          "shortLabel": "R3",
+          "category": "runtime"
+        },
+        {
+          "id": "subagent-general",
+          "label": "general subagent",
+          "region": "core-2",
+          "shortLabel": "C3",
+          "category": "coder"
+        },
+        {
+          "id": "child-sessions",
+          "label": "Child sessions",
+          "region": "core-2",
+          "shortLabel": "R4",
+          "category": "runtime"
+        },
+        {
+          "id": "tool-registry",
+          "label": "Tool registry",
+          "region": "core-3",
+          "shortLabel": "T5",
+          "category": "tools"
+        },
+        {
+          "id": "mcp-servers",
+          "label": "MCP servers",
+          "region": "core-3",
+          "shortLabel": "M1",
+          "category": "mcp"
+        },
+        {
+          "id": "permission-system",
+          "label": "Permission system",
+          "region": "control",
+          "shortLabel": "T6",
+          "category": "tools"
+        },
+        {
+          "id": "agent-plan",
+          "label": "plan agent",
+          "region": "control",
+          "shortLabel": "R5",
+          "category": "runtime"
+        },
+        {
+          "id": "custom-tools",
+          "label": "Plugin custom tools",
+          "region": "control",
           "shortLabel": "T7",
           "category": "tools"
+        },
+        {
+          "id": "config-system",
+          "label": "Config system",
+          "region": "control",
+          "shortLabel": "R6",
+          "category": "runtime"
         },
         {
           "id": "opencode-cli",
@@ -335,7 +347,13 @@
         {
           "from": "agent-system",
           "to": "config-system",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "agent-build",
@@ -352,7 +370,13 @@
         {
           "from": "agent-plan",
           "to": "agent-system",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "subagent-general",
@@ -369,17 +393,35 @@
         {
           "from": "subagent-explore",
           "to": "agent-system",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "subagent-scout",
           "to": "agent-system",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "tool-registry",
           "to": "agent-build",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "permission-system",
@@ -394,7 +436,10 @@
           "to": "agent-plan",
           "mark": "x",
           "rendering": {
-            "emphasis": "secondary"
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
           }
         },
         {
@@ -412,12 +457,24 @@
         {
           "from": "subagent-explore",
           "to": "agent-build",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "subagent-scout",
           "to": "agent-build",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "child-sessions",
@@ -448,7 +505,10 @@
           "to": "tool-registry",
           "mark": "x",
           "rendering": {
-            "emphasis": "secondary"
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
           }
         },
         {
@@ -480,7 +540,10 @@
           "to": "tool-registry",
           "mark": "x",
           "rendering": {
-            "emphasis": "secondary"
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
           }
         },
         {
@@ -488,7 +551,10 @@
           "to": "permission-system",
           "mark": "x",
           "rendering": {
-            "emphasis": "secondary"
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
           }
         },
         {
@@ -553,17 +619,35 @@
         {
           "from": "tool-registry",
           "to": "custom-tools",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "provider-layer",
           "to": "agent-system",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "mcp-servers",
           "to": "config-system",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         }
       ],
       "overlays": [
@@ -579,7 +663,27 @@
         },
         {
           "kind": "module-border",
-          "regionId": "core",
+          "regionId": "core-1",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core-2",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core-3",
           "rendering": {
             "emphasis": "primary",
             "lens": [

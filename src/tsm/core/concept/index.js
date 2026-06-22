@@ -17,6 +17,7 @@ import {
   registerCheck,
 } from "./registry.js";
 import fourSquare from "./strategies/four-square.js";
+import multiCoreFourSquare from "./strategies/multi-core-four-square.js";
 
 import integral from "./types/integral.js";
 import protoModular from "./types/proto-modular.js";
@@ -34,6 +35,7 @@ import { I7, I8, I11 } from "./invariants/flow-family.js";
 import { I14, I15, I16 } from "./invariants/derived-family.js";
 
 registerStrategy(fourSquare);
+registerStrategy(multiCoreFourSquare);
 
 for (const plugin of [
   integral,

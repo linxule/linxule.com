@@ -15,6 +15,8 @@
  * @param {string[][]} [ctx.cyclicGroups] — detected cyclic cores (largest first)
  * @param {boolean} [ctx.hasForwardTransfers] — any forward transfer rendered
  * @param {boolean} [ctx.hasBackwardTransfers] — any backward transfer rendered
+ * @param {string[][]} [ctx.coreGroups] — the boxed core regions (multi-core);
+ *   ≥2 entries selects the multi-core Step-4 caption. Empty/absent → single-core.
  */
 export function buildDefaultNarrative({
   partition,
@@ -23,6 +25,7 @@ export function buildDefaultNarrative({
   cyclicGroups = [],
   hasForwardTransfers = true,
   hasBackwardTransfers = (cyclicGroups?.length ?? 0) > 0,
+  coreGroups = [],
 }) {
   // Structural classification is DATA-DRIVEN — keyed on whether module-border
   // overlays were actually emitted and the detected core size, NOT on the
@@ -31,15 +34,23 @@ export function buildDefaultNarrative({
   //   - genuineFourSquare: real module-border overlays exist → reveal them.
   //   - smallCore: a cyclic core exists but below the partition threshold (no
   //     overlays) → acknowledge the cycle, draw no overlay.
-  //   - cyclicNoCore: backward transfers are rendered but the detector found no
-  //     sized core (findCyclicGroups can under-report — KNOWN-ISSUES.md D-1);
-  //     acknowledge the cycle so Step 4 never denies what Step 3 shows.
+  //   - cyclicNoCore: backward transfers rendered but no sized core. With exact
+  //     SCC detection (D-1 resolved) the single-matrix derive path cannot reach
+  //     this — in a DAG, VFI-desc ordering ranks every supplier above its
+  //     consumer, so all transfers render forward and a backward transfer
+  //     implies a real SCC (coreCount > 0). Retained as defense-in-depth for
+  //     hand-authored scenes / the multi-matrix path so Step 4 never denies
+  //     what Step 3 shows.
   //   - fully hierarchical: no backward transfers, no cyclic core.
   // Only genuineFourSquare reveals overlay:module-border; revealing it without
   // emitted overlays spawns an empty phantom auto-border.
+  //   - multiCore: ≥2 boxed cyclic cores (no single organizing core) → name the
+  //     cores; reveal their module-borders. Checked first since it also has
+  //     module-border overlays (and would otherwise read as genuineFourSquare).
   const hasModuleBorder = overlays.some((o) => o.kind === "module-border");
   const coreCount = cyclicGroups?.[0]?.length ?? 0;
-  const genuineFourSquare = hasModuleBorder;
+  const multiCore = (coreGroups?.length ?? 0) >= 2;
+  const genuineFourSquare = hasModuleBorder && !multiCore;
   const smallCore = !hasModuleBorder && coreCount > 0;
   const cyclicNoCore = !hasModuleBorder && coreCount === 0 && hasBackwardTransfers;
 
@@ -65,9 +76,24 @@ export function buildDefaultNarrative({
     ? "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible."
     : "<strong>Step 3.</strong> No backward transfers above the diagonal — the rendered dependencies sort cleanly into layers, so ordinary topological sorting succeeds.";
 
-  // Step 4 caption adapts to the four structural cases above.
+  // Step 4 caption adapts to the structural cases above (multi-core first).
   let partitionBody;
-  if (genuineFourSquare) {
+  if (multiCore) {
+    const COUNT_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight"];
+    const numCores = coreGroups.length;
+    const countWord = COUNT_WORDS[numCores] ?? String(numCores);
+    const Countish = countWord.charAt(0).toUpperCase() + countWord.slice(1);
+    const sizes = coreGroups.map((g) => g.length);
+    const sizesText = sizes.length > 1
+      ? `${sizes.slice(0, -1).join(", ")} and ${sizes[sizes.length - 1]}`
+      : String(sizes[0] ?? 0);
+    const mcShared = partition && partition.shared.length > 0
+      ? `Shared: ${partition.shared.length} nodes the cores depend on.` : "";
+    const mcControl = partition && partition.control.length > 0
+      ? `Control: ${partition.control.length} nodes that depend on the cores.` : "";
+    const mcLines = [mcShared, mcControl, peripheralLine].filter(Boolean).join("<br/>");
+    partitionBody = `${Countish} independent cyclic cores — no single core is large enough to organize the whole system, so it partitions around several rather than one. Cores: ${sizesText} nodes.${mcLines ? `<br/>${mcLines}` : ""}`;
+  } else if (genuineFourSquare) {
     partitionBody = `The four-square partition.<br/>${[coreLine, sharedLine, controlLine, peripheralLine].filter(Boolean).join("<br/>")}`;
   } else if (smallCore) {
     partitionBody = `A small cyclic core was found — ${coreCount} ${coreCount === 1 ? "node" : "nodes"} in a mutually-dependent cycle — but it is below the threshold to partition the whole system around, so the system sorts into dependency layers.`;
@@ -100,8 +126,9 @@ export function buildDefaultNarrative({
             "transfer:directed:forward",
             "transfer:directed:backward",
             // Reveal partition boxes only when real module-border overlays were
-            // emitted; otherwise the token spawns an empty phantom auto-border.
-            ...(genuineFourSquare ? ["overlay:module-border"] : []),
+            // emitted (single-core four-square OR multi-core's ≥2 cores);
+            // otherwise the token spawns an empty phantom auto-border.
+            ...(genuineFourSquare || multiCore ? ["overlay:module-border"] : []),
           ],
         },
       },

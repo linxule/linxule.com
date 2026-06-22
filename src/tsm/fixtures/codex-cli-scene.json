@@ -35,7 +35,7 @@
         }
       },
       {
-        "caption": "<strong>Step 4.</strong> The four-square partition.<br/>Core: 3 nodes in a mutually-dependent cycle.<br/>Shared: 15 nodes the core depends on.<br/>Control: 4 nodes that depend on the core.<br/><em>Architecture: core-periphery.</em>",
+        "caption": "<strong>Step 4.</strong> Four independent cyclic cores — no single core is large enough to organize the whole system, so it partitions around several rather than one. Cores: 3, 2, 2 and 2 nodes.<br/>Shared: 10 nodes the cores depend on.<br/>Control: 3 nodes that depend on the cores.<br/><em>Architecture: multi-core.</em>",
         "reveal": {
           "include": [
             "diagonal",
@@ -50,7 +50,7 @@
   "matrices": [
     {
       "id": "codex-cli-native-agent",
-      "architectureType": "core-periphery",
+      "architectureType": "multi-core",
       "regions": [
         {
           "id": "shared",
@@ -59,10 +59,28 @@
           "label": "Shared"
         },
         {
-          "id": "core",
+          "id": "core-1",
           "layoutKind": "diagonal-block",
           "semanticKind": "core",
-          "label": "Core"
+          "label": "Core 1"
+        },
+        {
+          "id": "core-2",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core 2"
+        },
+        {
+          "id": "core-3",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core 3"
+        },
+        {
+          "id": "core-4",
+          "layoutKind": "diagonal-block",
+          "semanticKind": "core",
+          "label": "Core 4"
         },
         {
           "id": "control",
@@ -94,39 +112,11 @@
           "category": "tools"
         },
         {
-          "id": "subagent-workflows",
-          "label": "Subagent workflows",
-          "region": "shared",
-          "shortLabel": "C1",
-          "category": "coder"
-        },
-        {
-          "id": "child-agents",
-          "label": "Child agent threads",
-          "region": "shared",
-          "shortLabel": "C2",
-          "category": "coder"
-        },
-        {
           "id": "app-server-protocol",
           "label": "App-server protocol",
           "region": "shared",
           "shortLabel": "V1",
           "category": "server"
-        },
-        {
-          "id": "mcp-manager",
-          "label": "MCP manager",
-          "region": "shared",
-          "shortLabel": "M1",
-          "category": "mcp"
-        },
-        {
-          "id": "external-mcp-servers",
-          "label": "External MCP servers",
-          "region": "shared",
-          "shortLabel": "M2",
-          "category": "mcp"
         },
         {
           "id": "app-connectors",
@@ -171,46 +161,74 @@
           "category": "runtime"
         },
         {
-          "id": "thread-manager",
-          "label": "Thread manager",
-          "region": "shared",
-          "shortLabel": "R4",
-          "category": "runtime"
-        },
-        {
           "id": "codex-core",
           "label": "codex-core",
-          "region": "core",
-          "shortLabel": "R5",
+          "region": "core-1",
+          "shortLabel": "R4",
           "category": "runtime"
         },
         {
           "id": "skills-system",
           "label": "Skills system",
-          "region": "core",
+          "region": "core-1",
           "shortLabel": "T7",
           "category": "tools"
         },
         {
           "id": "plugin-system",
           "label": "Plugin system",
-          "region": "core",
+          "region": "core-1",
           "shortLabel": "T8",
           "category": "tools"
         },
         {
           "id": "codex-tui",
           "label": "Codex TUI",
-          "region": "control",
+          "region": "core-2",
           "shortLabel": "L1",
           "category": "cli"
         },
         {
           "id": "app-server",
           "label": "Codex app-server",
-          "region": "control",
+          "region": "core-2",
           "shortLabel": "V2",
           "category": "server"
+        },
+        {
+          "id": "subagent-workflows",
+          "label": "Subagent workflows",
+          "region": "core-3",
+          "shortLabel": "C1",
+          "category": "coder"
+        },
+        {
+          "id": "child-agents",
+          "label": "Child agent threads",
+          "region": "core-3",
+          "shortLabel": "C2",
+          "category": "coder"
+        },
+        {
+          "id": "mcp-manager",
+          "label": "MCP manager",
+          "region": "core-4",
+          "shortLabel": "M1",
+          "category": "mcp"
+        },
+        {
+          "id": "external-mcp-servers",
+          "label": "External MCP servers",
+          "region": "core-4",
+          "shortLabel": "M2",
+          "category": "mcp"
+        },
+        {
+          "id": "thread-manager",
+          "label": "Thread manager",
+          "region": "control",
+          "shortLabel": "R5",
+          "category": "runtime"
         },
         {
           "id": "codex-mcp-crate",
@@ -231,12 +249,24 @@
         {
           "from": "codex-tui",
           "to": "codex-cli",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "app-server",
           "to": "codex-cli",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "codex-core",
@@ -347,7 +377,13 @@
         {
           "from": "subagent-workflows",
           "to": "thread-manager",
-          "mark": "x"
+          "mark": "x",
+          "rendering": {
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
+          }
         },
         {
           "from": "child-agents",
@@ -378,7 +414,10 @@
           "to": "child-agents",
           "mark": "x",
           "rendering": {
-            "emphasis": "secondary"
+            "emphasis": "secondary",
+            "lens": [
+              "cross-region-edge"
+            ]
           }
         },
         {
@@ -608,7 +647,37 @@
         },
         {
           "kind": "module-border",
-          "regionId": "core",
+          "regionId": "core-1",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core-2",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core-3",
+          "rendering": {
+            "emphasis": "primary",
+            "lens": [
+              "core-periphery-boundary"
+            ]
+          }
+        },
+        {
+          "kind": "module-border",
+          "regionId": "core-4",
           "rendering": {
             "emphasis": "primary",
             "lens": [

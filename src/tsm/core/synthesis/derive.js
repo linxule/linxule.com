@@ -108,14 +108,14 @@ export function partitionFourSquare(V, idx, nodes, cyclicGroups) {
  * plugins in priority order: core-periphery (most specific), multi-core
  * (placeholder — never fires today), hierarchical (last-resort fallback).
  */
-function pickArchitectureType({ partition, totalNodes, declared }) {
+function pickArchitectureType({ partition, totalNodes, declared, cyclicGroups = [] }) {
   if (declared) {
     const plugin = getArchitectureType(declared);
     if (plugin) return plugin;
   }
   for (const id of ["core-periphery", "multi-core", "hierarchical"]) {
     const plugin = getArchitectureType(id);
-    const verdict = plugin?.classify?.({ partition, totalNodes });
+    const verdict = plugin?.classify?.({ partition, totalNodes, cyclicGroups });
     if (verdict) return plugin;
   }
   return getArchitectureType("hierarchical");
@@ -128,10 +128,10 @@ function pickArchitectureType({ partition, totalNodes, declared }) {
  * but the synthesis machinery falls back to the heuristic-picked derived
  * plugin (preserving pre-Phase-2 behavior).
  */
-function pickSynthesisPlugin({ partition, totalNodes }) {
+function pickSynthesisPlugin({ partition, totalNodes, cyclicGroups = [] }) {
   for (const id of ["core-periphery", "multi-core", "hierarchical"]) {
     const plugin = getArchitectureType(id);
-    const verdict = plugin?.classify?.({ partition, totalNodes });
+    const verdict = plugin?.classify?.({ partition, totalNodes, cyclicGroups });
     if (verdict) return plugin;
   }
   return getArchitectureType("hierarchical");
@@ -141,11 +141,14 @@ function pickSynthesisPlugin({ partition, totalNodes }) {
  * Architecture-type heuristic from the partition.
  *
  * Retained as a thin wrapper for the algorithm.js barrel. Delegates to
- * pickArchitectureType and returns the plugin id, preserving the legacy
- * string output ("core-periphery" or "hierarchical" today).
+ * pickArchitectureType and returns the plugin id ("core-periphery",
+ * "multi-core", or "hierarchical"). `cyclicGroups` is required to distinguish
+ * multi-core (≥2 cores ≥6%) from core-periphery — omitting it can only
+ * under-report multi-core as core-periphery, so callers that may see multiple
+ * cores must pass it. Defaults to [] for legacy single-core callers.
  */
-export function classifyArchitecture(partition, totalNodes) {
-  return pickArchitectureType({ partition, totalNodes }).id;
+export function classifyArchitecture(partition, totalNodes, cyclicGroups = []) {
+  return pickArchitectureType({ partition, totalNodes, cyclicGroups }).id;
 }
 
 /**
@@ -187,12 +190,13 @@ function synthesizeMatrix(edges, nodeIds, hint, context = {}) {
   const { V, idx } = computeVisibilityMatrix(nodes, inducedEdges);
   const vfivfo = computeVFIVFO(V, nodes);
   const cyclicGroups = findCyclicGroups(V, vfivfo, nodes);
-  const partition = partitionFourSquare(V, idx, nodes, cyclicGroups);
+  let partition = partitionFourSquare(V, idx, nodes, cyclicGroups);
 
   const labelPlugin = pickArchitectureType({
     partition,
     totalNodes: nodes.length,
     declared: hint,
+    cyclicGroups,
   });
   const architectureType = labelPlugin.id;
   // If the declared plugin can synthesize (regions hook present), use it
@@ -202,13 +206,32 @@ function synthesizeMatrix(edges, nodeIds, hint, context = {}) {
   // four-square regions/overlays/narrative come from the heuristic.
   const plugin = labelPlugin.regions
     ? labelPlugin
-    : pickSynthesisPlugin({ partition, totalNodes: nodes.length });
+    : pickSynthesisPlugin({ partition, totalNodes: nodes.length, cyclicGroups });
 
-  // Task ordering — plugin.blockOrder dictates the diagonal sequence.
-  // Within each block, sort by VFI desc, then VFO asc.
+  // The four-square partition above (single core = cyclicGroups[0]) is what
+  // core-periphery / hierarchical classify read. A plugin that declares a
+  // different partition strategy (multi-core) needs its own partition shape —
+  // recompute with that strategy now that the plugin is chosen.
+  if (plugin.partitionStrategy && plugin.partitionStrategy !== "four-square") {
+    const restrategized = getStrategy(plugin.partitionStrategy).run({
+      V,
+      idx,
+      nodes,
+      cyclicGroups,
+      totalNodes: nodes.length,
+    });
+    if (restrategized) partition = restrategized;
+  }
+
+  // Task ordering — plugin.blockOrder dictates the diagonal sequence (a function
+  // for plugins whose block set is data-driven, e.g. multi-core's N core
+  // regions). Within each block, sort by VFI desc, then VFO asc.
+  const blockOrder = typeof plugin.blockOrder === "function"
+    ? plugin.blockOrder(partition)
+    : plugin.blockOrder;
   const orderedTasks = [];
-  if (partition && plugin.blockOrder.some((r) => Array.isArray(partition[r]))) {
-    for (const region of plugin.blockOrder) {
+  if (partition && blockOrder.some((r) => Array.isArray(partition[r]))) {
+    for (const region of blockOrder) {
       const ids = sortIdsByMetrics(partition[region] ?? [], vfivfo);
       for (const id of ids) orderedTasks.push({ id, region });
     }
@@ -680,8 +703,16 @@ export function emitEmphasisAndLenses({
   // caption named them — a caption↔visibility mismatch (post-layout audit
   // H1/M2). Peripheral nodes intentionally carry no box (the core-periphery
   // plugin's overlays() omits them). The 6% threshold matches the
-  // core-periphery plugin's classify() rule.
-  if (partition && partition.core.length / totalNodes >= 0.06) {
+  // core-periphery plugin's classify() rule. Count core nodes across both the
+  // single-core partition (`core`) and the multi-core partition (`core-1`,
+  // `core-2`, …) — multi-core has no `core` key, so a bare `partition.core`
+  // read would throw.
+  const coreNodeCount = partition
+    ? Object.entries(partition)
+        .filter(([k]) => k === "core" || /^core-\d+$/.test(k))
+        .reduce((sum, [, v]) => sum + (Array.isArray(v) ? v.length : 0), 0)
+    : 0;
+  if (coreNodeCount / totalNodes >= 0.06) {
     for (const ov of overlays) {
       if (ov.kind === "module-border") {
         ensureRendering(ov);

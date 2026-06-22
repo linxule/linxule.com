@@ -118,6 +118,30 @@ function partitionByRegion(matrix) {
   return result;
 }
 
+// Group core-region task ids by region id (in task order). Multi-core declares
+// several Core regions (core-1, core-2, …) that partitionByRegion would merge by
+// semanticKind; I15 checks each one independently against its own cyclic group.
+function coreRegionGroups(matrix) {
+  const coreRegionIds = new Set(
+    (matrix.regions ?? [])
+      .filter((r) => r.semanticKind === "core")
+      .map((r) => r.id),
+  );
+  const groups = new Map();
+  for (const task of matrix.tasks) {
+    if (!coreRegionIds.has(task.region)) continue;
+    if (!groups.has(task.region)) groups.set(task.region, []);
+    groups.get(task.region).push(task.id);
+  }
+  return groups;
+}
+
+function setsEqual(a, b) {
+  if (a.size !== b.size) return false;
+  for (const x of a) if (!b.has(x)) return false;
+  return true;
+}
+
 function provenanceForMatrix(scene, matrix) {
   const provenance = scene?.provenance;
   if (!provenance || typeof provenance !== "object") return null;
@@ -259,24 +283,49 @@ export function I15(matrix, severity, scene) {
     }
   }
 
-  // (a) Declared-Core oracle.
+  const matrixProvenance = provenanceForMatrix(scene, matrix);
+  const engineGroups = matrixProvenance?.cyclicGroups;
+  const hasEngine = Array.isArray(engineGroups) && engineGroups.length > 0;
+
+  // Multi-core declares several Core regions (core-1, core-2, …), each a
+  // DISTINCT cyclic group with its own (VFI, VFO). Merging them (as
+  // partitionByRegion does, by semanticKind) would falsely fire (a) on the
+  // mixed metrics and (b) against the single largest group. Check each region
+  // independently instead.
+  if (matrix.architectureType === "multi-core") {
+    const coreRegions = coreRegionGroups(matrix);
+    // (a) each Core region is internally a single (VFI, VFO) cyclic group.
+    for (const [regionId, members] of coreRegions) {
+      checkGroup(members, regionId);
+    }
+    // (b) each declared Core region must equal some engine cyclic group.
+    if (hasEngine) {
+      const engineSets = engineGroups.filter(Array.isArray).map((g) => new Set(g));
+      for (const [regionId, members] of coreRegions) {
+        const declared = new Set(members);
+        if (!engineSets.some((es) => setsEqual(es, declared))) {
+          issues.push({
+            code: "cyclic_group_drift",
+            severity,
+            message: `Declared Core region "${regionId}" [${members.join(", ")}] matches no engine cyclic group. Either the matrix was re-partitioned by hand or the engine recomputed different cycles since provenance was written (I15).`,
+            locator: { region: regionId, members: [...declared] },
+          });
+        }
+      }
+    }
+    return issues;
+  }
+
+  // (a) Declared-Core oracle (single-core / core-periphery).
   const partition = partitionByRegion(matrix);
   if (partition.core.length > 1) {
     checkGroup(partition.core, "core");
   }
 
   // (b) Engine-cyclic-group drift oracle. Only meaningful for architectures
-  // that declare a Core region (core-periphery / multi-core). Compare the
-  // engine's largest cyclic group against declared Core membership.
-  const matrixProvenance = provenanceForMatrix(scene, matrix);
-  const engineGroups = matrixProvenance?.cyclicGroups;
-  if (
-    Array.isArray(engineGroups) &&
-    engineGroups.length > 0 &&
-    partition.core.length > 0 &&
-    (matrix.architectureType === "core-periphery" ||
-      matrix.architectureType === "multi-core")
-  ) {
+  // that declare a Core region. Compare the engine's largest cyclic group
+  // against declared Core membership.
+  if (hasEngine && partition.core.length > 0 && matrix.architectureType === "core-periphery") {
     // The engine emits cyclicGroups sorted by size descending (see
     // core/engine/cyclic-groups.js). The largest group is the canonical
     // Core for core-periphery. Symmetric difference reveals drift.
