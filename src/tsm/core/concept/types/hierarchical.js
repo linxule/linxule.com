@@ -26,8 +26,15 @@ export default {
   // No module borders on hierarchical — peripheral and task are both filtered
   // out by the core-periphery overlay rule, and hierarchical only emits task.
   overlays: () => [],
-  buildNarrative({ partition, stats, totalNodes }) {
-    return buildDefaultNarrative(partition, "hierarchical", stats);
+  buildNarrative({ partition, overlays, cyclicGroups, hasForwardTransfers, hasBackwardTransfers }) {
+    return buildDefaultNarrative({
+      partition,
+      architectureType: "hierarchical",
+      overlays,
+      cyclicGroups,
+      hasForwardTransfers,
+      hasBackwardTransfers,
+    });
   },
   invariants: [
     { check: "I1" },

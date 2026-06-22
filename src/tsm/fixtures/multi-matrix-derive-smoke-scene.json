@@ -25,7 +25,7 @@
         }
       },
       {
-        "caption": "<strong>Step 3.</strong> Backward transfers — above each diagonal — show where a system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "caption": "<strong>Step 3.</strong> No backward transfers above any diagonal — the rendered dependencies sort cleanly into layers, so ordinary topological sorting succeeds.",
         "reveal": {
           "include": [
             "diagonal",
@@ -35,7 +35,7 @@
         }
       },
       {
-        "caption": "<strong>Step 4.</strong> Each system sorts into dependency layers — no cyclic core large enough to partition any of them.<br/><em>Architecture — Upstream supplier: job-shop; Downstream buyer: flow.</em><br/>The one arrow crossing between the matrices is the contract — the transaction that links otherwise-separate systems.",
+        "caption": "<strong>Step 4.</strong> Each system sorts into dependency layers — none contains a cyclic core.<br/><em>Architecture — Upstream supplier: job-shop; Downstream buyer: flow.</em><br/>The one arrow crossing between the matrices is the contract — the transaction that links otherwise-separate systems.",
         "reveal": {
           "include": [
             "diagonal",

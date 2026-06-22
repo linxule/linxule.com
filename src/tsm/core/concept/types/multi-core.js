@@ -33,8 +33,15 @@ export default {
     regionsPresent
       .filter((r) => r !== "peripheral" && r !== "task")
       .map((r) => ({ kind: "module-border", regionId: r })),
-  buildNarrative({ partition, stats, totalNodes }) {
-    return buildDefaultNarrative(partition, "multi-core", stats);
+  buildNarrative({ partition, overlays, cyclicGroups, hasForwardTransfers, hasBackwardTransfers }) {
+    return buildDefaultNarrative({
+      partition,
+      architectureType: "multi-core",
+      overlays,
+      cyclicGroups,
+      hasForwardTransfers,
+      hasBackwardTransfers,
+    });
   },
   invariants: [
     { check: "I1" },

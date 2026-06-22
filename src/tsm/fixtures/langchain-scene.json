@@ -25,7 +25,7 @@
         }
       },
       {
-        "caption": "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        "caption": "<strong>Step 3.</strong> No backward transfers above the diagonal — the rendered dependencies sort cleanly into layers, so ordinary topological sorting succeeds.",
         "reveal": {
           "include": [
             "diagonal",
@@ -35,7 +35,7 @@
         }
       },
       {
-        "caption": "<strong>Step 4.</strong> No cyclic core was found — the system is fully hierarchical, so it sorts into dependency layers rather than a core-periphery partition.<br/><em>Architecture: hierarchical.</em>",
+        "caption": "<strong>Step 4.</strong> No backward transfers and no cyclic core — the system is fully hierarchical, so it sorts into dependency layers rather than a core-periphery partition.<br/><em>Architecture: hierarchical.</em>",
         "reveal": {
           "include": [
             "diagonal",

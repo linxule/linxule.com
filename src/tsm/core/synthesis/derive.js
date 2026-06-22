@@ -148,6 +148,36 @@ export function classifyArchitecture(partition, totalNodes) {
   return pickArchitectureType({ partition, totalNodes }).id;
 }
 
+/**
+ * Classify rendered transfers by direction relative to the diagonal order.
+ * A transfer is forward when `from` precedes `to` in orderedTasks (rendered
+ * below the diagonal), backward otherwise (above) — mirroring the live
+ * direction logic in scene-adapter. Throws on an unknown endpoint: ids must
+ * already share orderedTasks' id space (loud, like the adapter), so a silent
+ * miscount can't slip through.
+ *
+ * @param {{ from: string, to: string }[]} transfers
+ * @param {{ id: string }[]} orderedTasks
+ * @returns {{ hasForwardTransfers: boolean, hasBackwardTransfers: boolean }}
+ */
+function countTransfersByDirection(transfers, orderedTasks) {
+  const idx = Object.fromEntries(orderedTasks.map((t, i) => [t.id, i]));
+  let forward = 0;
+  let backward = 0;
+  for (const tr of transfers) {
+    const f = idx[tr.from];
+    const t = idx[tr.to];
+    if (f === undefined || t === undefined) {
+      throw new Error(
+        `countTransfersByDirection: unknown transfer endpoint ${tr.from}->${tr.to}`,
+      );
+    }
+    if (f < t) forward += 1;
+    else if (f > t) backward += 1;
+  }
+  return { hasForwardTransfers: forward > 0, hasBackwardTransfers: backward > 0 };
+}
+
 function synthesizeMatrix(edges, nodeIds, hint, context = {}) {
   const { allNodes, matrixId, sceneArrows = [] } = context;
   const nodeIdSet = new Set(nodeIds);
@@ -244,6 +274,13 @@ function synthesizeMatrix(edges, nodeIds, hint, context = {}) {
       mark: "x",
     }));
 
+  // Direction of the rendered transfers — drives the data-aware Step-2/Step-3
+  // captions (forward = below the diagonal, backward = above).
+  const { hasForwardTransfers, hasBackwardTransfers } = countTransfersByDirection(
+    transfers,
+    orderedTasks,
+  );
+
   const overlays = plugin.overlays({ regionsPresent: [...presentRegions] });
 
   // SPEC-LENSES v0.2 §6 — Path B emphasis pass.
@@ -267,6 +304,10 @@ function synthesizeMatrix(edges, nodeIds, hint, context = {}) {
     partition,
     stats: vfivfo,
     totalNodes: nodes.length,
+    overlays,
+    cyclicGroups,
+    hasForwardTransfers,
+    hasBackwardTransfers,
   });
 
   // Derive scene.lenses — the optional declaration (§3.3) listing every
@@ -289,6 +330,8 @@ function synthesizeMatrix(edges, nodeIds, hint, context = {}) {
     lenses,
     vfivfo,
     cyclicGroups,
+    hasForwardTransfers,
+    hasBackwardTransfers,
   };
 }
 
@@ -364,6 +407,11 @@ function deriveMultiMatrixScene(observation, edges, options) {
       // label (which can be an authored "modular"/"job-shop" id whose synthesis
       // fell back to hierarchical and drew no borders).
       hasModuleBorder: synthesized[i].matrix.overlays.some((o) => o.kind === "module-border"),
+      // Per-matrix data-awareness signals for the scene-level Step-2/Step-3/Step-4
+      // captions (rendered transfer directions + detected core size).
+      hasForwardTransfers: synthesized[i].hasForwardTransfers,
+      hasBackwardTransfers: synthesized[i].hasBackwardTransfers,
+      coreCount: synthesized[i].cyclicGroups?.[0]?.length ?? 0,
     })),
     sceneArrows.length,
   );

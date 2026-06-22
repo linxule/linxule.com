@@ -2,34 +2,46 @@
 // Lives in the synthesis layer so the engine stays free of HTML strings.
 
 /**
- * Build a 4-step walkthrough narrative for a derived scene. Captions
- * adapt to the discovered architecture type and partition sizes.
+ * Build a 4-step walkthrough narrative for a derived scene. Every step's
+ * caption adapts to the RENDERED data — forward/backward transfers actually
+ * present, module-border overlays actually emitted, and the cyclic-core size —
+ * so no step asserts something the matrix doesn't show, and no two steps can
+ * contradict.
+ *
+ * @param {object} ctx
+ * @param {object|null} ctx.partition — four-square partition (null when none)
+ * @param {string} ctx.architectureType — synthesis-plugin id; DISPLAY LABEL ONLY
+ * @param {{ kind: string }[]} [ctx.overlays] — overlays actually emitted
+ * @param {string[][]} [ctx.cyclicGroups] — detected cyclic cores (largest first)
+ * @param {boolean} [ctx.hasForwardTransfers] — any forward transfer rendered
+ * @param {boolean} [ctx.hasBackwardTransfers] — any backward transfer rendered
  */
-export function buildDefaultNarrative(partition, architectureType, vfivfo) {
-  const coreCount = partition ? partition.core.length : 0;
-
-  // Three structural cases, keyed on the synthesis plugin (architectureType is
-  // the id of the plugin whose narrative() ran — core-periphery / multi-core /
-  // hierarchical) AND whether a cyclic core was found:
-  //   - genuineFourSquare: a core-periphery/multi-core plugin ran, so a cyclic
-  //     core large enough to organize the system exists AND module-border
-  //     overlays are actually rendered.
-  //   - smallCore: the hierarchical plugin ran but a cyclic group WAS found —
-  //     it's just below the threshold to partition the whole system around, so
-  //     no module-border overlays exist. The caption must ACKNOWLEDGE the cycle
-  //     (Step 3 just revealed its backward transfers), not deny it.
-  //   - fully hierarchical: no cyclic core at all.
-  // Only genuineFourSquare reveals overlay:module-border; revealing it in either
-  // hierarchical case spawns an empty phantom auto-border (the L1 footgun).
-  // KNOWN LIMITATION (see KNOWN-ISSUES.md N-3): this keys on the synthesis-plugin
-  // id string, which equals "has module-border overlays" for every CURRENT plugin
-  // but would mis-fire for a future non-hierarchical plugin that draws no module
-  // borders. The multi-matrix path gates on an actual hasModuleBorder flag; mirror
-  // that here (thread hasModuleBorder through buildNarrative) if such a plugin lands.
-  // NOTE: Step 3 below still claims "cycles" unconditionally (KNOWN-ISSUES.md N-1).
-  const isHierarchical = architectureType === "hierarchical";
-  const genuineFourSquare = !isHierarchical && coreCount > 0;
-  const smallCore = isHierarchical && coreCount > 0;
+export function buildDefaultNarrative({
+  partition,
+  architectureType,
+  overlays = [],
+  cyclicGroups = [],
+  hasForwardTransfers = true,
+  hasBackwardTransfers = (cyclicGroups?.length ?? 0) > 0,
+}) {
+  // Structural classification is DATA-DRIVEN — keyed on whether module-border
+  // overlays were actually emitted and the detected core size, NOT on the
+  // architectureType string (which is only the display label and can be an
+  // authored "modular"/"job-shop" id whose synthesis fell back to hierarchical).
+  //   - genuineFourSquare: real module-border overlays exist → reveal them.
+  //   - smallCore: a cyclic core exists but below the partition threshold (no
+  //     overlays) → acknowledge the cycle, draw no overlay.
+  //   - cyclicNoCore: backward transfers are rendered but the detector found no
+  //     sized core (findCyclicGroups can under-report — KNOWN-ISSUES.md D-1);
+  //     acknowledge the cycle so Step 4 never denies what Step 3 shows.
+  //   - fully hierarchical: no backward transfers, no cyclic core.
+  // Only genuineFourSquare reveals overlay:module-border; revealing it without
+  // emitted overlays spawns an empty phantom auto-border.
+  const hasModuleBorder = overlays.some((o) => o.kind === "module-border");
+  const coreCount = cyclicGroups?.[0]?.length ?? 0;
+  const genuineFourSquare = hasModuleBorder;
+  const smallCore = !hasModuleBorder && coreCount > 0;
+  const cyclicNoCore = !hasModuleBorder && coreCount === 0 && hasBackwardTransfers;
 
   const coreLine = coreCount > 0
     ? `Core: ${coreCount} nodes in a mutually-dependent cycle.`
@@ -44,14 +56,25 @@ export function buildDefaultNarrative(partition, architectureType, vfivfo) {
     ? `Peripheral: ${partition.peripheral.length} unrelated nodes.`
     : "";
 
-  // Step 4 caption adapts to the three cases above.
+  // Step 2 + Step 3 captions describe the RENDERED transfers, not graph theory
+  // (a self-loop is filtered from transfers, so "acyclic" would over-claim).
+  const step2Caption = hasForwardTransfers
+    ? "<strong>Step 2.</strong> Forward transfers show the dependency flow as it actually runs. Below the diagonal, each mark is a direct invocation or load."
+    : "<strong>Step 2.</strong> No forward transfers below the diagonal — there are no downward dependencies to show.";
+  const step3Caption = hasBackwardTransfers
+    ? "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible."
+    : "<strong>Step 3.</strong> No backward transfers above the diagonal — the rendered dependencies sort cleanly into layers, so ordinary topological sorting succeeds.";
+
+  // Step 4 caption adapts to the four structural cases above.
   let partitionBody;
   if (genuineFourSquare) {
     partitionBody = `The four-square partition.<br/>${[coreLine, sharedLine, controlLine, peripheralLine].filter(Boolean).join("<br/>")}`;
   } else if (smallCore) {
     partitionBody = `A small cyclic core was found — ${coreCount} ${coreCount === 1 ? "node" : "nodes"} in a mutually-dependent cycle — but it is below the threshold to partition the whole system around, so the system sorts into dependency layers.`;
+  } else if (cyclicNoCore) {
+    partitionBody = "Cyclic dependencies are present, but no single core large enough to organize the system — it sorts into dependency layers.";
   } else {
-    partitionBody = "No cyclic core was found — the system is fully hierarchical, so it sorts into dependency layers rather than a core-periphery partition.";
+    partitionBody = "No backward transfers and no cyclic core — the system is fully hierarchical, so it sorts into dependency layers rather than a core-periphery partition.";
   }
 
   return {
@@ -62,11 +85,11 @@ export function buildDefaultNarrative(partition, architectureType, vfivfo) {
         reveal: { include: ["diagonal"] },
       },
       {
-        caption: "<strong>Step 2.</strong> Forward transfers show the dependency flow as it actually runs. Below the diagonal, each mark is a direct invocation or load.",
+        caption: step2Caption,
         reveal: { include: ["diagonal", "transfer:directed:forward"] },
       },
       {
-        caption: "<strong>Step 3.</strong> Backward transfers — above the diagonal — show where the system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        caption: step3Caption,
         reveal: { include: ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] },
       },
       {
@@ -76,11 +99,8 @@ export function buildDefaultNarrative(partition, architectureType, vfivfo) {
             "diagonal",
             "transfer:directed:forward",
             "transfer:directed:backward",
-            // Reveal the partition boxes only for a genuine four-square (a
-            // core-periphery/multi-core synthesis with real module-border
-            // overlays). Both hierarchical cases (small cyclic core or none)
-            // have no overlays; revealing the token there spawns an empty
-            // phantom auto-border (the L1 auto-border footgun).
+            // Reveal partition boxes only when real module-border overlays were
+            // emitted; otherwise the token spawns an empty phantom auto-border.
             ...(genuineFourSquare ? ["overlay:module-border"] : []),
           ],
         },
@@ -103,7 +123,7 @@ export function buildDefaultNarrative(partition, architectureType, vfivfo) {
  * forward → backward → module-border) so it fans out cleanly; captions speak
  * to the multi-system view and name the cross-matrix contracts.
  *
- * @param {{ id: string, label?: string, architectureType?: string, hasModuleBorder?: boolean }[]} matrixSummaries
+ * @param {{ id: string, label?: string, architectureType?: string, hasModuleBorder?: boolean, hasForwardTransfers?: boolean, hasBackwardTransfers?: boolean, coreCount?: number }[]} matrixSummaries
  * @param {number} crossArrowCount — number of cross-matrix arrows (contracts)
  * @returns {{ mode: "walkthrough", steps: object[] }}
  */
@@ -118,17 +138,43 @@ export function buildMultiMatrixNarrative(matrixSummaries, crossArrowCount = 0) 
       ? `The ${crossArrowCount} arrows crossing between the matrices are the contracts — the transactions that link otherwise-separate systems.`
       : "";
 
-  // Whether the scene-level Step-4 caption/reveal should claim a four-square
-  // partition: gate on matrices that ACTUALLY emit module-border overlays
-  // (a coreless/hierarchical matrix emits none), not on the architectureType
-  // label — mirrors the single-matrix buildDefaultNarrative 3-state model.
-  const anyModuleBorder = matrixSummaries.some((m) => m.hasModuleBorder);
-  const allModuleBorder = n > 0 && matrixSummaries.every((m) => m.hasModuleBorder);
-  const step4Body = allModuleBorder
-    ? "The four-square partition in each system."
-    : anyModuleBorder
-      ? "Each system's internal structure — a four-square partition where a cyclic core organizes it, dependency layers where none is large enough."
-      : "Each system sorts into dependency layers — no cyclic core large enough to partition any of them.";
+  // Data-driven, per-matrix signals (mirrors the single-matrix builder):
+  //   - hasModuleBorder: this matrix emitted real module-border overlays.
+  //   - coreCount: detected cyclic-core size.
+  //   - hasForwardTransfers / hasBackwardTransfers: rendered transfer directions.
+  const allBorder = n > 0 && matrixSummaries.every((m) => m.hasModuleBorder);
+  const anyBorder = matrixSummaries.some((m) => m.hasModuleBorder);
+  const anyForward = matrixSummaries.some((m) => m.hasForwardTransfers);
+  const anyBackward = matrixSummaries.some((m) => m.hasBackwardTransfers);
+  // A matrix with cyclic dependencies but no emitted border: a small core, or a
+  // core the detector under-reported (KNOWN-ISSUES.md D-1).
+  const anyCyclicNoBorder = matrixSummaries.some(
+    (m) => !m.hasModuleBorder && ((m.coreCount ?? 0) > 0 || m.hasBackwardTransfers),
+  );
+
+  const step2Caption = anyForward
+    ? "<strong>Step 2.</strong> Forward transfers — below each diagonal — show the dependency flow as it actually runs inside each system. Each mark is a direct invocation or load."
+    : "<strong>Step 2.</strong> No forward transfers below any diagonal — these systems have no downward dependencies to show.";
+  const step3Caption = anyBackward
+    ? "<strong>Step 3.</strong> Backward transfers — above each diagonal — show where a system loops back on itself. These are the cycles that make ordinary topological sorting impossible."
+    : "<strong>Step 3.</strong> No backward transfers above any diagonal — the rendered dependencies sort cleanly into layers, so ordinary topological sorting succeeds.";
+
+  // Step-4 caption: gate the four-square claim on matrices that ACTUALLY emit
+  // module-border overlays; distinguish small/under-reported cyclic cores from
+  // fully-hierarchical layers so the caption never denies a rendered cycle.
+  let step4Body;
+  if (allBorder) {
+    step4Body = "The four-square partition in each system.";
+  } else if (anyBorder) {
+    // Mixed: at least one four-square, the rest are layers. Don't over-specify
+    // the layered matrices as "small cyclic core" — some may be acyclic, others
+    // cyclic-without-a-sized-core (cyclicNoCore). "no core is large enough" covers all.
+    step4Body = "Each system's internal structure — a four-square partition where a cyclic core organizes it, dependency layers where no core is large enough.";
+  } else if (anyCyclicNoBorder) {
+    step4Body = "Each system sorts into dependency layers; some carry cyclic dependencies below the threshold to partition around.";
+  } else {
+    step4Body = "Each system sorts into dependency layers — none contains a cyclic core.";
+  }
 
   return {
     mode: "walkthrough",
@@ -138,11 +184,11 @@ export function buildMultiMatrixNarrative(matrixSummaries, crossArrowCount = 0) 
         reveal: { include: ["diagonal"] },
       },
       {
-        caption: "<strong>Step 2.</strong> Forward transfers — below each diagonal — show the dependency flow as it actually runs inside each system. Each mark is a direct invocation or load.",
+        caption: step2Caption,
         reveal: { include: ["diagonal", "transfer:directed:forward"] },
       },
       {
-        caption: "<strong>Step 3.</strong> Backward transfers — above each diagonal — show where a system loops back on itself. These are the cycles that make ordinary topological sorting impossible.",
+        caption: step3Caption,
         reveal: { include: ["diagonal", "transfer:directed:forward", "transfer:directed:backward"] },
       },
       {
@@ -153,9 +199,9 @@ export function buildMultiMatrixNarrative(matrixSummaries, crossArrowCount = 0) 
             "transfer:directed:forward",
             "transfer:directed:backward",
             // Reveal module-border only if >=1 matrix actually emits those
-            // overlays; a coreless/hierarchical matrix has none, so revealing
-            // the token there would spawn an empty phantom auto-border.
-            ...(anyModuleBorder ? ["overlay:module-border"] : []),
+            // overlays; the N-2 renderer fix prevents a coreless matrix from
+            // drawing a phantom even when the scene-level token reaches it.
+            ...(anyBorder ? ["overlay:module-border"] : []),
           ],
         },
       },

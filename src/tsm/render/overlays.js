@@ -35,17 +35,28 @@ import { createLayeredEmphasisState } from "./emphasis-state.js";
  *   overlayRegionIds?: string[],
  *   firmBoundaries?: Array<{ excludedTaskIds?: string[], label?: string }>,
  *   tasks?: Array<{ id: string }>,
- * }} [opts] — which region ids should render as module-border overlays
- *   (legacy: absent/empty means every contiguous group span gets one, for
- *   Fig 1) and any firm-boundary overlays to draw with their excluded
+ * }} [opts] — which region ids should render as module-border overlays:
+ *   ABSENT/undefined → legacy "every contiguous group span gets one" (Fig 1);
+ *   [] (explicit empty) → this matrix emits NO module-border overlays, draw
+ *   none (a coreless matrix passes []; treating it like "absent" auto-drew a
+ *   phantom whole-matrix border — the N-2 footgun); non-empty → only the
+ *   listed ids. Plus any firm-boundary overlays to draw with their excluded
  *   task ids. `tasks` is the matrix's task list; required when
  *   `firmBoundaries` is given so excluded-task indices can be resolved.
  */
 export function renderOverlays(wrapper, gridEl, grid, opts = {}) {
   const { groupSpans, groupById, n } = grid;
-  const allowedSet = opts.overlayRegionIds && opts.overlayRegionIds.length > 0
-    ? new Set(opts.overlayRegionIds)
-    : null;
+  // Distinguish ABSENT (undefined) from explicit EMPTY ([]):
+  //   undefined → null → draw every contiguous group span (legacy Fig-1).
+  //   [] or non-empty → exactly the listed region ids — so a coreless matrix's
+  //   [] draws NOTHING instead of an auto-drawn whole-matrix border. That border
+  //   was a hidden phantom on every coreless scene (no shipped scene declares
+  //   module-border overlays without also revealing them — declared ⟺ revealed),
+  //   and the N-2 footgun is exactly that phantom going visible when a mixed
+  //   multi-matrix scene fans overlay:module-border to a coreless matrix.
+  const allowedSet = (opts.overlayRegionIds === undefined || opts.overlayRegionIds === null)
+    ? null
+    : new Set(opts.overlayRegionIds);
   const firmBoundaries = opts.firmBoundaries ?? [];
   const tasks = opts.tasks ?? [];
   // Per-region (or per-overlay-id) emphasis declarations resolved by the
