@@ -359,6 +359,11 @@ function deriveMultiMatrixScene(observation, edges, options) {
       id: matrix.id,
       label: matrix.label ?? matrix.id,
       architectureType: synthesized[i].matrix.architectureType,
+      // Gate the scene-level Step-4 caption/overlay on whether this matrix
+      // ACTUALLY emits module-border overlays — not on its architectureType
+      // label (which can be an authored "modular"/"job-shop" id whose synthesis
+      // fell back to hierarchical and drew no borders).
+      hasModuleBorder: synthesized[i].matrix.overlays.some((o) => o.kind === "module-border"),
     })),
     sceneArrows.length,
   );

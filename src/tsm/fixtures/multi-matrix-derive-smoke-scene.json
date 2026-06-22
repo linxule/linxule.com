@@ -35,13 +35,12 @@
         }
       },
       {
-        "caption": "<strong>Step 4.</strong> The four-square partition in each system.<br/><em>Architecture — Upstream supplier: job-shop; Downstream buyer: flow.</em><br/>The one arrow crossing between the matrices is the contract — the transaction that links otherwise-separate systems.",
+        "caption": "<strong>Step 4.</strong> Each system sorts into dependency layers — no cyclic core large enough to partition any of them.<br/><em>Architecture — Upstream supplier: job-shop; Downstream buyer: flow.</em><br/>The one arrow crossing between the matrices is the contract — the transaction that links otherwise-separate systems.",
         "reveal": {
           "include": [
             "diagonal",
             "transfer:directed:forward",
-            "transfer:directed:backward",
-            "overlay:module-border"
+            "transfer:directed:backward"
           ]
         }
       }
