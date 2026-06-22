@@ -350,6 +350,10 @@ export function renderArrows(wrapper, gridEl, grid, matrix) {
   function applyReveal(tokens) {
     lastTokens = tokens;
     applyRevealTokens(tokens);
+    // H1e — re-layer the Explore emphasis so an active lens survives
+    // walkthrough Next/Prev/Restart ("Explore wins composition"), instead of
+    // the chip staying pressed while its force-revealed arrows vanish.
+    applyEmphasisToElements();
   }
 
   function destroy() {
@@ -361,16 +365,26 @@ export function renderArrows(wrapper, gridEl, grid, matrix) {
   // and toggle the wrapper-level show-all class. Called after redraw and
   // after applyEmphasis updates the override map.
   function applyEmphasisToElements() {
+    // H1a (explore lens visibility) — arrows gate on `.visible` (set per
+    // direction by the reveal layer). The Explore chip writes emphasis only,
+    // so a lens-primary transfer the current step hasn't revealed stayed
+    // hidden. Re-derive the visibility baseline from the latest reveal tokens,
+    // then force-reveal the Explore layer's OWN primary arrows on top. Clearing
+    // the lens empties exploreDiff → the next apply restores the baseline.
+    if (lastTokens !== null) applyRevealTokens(lastTokens);
+    const exploreDiff = emphasisState.exploreDiff;
     for (const el of elements) {
       const t = el._transfer;
       if (!t) continue;
       el.dataset.emphasis = effectiveEmphasis(t);
+      if (exploreDiff.get(`${t.from}→${t.to}`) === "primary") el.classList.add("visible");
     }
     for (const label of labelElements) {
       if (!label) continue;
       const t = label._transfer;
       if (!t) continue;
       label.dataset.emphasis = effectiveEmphasis(t);
+      if (exploreDiff.get(`${t.from}→${t.to}`) === "primary") label.classList.add("visible");
     }
     if (wrapper?.classList?.toggle) {
       wrapper.classList.toggle("tsm-show-all-emphasis", emphasisState.effectiveShowAll());

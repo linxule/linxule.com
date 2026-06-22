@@ -339,6 +339,20 @@
   display: none;
 }
 
+/* H1f — force-reveal win. render/annotations.js#applyEmphasisToElements adds
+ * `.visible` to an annotation whose Explore lens marks it primary (so a
+ * lens-primary annotation the walkthrough hasn't surfaced shows on a chip
+ * click) and removes it when the lens clears. This rule lets that `.visible`
+ * label beat the secondary `display:none` hide above — it follows the hide
+ * rule in source order and adds a class, so it wins on (specificity + order)
+ * without `!important`. Consistent with how arrows/overlays gate reveal on
+ * `.visible`. The secondary opacity dim is retained so the force-revealed
+ * label still reads as "surfaced by the lens, not part of the loud baseline". */
+.tsm-annotation[data-emphasis="secondary"].visible {
+  display: revert;
+  opacity: 0.6;
+}
+
 .tsm-show-all-emphasis .tsm-annotation[data-emphasis="secondary"] {
   display: revert;
   opacity: 0.6;
@@ -353,6 +367,13 @@
  * carries `.tsm-show-all-emphasis`. */
 .tsm-annotation-pointer[data-emphasis="secondary"] {
   display: none;
+}
+
+/* H1f — pointer line follows its label's force-reveal (see the matching
+ * `.tsm-annotation[data-emphasis="secondary"].visible` rule above). */
+.tsm-annotation-pointer[data-emphasis="secondary"].visible {
+  display: revert;
+  opacity: 0.6;
 }
 
 .tsm-show-all-emphasis .tsm-annotation-pointer[data-emphasis="secondary"] {
@@ -534,8 +555,15 @@
 }
 
 .explore-chip[aria-pressed="true"] {
-  background: var(--accent, #3b6cd1);
-  border-color: var(--accent, #3b6cd1);
+  /* M9 — AA contrast for the small mono label. The resting active fill was
+     --accent (= --bloom #8b7089) with --paper text at ~3.9:1, below AA (4.5:1
+     for this small-text pill). Darkening ONLY this active surface to a deeper
+     shade of the same bloom violet (a local value, NOT a global token change)
+     lifts paper-on-fill to ~5.5:1 while preserving the earned color-as-event
+     pill. The fallback hex mirrors the darker shade so a missing --bloom-active
+     still passes. */
+  background: var(--bloom-active, #6f5a6e);
+  border-color: var(--bloom-active, #6f5a6e);
   color: var(--paper);
 }
 
@@ -684,7 +712,10 @@
 }
 
 .cross-arrows-toggle.active {
-  background: var(--bloom);
+  /* M9 — see .explore-chip[aria-pressed="true"]. The "Show all" active fill
+     was --bloom with --paper text at ~3.9:1; the deeper bloom-active surface
+     lifts it to ~5.5:1 (AA) without touching global palette tokens. */
+  background: var(--bloom-active, #6f5a6e);
   color: var(--paper);
 }
 

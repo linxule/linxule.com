@@ -290,11 +290,22 @@ export function renderOverlays(wrapper, gridEl, grid, opts = {}) {
   }
 
   function applyEmphasisToElements() {
+    // H1a (explore lens visibility) — module overlays gate on `.visible`,
+    // which the reveal layer sets from walkthrough tokens. The Explore chip
+    // path writes emphasis only, so a lens-primary module border the current
+    // step hasn't revealed stayed at opacity:0 (highlight invisible). Fix:
+    // re-derive the visibility baseline from the latest reveal tokens here
+    // (not just in draw()), then force-reveal the Explore layer's OWN primary
+    // targets on top. Clearing the lens empties exploreDiff → the next
+    // apply restores the pure walkthrough baseline with no stale `.visible`.
+    if (lastTokens !== null) applyRevealTokens(lastTokens);
+    const exploreDiff = emphasisState.exploreDiff;
     const overlays = wrapper.querySelectorAll?.(".module-overlay") ?? [];
     for (const ov of Array.from(overlays)) {
       const gid = ov.dataset?.group;
       if (!gid) continue;
       ov.dataset.emphasis = effectiveEmphasis(gid);
+      if (exploreDiff.get(gid) === "primary") ov.classList.add("visible");
     }
     // Path B firm-boundaries participate in the same override Map. Keys
     // arrive as `firm-boundary:${index}` (see buildLensFilter in
@@ -369,6 +380,10 @@ export function renderOverlays(wrapper, gridEl, grid, opts = {}) {
   function applyReveal(tokens) {
     lastTokens = tokens;
     applyRevealTokens(tokens);
+    // H1e — re-layer the Explore emphasis so an active lens survives
+    // walkthrough Next/Prev/Restart ("Explore wins composition"), instead of
+    // the chip staying pressed while its force-revealed targets vanish.
+    applyEmphasisToElements();
   }
 
   // Initial paint deferred until after the browser lays out the grid.

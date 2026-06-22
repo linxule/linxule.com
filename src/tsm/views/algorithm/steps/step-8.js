@@ -36,6 +36,7 @@ export function renderStep8({
   vfivfo,
   cyclicGroups,
   partition,
+  coreGroups,
   shortCodes,
 }) {
   const n = nodes.length;
@@ -61,8 +62,13 @@ export function renderStep8({
   root.dataset.size = String(n);
   root.dataset.order = sortedIds.join(",");
 
-  // Identify the Core block.
-  const coreMembers =
+  // Identify the Core block(s). A multi-core system boxes EACH ≥6% core
+  // (Core 1, Core 2, …) — threaded as `coreGroups` from the multi-core
+  // classification, in cyclicGroups order. A core-periphery / hierarchical
+  // system boxes the single largest cyclic group. Build one
+  // { members, range, coreIndex } descriptor per box; coreIndex is null for
+  // the single-core path so its label + datasets stay byte-identical.
+  const singleCoreMembers =
     partition && Array.isArray(partition.core) && partition.core.length > 0
       ? partition.core
       : Array.isArray(cyclicGroups) &&
@@ -70,14 +76,25 @@ export function renderStep8({
           cyclicGroups[0].length >= 2
         ? cyclicGroups[0]
         : null;
-  const coreSet = coreMembers ? new Set(coreMembers) : new Set();
-  const corePositions = coreMembers
-    ? coreMembers.map((id) => sortedIds.indexOf(id)).filter((p) => p >= 0)
-    : [];
-  const coreRange =
-    corePositions.length > 0
-      ? { min: Math.min(...corePositions), max: Math.max(...corePositions) }
-      : null;
+  const coreDescriptors =
+    Array.isArray(coreGroups) && coreGroups.length >= 2
+      ? coreGroups.map((members, i) => ({ members, coreIndex: i }))
+      : singleCoreMembers
+        ? [{ members: singleCoreMembers, coreIndex: null }]
+        : [];
+  for (const desc of coreDescriptors) {
+    const positions = desc.members
+      .map((id) => sortedIds.indexOf(id))
+      .filter((p) => p >= 0);
+    desc.range =
+      positions.length > 0
+        ? { min: Math.min(...positions), max: Math.max(...positions) }
+        : null;
+  }
+  const renderableCores = coreDescriptors.filter((d) => d.range);
+  // Union of all core members — drives the in-core cell shading so a
+  // multi-core matrix shades every core block, not just the first.
+  const coreSet = new Set(renderableCores.flatMap((d) => d.members));
 
   // Render the sorted matrix.
   const grid = document.createElement("div");
@@ -113,66 +130,79 @@ export function renderStep8({
         cell.textContent = "·";
         if (cell.style) cell.style.opacity = "0.55";
       }
-      // Mark cells inside the Core block so a CSS layer can shade them
-      // and tests can pin block geometry independently from the overlay.
-      if (
-        coreRange &&
-        r >= coreRange.min &&
-        r <= coreRange.max &&
-        c >= coreRange.min &&
-        c <= coreRange.max
-      ) {
-        cell.classList.add("in-core");
-        // SPEC-LENSES §6 Path B emphasis: Core-block cells get emphasis
-        // primary + lens core-periphery-boundary. The algorithm view does
-        // not render a chip strip; the attributes are still useful for
-        // tests, the CSS layer, and a future export of the derived scene.
-        cell.dataset.emphasis = "primary";
-        cell.dataset.lens = "core-periphery-boundary";
+      // Mark cells inside a Core block so a CSS layer can shade them and tests
+      // can pin block geometry independently from the overlay. With multiple
+      // cores, a cell is in-core if it falls inside ANY core's square; the
+      // 0-based core index rides on data-core so a CSS layer can hue each core
+      // block.
+      for (const desc of renderableCores) {
+        const cr = desc.range;
+        if (r >= cr.min && r <= cr.max && c >= cr.min && c <= cr.max) {
+          cell.classList.add("in-core");
+          if (desc.coreIndex !== null) cell.dataset.core = String(desc.coreIndex);
+          // SPEC-LENSES §6 Path B emphasis: Core-block cells get emphasis
+          // primary + lens core-periphery-boundary. The algorithm view does
+          // not render a chip strip; the attributes are still useful for
+          // tests, the CSS layer, and a future export of the derived scene.
+          cell.dataset.emphasis = "primary";
+          cell.dataset.lens = "core-periphery-boundary";
+          break;
+        }
       }
       grid.appendChild(cell);
     }
   }
   root.appendChild(grid);
 
-  if (coreMembers && coreRange) {
-    // Sibling element with explicit position metadata — visual layer
-    // draws the thick border without sniffing child cells.
-    const block = document.createElement("div");
-    block.className = "algorithm-core-block";
-    block.dataset.size = String(coreMembers.length);
-    block.dataset.start = String(coreRange.min);
-    block.dataset.end = String(coreRange.max);
-    block.dataset.members = coreMembers.join(",");
-    // Path B emphasis: Core boundary overlay is the primary visual claim.
-    block.dataset.emphasis = "primary";
-    block.dataset.lens = "core-periphery-boundary";
-    if (block.style) {
-      block.style.marginTop = "0.5rem";
-      block.style.padding = "0.35rem 0.55rem";
-      block.style.border = "2.5px solid currentColor";
-      block.style.fontSize = "0.9em";
-    }
-    // Count + meaning, not a roll-call: the shaded square + the decode key
-    // already name the members, so the prose stays scannable for a large Core.
-    block.textContent =
-      `Core block — ${coreMembers.length} of the ${n} components, every one depending on every ` +
-      `other directly or transitively. Untying the knot means changing them all at once.`;
-    root.appendChild(block);
+  if (renderableCores.length > 0) {
+    // One boxed block + label per core. For a single-core system coreIndex is
+    // null, so the block text reads "Core block …" and the label reads "Core"
+    // — byte-identical to the pre-multi-core output. A multi-core system gets
+    // "Core 1 block …" / "Core 1", "Core 2 block …" / "Core 2", … so the
+    // headline can't claim more cores than the boxes show.
+    for (const desc of renderableCores) {
+      const coreLabel = desc.coreIndex !== null ? `Core ${desc.coreIndex + 1}` : "Core";
+      const cr = desc.range;
+      // Sibling element with explicit position metadata — visual layer
+      // draws the thick border without sniffing child cells.
+      const block = document.createElement("div");
+      block.className = "algorithm-core-block";
+      block.dataset.size = String(desc.members.length);
+      block.dataset.start = String(cr.min);
+      block.dataset.end = String(cr.max);
+      block.dataset.members = desc.members.join(",");
+      if (desc.coreIndex !== null) block.dataset.core = String(desc.coreIndex);
+      // Path B emphasis: Core boundary overlay is the primary visual claim.
+      block.dataset.emphasis = "primary";
+      block.dataset.lens = "core-periphery-boundary";
+      if (block.style) {
+        block.style.marginTop = "0.5rem";
+        block.style.padding = "0.35rem 0.55rem";
+        block.style.border = "2.5px solid currentColor";
+        block.style.fontSize = "0.9em";
+      }
+      // Count + meaning, not a roll-call: the shaded square + the decode key
+      // already name the members, so the prose stays scannable for a large Core.
+      block.textContent =
+        `${coreLabel} block — ${desc.members.length} of the ${n} components, every one depending ` +
+        `on every other directly or transitively. Untying the knot means changing them all at once.`;
+      root.appendChild(block);
 
-    const label = document.createElement("span");
-    label.className = "algorithm-core-label";
-    label.dataset.size = String(coreMembers.length);
-    label.textContent = "Core";
-    if (label.style) {
-      label.style.display = "inline-block";
-      label.style.marginTop = "0.4rem";
-      label.style.padding = "0.15rem 0.45rem";
-      label.style.fontWeight = "600";
-      label.style.letterSpacing = "0.05em";
-      label.style.textTransform = "uppercase";
+      const label = document.createElement("span");
+      label.className = "algorithm-core-label";
+      label.dataset.size = String(desc.members.length);
+      if (desc.coreIndex !== null) label.dataset.core = String(desc.coreIndex);
+      label.textContent = coreLabel;
+      if (label.style) {
+        label.style.display = "inline-block";
+        label.style.marginTop = "0.4rem";
+        label.style.padding = "0.15rem 0.45rem";
+        label.style.fontWeight = "600";
+        label.style.letterSpacing = "0.05em";
+        label.style.textTransform = "uppercase";
+      }
+      root.appendChild(label);
     }
-    root.appendChild(label);
   } else {
     const badge = document.createElement("div");
     badge.className = "algorithm-core-label algorithm-no-core";

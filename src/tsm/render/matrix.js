@@ -132,6 +132,10 @@ export function renderMatrix(container, scene, matrixIndex = 0) {
       el.appendChild(labelEl);
     } else if (cell.kind === "transfer") {
       el.classList.add("transfer", "hidden");
+      // H1b — key the cell by its transfer so the Explore lens can target
+      // non-arrowed transfer marks (e.g. cross-region edges), mirroring the
+      // `${from}→${to}` key buildLensFilter uses for arrows.
+      el.dataset.transfer = `${cell.transfer.from}→${cell.transfer.to}`;
       if (cell.transfer.direction === "forward") {
         el.classList.add("forward");
         el.textContent = "→";
@@ -188,7 +192,15 @@ export function renderMatrix(container, scene, matrixIndex = 0) {
    *
    * @param {string[]} tokens
    */
-  function applyReveal(tokens) {
+  // H1b — the Explore lens targets non-arrowed transfer marks (cells). Cells
+  // have no `.visible` gate like overlays/arrows; the walkthrough reveal
+  // toggles `.hidden`/`.highlighted` instead. Track the latest reveal tokens
+  // and the explore override map so a lens can force-show its target cells on
+  // top of the current reveal baseline, and clearing it restores the baseline.
+  let lastTokens = null;
+  const exploreCells = new Map();
+
+  function applyRevealCells(tokens) {
     const { showForward, showBackward, highlightCross } = resolveReveal(tokens);
     const forwardCells = gridEl.querySelectorAll(".cell.transfer.forward");
     const backwardCells = gridEl.querySelectorAll(".cell.transfer.backward");
@@ -201,7 +213,48 @@ export function renderMatrix(container, scene, matrixIndex = 0) {
     if (highlightCross) crossCells.forEach((c) => c.classList.add("highlighted"));
   }
 
-  return { gridEl, applyReveal, grid, measure };
+  function applyEmphasisToCells() {
+    gridEl.querySelectorAll(".cell.transfer").forEach((c) => {
+      const tier = c.dataset.transfer ? exploreCells.get(c.dataset.transfer) : undefined;
+      if (tier === "primary") {
+        // Force-show the lens's target marks even if the current step hasn't
+        // revealed them, and highlight.
+        c.classList.remove("hidden", "lens-dim");
+        c.classList.add("lens-primary");
+      } else if (tier === "secondary" && !c.classList.contains("hidden")) {
+        // Only OTHER lens-tagged marks dim. Untagged cells keep their baseline
+        // emphasis — matches the arrows/overlays contract (review finding:
+        // don't dim cells absent from the explore override map).
+        c.classList.remove("lens-primary");
+        c.classList.add("lens-dim");
+      } else {
+        c.classList.remove("lens-primary", "lens-dim");
+      }
+    });
+  }
+
+  function applyReveal(tokens) {
+    lastTokens = tokens;
+    applyRevealCells(tokens);
+    // Re-layer the Explore lens (if any) so it survives walkthrough
+    // Next/Prev/Restart — matches the "Explore wins composition" contract.
+    applyEmphasisToCells();
+  }
+
+  // Explore-layer cell emphasis. Signature matches the other renderer slots
+  // (the per-matrix fan-out delivers `overrides`); cells participate only in
+  // the explore layer, so `layer` is accepted but unused.
+  function applyEmphasis({ overrides, reset } = {}) {
+    if (reset) exploreCells.clear();
+    if (overrides) {
+      const entries = overrides instanceof Map ? overrides.entries() : Object.entries(overrides);
+      for (const [k, v] of entries) exploreCells.set(k, v);
+    }
+    if (lastTokens !== null) applyRevealCells(lastTokens);
+    applyEmphasisToCells();
+  }
+
+  return { gridEl, applyReveal, applyEmphasis, grid, measure };
 }
 
 /**
@@ -225,12 +278,27 @@ export function resolveMatrixHeaderLabel(matrix) {
       return overlay.label;
     }
   }
+  // N3/M6 — the region-label fallback is a single-firm-IDENTITY heuristic, but
+  // it previously returned the FIRST diagonal-block region's label, which for
+  // four-square / multi-core matrices is a generic PARTITION slot ("Shared",
+  // or "Core"/"Control" when the first block is empty) — mislabeling the whole
+  // matrix. Reject by the LABEL string (not the id), so a genuine firm region
+  // that happens to carry id "core" but label "Integral core" still shows,
+  // while auto-generated partition slots ("Shared", "Core", "Core 2",
+  // "Control", "Peripheral", "Task") resolve to "" and let the scene title
+  // carry the identity (review finding).
+  const isGenericLabel = (label) => {
+    const l = (label ?? "").trim().toLowerCase();
+    return l === "shared" || l === "core" || l === "control" ||
+      l === "peripheral" || l === "task" || /^core[\s-]?\d+$/.test(l);
+  };
   const regions = matrix.regions ?? [];
   for (const region of regions) {
     if (
       (region?.layoutKind === "diagonal-block" || region?.layoutKind === "corner-wrapping") &&
       typeof region.label === "string" &&
-      region.label.trim() !== ""
+      region.label.trim() !== "" &&
+      !isGenericLabel(region.label)
     ) {
       return region.label;
     }

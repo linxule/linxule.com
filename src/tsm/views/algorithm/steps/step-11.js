@@ -35,6 +35,22 @@ const REGION_LABELS = {
   task: "Task",
 };
 
+// Human label for a region id, covering the multi-core `core-N` ids the static
+// REGION_LABELS map doesn't enumerate ("core-1" → "Core 1").
+function labelForRegion(id, fallback) {
+  if (REGION_LABELS[id]) return REGION_LABELS[id];
+  const m = /^core-(\d+)$/.exec(id);
+  if (m) return `Core ${m[1]}`;
+  return fallback ?? id;
+}
+
+// Collapse core-N → core for the cell CSS class so each core's diagonal reads
+// with the single --color-core hue, mirroring getRegionColor in
+// core/scene-adapter.js (which the `region-core-N` classes never matched).
+function regionClass(region) {
+  return region.replace(/-\d+$/, "");
+}
+
 /**
  * @param {{
  *   stageEl: HTMLElement,
@@ -108,8 +124,22 @@ function renderSingleMatrixStep11({ stageEl, derivedScene, shortCodes }) {
   for (const t of tasks) {
     (regionMembersById[t.region] ??= []).push(t.id);
   }
+  // Band order: canonical four-square, plus any multi-core `core-N` bands
+  // (numerically sorted so Core 1 precedes Core 2), plus the hierarchical
+  // "task" band. Without the core-N ids a multi-core scene dropped every core
+  // band from the strip — the regions exist in matrix.regions but REGION_ORDER
+  // doesn't name them. Dedup so a single `core` band never doubles.
+  const coreBandIds = Object.keys(regionsById)
+    .filter((id) => /^core-\d+$/.test(id))
+    .sort((a, b) => Number(a.slice(5)) - Number(b.slice(5)));
+  // Splice the core-N bands into the canonical four-square slot (after Shared,
+  // before Control) so the strip reads Shared → Core 1 → Core 2 → … → Control
+  // → Periphery, matching the diagonal block order.
+  const bandOrder = [
+    ...new Set(["shared", ...coreBandIds, "core", "control", "peripheral", "task"]),
+  ];
   const renderedRegionIds = [];
-  for (const id of [...REGION_ORDER, "task"]) {
+  for (const id of bandOrder) {
     if (!regionsById[id]) continue;
     renderedRegionIds.push(id);
     const r = regionsById[id];
@@ -118,7 +148,7 @@ function renderSingleMatrixStep11({ stageEl, derivedScene, shortCodes }) {
     band.className = "algorithm-final-tsm-region-band";
     band.dataset.region = id;
     band.dataset.size = String(members.length);
-    band.textContent = `${REGION_LABELS[id] ?? r.label ?? id} (${members.length})`;
+    band.textContent = `${labelForRegion(id, r.label)} (${members.length})`;
     regionStrip.appendChild(band);
   }
   root.appendChild(regionStrip);
@@ -152,7 +182,9 @@ function renderSingleMatrixStep11({ stageEl, derivedScene, shortCodes }) {
     cell.dataset.colRegion = colTask.region;
     if (kind === "diagonal") {
       cell.classList.add("diagonal");
-      cell.classList.add(`region-${rowTask.region}`);
+      // Collapse core-N → core for the CSS class (single core hue), mirroring
+      // getRegionColor; keep the precise region id on data-region.
+      cell.classList.add(`region-${regionClass(rowTask.region)}`);
       cell.dataset.region = rowTask.region;
       cell.dataset.id = rowTask.id;
       // SPEC-LENSES §6: Stage 2b's derive.js stamps rendering.emphasis +
@@ -270,8 +302,13 @@ function renderMultiMatrixStep11({ stageEl, derivedScene, shortCodes }) {
   root.appendChild(host);
 
   // Render with ctx codes (so the cells match the decode key); export keeps the
-  // original scene's derive-time codes.
-  const controller = mountAllMatrices(host, decorateScene(withDisplayCodes(derivedScene, shortCodes)), {
+  // original scene's derive-time codes. decorateScene mutates the scene in place
+  // (regions get color, transfers get direction/cross) — and withDisplayCodes
+  // only shallow-clones matrices + tasks, NOT regions/transfers, so without a
+  // deep clone here decorateScene would mutate the shared derivedScene the
+  // export button serializes. structuredClone isolates the display copy.
+  const displayScene = structuredClone(withDisplayCodes(derivedScene, shortCodes));
+  const controller = mountAllMatrices(host, decorateScene(displayScene), {
     enableExplore: false,
   });
 

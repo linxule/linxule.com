@@ -92,8 +92,14 @@ export function renderStep12({ stageEl }) {
   // --- Drop zone ----------------------------------------------------------
   const dropZone = document.createElement("div");
   dropZone.className = "algorithm-drop-zone";
-  dropZone.setAttribute("role", "region");
-  dropZone.setAttribute("aria-label", "Drop dependency observation JSON");
+  // role=button (not region): the zone is keyboard-focusable and click/Enter/
+  // Space open the file picker, so it behaves as a button, and the aria-label
+  // names that affordance instead of promising a passive landmark.
+  dropZone.setAttribute("role", "button");
+  dropZone.setAttribute(
+    "aria-label",
+    "Drop a dependency-observation JSON file here, or press Enter to select one",
+  );
   dropZone.setAttribute("tabindex", "0");
   dropZone.dataset.state = "idle";
   if (dropZone.style) {
@@ -115,6 +121,11 @@ export function renderStep12({ stageEl }) {
   const dropStatus = document.createElement("p");
   dropStatus.className = "algorithm-drop-zone-status";
   dropStatus.dataset.state = "idle";
+  // Announce load progress / errors to assistive tech. Default is a polite
+  // status region; setError() escalates to role=alert (assertive) so a failed
+  // drop interrupts rather than waiting for the user to idle.
+  dropStatus.setAttribute("role", "status");
+  dropStatus.setAttribute("aria-live", "polite");
   if (dropStatus.style) {
     dropStatus.style.margin = "0.4rem 0 0";
     dropStatus.style.fontSize = "0.85em";
@@ -262,8 +273,30 @@ async function handleFile(file, dropZone, dropStatus) {
     if (!Array.isArray(json.edges)) {
       throw new Error("Observation is missing the edges array");
     }
+    // Pre-dispatch referential-integrity check: every edge endpoint must name a
+    // declared node. The engine (core/engine/visibility.js) silently drops
+    // dangling edges, so a malformed upload would report "loaded" while quietly
+    // losing dependencies. Surface it here instead — the algorithm view is only
+    // as honest as the graph it's handed.
+    const nodeIds = new Set(json.nodes.map((node) => node?.id));
+    const dangling = [];
+    for (const edge of json.edges) {
+      if (!nodeIds.has(edge?.from)) dangling.push(`${edge?.from ?? "(missing)"} → ${edge?.to ?? "(missing)"} (from "${edge?.from ?? ""}" not in nodes)`);
+      else if (!nodeIds.has(edge?.to)) dangling.push(`${edge?.from ?? "(missing)"} → ${edge?.to ?? "(missing)"} (to "${edge?.to ?? ""}" not in nodes)`);
+    }
+    if (dangling.length > 0) {
+      const shown = dangling.slice(0, 3).join("; ");
+      const more = dangling.length > 3 ? ` (+${dangling.length - 3} more)` : "";
+      throw new Error(
+        `${dangling.length} edge${dangling.length === 1 ? "" : "s"} reference a node not in nodes[]: ${shown}${more}`,
+      );
+    }
     dropZone.dataset.state = "loaded";
     dropStatus.dataset.state = "loaded";
+    // Reset to a polite status region for the success announcement (a prior
+    // error may have escalated it to role=alert).
+    dropStatus.setAttribute("role", "status");
+    dropStatus.setAttribute("aria-live", "polite");
     dropStatus.textContent = `Loaded ${json.id ?? "(unnamed)"} — ${json.nodes.length} nodes, ${json.edges.length} edges.`;
     if (typeof CustomEvent === "function") {
       dropZone.dispatchEvent(
@@ -278,6 +311,10 @@ async function handleFile(file, dropZone, dropStatus) {
 function setError(dropZone, dropStatus, message) {
   dropZone.dataset.state = "error";
   dropStatus.dataset.state = "error";
+  // Escalate to an assertive alert so the failure is announced immediately,
+  // not deferred until the user idles.
+  dropStatus.setAttribute("role", "alert");
+  dropStatus.setAttribute("aria-live", "assertive");
   dropStatus.textContent = `Could not load file: ${message}`;
 }
 

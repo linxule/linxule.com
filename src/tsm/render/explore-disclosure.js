@@ -124,6 +124,7 @@ function buildLensFilter(scene, activeLens) {
   const arrowsByMatrix = new Map();
   const overlaysByMatrix = new Map();
   const annotationsByMatrix = new Map();
+  const cellsByMatrix = new Map();
   const crossArrows = new Map();
 
   const matrices = scene?.matrices ?? [];
@@ -145,22 +146,39 @@ function buildLensFilter(scene, activeLens) {
     const arrows = new Map();
     const overlays = new Map();
     const annotations = new Map();
+    const cells = new Map();
 
     for (const t of m.transfers ?? []) {
-      if (t?.rendering?.arrow !== true) continue;
       const tr = tier(t);
-      if (tr) arrows.set(`${t.from}→${t.to}`, tr);
+      if (!tr) continue;
+      const key = `${t.from}→${t.to}`;
+      // H1b — arrowed transfers emphasize via the arrows renderer; non-arrowed
+      // transfers render as plain cell marks (e.g. cross-region edges) and
+      // emphasize via the matrix cell renderer. They were previously skipped
+      // entirely, leaving every cell-only lens (cross-region-edge) inert.
+      if (t?.rendering?.arrow === true) arrows.set(key, tr);
+      else cells.set(key, tr);
     }
     const matrixOverlays = m.overlays ?? [];
+    // H1d — firm-boundary keys must match the renderer's CONSUMER index, which
+    // is the position in the FILTERED firm-boundary array (main.js filters
+    // overlays to kind==="firm-boundary"; render/overlays.js stamps
+    // data-boundary-index = that filtered index). Keying off the full-overlays
+    // index `oi` silently misses whenever a module-border precedes a
+    // firm-boundary. Track a firm-only counter that increments on EVERY
+    // firm-boundary (tagged or not) so it stays in lock-step with the consumer.
+    let firmIdx = 0;
     for (let oi = 0; oi < matrixOverlays.length; oi++) {
       const o = matrixOverlays[oi];
-      if (o.kind !== "module-border" && o.kind !== "firm-boundary") continue;
-      const tr = tier(o);
-      if (!tr) continue;
-      if (o.kind === "module-border" && o.regionId) {
-        overlays.set(o.regionId, tr);
-      } else if (o.kind === "firm-boundary") {
-        overlays.set(`firm-boundary:${oi}`, tr);
+      if (o.kind === "firm-boundary") {
+        const fi = firmIdx++;
+        const tr = tier(o);
+        if (tr) overlays.set(`firm-boundary:${fi}`, tr);
+        continue;
+      }
+      if (o.kind === "module-border") {
+        const tr = tier(o);
+        if (tr && o.regionId) overlays.set(o.regionId, tr);
       }
     }
     const anns = m.annotations ?? [];
@@ -172,18 +190,32 @@ function buildLensFilter(scene, activeLens) {
     arrowsByMatrix.set(mi, arrows);
     overlaysByMatrix.set(mi, overlays);
     annotationsByMatrix.set(mi, annotations);
+    cellsByMatrix.set(mi, cells);
   }
 
   for (const a of scene?.arrows ?? []) {
-    const k = a.id ?? `${a.from?.matrix}:${a.from?.taskId}→${a.to?.matrix}:${a.to?.taskId}`;
     const tr = tier(a);
-    if (tr) crossArrows.set(k, tr);
+    if (!tr) continue;
+    // N5 — prefer the explicit id (any non-null string is a valid key, incl.
+    // ids that literally contain "undefined"). Only when there's no id do we
+    // build the positional key, and then validate the endpoint fields directly
+    // rather than substring-matching "undefined" (review finding).
+    if (a.id != null) {
+      crossArrows.set(a.id, tr);
+      continue;
+    }
+    if (a.from?.matrix == null || a.from?.taskId == null || a.to?.matrix == null || a.to?.taskId == null) {
+      console.warn("[explore] cross-arrow lens skipped — missing endpoint fields", a);
+      continue;
+    }
+    crossArrows.set(`${a.from.matrix}:${a.from.taskId}→${a.to.matrix}:${a.to.taskId}`, tr);
   }
 
   return {
     arrows: arrowsByMatrix,
     overlays: overlaysByMatrix,
     annotations: annotationsByMatrix,
+    cells: cellsByMatrix,
     crossArrows,
   };
 }
@@ -411,6 +443,7 @@ export function createExploreDisclosure(container, scene, options = {}) {
       emphasis.arrows?.applyEmphasis?.({ reset: true, layer: "explore" });
       emphasis.overlays?.applyEmphasis?.({ reset: true, layer: "explore" });
       emphasis.annotations?.applyEmphasis?.({ reset: true, layer: "explore" });
+      emphasis.cells?.applyEmphasis?.({ reset: true, layer: "explore" });
       emphasis.crossArrows?.applyEmphasis?.({ reset: true, layer: "explore" });
       emitEmphasisChange();
       return;
@@ -426,6 +459,7 @@ export function createExploreDisclosure(container, scene, options = {}) {
     emphasis.arrows?.applyEmphasis?.({ overridesByMatrix: diff.arrows, reset: true, layer: "explore" });
     emphasis.overlays?.applyEmphasis?.({ overridesByMatrix: diff.overlays, reset: true, layer: "explore" });
     emphasis.annotations?.applyEmphasis?.({ overridesByMatrix: diff.annotations, reset: true, layer: "explore" });
+    emphasis.cells?.applyEmphasis?.({ overridesByMatrix: diff.cells, reset: true, layer: "explore" });
     emphasis.crossArrows?.applyEmphasis?.({ overrides: diff.crossArrows, reset: true, layer: "explore" });
     emitEmphasisChange();
   }

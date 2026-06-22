@@ -27,6 +27,28 @@ const REGION_BLURBS = {
   peripheral: "unrelated to the Core",
 };
 
+// Core regions in a multi-core partition are `core-1`, `core-2`, …
+function coreKeysOf(partition) {
+  return Object.keys(partition || {})
+    .filter((k) => /^core-\d+$/.test(k))
+    .sort((a, b) => Number(a.slice(5)) - Number(b.slice(5)));
+}
+
+// Multi-core declares several core regions (core-1, core-2, …). The theme has a
+// single --color-core hue and the four-square CSS keys off `region-core`, so
+// collapse core-N → core for the cell/dot CSS class, mirroring getRegionColor
+// in core/scene-adapter.js. The precise region id still rides on data-region.
+function regionClass(region) {
+  return /^core-\d+$/.test(region) ? "core" : region;
+}
+
+// Human label for a region id: "Core 1" for core-1, capitalized id otherwise.
+function regionLabel(region) {
+  const m = /^core-(\d+)$/.exec(region);
+  if (m) return `Core ${m[1]}`;
+  return capitalize(region);
+}
+
 /**
  * @param {{
  *   stageEl: HTMLElement,
@@ -48,6 +70,7 @@ export function renderStep9({
   nodeIndex,
   vfivfo,
   partition,
+  multiCorePartition,
   shortCodes,
 }) {
   const n = nodes.length;
@@ -67,14 +90,34 @@ export function renderStep9({
     D[i][j] = 1;
   }
 
+  // A multi-core system partitions into core-1, core-2, …, shared, control,
+  // peripheral; drive everything off that partition so each core's members land
+  // in their OWN band/color instead of being mislabeled into Shared/Control by
+  // the single-core lookup. A core-periphery / hierarchical system uses the
+  // single-core four-square partition unchanged (the default kimi-code path).
+  const activePartition = multiCorePartition ?? partition;
+  // Region display order: Shared, then the core band(s), then Control,
+  // Peripheral. A multi-core partition supplies core-1, core-2, … (numerically
+  // sorted so Core 1 precedes Core 2); a single-core partition supplies one
+  // `core` band. Picking the core band(s) from the partition's actual keys
+  // avoids emitting a phantom empty `core` placeholder alongside the core-N
+  // bands.
+  const coreBands = coreKeysOf(activePartition);
+  const regionList = [
+    "shared",
+    ...(coreBands.length > 0 ? coreBands : ["core"]),
+    "control",
+    "peripheral",
+  ];
+
   // Region lookup. For acyclic fixtures partition is null, so every node
   // falls into a single "task" bucket; we surface that as an empty-region
   // placeholder per the four canonical regions so tests can verify the
   // partition machinery wasn't silently skipped.
   const regionOf = {};
-  if (partition) {
-    for (const region of REGION_ORDER) {
-      for (const id of partition[region] ?? []) regionOf[id] = region;
+  if (activePartition) {
+    for (const region of regionList) {
+      for (const id of activePartition[region] ?? []) regionOf[id] = region;
     }
   }
 
@@ -83,7 +126,7 @@ export function renderStep9({
   root.dataset.step = "9";
   root.dataset.size = String(n);
   root.dataset.order = sortedIds.join(",");
-  if (partition) root.dataset.hasPartition = "true";
+  if (activePartition) root.dataset.hasPartition = "true";
   else root.dataset.hasPartition = "false";
 
   // --- Part 1: annotated sorted matrix --------------------------------------
@@ -119,7 +162,9 @@ export function renderStep9({
       if (r === c) {
         cell.classList.add("diagonal");
         if (rowRegion) {
-          cell.classList.add(`region-${rowRegion}`);
+          // Collapse core-N → core for the CSS class (single core hue), but keep
+          // the precise region id on data-region for the badges + key.
+          cell.classList.add(`region-${regionClass(rowRegion)}`);
           cell.dataset.region = rowRegion;
           // SPEC-LENSES §6 Path B emphasis. Step 8 already emitted the
           // core-periphery-boundary lens on Core cells; Step 9 keeps the
@@ -129,7 +174,7 @@ export function renderStep9({
           // structurally the core-periphery-boundary surface — so Core
           // stays on core-periphery-boundary and the other regions get
           // modularity-boundary as their lens tag.
-          if (rowRegion === "core") {
+          if (regionClass(rowRegion) === "core") {
             cell.dataset.emphasis = "primary";
             cell.dataset.lens = "core-periphery-boundary";
           } else {
@@ -167,14 +212,18 @@ export function renderStep9({
     regionsEl.style.marginTop = "0.5rem";
     regionsEl.style.fontSize = "0.85em";
   }
-  for (const region of REGION_ORDER) {
-    const members = partition ? partition[region] ?? [] : [];
+  for (const region of regionList) {
+    const members = activePartition ? activePartition[region] ?? [] : [];
+    const isCore = regionClass(region) === "core";
+    // Multi-core blurb reuses the single-core "mutual-dependency knot" line for
+    // every core band; the band label (Core 1 / Core 2) carries the distinction.
+    const blurb = REGION_BLURBS[region] ?? (isCore ? REGION_BLURBS.core : "");
     if (members.length === 0) {
       const empty = document.createElement("span");
       empty.className = "algorithm-region-empty";
       empty.dataset.region = region;
       empty.dataset.size = "0";
-      empty.textContent = `${capitalize(region)} 0`;
+      empty.textContent = `${regionLabel(region)} 0`;
       if (empty.style) empty.style.opacity = "0.55";
       regionsEl.appendChild(empty);
       continue;
@@ -188,7 +237,7 @@ export function renderStep9({
     // Core inherits core-periphery-boundary from Step 8 conceptually; other
     // regions tag as modularity-boundary.
     badge.dataset.emphasis = "primary";
-    badge.dataset.lens = region === "core"
+    badge.dataset.lens = isCore
       ? "core-periphery-boundary"
       : "modularity-boundary";
     // First few members for concreteness, then "+N more" — the colored cells +
@@ -197,7 +246,7 @@ export function renderStep9({
     const moreCount = members.length - Math.min(3, members.length);
     const tail = moreCount > 0 ? `, +${moreCount} more` : "";
     badge.textContent =
-      `${capitalize(region)} (${members.length}) — ${REGION_BLURBS[region]}: ${preview}${tail}`;
+      `${regionLabel(region)} (${members.length}) — ${blurb}: ${preview}${tail}`;
     regionsEl.appendChild(badge);
   }
   root.appendChild(regionsEl);
@@ -263,9 +312,16 @@ export function renderStep9({
     const region = regionOf[node.id];
     if (region) {
       dot.dataset.region = region;
-      dot.classList.add(`region-${region}`);
+      // Collapse core-N → core for the dot color class so every core's members
+      // read with the core hue (and not an undefined region-core-N class).
+      dot.classList.add(`region-${regionClass(region)}`);
     } else {
+      // No partition (acyclic) or a node the partition didn't place: flag it
+      // Unclassified so a CSS layer can style these dots distinctly instead of
+      // leaving them silently uncolored. data-region stays "unassigned" for the
+      // existing introspection contract.
       dot.dataset.region = "unassigned";
+      dot.classList.add("algorithm-scatter-dot-unclassified");
     }
     if (dot.style) {
       dot.style.position = "absolute";
@@ -309,12 +365,13 @@ export function renderStep9({
   root.appendChild(inset);
 
   // Per-region count key under the scatter, so a reader can read the dot colours
-  // without scrolling back to the badges.
-  if (partition) {
+  // without scrolling back to the badges. Suppressed for acyclic systems (no
+  // partition) where every dot is Unclassified and a key would be misleading.
+  if (activePartition) {
     const scatterKey = document.createElement("div");
     scatterKey.className = "algorithm-scatter-key";
-    for (const region of REGION_ORDER) {
-      const count = (partition[region] ?? []).length;
+    for (const region of regionList) {
+      const count = (activePartition[region] ?? []).length;
       const item = document.createElement("span");
       item.className = "algorithm-scatter-key-item";
       item.dataset.region = region;
@@ -323,14 +380,14 @@ export function renderStep9({
       item.appendChild(swatch);
       const label = document.createElement("span");
       label.className = "algorithm-scatter-key-label";
-      label.textContent = `${capitalize(region)} ${count}`;
+      label.textContent = `${regionLabel(region)} ${count}`;
       item.appendChild(label);
       scatterKey.appendChild(item);
     }
     root.appendChild(scatterKey);
   }
 
-  if (!partition) {
+  if (!activePartition) {
     const notice = document.createElement("p");
     notice.className = "algorithm-four-square-notice";
     notice.dataset.kind = "hierarchical";

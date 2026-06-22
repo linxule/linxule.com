@@ -119,6 +119,25 @@
   flex-direction: column;
 }
 
+/* Cockpit children must NOT flex-shrink. The cockpit is a capped flex column
+   (max-height + overflow-y:auto above); with the default flex-shrink:1, a tall
+   cockpit on a short viewport compresses the title/controls/caption below their
+   content instead of scrolling, so they mash together. Mirrors the figure
+   walkthrough's `.layout .narrative > *{flex-shrink:0}` (base.css) — this is a
+   different selector and was unaffected (short-viewport bug, 2026-06-22). Inert
+   in the <1100px fallback, where .algorithm-cockpit is display:contents. */
+.algorithm-cockpit > * {
+  flex-shrink: 0;
+}
+
+/* Let a long Step-10/11 caption scroll within the cockpit instead of forcing
+   the controls/title to mash; min-height keeps it from collapsing to nothing
+   while still yielding to the cockpit's own overflow guard above. */
+.algorithm-cockpit .algorithm-caption {
+  overflow-y: auto;
+  min-height: 3em;
+}
+
 /* DOM order is title → caption → controls (caption-first, so a screen reader
    meets the explanation before the buttons); `order` lifts the controls above
    the caption visually so Next/Back hold position as the caption length swings. */
@@ -417,7 +436,10 @@
   background: var(--rule);
   border: 1px solid var(--rule);
   width: 100%;
-  max-width: min(640px, calc(100vh - var(--algo-matrix-chrome, 200px)));
+  /* Floor the height-bound cap: on a wide-but-short viewport the bare calc
+     collapses the dense square to a few px. max(320px, …) holds a legible
+     floor; min(640px, …) keeps the existing upper cap (2026-06-22). */
+  max-width: min(640px, max(320px, calc(100vh - var(--algo-matrix-chrome, 200px))));
   aspect-ratio: 1;
   margin: 4px auto 0;
 }
@@ -467,32 +489,55 @@
   background: var(--warm-tint-3);
 }
 
+/* Cluster/Core diagonal members. Same contrast fix as the four-square region
+   cells below (2026-06-22, M9): paper-on-core measured 4.04:1 at the small
+   label size (sub-AA). Keep the canonical dark task ground (12.7:1 label) and
+   ring the cell in the core hue — which is exactly the "ring the diagonal
+   members" intent already noted above. */
 .algorithm-matrix-cell.in-core.diagonal,
 .algorithm-matrix-cell.in-cluster.diagonal {
-  background: var(--color-core);
-  color: var(--paper);
+  background: var(--diagonal-bg);
+  color: var(--diagonal-ink);
+  box-shadow: inset 0 0 0 3px var(--color-core);
 }
 
-/* Region-colored diagonal cells (Step 9 four-square + Step 11 final TSM). */
+/* Region-colored diagonal cells (Step 9 four-square + Step 11 final TSM).
+
+   Contrast fix (2026-06-22, M9): paper-on-fill failed AA at the small diagonal
+   label size — paper text measured 2.67:1 (peripheral) … 4.04:1 (core) on the
+   four region fills, all below 4.5:1. Rather than darken the region tokens
+   (which are a shared palette and a deliberate four-square payoff), keep the
+   cell's canonical dark task ground (--diagonal-bg + --diagonal-ink paper text
+   = 12.7:1, the same pairing every other diagonal trusts) and express the
+   region hue as a thick INSET RING. The four-square still reads as four colored
+   region cells (the ring carries the hue, ≥3:1 graphic contrast on the dark
+   ground), but the small label no longer sits on a low-contrast colored fill. */
+.algorithm-matrix-cell.diagonal.region-core,
+.algorithm-final-tsm-cell.diagonal.region-core,
+.algorithm-matrix-cell.diagonal.region-shared,
+.algorithm-final-tsm-cell.diagonal.region-shared,
+.algorithm-matrix-cell.diagonal.region-control,
+.algorithm-final-tsm-cell.diagonal.region-control,
+.algorithm-matrix-cell.diagonal.region-peripheral,
+.algorithm-final-tsm-cell.diagonal.region-peripheral {
+  background: var(--diagonal-bg);
+  color: var(--diagonal-ink);
+}
 .algorithm-matrix-cell.diagonal.region-core,
 .algorithm-final-tsm-cell.diagonal.region-core {
-  background: var(--color-core);
-  color: var(--paper);
+  box-shadow: inset 0 0 0 3px var(--color-core);
 }
 .algorithm-matrix-cell.diagonal.region-shared,
 .algorithm-final-tsm-cell.diagonal.region-shared {
-  background: var(--color-shared);
-  color: var(--paper);
+  box-shadow: inset 0 0 0 3px var(--color-shared);
 }
 .algorithm-matrix-cell.diagonal.region-control,
 .algorithm-final-tsm-cell.diagonal.region-control {
-  background: var(--color-control);
-  color: var(--paper);
+  box-shadow: inset 0 0 0 3px var(--color-control);
 }
 .algorithm-matrix-cell.diagonal.region-peripheral,
 .algorithm-final-tsm-cell.diagonal.region-peripheral {
-  background: var(--color-peripheral);
-  color: var(--paper);
+  box-shadow: inset 0 0 0 3px var(--color-peripheral);
 }
 
 .algorithm-matrix-legend {
@@ -741,6 +786,12 @@
   border: 1px solid var(--rule); /* moved off the inline currentColor */
   border-radius: 2px;
   background: var(--bg);
+  /* L6-CSS guard (2026-06-22): the inset width is set inline to 300px by the
+     step-9 renderer (JS, another lane). On a 320px viewport that fixed box is
+     wider than the content column and side-scrolls the stage. max-width caps
+     the box to its container so the page can't scroll sideways; the inner dot
+     positions stay JS-owned. (max-width wins over the inline width per spec.) */
+  max-width: 100%;
 }
 
 /* Per-region count key under the scatter (round swatches = family tag idiom). */
@@ -782,6 +833,10 @@
 .algorithm-scatter-dot.region-control    { color: var(--color-control); }
 .algorithm-scatter-dot.region-peripheral { color: var(--color-peripheral); }
 .algorithm-scatter-dot[data-region="unassigned"] { color: var(--muted); }
+/* Acyclic uploads (no cyclic groups → no partition) tag every dot
+   "unclassified"; mirror the unassigned muting so the scatter reads as one
+   neutral cloud rather than falling back to currentColor (H2 N2). */
+.algorithm-scatter-dot-unclassified { color: var(--muted); }
 
 .algorithm-scatter-axis {
   color: var(--muted);
@@ -866,7 +921,9 @@
   background: var(--rule);
   border: 1px solid var(--rule);
   width: 100%;
-  max-width: min(640px, calc(100vh - var(--algo-matrix-chrome, 200px)));
+  /* Floored like .algorithm-matrix — never collapse below 320px on a short
+     viewport; min(640px, …) keeps the upper cap (2026-06-22). */
+  max-width: min(640px, max(320px, calc(100vh - var(--algo-matrix-chrome, 200px))));
   aspect-ratio: 1;
   margin: 0 auto;
 }

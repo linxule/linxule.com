@@ -38,6 +38,7 @@ import {
   classifyArchitecture,
   deriveSceneFromObservation,
 } from "../../core/synthesis/derive.js";
+import { getStrategy } from "../../core/concept/registry.js";
 import { buildShortCodeMap } from "../../core/synthesis/present.js";
 import { renderTaskLegend } from "../../render/legend.js";
 
@@ -60,6 +61,17 @@ const PHASE_LABELS = {
   5: "The Core",
   6: "Your TSM",
 };
+
+// Core regions in a multi-core partition are emitted as `core-1`, `core-2`, …
+// — return them ordered by the numeric suffix so the diagonal sequence matches
+// cyclicGroups order (largest-first). Mirrors coreKeys() in
+// core/concept/types/multi-core.js so the algorithm view and the synthesis
+// plugin agree on core ordering.
+function coreKeysOf(partition) {
+  return Object.keys(partition || {})
+    .filter((k) => /^core-\d+$/.test(k))
+    .sort((a, b) => Number(a.slice(5)) - Number(b.slice(5)));
+}
 
 /**
  * Mount the algorithm view into a container.
@@ -105,6 +117,33 @@ export function mountAlgorithmView(container, observation, options = {}) {
   const architectureType = partition
     ? classifyArchitecture(partition, nodes.length, cyclicGroups)
     : "hierarchical";
+
+  // When the system classifies as multi-core, the single-core
+  // `partition` above boxes only cyclicGroups[0] — so Steps 7-10 would
+  // mis-render core-2…N members into Shared/Control before Step 11
+  // re-derives the multi-core partition and reveals them as Core 2/3. To
+  // keep the whole arc internally consistent, compute the SAME multi-core
+  // partition Step 11's derived scene uses (`multi-core-four-square`: core-1,
+  // core-2, …, shared, control, peripheral keyed by the engine's
+  // largest-first cyclicGroups order) and thread it through ctx as
+  // `multiCorePartition`. coreGroups[] are the boxed cores (core-1…N) in
+  // diagonal order. For core-periphery / hierarchical / four-square uploads
+  // this is null and the single-core path stays byte-identical — the default
+  // kimi-code (core-periphery) is unaffected.
+  const multiCorePartition =
+    architectureType === "multi-core"
+      ? getStrategy("multi-core-four-square").run({
+          V,
+          idx: nodeIndex,
+          nodes,
+          cyclicGroups,
+          totalNodes: nodes.length,
+        })
+      : null;
+  const coreGroups = multiCorePartition
+    ? coreKeysOf(multiCorePartition).map((k) => multiCorePartition[k])
+    : null;
+
   // Derived tsm-scene — the full v0.3 document the algorithm produces from
   // the observation. Step 11 renders this directly as a "proper TSM" + an
   // "Export as scene.json" button; the rest of the steps ignore it.
@@ -311,6 +350,8 @@ export function mountAlgorithmView(container, observation, options = {}) {
       vfivfo,
       cyclicGroups,
       partition,
+      multiCorePartition,
+      coreGroups,
       architectureType,
       derivedScene,
       shortCodes,

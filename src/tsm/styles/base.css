@@ -382,6 +382,19 @@ header p.subtitle {
   overflow-y: auto;
 }
 
+/* Cockpit children must NOT flex-shrink. The rail is a capped flex column
+   (max-height + overflow-y:auto above); with the default flex-shrink:1, a tall
+   rail on a short viewport compresses items below their content instead of
+   scrolling. .step-caption has min-height:0, so its box collapsed to a few px
+   while its text overflowed downward — mingling the Highlight-patterns and
+   Source-&-provenance sections into the step caption (short-viewport bug,
+   2026-06-22). flex-shrink:0 keeps every item at its natural height so
+   overflow-y:auto scrolls the rail instead. (Inert in the <1024px fallback,
+   where .narrative is display:contents — no flex context.) */
+.layout .narrative > * {
+  flex-shrink: 0;
+}
+
 .layout #tsm {
   /* Fill the flexible column — the grid track caps the width, not a 900px
      wrapper rule (which still governs embeds + the single-column fallback).
@@ -422,6 +435,12 @@ header p.subtitle {
   color: var(--ink-light);
   font-style: italic;
   padding: 8px 0 4px;
+  /* scene.source carries 40-char commit SHAs with no break opportunity; the
+     cockpit/provenance column is finite, so at ≥1.25× zoom the SHA overflows
+     horizontally and bleeds toward the matrix. Let long unbreakable tokens
+     wrap inside the column (2026-06-22). */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* In the app layout the in-card scene title + source are redundant/relocated:
@@ -447,8 +466,10 @@ header p.subtitle {
    right reads as intentional document margin (linxule.com negative space).
    Scoped single-mount / non-algorithm / wide; multi-mount + <1024 keep theirs. */
 /* Centre the single-mount square plate within the (flexible) matrix column —
-   #tsm is a flex column (matrix.css), so align-items centres the capped grid. */
-@media (min-width: 1025px) {
+   #tsm is a flex column (matrix.css), so align-items centres the capped grid.
+   1025→1101 (2026-06-22, M8): matches the grid's collapse breakpoint so the
+   centring only applies while the three-column grid is live. */
+@media (min-width: 1101px) {
   body:not(.view-algorithm) .layout #tsm:not(.multi-mount) {
     align-items: center;
   }
@@ -506,8 +527,15 @@ header p.subtitle {
    scene index + legend) would render as one block ABOVE the matrix, pushing it
    far below the fold. Reading order: caption → controls → switcher → Explore →
    matrix → legend → provenance → scene index (nav last); the decode key
-   (.matrix-meta) is a block after .layout and naturally trails. */
-@media (max-width: 1024px) {
+   (.matrix-meta) is a block after .layout and naturally trails.
+
+   Breakpoint raised 1024→1100 (2026-06-22, M8): in the 1025–1100px band the
+   three-column grid (220 + 340 rails + 2×40 gaps + main padding) starved the
+   centre #tsm track to ~330px. Single-column — where the matrix gets full
+   width — reads better than a cramped three columns, and this now matches the
+   algorithm view's own 1100px collapse (algorithm.css). The min-width caps
+   below move to 1101 in lockstep. */
+@media (max-width: 1100px) {
   .layout {
     display: flex;
     flex-direction: column;

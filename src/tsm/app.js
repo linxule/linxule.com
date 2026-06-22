@@ -382,7 +382,13 @@ export function rebuildMatrixSwitcher(switcherEl, matrixCount, currentIndex, onS
     function setActiveFocusButton(focusKey) {
       if (!focusButtons) return;
       for (const [key, btn] of focusButtons) {
-        btn.classList.toggle("active", key === focusKey);
+        const isActive = key === focusKey;
+        btn.classList.toggle("active", isActive);
+        // a11y — selection was exposed via `.active` (a visual-only class) so
+        // screen-reader users never heard which matrix was focused. Mirror it
+        // onto aria-pressed so the focus buttons announce as toggle buttons
+        // with a pressed state.
+        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
       }
     }
 
@@ -392,7 +398,13 @@ export function rebuildMatrixSwitcher(switcherEl, matrixCount, currentIndex, onS
       bothBtn.type = "button";
       bothBtn.className = "matrix-switcher-btn";
       bothBtn.textContent = matrixCount === 2 ? "Both" : "All";
-      if (currentIndex === null || currentIndex === undefined) {
+      // a11y — the visible "Both"/"All" glyph is terse; give it a descriptive
+      // accessible name and an initial aria-pressed reflecting the no-focus
+      // default. setActiveFocusButton keeps aria-pressed in sync thereafter.
+      bothBtn.setAttribute("aria-label", "Show all matrices");
+      const bothActive = currentIndex === null || currentIndex === undefined;
+      bothBtn.setAttribute("aria-pressed", bothActive ? "true" : "false");
+      if (bothActive) {
         bothBtn.classList.add("active");
       }
       focusButtons.set(null, bothBtn);
@@ -408,8 +420,15 @@ export function rebuildMatrixSwitcher(switcherEl, matrixCount, currentIndex, onS
       btn.type = "button";
       btn.className = "matrix-switcher-btn";
       btn.textContent = String(i);
-      if (i === currentIndex) btn.classList.add("active");
+      // a11y — the visible label is a bare index ("0", "1", …); give the
+      // button a descriptive accessible name. Human-friendly 1-based numbering.
+      btn.setAttribute("aria-label", `Focus matrix ${i + 1}`);
+      const isCurrent = i === currentIndex;
+      if (isCurrent) btn.classList.add("active");
       if (multiMount) {
+        // Expose selection state to assistive tech, kept in sync by
+        // setActiveFocusButton on every click.
+        btn.setAttribute("aria-pressed", isCurrent ? "true" : "false");
         focusButtons.set(i, btn);
         const idx = i;
         btn.addEventListener("click", () => {
@@ -707,7 +726,11 @@ async function mountAlgorithmScene(els) {
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     observation = await resp.json();
   } catch (err) {
-    els.tsm.innerHTML = `<p class="algorithm-load-error"><strong>Error.</strong> Could not load the observation: ${err.message}</p>`;
+    // a11y — #tsm carries no role/aria-live, and the only live region
+    // (#caption) is hidden in algorithm mode, so a bare error <p> here was
+    // never announced. role="alert" on the error element makes both algorithm
+    // error paths (this load failure + the remount catch) speak.
+    els.tsm.innerHTML = `<p class="algorithm-load-error" role="alert"><strong>Error.</strong> Could not load the observation: ${err.message}</p>`;
     console.error(err);
     return;
   }
@@ -816,7 +839,12 @@ async function init() {
       try {
         activeController = mountAlgorithmView(els.tsm, observation);
       } catch (err) {
-        els.tsm.innerHTML = `<p class="algorithm-load-error"><strong>Could not run that observation.</strong> ${err.message}</p>`;
+        // N7 — the prior controller was already destroyed above; if the
+        // remount throws, `activeController` still references the destroyed
+        // instance. Null it so a later activeController.destroy() (next mount /
+        // view toggle) can't run destroy() twice on a torn-down view.
+        activeController = null;
+        els.tsm.innerHTML = `<p class="algorithm-load-error" role="alert"><strong>Could not run that observation.</strong> ${err.message}</p>`;
         console.error(err);
       }
     });

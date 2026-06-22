@@ -436,12 +436,38 @@ export function renderAnnotations(wrapper, gridEl, grid, matrix) {
     // re-stamp both surfaces so an emphasis change touches BOTH (v1.6.3
     // Batch C1 Fix 3 — pre-v1.6.3 only the label was updated and resolved
     // pointers stayed visible after the label was hidden).
+    //
+    // H1f (explore lens visibility) — mirrors the overlays.js / arrows.js
+    // template. Annotations default to `data-emphasis="secondary"`, which CSS
+    // hides via `display:none`; no chip/emphasis path ever force-revealed
+    // them, so a lens-primary annotation the walkthrough hadn't surfaced
+    // stayed hidden before AND after the chip click. Unlike overlays/arrows,
+    // annotations carry no reveal-token baseline (they're always rendered;
+    // there is no `lastTokens`/applyRevealTokens here), so there is nothing to
+    // re-derive — the baseline is simply "no `.visible` class". We force-
+    // reveal the Explore layer's OWN primary annotations by adding `.visible`
+    // (CSS gives `.tsm-annotation.visible` a `display` win over the secondary
+    // hide), and strip it otherwise so clearing the lens empties exploreDiff →
+    // the next apply removes the stale reveal and the annotation returns to its
+    // baseline hidden state.
+    const exploreDiff = emphasisState.exploreDiff;
+    // exploreDiff keys are annotation indices, normalized to NUMBER by this
+    // renderer's applyEmphasis wrapper (string-integer keys → Number) before
+    // they reach the factory's Map. buildLensFilter writes integer `i`
+    // (annotations.set(i, tr)); the fan-out preserves it. Read with the
+    // numeric key, falling back to the string form to stay robust against an
+    // un-normalized writer.
+    function explorePrimary(i) {
+      return exploreDiff.get(i) === "primary" || exploreDiff.get(String(i)) === "primary";
+    }
     for (let i = 0; i < elements.length; i++) {
       const el = elements[i];
       const annotation = annotations[i];
       if (!el || !annotation) continue;
       const eff = effectiveEmphasis(i, annotation);
       el.dataset.emphasis = eff;
+      if (explorePrimary(i)) el.classList.add("visible");
+      else el.classList.remove("visible");
     }
     const pointers = wrapper.querySelectorAll?.(".tsm-annotation-pointer") ?? [];
     for (const ptr of Array.from(pointers)) {
@@ -451,6 +477,9 @@ export function renderAnnotations(wrapper, gridEl, grid, matrix) {
       const annotation = annotations[i];
       if (!annotation) continue;
       ptr.dataset.emphasis = effectiveEmphasis(i, annotation);
+      // Keep the pointer line in lock-step with its label's force-reveal.
+      if (explorePrimary(i)) ptr.classList?.add?.("visible");
+      else ptr.classList?.remove?.("visible");
     }
     if (wrapper?.classList?.toggle) {
       wrapper.classList.toggle("tsm-show-all-emphasis", emphasisState.effectiveShowAll());

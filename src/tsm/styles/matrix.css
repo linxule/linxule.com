@@ -104,8 +104,10 @@
    the cells' own aspect-ratio inside each flex cell, and already fit. Fig 4 is
    single-mount (one matrices[] entry) so it DOES get this cap. The algorithm
    view uses its own grid class (excluded via body:not(.view-algorithm)); the
-   <1024 fallback keeps min(100%,900px) (this @media doesn't reach it). */
-@media (min-width: 1025px) {
+   single-column fallback keeps min(100%,900px) (this @media doesn't reach it).
+   1025→1101 (2026-06-22, M8): matches base.css's raised collapse breakpoint so
+   the viewport-square cap only binds while the three-column grid is live. */
+@media (min-width: 1101px) {
   body:not(.view-algorithm) .layout #tsm:not(.multi-mount) .tsm-grid {
     /* = grid top offset + bottom breathing. The caption + legend moved to the
        margins (2026-05-29), so only the header + mode bar sit above the plate
@@ -113,7 +115,11 @@
        the viewport, so the page never scrolls just to see one matrix whole. */
     --matrix-chrome: 312px;
     width: 100%;
-    max-width: calc(100vh - var(--matrix-chrome));
+    /* Floor the height-bound cap: on a wide-but-short viewport (≥1101px wide,
+       ~360px tall) the bare calc collapses the square to ~48px. max() never
+       lets it fall below a legible 360px — the page scrolls instead, which is
+       the lesser evil (2026-06-22). */
+    max-width: max(360px, calc(100vh - var(--matrix-chrome)));
     aspect-ratio: 1 / 1;
   }
 }
@@ -245,6 +251,21 @@
 
 .cell.transfer.hidden {
   color: transparent !important;
+}
+
+/* H1b — Explore lens emphasis on non-arrowed transfer cells (cross-region
+   edges, etc.). lens-primary force-shows + highlights the lens's targets;
+   lens-dim fades the OTHER revealed marks so the highlighted pattern stands
+   out. lens-dim never applies to .hidden cells (they stay unrevealed). */
+.cell.transfer.lens-primary {
+  background: var(--backward);
+  color: var(--paper);
+  transform: scale(1.08);
+  z-index: 2;
+  border-radius: 2px;
+}
+.cell.transfer.lens-dim:not(.hidden) {
+  opacity: 0.18;
 }
 
 .cell.transfer.cross.highlighted {

@@ -491,6 +491,9 @@ export function mountTSM(element, scene, options = {}) {
         arrows: createSingleMatrixEmphasisAdapter(arrows, { matrixIndex: 0 }),
         overlays: createSingleMatrixEmphasisAdapter(overlays, { matrixIndex: 0 }),
         annotations: createSingleMatrixEmphasisAdapter(annotations, { matrixIndex: 0 }),
+        // H1b — cell emphasis (non-arrowed transfer marks) lives on the matrix
+        // renderer; wire it so cell-only lenses (cross-region-edge) highlight.
+        cells: createSingleMatrixEmphasisAdapter(matrix, { matrixIndex: 0 }),
         crossArrows,
       },
       // v1.6.4 D5.2 — Explore Show All counts the union N across all four
@@ -797,6 +800,11 @@ export function mountAllMatrices(element, scene, options = {}) {
   const arrowsFanOut = createPerMatrixEmphasisFanOut(matrixParts, "arrows");
   const overlaysFanOutEmphasis = createPerMatrixEmphasisFanOut(matrixParts, "overlays");
   const annotationsFanOutEmphasis = createPerMatrixEmphasisFanOut(matrixParts, "annotations");
+  // H1b — the cell renderer (non-arrowed transfer marks) lives on the `matrix`
+  // part; fan the Explore lens out to it so cross-region-edge etc. can be
+  // highlighted. The walkthrough never emphasizes cells, so this is wired into
+  // the Explore emphasis object only (below), not the walkthrough's.
+  const cellsFanOut = createPerMatrixEmphasisFanOut(matrixParts, "matrix");
 
   // v1.6.4 D5.2 — wrap onChange so step transitions also refresh the
   // disclosure's Show All button label. The disclosure is mounted just
@@ -837,6 +845,7 @@ export function mountAllMatrices(element, scene, options = {}) {
         arrows: arrowsFanOut,
         overlays: overlaysFanOutEmphasis,
         annotations: annotationsFanOutEmphasis,
+        cells: cellsFanOut,
         crossArrows,
       },
       /**
