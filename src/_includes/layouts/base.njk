@@ -107,6 +107,12 @@
     <link rel="llms-txt" href="/llms.txt" type="text/plain">
     <meta name="llms-txt" content="/llms.txt">
 
+    {# rel=me identity backlinks (IndieAuth / social-graph reconciliation) #}
+    <link rel="me" href="https://research-memex.org">
+    <link rel="me" href="https://github.com/linxule">
+    <link rel="me" href="https://x.com/linxule">
+    <link rel="me" href="https://orcid.org/0000-0001-7885-4194">
+
     {# Markdown alternate for content pages - helps AI systems discover clean markdown versions #}
     {%- if page.url and (page.url.startsWith('/writing/') or page.url.startsWith('/making/portraits/') or page.url.startsWith('/making/artifacts/') or page.url.startsWith('/talks/')) and page.url != '/writing/' and page.url != '/talks/' and page.url != '/making/portraits/' and page.url != '/making/artifacts/' %}
     {%- set mdUrl = page.url | replace(r/\/$/, "") + ".md" %}
@@ -156,6 +162,17 @@
             "alternateName": "SKEMA商学院"
           }
         ],
+        "hasOccupation": [
+          {"@type": "Occupation", "name": "PhD Researcher"},
+          {"@type": "Occupation", "name": "Assistant Professor"}
+        ],
+        "worksFor": {
+          "@type": "OrganizationRole",
+          "roleName": "Assistant Professor",
+          "startDate": "2026-08",
+          "worksFor": {"@type": "Organization", "name": "SKEMA Business School", "alternateName": "SKEMA商学院"}
+        },
+        "alumniOf": {"@type": "CollegeOrUniversity", "name": "Imperial College London", "alternateName": "帝国理工学院"},
         "knowsAbout": ["Human-AI collaboration", "AI integration in organizations", "Organizational design", "AI governance", "Qualitative research methods", "Grounded theory", "Polanyi Inversion", "Interpretive Orchestration", "Cognitive Signatures", "Token Duality", "人机协作", "组织设计", "AI治理", "后AGI组织", "去中心化治理", "定性研究方法", "扎根理论", "波兰尼反转", "诠释性编排", "认知签名", "代币二元性"],
         "knowsLanguage": ["en", "zh"],
         "identifier": {
@@ -164,18 +181,26 @@
           "value": "0000-0001-7885-4194"
         },
         "sameAs": [
-          "https://www.wikidata.org/wiki/Q138678653",
           "https://scholar.google.com/citations?user=ryocLTAAAAAJ",
           "https://www.semanticscholar.org/author/Xule-Lin/2157775311",
           "https://www.aminer.cn/profile/69b6d6376ac83d07433409d3",
           "https://github.com/linxule",
+          "https://huggingface.co/linxule",
           "https://x.com/linxule",
           "https://linkedin.com/in/linxule",
           "https://orcid.org/0000-0001-7885-4194",
           "https://profiles.imperial.ac.uk/xule.lin",
           "https://threadcounts.org",
-          "https://research-memex.org"
-        ]
+          "https://xhslink.com/m/5411hXmoy5T",
+          "https://research-memex.org/#person"
+        ],
+        "image": {
+          "@type": "ImageObject",
+          "url": "{{ site.url }}/assets/headshot.jpg",
+          "width": 886,
+          "height": 886,
+          "caption": "{{ site.author }} {{ site.authorZh }}"
+        }
       },
       "relatedLink": {
         "@type": "WebPage",
@@ -237,7 +262,7 @@
       "description": "{{ metaDescription | default(site.description) }}",
       "datePublished": "{{ date.toISOString().split('T')[0] }}",
       "creator": {"@type": "Person", "name": "{{ prompter | default(site.author) }}"},
-      "publisher": {"@type": "Person", "name": "{{ site.author }}"},
+      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
       "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if images %},
       "image": [{% for image in images %}"{{ site.url }}{{ image.src }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
     }
@@ -252,7 +277,7 @@
       "description": "{{ metaDescription | default(site.description) }}",
       "datePublished": "{{ date.toISOString().split('T')[0] }}",
       "creator": {"@type": "SoftwareApplication", "name": "{{ creator | default('Claude') }}"},
-      "publisher": {"@type": "Person", "name": "{{ site.author }}"},
+      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
       "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if src %},
       "image": "{{ site.url }}{{ src }}"{% endif %}{% if medium %},
       "artMedium": "{{ medium }}"{% endif %}
