@@ -57,13 +57,23 @@ export function computeGrid(matrix) {
     }
   }
 
+  // Region spans assume each region occupies a contiguous run of tasks. This is
+  // a layout precondition: a band drawn from {start, end} can only be correct if
+  // no other region's task falls between a region's first and last task. Detect
+  // interleaving and fail loudly rather than emit a visually wrong overlapping band.
   const groupSpans = new Map();
   for (let i = 0; i < n; i++) {
     const rid = matrix.tasks[i].region;
     if (!groupSpans.has(rid)) {
       groupSpans.set(rid, { start: i, end: i });
     } else {
-      groupSpans.get(rid).end = i;
+      const span = groupSpans.get(rid);
+      if (span.end !== i - 1) {
+        throw new Error(
+          `Non-contiguous region "${rid}": task at index ${i} resumes the region after another region's tasks (previous region task at index ${span.end}). Region tasks must occupy a contiguous run.`,
+        );
+      }
+      span.end = i;
     }
   }
 

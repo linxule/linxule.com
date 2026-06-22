@@ -27,7 +27,7 @@ const HEADLINES = {
  *   architectureType: string,
  * }} ctx
  */
-export function renderStep10({ stageEl, nodes, edges, vfivfo, partition, architectureType }) {
+export function renderStep10({ stageEl, nodes, vfivfo, partition, architectureType }) {
   const total = nodes.length;
 
   const root = document.createElement("div");

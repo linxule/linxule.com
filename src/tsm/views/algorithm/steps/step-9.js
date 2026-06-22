@@ -37,7 +37,7 @@ const REGION_BLURBS = {
  *   vfivfo: Object<string, { vfi: number, vfo: number }>,
  *   cyclicGroups: Array<Array<string>>,
  *   partition: ({ core: string[], control: string[], shared: string[], peripheral: string[] } | null),
- *   architectureType: string,
+ *   shortCodes?: Object<string, string>,
  * }} ctx
  */
 export function renderStep9({

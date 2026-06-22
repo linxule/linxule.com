@@ -581,6 +581,10 @@ async function mountScene(id, matrixIndex, els) {
     els.prevBtn.disabled = isFirst;
     els.nextBtn.disabled = isLast;
     els.nextBtn.textContent = isLast ? "Done" : "Next step →";
+    // Restart is only ever disabled by the stepCount===0 backstop below; a
+    // walkthrough scene that fires onChange must re-enable it, otherwise a
+    // prior no-narrative scene leaves it stuck disabled for the session.
+    els.restartBtn.disabled = false;
 
     // After a step transition the walkthrough may have shifted items
     // between primary and secondary (setEmphasis on the new step). The

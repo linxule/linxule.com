@@ -218,7 +218,7 @@ function checkDependencyObservationStructure(doc) {
         errors.push({
           code: "V-OBS-3",
           severity: "error",
-          path: locations.split(", ")[1],
+          path: `/matrices/${entries[1].matrixIndex}/nodeIds/${entries[1].nodeIndex}`,
           message: `V-OBS-3: node "${nodeId}" appears in multiple matrices[].nodeIds entries (${locations}). Each node must appear exactly once.`,
         });
       }

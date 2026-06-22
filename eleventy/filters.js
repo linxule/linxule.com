@@ -9,7 +9,8 @@ export default function(eleventyConfig) {
   eleventyConfig.addFilter("readableDate", (dateObj) => {
     return new Date(dateObj).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long'
+      month: 'long',
+      timeZone: 'UTC'
     });
   });
 

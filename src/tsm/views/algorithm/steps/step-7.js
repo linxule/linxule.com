@@ -3,7 +3,8 @@
 // Step 7: "Equal numbers reveal cycles." Proposition 1 from Hidden
 // Structure paper — components that share a (VFI, VFO) pair AND are
 // mutually reachable form a cyclic group. After sorting rows + columns
-// by (VFI desc, VFO asc, id), those groups cluster on the diagonal.
+// by (VFI desc, VFO asc; ties keep observation order), those groups
+// cluster on the diagonal.
 //
 // We render two parts in one frame:
 //   1. The V matrix reordered by sortIdsByMetrics(ids, vfivfo).

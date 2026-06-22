@@ -562,6 +562,14 @@ export function createExploreDisclosure(container, scene, options = {}) {
     getActiveLens: () => activeLens,
     setActiveLens,
     getLenses: () => [...lenses],
+    // Symmetry with the inert lens-less handle (above) and main.js's
+    // `explore` placeholder, both of which expose `refreshShowAllLabel`.
+    // The strip's own "Show all" button was removed (UX pass 2026-05-29),
+    // so the live disclosure owns no show-all label to refresh — this is a
+    // deliberate no-op that keeps the handle's contract honest rather than
+    // relying on main.js's `explore?.refreshShowAllLabel?.()` optional-chain
+    // to silently skip a missing method.
+    refreshShowAllLabel() {},
     destroy() {
       if (destroyed) return;
       strip.removeEventListener?.("keydown", onKey);

@@ -1,6 +1,11 @@
 import { execSync } from 'child_process';
 
-const hash = execSync('git rev-parse --short HEAD').toString().trim();
+let hash;
+try {
+    hash = execSync('git rev-parse --short HEAD').toString().trim();
+} catch {
+    hash = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || Date.now().toString(36);
+}
 
 export default {
     version: hash,

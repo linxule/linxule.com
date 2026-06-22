@@ -114,6 +114,11 @@ export function createHoverSpotlight(wrapper) {
     if (!anchor) {
       throw new Error("createHoverSpotlight.register: anchor is required");
     }
+    // Destroyed-gate parity with explore-disclosure.js mutators: after
+    // destroy() has detached everything, a stray register() must not
+    // re-attach listeners (there is no teardown path left). Return an
+    // inert handle so callers keep a shape unregister() can safely ignore.
+    if (destroyed) return {};
     const handle = {};
     const state = ensureAnchorState(anchor);
     const registration = {

@@ -110,8 +110,8 @@ export function renderMatrix(container, scene, matrixIndex = 0) {
       el.dataset.taskId = cell.task.id;
       const group = groupById[cell.task.region];
       if (externalTaskIndices.has(cell.row)) el.classList.add("external-actor");
-      el.style.background = group.color;
-      const fullName = `${group.label}: ${cell.task.label}`;
+      if (group) el.style.background = group.color;
+      const fullName = group ? `${group.label}: ${cell.task.label}` : cell.task.label;
       // data-fullname drives a styled CSS hover tooltip (.cell.diagonal
       // [data-fullname], styles/matrix.css) — it replaces the native title=,
       // whose ~500ms OS delay clashed with the instant spotlight (the "finicky"

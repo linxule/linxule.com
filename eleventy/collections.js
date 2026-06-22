@@ -214,7 +214,7 @@ export default function(eleventyConfig) {
         slug = 'organizational-futures';
         name = 'Organizational Futures';
       } else {
-        slug = series.toLowerCase().replace(/\s+/g, '-');
+        slug = series.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
         name = series;
       }
 
@@ -301,7 +301,7 @@ export default function(eleventyConfig) {
         item.data.keywords.forEach(kw => addToTag(kw, item, 'talks'));
       }
       if (item.data.tags) {
-        item.data.tags.forEach(tag => addToTag(tag, item, 'talks'));
+        item.data.tags.filter(tag => tag !== 'talks').forEach(tag => addToTag(tag, item, 'talks'));
       }
     });
 

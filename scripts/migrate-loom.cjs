@@ -8,10 +8,15 @@
  * Options:
  *   --dry-run    Show what would be migrated without writing files
  *   --single     Migrate a single file (provide path as argument)
+ *   --force      Overwrite existing target files (default: skip them)
  */
 
 const fs = require('fs');
 const path = require('path');
+
+// Targets written during this run — guards against same-run slug collisions
+// (a second source mapping to the same target would otherwise silently clobber the first)
+const writtenTargets = new Set();
 
 // Configuration
 const CONFIG = {
@@ -70,7 +75,7 @@ function parseFrontmatter(content) {
 
 // Generate URL-friendly slug from filename
 function generateSlug(filename, source) {
-  let slug = filename.replace('.md', '');
+  let slug = filename.replace(/\.md$/, '');
 
   // Handle LOOM main series: loom_post_01_Title → loom-i-title
   if (source.seriesPrefix === 'LOOM') {
@@ -136,7 +141,7 @@ function transformFrontmatter(frontmatter, seriesName) {
 }
 
 // Migrate a single file
-function migrateFile(sourcePath, source, dryRun = false) {
+function migrateFile(sourcePath, source, dryRun = false, force = false) {
   const filename = path.basename(sourcePath);
   const content = fs.readFileSync(sourcePath, 'utf8');
   const { frontmatter, body } = parseFrontmatter(content);
@@ -155,16 +160,28 @@ function migrateFile(sourcePath, source, dryRun = false) {
     console.log(`  Series: ${seriesName || '(none)'}`);
     console.log('');
   } else {
+    if (writtenTargets.has(targetPath)) {
+      console.warn(`WARNING: slug collision — ${slug} already written this run; skipping ${filename}`);
+      return { source: sourcePath, target: targetPath, slug, series: seriesName, skipped: true };
+    }
+    if (fs.existsSync(targetPath) && !force) {
+      console.warn(`SKIP: ${slug} already exists (use --force to overwrite); skipping ${filename}`);
+      return { source: sourcePath, target: targetPath, slug, series: seriesName, skipped: true };
+    }
+    if (fs.existsSync(targetPath)) {
+      console.warn(`WARNING: overwriting existing ${slug} (--force)`);
+    }
     fs.writeFileSync(targetPath, newContent);
+    writtenTargets.add(targetPath);
     console.log(`Migrated: ${filename} → ${slug}`);
   }
 
-  return { source: sourcePath, target: targetPath, series: seriesName };
+  return { source: sourcePath, target: targetPath, slug, series: seriesName };
 }
 
 // Main migration function
 function migrate(options = {}) {
-  const { dryRun = false, singleFile = null } = options;
+  const { dryRun = false, singleFile = null, force = false } = options;
   const results = [];
 
   console.log('LOOM Post Migration');
@@ -180,10 +197,12 @@ function migrate(options = {}) {
 
   if (singleFile) {
     // Migrate single file - determine which source it belongs to
+    const resolvedSingle = path.resolve(singleFile);
     for (const source of CONFIG.sources) {
       const sourceDir = path.join(CONFIG.loomRepo, source.path);
-      if (singleFile.startsWith(sourceDir)) {
-        results.push(migrateFile(singleFile, source, dryRun));
+      const rel = path.relative(sourceDir, resolvedSingle);
+      if (rel && !rel.startsWith('..') && !path.isAbsolute(rel)) {
+        results.push(migrateFile(resolvedSingle, source, dryRun, force));
         break;
       }
     }
@@ -209,7 +228,7 @@ function migrate(options = {}) {
 
       for (const file of files) {
         const sourcePath = path.join(sourceDir, file);
-        results.push(migrateFile(sourcePath, source, dryRun));
+        results.push(migrateFile(sourcePath, source, dryRun, force));
       }
     }
   }
@@ -217,13 +236,25 @@ function migrate(options = {}) {
   console.log('\n===================');
   console.log(`Total: ${results.length} files ${dryRun ? 'would be ' : ''}migrated`);
 
+  // Surface slug collisions (multiple sources mapping to the same target)
+  const slugSources = {};
+  for (const r of results) {
+    (slugSources[r.slug] = slugSources[r.slug] || []).push(r.source);
+  }
+  for (const [slug, srcs] of Object.entries(slugSources)) {
+    if (srcs.length > 1) {
+      console.warn(`WARNING: slug collision on ${slug} from:\n  ${srcs.join('\n  ')}`);
+    }
+  }
+
   return results;
 }
 
 // CLI handling
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
+const force = args.includes('--force');
 const singleIndex = args.indexOf('--single');
 const singleFile = singleIndex >= 0 ? args[singleIndex + 1] : null;
 
-migrate({ dryRun, singleFile });
+migrate({ dryRun, singleFile, force });

@@ -47,7 +47,7 @@ export function I7(matrix, severity) {
     const fromIdx = pos[tr.from];
     const toIdx = pos[tr.to];
     if (fromIdx === undefined || toIdx === undefined) continue;
-    if (fromIdx < toIdx) forward += 1;
+    if (fromIdx < toIdx && tr.mark !== "s") forward += 1;
     else if (fromIdx > toIdx && tr.mark !== "s") backwardRework += 1;
   }
   if (forward === 0 && backwardRework === 0) return issues;

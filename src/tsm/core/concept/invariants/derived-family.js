@@ -133,9 +133,6 @@ function provenanceForMatrix(scene, matrix) {
   if (splitModel === "observation-seeded") {
     const nested = provenance.matrices;
     if (nested && typeof nested === "object") {
-      if (Array.isArray(nested)) {
-        return nested.find((entry) => entry?.id === matrix.id) ?? null;
-      }
       return nested[matrix.id] ?? null;
     }
   }
@@ -161,7 +158,7 @@ export function I14(matrix, severity, scene) {
   const issues = [];
   if (!matrix.tasks || matrix.tasks.length === 0) return issues;
   const { V, idx } = computeVisibility(matrix);
-  for (const tr of matrix.transfers ?? []) {
+  for (const tr of matrix.transfers) {
     const i = idx[tr.to];
     const j = idx[tr.from];
     if (i === undefined || j === undefined) continue; // I1 will flag

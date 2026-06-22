@@ -177,7 +177,7 @@ function synthesizeMatrix(edges, nodeIds, hint, context = {}) {
   // Task ordering — plugin.blockOrder dictates the diagonal sequence.
   // Within each block, sort by VFI desc, then VFO asc.
   const orderedTasks = [];
-  if (partition) {
+  if (partition && plugin.blockOrder.some((r) => Array.isArray(partition[r]))) {
     for (const region of plugin.blockOrder) {
       const ids = sortIdsByMetrics(partition[region] ?? [], vfivfo);
       for (const id of ids) orderedTasks.push({ id, region });

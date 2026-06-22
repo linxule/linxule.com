@@ -511,7 +511,9 @@ export function mountTSM(element, scene, options = {}) {
     if (exploreContainer) explore.open?.();
   }
 
+  let destroyed = false;
   function onResize() {
+    if (destroyed) return;
     measureAndRedraw();
     crossArrows.redraw();
     if (walkthrough) {
@@ -536,6 +538,7 @@ export function mountTSM(element, scene, options = {}) {
 
   return {
     destroy() {
+      destroyed = true;
       clearTimeout(settleTimer);
       window.removeEventListener("resize", onResize);
       overlays.destroy();

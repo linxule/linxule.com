@@ -70,6 +70,7 @@ const TSMScene = typeof HTMLElement === "undefined"
     this._controller = null;
     this._mounted = false;
     this._buttonState = null;
+    this._renderEpoch = 0;
   }
 
   async connectedCallback() {
@@ -79,6 +80,10 @@ const TSMScene = typeof HTMLElement === "undefined"
 
   disconnectedCallback() {
     this._mounted = false;
+    // Invalidate any in-flight _render() (still awaiting fetch/decorateScene) so it aborts
+    // at its next epoch check instead of mounting a controller into a now-detached element
+    // and leaking resize / fonts.ready listeners. (kimi-review finding.)
+    this._renderEpoch++;
     this._teardown();
   }
 
@@ -97,6 +102,10 @@ const TSMScene = typeof HTMLElement === "undefined"
   }
 
   async _render() {
+    // Increment the epoch before any work; capture it locally so every
+    // post-await check compares against the value at call time.
+    const epoch = ++this._renderEpoch;
+
     this._teardown();
     const src = this.getAttribute("src");
     const view = this.getAttribute("view") ?? "walkthrough";
@@ -104,6 +113,7 @@ const TSMScene = typeof HTMLElement === "undefined"
     const matrixIndex = parseMatrixIndexAttr(this.getAttribute("matrix-index"));
 
     if (!src) {
+      if (epoch !== this._renderEpoch) return;
       this.innerHTML = '<div class="tsm-embed-error">Missing src attribute.</div>';
       return;
     }
@@ -114,21 +124,29 @@ const TSMScene = typeof HTMLElement === "undefined"
       if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
       raw = await resp.json();
     } catch (err) {
+      if (epoch !== this._renderEpoch) return;
       const message = `Failed to load scene at ${src}: ${err.message}`;
       this.innerHTML = `<div class="tsm-embed-error">${message}</div>`;
       this.dispatchEvent(new CustomEvent("tsm-error", { detail: { message }, bubbles: true }));
       return;
     }
 
+    // Guard before DOM work that follows the async fetch.
+    if (epoch !== this._renderEpoch) return;
+
     let scene;
     try {
       scene = decorateScene(raw);
     } catch (err) {
+      if (epoch !== this._renderEpoch) return;
       const message = `Failed to decorate scene: ${err.message}`;
       this.innerHTML = `<div class="tsm-embed-error">${message}</div>`;
       this.dispatchEvent(new CustomEvent("tsm-error", { detail: { message }, bubbles: true }));
       return;
     }
+
+    // Final staleness check before all DOM mutations.
+    if (epoch !== this._renderEpoch) return;
 
     // Lay out the embed: a single tsm-wrapper, optionally with caption +
     // controls + progress bar below it.
@@ -187,6 +205,8 @@ const TSMScene = typeof HTMLElement === "undefined"
     }
 
     const onChange = ({ stepIndex, step, isFirst, isLast, total }) => {
+      // Guard: discard callbacks from a superseded render's controller.
+      if (epoch !== this._renderEpoch) return;
       if (captionEl) captionEl.innerHTML = step.caption;
       if (progressEl) {
         progressEl.querySelectorAll(".dot").forEach((d, i) => {
