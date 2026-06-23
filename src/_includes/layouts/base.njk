@@ -57,12 +57,14 @@
     {%- if not ogImg and src and not (src | isHTMLFile) -%}
       {%- set ogImg = src -%}
     {%- endif -%}
-    {%- set ogImg = ogImg | default('/assets/og-image.png') -%}
+    {# Downscale the resolved hero to a small social card — never serve a raw multi-MB source as og:image. See .claude/rules/og-images.md #}
+    {%- set ogImg = (ogImg | ogCard) | default('/assets/og-image.png') -%}
     <meta property="og:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta property="og:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
     <meta property="og:url" content="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
     <meta property="og:image" content="{{ site.url }}{{ ogImg }}">
+    <meta property="og:image:alt" content="{{ (metaDescription or title or site.description) | truncate(200) }}">
     <meta property="og:site_name" content="{{ site.title }}">
 
     {# Twitter Card #}
@@ -72,6 +74,7 @@
     <meta name="twitter:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta name="twitter:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
     <meta name="twitter:image" content="{{ site.url }}{{ ogImg }}">
+    <meta name="twitter:image:alt" content="{{ (metaDescription or title or site.description) | truncate(200) }}">
 
     {# Favicon #}
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -264,7 +267,7 @@
       "creator": {"@type": "Person", "name": "{{ prompter | default(site.author) }}"},
       "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
       "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if images %},
-      "image": [{% for image in images %}"{{ site.url }}{{ image.src }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
+      "image": [{% for image in images %}"{{ site.url }}{{ image.src | ogCard }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
     }
     </script>
     {% endif %}
@@ -279,7 +282,7 @@
       "creator": {"@type": "SoftwareApplication", "name": "{{ creator | default('Claude') }}"},
       "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
       "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if src %},
-      "image": "{{ site.url }}{{ src }}"{% endif %}{% if medium %},
+      "image": "{{ site.url }}{{ src | ogCard }}"{% endif %}{% if medium %},
       "artMedium": "{{ medium }}"{% endif %}
     }
     </script>

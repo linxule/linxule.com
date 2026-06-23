@@ -4,8 +4,10 @@
   "type": "module",
   "description": "Personal website - book aesthetic, algorithmic age",
   "scripts": {
-    "start": "eleventy --serve",
-    "build": "rm -rf _site && eleventy && bunx pagefind --site _site && bash scripts/indexnow-submit.sh"
+    "start": "bun scripts/gen-og-cards.mjs && eleventy --serve",
+    "build": "bun scripts/gen-og-cards.mjs && rm -rf _site && eleventy && bun scripts/check-og-images.mjs && bunx pagefind --site _site && bash scripts/indexnow-submit.sh",
+    "og:cards": "bun scripts/gen-og-cards.mjs",
+    "og:lint": "bun scripts/check-og-images.mjs"
   },
   "dependencies": {
     "@11ty/eleventy": "^3.1.2",

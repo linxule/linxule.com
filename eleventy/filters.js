@@ -117,6 +117,30 @@ export default function(eleventyConfig) {
     return src.toLowerCase().endsWith('.html') || src.toLowerCase().endsWith('.htm');
   });
 
+  // Map a hero image path to its small social-card derivative for og:image,
+  // so a raw multi-MB source is never served as the social card.
+  //   /assets/images/<dir>/<name>.png|webp  → the deterministic 1200w JPEG the
+  //       optimizedImage shortcode emits (/assets/images/optimized/<dir>-<name>-1200w.jpg)
+  //   /writing/attachments/<name>.png|webp   → a 1200x630 card from scripts/gen-og-cards.mjs
+  //   already a card (.jpg/.jpeg), a vector (.svg), the default og image, an
+  //       already-optimized path, or external → returned unchanged.
+  // Full rationale + cache discipline in .claude/rules/og-images.md.
+  eleventyConfig.addFilter("ogCard", (src) => {
+    if (!src || typeof src !== "string") return src;
+    const lower = src.toLowerCase();
+    if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".svg")) return src;
+    if (src.startsWith("/assets/images/optimized/")) return src;
+    const piped = src.match(/^\/assets\/images\/.+\/([^/]+)\.(?:png|webp)$/i);
+    if (piped) {
+      // eleventy-img writes format "jpeg" with a .jpeg extension (shortcodes.js)
+      const parentDir = src.split("/").slice(-2, -1)[0];
+      return `/assets/images/optimized/${parentDir}-${piped[1]}-1200w.jpeg`;
+    }
+    const cover = src.match(/^\/writing\/attachments\/([^/]+)\.(?:png|webp)$/i);
+    if (cover) return `/writing/attachments/${cover[1]}-og.jpg`;
+    return src;
+  });
+
   // Get content type from page URL for feed entries
   eleventyConfig.addFilter("contentType", (url) => {
     if (url.startsWith('/writing/')) return 'writing';
