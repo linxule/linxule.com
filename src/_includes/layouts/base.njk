@@ -26,7 +26,7 @@
         {%- set metaDescription = title ~ ' — a ' ~ (type | default('talk')) ~ ' by ' ~ site.author ~ '.' -%}
       {%- endif -%}
     {%- endif -%}
-    <meta name="description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
+    <meta name="description" content="{{ metaDescription | default(site.description) | truncate(147) }}">
     {%- if robots %}
     <meta name="robots" content="{{ robots }}">
     {%- endif %}
@@ -60,10 +60,15 @@
     {# Downscale the resolved hero to a small social card — never serve a raw multi-MB source as og:image. See .claude/rules/og-images.md #}
     {%- set ogImg = (ogImg | ogCard) | default('/assets/og-image.png') -%}
     <meta property="og:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
-    <meta property="og:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
+    <meta property="og:description" content="{{ metaDescription | default(site.description) | truncate(147) }}">
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
     <meta property="og:url" content="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
     <meta property="og:image" content="{{ site.url }}{{ ogImg }}">
+    {%- if not ogImg.endsWith('.svg') %}
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/{% if ogImg.endsWith('.png') %}png{% else %}jpeg{% endif %}">
+    {%- endif %}
     <meta property="og:image:alt" content="{{ (metaDescription or title or site.description) | truncate(200) }}">
     <meta property="og:site_name" content="{{ site.title }}">
 
@@ -72,7 +77,7 @@
     <meta name="twitter:site" content="@linxule">
     <meta name="twitter:creator" content="@linxule">
     <meta name="twitter:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
-    <meta name="twitter:description" content="{{ metaDescription | default(site.description) | truncate(160) }}">
+    <meta name="twitter:description" content="{{ metaDescription | default(site.description) | truncate(147) }}">
     <meta name="twitter:image" content="{{ site.url }}{{ ogImg }}">
     <meta name="twitter:image:alt" content="{{ (metaDescription or title or site.description) | truncate(200) }}">
 
@@ -267,7 +272,7 @@
       "creator": {"@type": "Person", "name": "{{ prompter | default(site.author) }}"},
       "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
       "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if images %},
-      "image": [{% for image in images %}"{{ site.url }}{{ image.src | ogCard }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
+      "image": [{% for image in images %}"{{ site.url }}{{ image.src }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
     }
     </script>
     {% endif %}
@@ -282,7 +287,7 @@
       "creator": {"@type": "SoftwareApplication", "name": "{{ creator | default('Claude') }}"},
       "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
       "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if src %},
-      "image": "{{ site.url }}{{ src | ogCard }}"{% endif %}{% if medium %},
+      "image": "{{ site.url }}{{ src }}"{% endif %}{% if medium %},
       "artMedium": "{{ medium }}"{% endif %}
     }
     </script>

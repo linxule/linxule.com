@@ -119,9 +119,7 @@ export default function(eleventyConfig) {
     try {
       let metadata = await Image(inputPath, {
         widths: [400, 800, 1200, null], // null = original size
-        // jpeg is the social-card fallback format: the deterministic 1200w jpeg
-        // is what the `ogCard` filter points og:image at (scraper-safe + small).
-        formats: ["avif", "webp", "png", "jpeg"],
+        formats: ["avif", "webp", "png"],
         outputDir: "./.cache/@11ty/img/",
         urlPath: "/assets/images/optimized/",
         filenameFormat: function (id, src, width, format) {

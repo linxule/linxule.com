@@ -19,7 +19,7 @@ The website repo is `xule-site/`, not the parent `personal-website/` directory. 
 - Standalone interactive sub-apps at a root subpath (e.g. `/tsm/`) — vendoring, base-href, privacy allowlist, linking — in `.claude/rules/interactive-subapps.md`. A fourth content shape, distinct from slide decks at `/assets/slides/`.
 - Deploying Making **artifacts** (interactive HTML / video / image into the gallery) — wrappers, poster capture, R2, and why artifacts need *no* base-href (loaded by full file path, not directory URL) — in `.claude/rules/deploying-artifacts.md`.
 - Adding Making **portraits** (a prompt written by one AI, rendered by another generator like Midjourney) — file/dir layout, semantic image naming, the prompt-poem accident, prompter auto-pages, build/verify — in `.claude/rules/adding-portraits.md`.
-- **Social cards (og:image)** — every page's card is auto-downscaled to a small JPEG (never a raw multi-MB source); `ogCard` filter + jpeg pipeline format + `scripts/gen-og-cards.mjs` (writing covers) + a build lint (`scripts/check-og-images.mjs`) — in `.claude/rules/og-images.md`.
+- **Social cards (og:image)** — every page's card is a cropped 1200×630 JPEG (never a raw multi-MB source); `ogCard` filter + `scripts/gen-og-cards.mjs` (generates cards for portraits + writing covers) + a build lint (`scripts/check-og-images.mjs`) — in `.claude/rules/og-images.md`.
 
 ### Key Files
 ```
