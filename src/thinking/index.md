@@ -1,4 +1,5 @@
 ---
+ogImage: /assets/og-cards/thinking.jpg
 layout: layouts/thinking.njk
 title: thinking
 seoTitle: "Thinking — the research framework"

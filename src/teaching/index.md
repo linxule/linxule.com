@@ -1,4 +1,5 @@
 ---
+ogImage: /assets/og-cards/teaching.jpg
 layout: layouts/teaching.njk
 title: teaching
 seoTitle: "Teaching — methods, cases, and tools"

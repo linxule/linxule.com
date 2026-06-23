@@ -1,4 +1,5 @@
 ---
+ogImage: /assets/og-cards/concepts.jpg
 layout: layouts/concepts.njk
 title: concepts
 seoTitle: "Concepts — a working vocabulary"

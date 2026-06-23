@@ -58,7 +58,13 @@
       {%- set ogImg = src -%}
     {%- endif -%}
     {# Downscale the resolved hero to a small social card — never serve a raw multi-MB source as og:image. See .claude/rules/og-images.md #}
-    {%- set ogImg = (ogImg | ogCard) | default('/assets/og-image.png') -%}
+    {%- set ogImg = ogImg | ogCard -%}
+    {# No hero image: image-less content pages (writing w/o cover, HTML artifacts) get a generated title card; everything else gets the brand/default card. #}
+    {%- if not ogImg -%}
+      {%- set auto = page.fileSlug | autoCardPath(layout) -%}
+      {%- if auto -%}{%- set ogImg = auto -%}{%- endif -%}
+    {%- endif -%}
+    {%- if not ogImg -%}{%- set ogImg = '/assets/og-cards/default.jpg' -%}{%- endif -%}
     <meta property="og:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta property="og:description" content="{{ metaDescription | default(site.description) | truncate(147) }}">
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">

@@ -1,4 +1,5 @@
 ---
+ogImage: /assets/og-cards/cv.jpg
 layout: layouts/cv.njk
 title: 简历 — 林徐乐
 lang: zh-CN

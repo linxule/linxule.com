@@ -40,3 +40,4 @@ tools/
 
 # Headless Chrome temp profiles (poster rendering)
 .chrome-tmp/
+.og-preview/

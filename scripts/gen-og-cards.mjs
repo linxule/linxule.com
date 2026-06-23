@@ -14,12 +14,15 @@
  * Full mechanism: .claude/rules/og-images.md.
  */
 import sharp from "sharp";
-import { readFileSync, existsSync, readdirSync, statSync } from "fs";
+import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync } from "fs";
 import path from "path";
+import { sectionCard, titleCard, brandCard } from "./lib/og-cards.mjs";
+import { fileSlugOf } from "../eleventy/og-card-paths.js";
 
 const WRITING_DIR = "src/writing";
 const PORTRAITS_DIR = "src/making/portraits";
 const ARTIFACTS_DIR = "src/making/artifacts";
+const OG_CARDS_DIR = "src/assets/og-cards";
 const PAPER = "#f4f1eb"; // site paper background (matches /assets/og-image.png)
 
 let made = 0;
@@ -105,6 +108,77 @@ for (const file of readdirSync(ARTIFACTS_DIR)) {
   const srcFile = "src" + m[1];
   const base = path.basename(srcFile, ".svg");
   await svgCard(srcFile, path.join(path.dirname(srcFile), `${base}-og.jpg`));
+}
+
+// ── Text cards (resvg) — on-brand cards for pages with no hero image ──────────
+// Brand/default + section index cards + per-page auto-title cards (writing without
+// a cover, HTML artifacts). Wiring: eleventy/og-card-paths.js + base.njk cascade.
+
+mkdirSync(`${OG_CARDS_DIR}/auto`, { recursive: true });
+
+async function writeTextCard(png, outFile) {
+  await sharp(png).jpeg({ quality: 86, mozjpeg: true }).toFile(outFile);
+  made++;
+  console.log(`[og-cards] wrote ${path.relative("src", outFile)}`);
+}
+const fm = (txt, key) => {
+  const m = txt.match(new RegExp(`^${key}:\\s*(.+?)\\s*$`, "im"));
+  return m ? m[1].replace(/^["']|["']$/g, "") : null;
+};
+
+// Brand / default card (also the global fallback in base.njk). design.md line 148:
+// the old card's "to participants." framing is stale → refreshed to "not as tools."
+await writeTextCard(
+  brandCard({
+    name: "Xule Lin",
+    kicker: "LINXULE.COM",
+    taglineLines: [
+      "What becomes impossible to see when",
+      "algorithms enter organizational life —",
+      { text: "not as tools.", accent: true },
+    ],
+  }),
+  `${OG_CARDS_DIR}/default.jpg`
+);
+
+// Section index cards (cyan DOT accent).
+const SECTIONS = {
+  making: ["Portraits as poems, artifacts Claude", "made directly, and research tools."],
+  writing: ["Essays on human–AI collaboration", "in qualitative research."],
+  talks: ["On human–AI collaboration and", "the future of organizing."],
+  thinking: ["What becomes impossible to see when", "AI carries implicit theories of organizing."],
+  concepts: ["A working vocabulary — naming is", "how you make a noticing portable."],
+  teaching: ["Methods, cases, and tools for", "teaching and researching with AI."],
+  cv: ["Organization scholar and", "human–AI collaboration researcher."],
+};
+for (const [key, taglineLines] of Object.entries(SECTIONS)) {
+  await writeTextCard(
+    sectionCard({ kicker: "XULE LIN", title: key, taglineLines }),
+    `${OG_CARDS_DIR}/${key}.jpg`
+  );
+}
+
+// Auto-title cards: writing posts WITHOUT a cover (ogImage), keyed by fileSlug.
+for (const file of readdirSync(WRITING_DIR)) {
+  if (!file.endsWith(".md")) continue;
+  const txt = readFileSync(path.join(WRITING_DIR, file), "utf8");
+  if (fm(txt, "ogImage")) continue; // covered posts get a cover card
+  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}.jpg`;
+  if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(WRITING_DIR, file)).mtimeMs) { skipped++; continue; }
+  const series = fm(txt, "series");
+  const kicker = series ? `WRITING · ${series.toUpperCase()}` : "WRITING";
+  await writeTextCard(titleCard({ kicker, title: fm(txt, "title") || fileSlugOf(file) }), out);
+}
+
+// Auto-title cards: artifacts that aren't a rasterizable SVG (HTML/canvas/video).
+for (const file of readdirSync(ARTIFACTS_DIR)) {
+  if (!file.endsWith(".md")) continue;
+  const txt = readFileSync(path.join(ARTIFACTS_DIR, file), "utf8");
+  const src = fm(txt, "src") || "";
+  if (src.toLowerCase().endsWith(".svg")) continue; // svgCard pass handles these
+  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}.jpg`;
+  if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(ARTIFACTS_DIR, file)).mtimeMs) { skipped++; continue; }
+  await writeTextCard(titleCard({ kicker: "MAKING · ARTIFACT", title: fm(txt, "title") || fileSlugOf(file) }), out);
 }
 
 console.log(`[og-cards] done — ${made} generated, ${skipped} up-to-date.`);

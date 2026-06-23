@@ -3,7 +3,13 @@
  * Custom filters for date formatting, string manipulation, and content extraction
  */
 
+import { autoCardPath } from "./og-card-paths.js";
+
 export default function(eleventyConfig) {
+
+  // Auto-title social card for image-less content pages (writing w/o cover, HTML
+  // artifacts). Returns the generated card path or null. See .claude/rules/og-images.md.
+  eleventyConfig.addFilter("autoCardPath", (fileSlug, layout) => autoCardPath(fileSlug, layout));
 
   // Date formatting
   eleventyConfig.addFilter("readableDate", (dateObj) => {

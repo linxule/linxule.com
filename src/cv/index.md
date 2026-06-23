@@ -1,4 +1,5 @@
 ---
+ogImage: /assets/og-cards/cv.jpg
 layout: layouts/cv.njk
 title: CV
 seoTitle: "CV — organization scholar & AI researcher"
