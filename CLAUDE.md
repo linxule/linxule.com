@@ -18,6 +18,7 @@ The website repo is `xule-site/`, not the parent `personal-website/` directory. 
 - Concept propagation and departure infrastructure in `.claude/rules/concept-propagation.md`
 - Standalone interactive sub-apps at a root subpath (e.g. `/tsm/`) — vendoring, base-href, privacy allowlist, linking — in `.claude/rules/interactive-subapps.md`. A fourth content shape, distinct from slide decks at `/assets/slides/`.
 - Deploying Making **artifacts** (interactive HTML / video / image into the gallery) — wrappers, poster capture, R2, and why artifacts need *no* base-href (loaded by full file path, not directory URL) — in `.claude/rules/deploying-artifacts.md`.
+- Adding Making **portraits** (a prompt written by one AI, rendered by another generator like Midjourney) — file/dir layout, semantic image naming, the prompt-poem accident, prompter auto-pages, build/verify — in `.claude/rules/adding-portraits.md`.
 
 ### Key Files
 ```
