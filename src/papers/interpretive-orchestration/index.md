@@ -18,7 +18,7 @@ authors:
     self: true
   - name: "Kevin Corley"
     orcid: "0000-0002-6556-5032"
-# pdf: interpretive-orchestration.pdf   # ← drop the CC-BY version-of-record PDF in this folder, then uncomment
+pdf: interpretive-orchestration.pdf
 abstract: "This essay proposes “interpretive orchestration” as a collaborative framework between researchers and AI systems, addressing two central challenges: translating tacit knowledge into processable forms, and evaluating AI-generated patterns for theoretical importance. It develops three strategic models — Socratic tension, Euclidean documentation, and Vitruvian mastery — and argues that systematic human–AI partnership can preserve scholarly accountability while leveraging AI's capacity to process patterns across scales beyond unaided human capability."
 links:
   - label: "Publisher (DOI)"
