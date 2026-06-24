@@ -40,6 +40,8 @@ export default function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/writing/attachments");
   // TSM demo — self-contained static sub-app, copied verbatim, served at /tsm/
   eleventyConfig.addPassthroughCopy("src/tsm");
+  // Papers — self-hosted PDFs co-located with each paper's landing page (Google Scholar)
+  eleventyConfig.addPassthroughCopy("src/papers/**/*.pdf");
 
   // Register modular configuration
   collections(eleventyConfig);

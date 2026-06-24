@@ -221,7 +221,10 @@
         "url": "{{ site.url }}/llms.txt",
         "name": "AI Interaction Guidelines",
         "description": "Machine-readable site context for AI assistants and language models"
-      }
+      },
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "usageInfo": "{{ site.url }}/llms.txt",
+      "copyrightHolder": {"@id": "{{ site.url }}/#person"}
     }
     </script>
     {% endif %}
@@ -235,6 +238,10 @@
       "datePublished": "{{ date.toISOString().split('T')[0] }}",
       "author": [{% for author in authors %}{"@type": "Person", {% if author == site.author %}"@id": "{{ site.url }}/#person", {% endif %}"name": "{{ author }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
       "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "usageInfo": "{{ site.url }}/llms.txt",
+      "copyrightHolder": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
+      "copyrightYear": "{{ date.getFullYear() }}",
       "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if defines %},
       "hasPart": [{% for def in defines %}{
         "@type": "DefinedTerm",
@@ -256,6 +263,8 @@
       "name": "Signature Concepts — {{ site.author }}",
       "url": "{{ site.url }}/concepts/",
       "inLanguage": "en",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "usageInfo": "{{ site.url }}/llms.txt",
       "hasDefinedTerm": [{% for concept in collections.concepts %}{
         "@type": "DefinedTerm",
         "name": {{ concept.term | dump | safe }},
@@ -295,6 +304,53 @@
       "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if src %},
       "image": "{{ site.url }}{{ src }}"{% endif %}{% if medium %},
       "artMedium": "{{ medium }}"{% endif %}
+    }
+    </script>
+    {% endif %}
+
+    {% if layout == 'layouts/paper.njk' %}
+    {# Google Scholar / Highwire citation metadata — one paper = one landing-page URL.
+       citation_pdf_url is emitted ONLY when a co-located `pdf:` is present (no dangling links). #}
+    <meta name="citation_title" content="{{ paperTitle | default(title) }}">
+    {%- for a in authors %}
+    <meta name="citation_author" content="{{ a.name }}">
+    {%- endfor %}
+    <meta name="citation_publication_date" content="{{ pubDate }}">
+    {%- if venueType == 'journal' and venue %}
+    <meta name="citation_journal_title" content="{{ venue }}">
+    {%- endif %}
+    {%- if publisher %}
+    <meta name="citation_publisher" content="{{ publisher }}">
+    {%- endif %}
+    {%- if doi %}
+    <meta name="citation_doi" content="{{ doi }}">
+    {%- endif %}
+    {%- if arxivId %}
+    <meta name="citation_arxiv_id" content="{{ arxivId }}">
+    <meta name="citation_technical_report_institution" content="arXiv">
+    {%- endif %}
+    <meta name="citation_abstract_html_url" content="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
+    {%- if pdf %}
+    <meta name="citation_pdf_url" content="{{ site.url }}{{ page.url }}{{ pdf }}">
+    {%- endif %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ScholarlyArticle",
+      "headline": {{ (paperTitle | default(title)) | dump | safe }},
+      "name": {{ (paperTitle | default(title)) | dump | safe }},
+      "author": [{% for a in authors %}{"@type": "Person", {% if a.self %}"@id": "{{ site.url }}/#person", {% endif %}"name": {{ a.name | dump | safe }}{% if a.orcid %}, "identifier": "https://orcid.org/{{ a.orcid }}", "sameAs": "https://orcid.org/{{ a.orcid }}"{% endif %}}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "datePublished": "{{ date.toISOString().split('T')[0] }}",
+      "publisher": {% if publisher %}{"@type": "Organization", "name": {{ publisher | dump | safe }}}{% else %}{"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"}{% endif %},
+      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}",
+      "url": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if venueType == 'journal' and venue %},
+      "isPartOf": {"@type": "Periodical", "name": {{ venue | dump | safe }}}{% endif %}{% if doi %},
+      "identifier": {"@type": "PropertyValue", "propertyID": "DOI", "value": "{{ doi }}"},
+      "sameAs": "https://doi.org/{{ doi }}"{% endif %}{% if license %},
+      "license": "{{ license }}"{% endif %}{% if abstract %},
+      "abstract": {{ abstract | striptags | dump | safe }}{% endif %},
+      "creativeWorkStatus": "{{ creativeWorkStatus | default('Published') }}",
+      "inLanguage": "en"
     }
     </script>
     {% endif %}
