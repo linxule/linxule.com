@@ -46,7 +46,7 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 
 # 发表论文
 
-- Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. 《战略组织》_Strategic Organization_. https://doi.org/10.1177/14761270261448645 [在线优先发表] [[SSRN]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) | [[GitHub]](https://github.com/linxule/interpretive-orchestration-paper)
+- Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. 《战略组织》_Strategic Organization_. https://doi.org/10.1177/14761270261448645 [在线优先发表] [[论文页面]](/papers/interpretive-orchestration/) | [[SSRN]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) | [[GitHub]](https://github.com/linxule/interpretive-orchestration-paper)
 	- 受邀理论贡献，提出"诠释性编排" (interpretive orchestration) 框架，将定性研究者重新定位为人机协作的编排者，应对两大认识论挑战：将隐性知识转化为AI可处理的形式(翻译挑战)，以及对"1.5阶数据" (1.5 order data)——通过计算得出但需人类诠释才具理论意义的模式——行使学术判断(判断挑战)。提出三种战略模型(苏格拉底式、欧几里得式、维特鲁威式)以维护认识论责任。
 
 # 审稿中论文
@@ -73,7 +73,7 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 	- 获得Google Cloud Research Credits Program资助，2023
 - <br/>daogov: DAO治理协调公开数据集 [数据准备阶段]
 	- 78个去中心化组织，26万条治理讨论，约4030万字的审议和决策记录
-- <br/>Lin, X. (2025). _Cognitio Emergens: Agency, Dimensions, and Dynamics in Human–AI Knowledge Co-Creation_. [[arXiv预印本]](https://arxiv.org/abs/2505.03105)
+- <br/>Lin, X. (2025). _Cognitio Emergens: Agency, Dimensions, and Dynamics in Human–AI Knowledge Co-Creation_. [[arXiv预印本]](https://arxiv.org/abs/2505.03105) | [[论文页面]](/papers/cognitio-emergens/)
 	- 将人机认识论伙伴关系作为共同进化系统的框架。研究能动性配置、认识论维度和伙伴关系动态，包括研究者失去对其正式认可的知识的诠释控制的条件。
 - <br/>Lin, X. (2025). _AI Organizational Preferences_. [撰写中]
 	- 使用UK AISI的Inspect框架研究大语言模型 (LLMs) 组织认知中的稳定模式。研究前沿模型在推理组织结构时是否表现出一致的内部特征。
