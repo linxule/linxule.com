@@ -39,6 +39,15 @@
       ]
     },
     {
+      "source": "/license.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/rsl+xml; charset=utf-8"
+        }
+      ]
+    },
+    {
       "source": "/assets/:path*",
       "headers": [
         {

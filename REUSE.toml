@@ -1,0 +1,39 @@
+# REUSE 3.x manifest — https://reuse.software
+# Machine-readable, file-level license mapping for this repository.
+#
+# Scope note (no scorecard theater): this maps the two unambiguous buckets —
+# authored prose (CC BY 4.0) and code (MIT). AI-generated images and other
+# binaries under src/assets and src/making are intentionally NOT blanket-licensed
+# here; their provenance/terms are per-page (see /llms.txt). So `reuse lint` will
+# still report those binaries as missing info — that is deliberate, not an oversight.
+
+version = 1
+
+# Authored prose, essays, concepts, CV, and paper landing pages — CC BY 4.0
+[[annotations]]
+path = [
+  "src/writing/**/*.md",
+  "src/concepts/**/*.md",
+  "src/thinking/**/*.md",
+  "src/talks/**/*.md",
+  "src/teaching/**/*.md",
+  "src/cv/**/*.md",
+  "src/cv-zh/**/*.md",
+  "src/papers/**/*.md",
+]
+SPDX-FileCopyrightText = "Xule Lin <x@linxule.com>"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+# Site source code and templates — MIT
+[[annotations]]
+path = [
+  "**/*.js",
+  "**/*.mjs",
+  "**/*.njk",
+  "**/*.css",
+  "eleventy.config.js",
+  "vercel.json",
+  "package.json",
+]
+SPDX-FileCopyrightText = "Xule Lin <x@linxule.com>"
+SPDX-License-Identifier = "MIT"

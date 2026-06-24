@@ -12,6 +12,16 @@ publisher: "SAGE Publications"
 doi: "10.1177/14761270261448645"
 license: "https://creativecommons.org/licenses/by/4.0/"
 creativeWorkStatus: "Published"
+bibtex: |
+  @article{lin2026interpretive,
+    author  = {Lin, Xule and Corley, Kevin G.},
+    title   = {Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence},
+    journal = {Strategic Organization},
+    year    = {2026},
+    doi     = {10.1177/14761270261448645},
+    note    = {Advance online publication},
+    url     = {https://doi.org/10.1177/14761270261448645}
+  }
 authors:
   - name: "Xule Lin"
     orcid: "0000-0001-7885-4194"

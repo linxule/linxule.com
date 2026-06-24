@@ -11,6 +11,16 @@ venueType: preprint
 arxivId: "2505.03105"
 doi: "10.48550/arXiv.2505.03105"
 creativeWorkStatus: "Preprint"
+bibtex: |
+  @misc{lin2025cognitio,
+    author        = {Lin, Xule},
+    title         = {Cognitio Emergens: Agency, Dimensions, and Dynamics in Human-AI Knowledge Co-Creation},
+    year          = {2025},
+    eprint        = {2505.03105},
+    archivePrefix = {arXiv},
+    doi           = {10.48550/arXiv.2505.03105},
+    url           = {https://arxiv.org/abs/2505.03105}
+  }
 authors:
   - name: "Xule Lin"
     orcid: "0000-0001-7885-4194"
