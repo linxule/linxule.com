@@ -66,4 +66,5 @@ orientations:
   - "What happens when articulation outruns understanding — and the gap is invisible?"
   - "What if the writing is the method?"
   - "Who holds the synthesis?"
+  - "If a machine can say when a sonnet is finished but not when an inquiry has seen enough, what does that leave for you to decide?"
 ---

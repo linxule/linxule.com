@@ -34,11 +34,16 @@ territories:
         oneliner: "Treating AI as if it delivers objective truth in interpretive work."
         essay: "/writing/loom-xiv-calculator-fallacy/"
 
+      - term: "Completion Authority"
+        oneliner: "Who gets to say the work is done — the call no external scorer can make for you."
+        essay: "/writing/loom-xviii-the-end-of-positivism/"
+
     questions:
       - "How do you notice when fluency outruns understanding?"
       - "What if the medium shapes the meaning, not just the message?"
       - "Who holds the synthesis?"
       - "What gets blocked when you optimize for the local maximum?"
+      - "Who gets to say the work is done — and what happens when the whistle is gone?"
 
   - name: "Agency and interaction"
     concepts:
