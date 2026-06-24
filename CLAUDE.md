@@ -19,6 +19,7 @@ The website repo is `xule-site/`, not the parent `personal-website/` directory. 
 - Standalone interactive sub-apps at a root subpath (e.g. `/tsm/`) — vendoring, base-href, privacy allowlist, linking — in `.claude/rules/interactive-subapps.md`. A fourth content shape, distinct from slide decks at `/assets/slides/`.
 - Deploying Making **artifacts** (interactive HTML / video / image into the gallery) — wrappers, poster capture, R2, and why artifacts need *no* base-href (loaded by full file path, not directory URL) — in `.claude/rules/deploying-artifacts.md`.
 - Adding Making **portraits** (a prompt written by one AI, rendered by another generator like Midjourney) — file/dir layout, semantic image naming, the prompt-poem accident, prompter auto-pages, build/verify — in `.claude/rules/adding-portraits.md`.
+- Adding a **paper** landing page (`/papers/<slug>/` for Google Scholar — `citation_*` Highwire tags, a co-located full-text PDF gated on a `pdf:` field, ScholarlyArticle JSON-LD, BibTeX) — in `.claude/rules/papers.md`. The site's AI-discoverability + licensing surface (llms.txt, JSON-LD `license`/`usageInfo`, RSL `/license.xml`, REUSE/SPDX, security.txt, IndexNow) is documented in `.claude/docs/ai-discoverability.md`.
 - **Social cards (og:image)** — every page gets a small 1200×630 card, never a raw source or a generic miss. Two families: **image cards** (sharp-cropped art — portraits, writing covers, SVG artifacts) and **text cards** (on-brand typographic — brand/default, section indexes, per-post auto-title cards for writing-without-cover & HTML artifacts), rendered pure-Node with `@resvg/resvg-js` + vendored fonts in `scripts/og-fonts/`. `ogCard`+`autoCardPath` filters + `scripts/gen-og-cards.mjs` + build lint (`scripts/check-og-images.mjs`) — mechanism in `.claude/rules/og-images.md`, verifying/refreshing live previews in `.claude/rules/og-card-refresh.md`.
 
 ### Key Files
@@ -34,11 +35,12 @@ src/
   writing/                # Blog posts    concepts/           # Concept territory page
   making/                 # Portraits + artifacts
   talks/                  # Presentations
+  papers/                 # Paper landing pages (/papers/, Google Scholar)
 ```
 
 ### Content Types
 
-Writing, Portraits, Artifacts, Thinking, Concepts, Teaching, CV, Talks. Each has its own layout. Frontmatter patterns in `.claude/docs/content-patterns.md`.
+Writing, Portraits, Artifacts, Thinking, Concepts, Teaching, CV, Talks, Papers. Each has its own layout. Frontmatter patterns in `.claude/docs/content-patterns.md`.
 
 ## Key Gotchas
 
