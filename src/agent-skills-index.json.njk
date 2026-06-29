@@ -1,0 +1,18 @@
+---
+permalink: /.well-known/agent-skills/index.json
+eleventyExcludeFromCollections: true
+---
+{
+  "$schema": "{{ agentSkills.schema }}",
+  "skills": [
+{%- for skill in agentSkills.skills %}
+    {
+      "name": {{ skill.name | dump | safe }},
+      "type": {{ skill.type | dump | safe }},
+      "description": {{ skill.description | dump | safe }},
+      "url": {{ skill.url | dump | safe }},
+      "digest": {{ skill.digest | dump | safe }}
+    }{% if not loop.last %},{% endif %}
+{%- endfor %}
+  ]
+}

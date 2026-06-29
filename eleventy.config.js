@@ -42,6 +42,8 @@ export default function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/tsm");
   // Papers — self-hosted PDFs co-located with each paper's landing page (Google Scholar)
   eleventyConfig.addPassthroughCopy("src/papers/**/*.pdf");
+  // Agent Skills Discovery — raw skill artifacts served from the well-known path
+  eleventyConfig.addPassthroughCopy({ "agent-skills": ".well-known/agent-skills" });
 
   // Register modular configuration
   collections(eleventyConfig);
