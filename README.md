@@ -132,6 +132,12 @@ The site uses [Pagefind](https://pagefind.app/) for client-side search:
 - Available at `/search/`
 - Searches writing, portraits, artifacts, talks, teaching, and CV
 
+## Agent Discovery
+
+The site publishes content-only AI and agent discovery metadata: `/llms.txt`, `/site-index.json`, `/.well-known/api-catalog`, markdown page variants, and one Agent Skills Discovery index at `/.well-known/agent-skills/index.json`.
+
+DNS-AID is limited to `_index._agents.linxule.com` and should not advertise A2A or MCP unless those real services exist. Operational notes are in [`docs/agent-discovery.md`](./docs/agent-discovery.md).
+
 ## Deployment
 
 ```bash
