@@ -4,6 +4,24 @@
  */
 
 import { autoCardPath } from "./og-card-paths.js";
+import { imageSize } from "image-size";
+import { readFileSync } from "node:fs";
+
+// Classify an image by aspect ratio for layout routing. Reads header dims only
+// (image-size, no full decode) from the source file behind a public /assets path.
+// Returns 'wide' | 'tall' | 'square', or null if the file can't be measured.
+function aspectClassOf(src) {
+  if (!src || typeof src !== "string") return null;
+  try {
+    const file = src.startsWith("/") ? `./src${src}` : src;
+    const { width, height } = imageSize(readFileSync(file));
+    if (!width || !height) return null;
+    const ratio = width / height;
+    return ratio > 1.15 ? "wide" : ratio < 0.87 ? "tall" : "square";
+  } catch {
+    return null;
+  }
+}
 
 export default function(eleventyConfig) {
 
@@ -69,11 +87,28 @@ export default function(eleventyConfig) {
     return parts.slice(1).join(' ') || null;
   });
 
-  // Deterministic layout picker based on slug hash and orientation
-  eleventyConfig.addFilter("layoutVariant", (slug, orientation) => {
+  // Deterministic layout picker. A uniform set of ≤4 same-shape images gets one
+  // of three orientation-matched variants, hashed by slug → stable per page,
+  // varied across pages ("structured randomness", design.md). Sets that break
+  // those variants' assumptions route to a shape-aware layout instead:
+  //   • heterogeneous aspect (or `orientation: mixed`) → 'salon': a hero leads,
+  //     the rest hang sized by their own aspect (tall frames stay featured-tall).
+  //   • uniform shape but >4 images → 'mosaic': one equal-size array (the scatter
+  //     variants only position 4 and assume a single shape).
+  // This keeps a tall frame from overrunning `drift`'s absolute positions, and a
+  // 7th image from landing unpositioned.
+  eleventyConfig.addFilter("layoutVariant", (slug, orientation, images) => {
     if (!slug) return 'drift';
 
-    // Different layout sets for different orientations
+    if (orientation === 'mixed') return 'salon';
+    if (Array.isArray(images)) {
+      const classes = images.map(im => aspectClassOf(im && im.src)).filter(Boolean);
+      const heterogeneous = classes.length > 1 && !classes.every(c => c === classes[0]);
+      if (heterogeneous) return 'salon';        // mixed shapes → hero + aspect-featured strip
+      if (images.length > 4) return 'mosaic';   // uniform but too many for the scatter variants → equal-size array
+    }
+
+    // Uniform sets: stable, varied pick within the orientation's layout family.
     const landscapeLayouts = ['drift', 'column', 'focus'];
     const portraitLayouts = ['stack', 'grid', 'filmstrip'];
 
@@ -85,6 +120,14 @@ export default function(eleventyConfig) {
       hash = hash & hash;
     }
     return layouts[Math.abs(hash) % layouts.length];
+  });
+
+  // Per-image aspect class for the salon layout's supporting frames, so a tall
+  // frame is featured at portrait height instead of squashed to a wide's height.
+  // Returns 'is-wide' | 'is-tall' | 'is-square' (empty if unmeasurable).
+  eleventyConfig.addFilter("aspectClass", (src) => {
+    const cls = aspectClassOf(src);
+    return cls ? `is-${cls}` : "";
   });
 
   // Extract opening excerpt from content (fallback only — prefer frontmatter description)
