@@ -26,7 +26,7 @@ eleventyExcludeFromCollections: true
 {%- for portrait in collections.portraits %}
     {
       "url": "{{ portrait.url | replace(r/\/$/, "") }}",
-      "url_md": "/making/portraits/{{ portrait.fileSlug }}.md",
+      "url_md": "{{ portrait.url | replace(r/\/$/, "") }}.md",
       "title": {{ portrait.data.title | dump | safe }},
       "section": "portraits",
       "date": "{{ portrait.date.toISOString().split('T')[0] }}",
@@ -38,7 +38,7 @@ eleventyExcludeFromCollections: true
 {%- for artifact in collections.artifacts %}
     {
       "url": "{{ artifact.url | replace(r/\/$/, "") }}",
-      "url_md": "/making/artifacts/{{ artifact.fileSlug }}.md",
+      "url_md": "{{ artifact.url | replace(r/\/$/, "") }}.md",
       "title": {{ artifact.data.title | dump | safe }},
       "section": "artifacts",
       "date": "{{ artifact.date.toISOString().split('T')[0] }}",

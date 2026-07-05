@@ -126,6 +126,11 @@
       "statusCode": 301
     },
     {
+      "source": "/curation-mgmt",
+      "destination": "/cv",
+      "statusCode": 301
+    },
+    {
       "source": "/daogov/:path*",
       "destination": "/writing/dao-governance-resources",
       "statusCode": 301
@@ -138,6 +143,16 @@
     {
       "source": "/markdown",
       "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/about",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/terms",
+      "destination": "/license.xml",
       "statusCode": 301
     },
     {
@@ -303,6 +318,11 @@
     {
       "source": "/talks/2023-08/aom",
       "destination": "/talks",
+      "statusCode": 301
+    },
+    {
+      "source": "/talks/2023-04/ukfan",
+      "destination": "/cv",
       "statusCode": 301
     },
     {

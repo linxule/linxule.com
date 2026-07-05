@@ -4,15 +4,9 @@ eleventyExcludeFromCollections: true
 ---
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    {# llms.txt - high priority for AI discovery #}
-    <url>
-        <loc>{{ site.url }}/llms.txt</loc>
-        <priority>1.0</priority>
-        <changefreq>weekly</changefreq>
-    </url>
 {%- for page in collections.all %}
 {%- set robots = page.data.robots | default("") %}
-{%- if page.url and not page.data.eleventyExcludeFromCollections and not ("noindex" in robots) %}
+{%- if page.url and page.url != "/404.html" and not page.data.eleventyExcludeFromCollections and not ("noindex" in robots) %}
     <url>
         <loc>{{ site.url }}{{ page.url | replace(r/\/$/, "") }}</loc>
         {%- if page.date %}
@@ -21,50 +15,4 @@ eleventyExcludeFromCollections: true
     </url>
 {%- endif %}
 {%- endfor %}
-    {# Markdown versions for AI systems #}
-{%- for post in collections.writing %}
-    <url>
-        <loc>{{ site.url }}/writing/{{ post.fileSlug }}.md</loc>
-        {%- if post.date %}
-        <lastmod>{{ post.date.toISOString().split('T')[0] }}</lastmod>
-        {%- endif %}
-    </url>
-{%- endfor %}
-{%- for portrait in collections.portraits %}
-    <url>
-        <loc>{{ site.url }}/making/portraits/{{ portrait.fileSlug }}.md</loc>
-        {%- if portrait.date %}
-        <lastmod>{{ portrait.date.toISOString().split('T')[0] }}</lastmod>
-        {%- endif %}
-    </url>
-{%- endfor %}
-{%- for artifact in collections.artifacts %}
-    <url>
-        <loc>{{ site.url }}/making/artifacts/{{ artifact.fileSlug }}.md</loc>
-        {%- if artifact.date %}
-        <lastmod>{{ artifact.date.toISOString().split('T')[0] }}</lastmod>
-        {%- endif %}
-    </url>
-{%- endfor %}
-{%- for talk in collections.talks %}
-    <url>
-        <loc>{{ site.url }}/talks/{{ talk.fileSlug }}.md</loc>
-        {%- if talk.date %}
-        <lastmod>{{ talk.date.toISOString().split('T')[0] }}</lastmod>
-        {%- endif %}
-    </url>
-{%- endfor %}
-    {# Static page markdown versions #}
-    <url>
-        <loc>{{ site.url }}/thinking.md</loc>
-    </url>
-    <url>
-        <loc>{{ site.url }}/cv.md</loc>
-    </url>
-    <url>
-        <loc>{{ site.url }}/cv-zh.md</loc>
-    </url>
-    <url>
-        <loc>{{ site.url }}/teaching.md</loc>
-    </url>
 </urlset>

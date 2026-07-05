@@ -236,12 +236,12 @@ Every content page has a parallel `.md` version optimized for LLM consumption. A
 
 #### Portraits
 {% for portrait in collections.portraits %}
-- [{{ portrait.data.title | safe }}](https://linxule.com/making/portraits/{{ portrait.fileSlug }}.md)
+- [{{ portrait.data.title | safe }}](https://linxule.com{{ portrait.url | replace(r/\/$/, "") }}.md)
 {%- endfor %}
 
 #### Artifacts
 {% for artifact in collections.artifacts %}
-- [{{ artifact.data.title | safe }}](https://linxule.com/making/artifacts/{{ artifact.fileSlug }}.md)
+- [{{ artifact.data.title | safe }}](https://linxule.com{{ artifact.url | replace(r/\/$/, "") }}.md)
 {%- endfor %}
 
 #### Talks

@@ -3,7 +3,7 @@ pagination:
   data: collections.artifacts
   size: 1
   alias: artifact
-permalink: /making/artifacts/{{ artifact.fileSlug }}.md
+permalink: "{{ artifact.url | stripTrailingSlash }}.md"
 eleventyExcludeFromCollections: true
 ---
 # {{ artifact.data.title }}

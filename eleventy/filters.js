@@ -59,6 +59,11 @@ export default function(eleventyConfig) {
     return String(value);
   });
 
+  // Canonical path helper for extension-style alternates.
+  eleventyConfig.addFilter("stripTrailingSlash", (value) => {
+    return String(value || '').replace(/\/$/, '');
+  });
+
   // Extract prompter family (first word)
   eleventyConfig.addFilter("prompterFamily", (prompter) => {
     if (!prompter) return null;

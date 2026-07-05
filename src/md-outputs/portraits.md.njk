@@ -3,7 +3,7 @@ pagination:
   data: collections.portraits
   size: 1
   alias: portrait
-permalink: /making/portraits/{{ portrait.fileSlug }}.md
+permalink: "{{ portrait.url | stripTrailingSlash }}.md"
 eleventyExcludeFromCollections: true
 ---
 # {{ portrait.data.title }}
