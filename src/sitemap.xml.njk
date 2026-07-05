@@ -11,7 +11,8 @@ eleventyExcludeFromCollections: true
         <changefreq>weekly</changefreq>
     </url>
 {%- for page in collections.all %}
-{%- if page.url and not page.data.eleventyExcludeFromCollections %}
+{%- set robots = page.data.robots | default("") %}
+{%- if page.url and not page.data.eleventyExcludeFromCollections and not ("noindex" in robots) %}
     <url>
         <loc>{{ site.url }}{{ page.url | replace(r/\/$/, "") }}</loc>
         {%- if page.date %}
