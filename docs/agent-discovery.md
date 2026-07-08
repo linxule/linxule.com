@@ -9,7 +9,9 @@ This site publishes honest agent-discovery metadata for a content-only research 
 - `/llms.txt` explains the site for AI readers.
 - `/site-index.json` provides a machine-readable content index.
 - `/.well-known/api-catalog` is the RFC 9727 linkset for the public discovery surface.
-- Direct markdown variants and `Accept: text/markdown` negotiation expose readable page versions.
+- Direct markdown variants and `Accept: text/markdown` negotiation expose readable page versions. Direct `.md` requests must pass through unchanged; middleware should only rewrite unsuffixed content URLs to their `.md` counterpart.
+
+`sitemap.xml` lists canonical human-facing URLs, not `.md` alternates. Keep Markdown discovery in `/llms.txt`, `/site-index.json`, HTTP `Link` headers, HTML alternate links, and content negotiation so crawlers see one canonical URL per page while AI readers still get clean Markdown.
 
 The Agent Skills index is generated from `src/_data/agentSkills.js`. The SHA-256 digest is computed from `agent-skills/xule-research-navigation/SKILL.md` at build time so the index cannot drift silently from the artifact.
 

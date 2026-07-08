@@ -134,7 +134,7 @@ The site uses [Pagefind](https://pagefind.app/) for client-side search:
 
 ## Agent Discovery
 
-The site publishes content-only AI and agent discovery metadata: `/llms.txt`, `/site-index.json`, `/.well-known/api-catalog`, markdown page variants, and one Agent Skills Discovery index at `/.well-known/agent-skills/index.json`.
+The site publishes content-only AI and agent discovery metadata: `/llms.txt`, `/site-index.json`, `/.well-known/api-catalog`, markdown page variants, and one Agent Skills Discovery index at `/.well-known/agent-skills/index.json`. The sitemap stays canonical HTML pages only; `.md` alternates are discovered through the AI surfaces and content negotiation, not submitted as duplicate sitemap URLs.
 
 DNS-AID is limited to `_index._agents.linxule.com` and should not advertise A2A or MCP unless those real services exist. Operational notes are in [`docs/agent-discovery.md`](./docs/agent-discovery.md).
 

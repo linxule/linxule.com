@@ -25,7 +25,7 @@ The website repo is `xule-site/`, not the parent `personal-website/` directory. 
 ### Key Files
 ```
 eleventy.config.js        # Main config (ESM, imports from eleventy/)
-middleware.ts             # Vercel Edge Middleware (Accept: text/markdown → .md rewrite)
+middleware.ts             # Vercel Edge Middleware (Accept: text/markdown → .md rewrite; direct .md URLs pass through)
 docs/agent-discovery.md   # Tracked Agent Skills, DNS-AID, and DNSSEC operations note
 eleventy/
   collections.js          # Collections (writing, portraits, artifacts, tags, concepts)
