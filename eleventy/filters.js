@@ -198,6 +198,7 @@ export default function(eleventyConfig) {
     if (url.startsWith('/making/portraits/')) return 'portrait';
     if (url.startsWith('/making/artifacts/')) return 'artifact';
     if (url.startsWith('/talks/')) return 'talk';
+    if (url.startsWith('/papers/')) return 'paper';
     return 'page';
   });
 }

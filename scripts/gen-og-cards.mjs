@@ -22,6 +22,7 @@ import { fileSlugOf } from "../eleventy/og-card-paths.js";
 const WRITING_DIR = "src/writing";
 const PORTRAITS_DIR = "src/making/portraits";
 const ARTIFACTS_DIR = "src/making/artifacts";
+const TALKS_DIR = "src/talks";
 const OG_CARDS_DIR = "src/assets/og-cards";
 const PAPER = "#f4f1eb"; // site paper background (matches /assets/og-image.png)
 
@@ -179,6 +180,18 @@ for (const file of readdirSync(ARTIFACTS_DIR)) {
   const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}.jpg`;
   if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(ARTIFACTS_DIR, file)).mtimeMs) { skipped++; continue; }
   await writeTextCard(titleCard({ kicker: "MAKING · ARTIFACT", title: fm(txt, "title") || fileSlugOf(file) }), out);
+}
+
+// Auto-title cards: talks WITHOUT an ogImage override, kicker "TALKS · <year>".
+for (const file of readdirSync(TALKS_DIR)) {
+  if (!file.endsWith(".md")) continue;
+  const txt = readFileSync(path.join(TALKS_DIR, file), "utf8");
+  if (fm(txt, "ogImage")) continue; // covered talks get a cover card
+  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}.jpg`;
+  if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(TALKS_DIR, file)).mtimeMs) { skipped++; continue; }
+  const year = (fm(txt, "date") || "").slice(0, 4);
+  const kicker = year ? `TALKS · ${year}` : "TALKS";
+  await writeTextCard(titleCard({ kicker, title: fm(txt, "title") || fileSlugOf(file) }), out);
 }
 
 console.log(`[og-cards] done — ${made} generated, ${skipped} up-to-date.`);

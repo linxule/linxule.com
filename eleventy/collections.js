@@ -95,6 +95,15 @@ export default function(eleventyConfig) {
     return collectionApi.getFilteredByGlob("src/thinking/**/*.md");
   });
 
+  // Papers collection - formal research outputs (Google Scholar landing pages),
+  // sorted newest first. The hand-authored src/papers/index.njk isn't .md, so
+  // the glob already excludes the index page.
+  eleventyConfig.addCollection("papers", function(collectionApi) {
+    return collectionApi.getFilteredByGlob("src/papers/**/*.md").sort((a, b) => {
+      return b.date - a.date;
+    });
+  });
+
   // Talks collection - public presentations, lectures, etc.
   eleventyConfig.addCollection("talks", function(collectionApi) {
     const allTalks = collectionApi.getFilteredByGlob("src/talks/**/*.md");

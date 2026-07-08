@@ -12,6 +12,9 @@ publisher: "SAGE Publications"
 doi: "10.1177/14761270261448645"
 license: "https://creativecommons.org/licenses/by/4.0/"
 creativeWorkStatus: "Published"
+status: "advance online publication"
+coins: "Interpretive Orchestration"
+onSite: "https://linxule.com/writing/research-memex"
 bibtex: |
   @article{lin2026interpretive,
     author  = {Lin, Xule and Corley, Kevin G.},
@@ -26,7 +29,7 @@ authors:
   - name: "Xule Lin"
     orcid: "0000-0001-7885-4194"
     self: true
-  - name: "Kevin Corley"
+  - name: "Kevin G. Corley"
     orcid: "0000-0002-6556-5032"
 pdf: interpretive-orchestration.pdf
 abstract: "This essay proposes “interpretive orchestration” as a collaborative framework between researchers and AI systems, addressing two central challenges: translating tacit knowledge into processable forms, and evaluating AI-generated patterns for theoretical importance. It develops three strategic models — Socratic tension, Euclidean documentation, and Vitruvian mastery — and argues that systematic human–AI partnership can preserve scholarly accountability while leveraging AI's capacity to process patterns across scales beyond unaided human capability."

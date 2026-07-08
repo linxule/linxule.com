@@ -130,17 +130,22 @@
     <link rel="me" href="https://x.com/linxule">
     <link rel="me" href="https://orcid.org/0000-0001-7885-4194">
 
-    {# Markdown alternate for content pages - helps AI systems discover clean markdown versions #}
-    {%- if page.url and (page.url.startsWith('/writing/') or page.url.startsWith('/making/portraits/') or page.url.startsWith('/making/artifacts/') or page.url.startsWith('/talks/')) and page.url != '/writing/' and page.url != '/talks/' and page.url != '/making/portraits/' and page.url != '/making/artifacts/' %}
-    {%- set mdUrl = page.url | replace(r/\/$/, "") + ".md" %}
-    <link rel="alternate" type="text/markdown" href="{{ mdUrl }}">
+    {# Markdown twin — ONE computation drives both the head alternate and the footer
+       rendering marker, so the marker can never claim a twin that doesn't exist.
+       Series landings (/writing/series/*) are deliberately excluded: curated HTML
+       surfaces whose essays already twin (design-system.md § Renderings). #}
+    {%- set mdAlternate = '' %}
+    {%- if page.url and (page.url.startsWith('/writing/') or page.url.startsWith('/making/portraits/') or page.url.startsWith('/making/artifacts/') or page.url.startsWith('/talks/') or page.url.startsWith('/papers/')) and not page.url.startsWith('/writing/series/') and page.url != '/writing/' and page.url != '/talks/' and page.url != '/making/portraits/' and page.url != '/making/artifacts/' and page.url != '/papers/' %}
+    {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
     {%- endif %}
-    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' %}
-    {%- set mdUrl = page.url | replace(r/\/$/, "") + ".md" %}
-    <link rel="alternate" type="text/markdown" href="{{ mdUrl }}">
+    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' or page.url == '/papers/' or page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' %}
+    {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
     {%- endif %}
-    {%- if page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' %}
-    <link rel="alternate" type="text/markdown" href="{{ page.url | replace(r/\/$/, '') }}.md">
+    {%- if page.url == '/' %}
+    {%- set mdAlternate = '/index.md' %}
+    {%- endif %}
+    {%- if mdAlternate %}
+    <link rel="alternate" type="text/markdown" href="{{ mdAlternate }}">
     {%- endif %}
     {%- if page.url == '/concepts/' %}
     <link rel="license" href="https://creativecommons.org/licenses/by/4.0/">
@@ -311,6 +316,23 @@
     </script>
     {% endif %}
 
+    {% if layout == 'layouts/talk.njk' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "PresentationDigitalDocument",
+      "name": {{ title | dump | safe }},
+      "description": {{ metaDescription | default(site.description) | dump | safe }},
+      "datePublished": "{{ date.toISOString().split('T')[0] }}",
+      "author": [{% if speakers %}{% for speaker in speakers %}{"@type": "Person", {% if speaker == site.author %}"@id": "{{ site.url }}/#person", {% endif %}"name": {{ speaker | dump | safe }}}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}{"@type": "Person", "@id": "{{ site.url }}/#person", "name": {{ site.author | dump | safe }}}{% endif %}],
+      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": {{ site.author | dump | safe }}},
+      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if youtube %},
+      "video": {"@type": "VideoObject", "name": {{ title | dump | safe }}, "embedUrl": "https://www.youtube.com/embed/{{ youtube }}", "uploadDate": "{{ date.toISOString().split('T')[0] }}", "thumbnailUrl": "https://i.ytimg.com/vi/{{ youtube }}/hqdefault.jpg"}{% elif video %},
+      "video": {"@type": "VideoObject", "name": {{ title | dump | safe }}, "embedUrl": {{ video | dump | safe }}, "uploadDate": "{{ date.toISOString().split('T')[0] }}"}{% endif %}
+    }
+    </script>
+    {% endif %}
+
     {% if layout == 'layouts/paper.njk' %}
     {# Google Scholar / Highwire citation metadata — one paper = one landing-page URL.
        citation_pdf_url is emitted ONLY when a co-located `pdf:` is present (no dangling links). #}
@@ -380,8 +402,11 @@
         {{ content | safe }}
     </main>
     
-    {% if rendering %}
-    <div class="rendering">{{ rendering }}</div>
+    {# The rendering marker — dormant since the initial commit, wired 2026-07-08.
+       Appears exactly when the page has a markdown twin (same mdAlternate
+       computation as the head's alternate link). The site's thesis as navigation. #}
+    {% if mdAlternate %}
+    <div class="rendering">one rendering · <a href="{{ mdAlternate }}">the source remains</a></div>
     {% endif %}
     
     <script>
@@ -405,12 +430,14 @@
             history.scrollRestoration = 'auto';
         }
 
-        // Temporarily disable smooth scroll during back/forward navigation
+        // Temporarily disable smooth scroll during back/forward navigation.
+        // Restore by CLEARING the inline style (never set 'smooth' inline — it would
+        // override the prefers-reduced-motion CSS; the stylesheet decides).
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
                 document.documentElement.style.scrollBehavior = 'auto';
                 setTimeout(() => {
-                    document.documentElement.style.scrollBehavior = 'smooth';
+                    document.documentElement.style.scrollBehavior = '';
                 }, 100);
             }
         });
@@ -443,7 +470,7 @@
                         window.scrollTo(0, parseInt(savedPos));
                         sessionStorage.removeItem('scrollPos_' + currentPath);
                         setTimeout(() => {
-                            document.documentElement.style.scrollBehavior = 'smooth';
+                            document.documentElement.style.scrollBehavior = '';
                         }, 100);
                     }
                 } catch (e) {

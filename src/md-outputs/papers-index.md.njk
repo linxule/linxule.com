@@ -1,0 +1,11 @@
+---
+permalink: /papers.md
+eleventyExcludeFromCollections: true
+---
+# Papers
+
+{% for paper in collections.papers %}- [{{ paper.data.paperTitle | default(paper.data.title) }}](https://linxule.com/papers/{{ paper.fileSlug }}.md) — {{ paper.data.venue }}{% if paper.data.year %} ({{ paper.data.year }}){% endif %}{% if paper.data.doi %} · DOI: {{ paper.data.doi }}{% endif %}{% if paper.data.arxivId %} · arXiv: {{ paper.data.arxivId }}{% endif %}
+{% endfor %}
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/papers/*

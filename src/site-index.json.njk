@@ -59,6 +59,18 @@ eleventyExcludeFromCollections: true
       "speakers": [{% for speaker in talk.data.speakers %}{{ speaker | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
       "keywords": [{% for kw in talk.data.keywords %}{{ kw | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
       "youtube": {{ (talk.data.youtube or '') | dump | safe }}
+    }{% if not loop.last or collections.papers.length %},{% endif %}
+{%- endfor %}
+{%- for paper in collections.papers %}
+    {
+      "url": "{{ paper.url | replace(r/\/$/, "") }}",
+      "url_md": "{{ paper.url | replace(r/\/$/, "") }}.md",
+      "title": {{ (paper.data.paperTitle | default(paper.data.title)) | dump | safe }},
+      "section": "papers",
+      "date": "{{ paper.date.toISOString().split('T')[0] }}",
+      "venue": {{ (paper.data.venue or '') | dump | safe }},
+      "authors": [{% for a in paper.data.authors %}{{ a.name | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "summary": {{ (paper.data.abstract or '') | truncate(160) | replace('\n', ' ') | dump | safe }}
     }{% if not loop.last %},{% endif %}
 {%- endfor %}
   ],
@@ -75,29 +87,23 @@ eleventyExcludeFromCollections: true
 {%- endfor %}
   ],
   "publications": [
+{%- for paper in collections.papers %}
     {
-      "title": "Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence",
-      "authors": ["Xule Lin", "Kevin G. Corley"],
-      "year": 2026,
-      "venue": "Strategic Organization",
-      "type": "journal-article",
-      "status": "advance online publication",
-      "doi": "10.1177/14761270261448645",
-      "url": "https://doi.org/10.1177/14761270261448645",
-      "ssrn": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679",
-      "code": "https://github.com/linxule/interpretive-orchestration-paper",
-      "license": "CC BY 4.0",
-      "coins": "Interpretive Orchestration",
-      "onSite": "https://linxule.com/writing/research-memex"
-    },
-    {
-      "title": "Cognitio Emergens: Agency, Dimensions, and Dynamics in Human–AI Knowledge Co-Creation",
-      "authors": ["Xule Lin"],
-      "year": 2025,
-      "venue": "arXiv",
-      "type": "preprint",
-      "arxiv": "2505.03105",
-      "url": "https://arxiv.org/abs/2505.03105"
-    }
+      "title": {{ (paper.data.paperTitle | default(paper.data.title)) | dump | safe }},
+      "authors": [{% for a in paper.data.authors %}{{ a.name | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "year": {{ paper.data.year }},
+      "venue": {{ paper.data.venue | dump | safe }},
+      "type": {% if paper.data.venueType == 'journal' %}"journal-article"{% elif paper.data.venueType == 'preprint' %}"preprint"{% else %}{{ paper.data.venueType | dump | safe }}{% endif %}{% if paper.data.status %},
+      "status": {{ paper.data.status | dump | safe }}{% endif %}{% if paper.data.doi %},
+      "doi": {{ paper.data.doi | dump | safe }}{% endif %}{% for l in paper.data.links %}{% if l.label == "SSRN" %},
+      "ssrn": {{ l.href | dump | safe }}{% endif %}{% if l.label == "Code" %},
+      "code": {{ l.href | dump | safe }}{% endif %}{% endfor %},
+      "url": {% if paper.data.arxivId %}{{ ("https://arxiv.org/abs/" + paper.data.arxivId) | dump | safe }}{% elif paper.data.doi %}{{ ("https://doi.org/" + paper.data.doi) | dump | safe }}{% else %}{{ (site.url + (paper.url | replace(r/\/$/, ""))) | dump | safe }}{% endif %}{% if paper.data.arxivId %},
+      "arxiv": {{ paper.data.arxivId | dump | safe }}{% endif %}{% if paper.data.license %},
+      "license": "CC BY 4.0"{% endif %}{% if paper.data.coins %},
+      "coins": {{ paper.data.coins | dump | safe }}{% endif %}{% if paper.data.onSite %},
+      "onSite": {{ paper.data.onSite | dump | safe }}{% endif %}
+    }{% if not loop.last %},{% endif %}
+{%- endfor %}
   ]
 }

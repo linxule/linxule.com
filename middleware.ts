@@ -2,8 +2,11 @@ import { rewrite, next } from '@vercel/functions';
 
 // Content paths that have .md counterparts
 // Matches: /writing/slug, /making/portraits/slug, /making/artifacts/slug,
-//          /talks/slug, /cv, /cv-zh, /thinking, /teaching, /concepts, index pages
-const MD_PATHS = /^\/(writing\/[^/]+|making\/portraits\/[^/]+|making\/artifacts\/[^/]+|talks\/[^/]+|cv|cv-zh|thinking|teaching|concepts|writing|making|talks)\/?$/;
+//          /talks/slug, /papers/slug, /cv, /cv-zh, /thinking, /teaching,
+//          /concepts, index pages
+// NOTE: scripts/check-renderings.mjs parses the next line — keep MD_PATHS a
+// single-line regex literal ending in `;` with NO trailing comment.
+const MD_PATHS = /^\/(writing\/[^/]+|making\/portraits\/[^/]+|making\/artifacts\/[^/]+|talks\/[^/]+|papers\/[^/]+|cv|cv-zh|thinking|teaching|concepts|writing|making|talks|papers)\/?$/;
 
 export default function middleware(request: Request) {
   const accept = request.headers.get('accept') || '';
@@ -44,6 +47,8 @@ export const config = {
     '/making',
     '/talks/:path',
     '/talks',
+    '/papers/:path',
+    '/papers',
     '/cv',
     '/cv-zh',
     '/thinking',
