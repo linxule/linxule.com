@@ -598,7 +598,7 @@ marker: "making"
         {% if images and images.length > 1 %}
         <div class="artifact-gallery" id="artifact-gallery">
             {% for image in images %}
-            <figure class="artifact-gallery-item" data-src="{{ image.src }}"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
+            <figure class="artifact-gallery-item" data-src="{{ image.src }}{% if image.src | isHTMLFile %}?v={{ site.version }}{% endif %}"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
                 {% if image.src | isHTMLFile %}
                 <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" sandbox="allow-scripts allow-same-origin" loading="{% if loop.index > 2 %}lazy{% else %}eager{% endif %}"></iframe>
                 {% else %}
