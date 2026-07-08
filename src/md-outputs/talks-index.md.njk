@@ -6,3 +6,7 @@ eleventyExcludeFromCollections: true
 
 {% for talk in collections.talks %}- [{{ talk.data.title | safe }}](https://linxule.com/talks/{{ talk.fileSlug }}.md) — {{ talk.date | readableDate }}{% if talk.data.event %} · {{ talk.data.event }}{% endif %}{% if talk.data.speakers %} · Speakers: {{ talk.data.speakers | join(", ") }}{% endif %}
 {% endfor %}
+
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/talks/*

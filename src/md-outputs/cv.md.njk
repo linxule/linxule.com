@@ -6,6 +6,10 @@ eleventyExcludeFromCollections: true
 {%- if page.url == "/cv/" or page.url == "/cv" -%}
 # {{ page.data.title }}
 
-{{ page.rawInput | safe }}
+{{ page.rawInput | replace(r/<span class="accident">(.*?)<\/span>/g, "*$1* *(accident)*") | safe }}
+
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/cv/*
 {%- endif -%}
 {%- endfor -%}

@@ -6,7 +6,7 @@ pagination:
 permalink: /writing/{{ post.fileSlug }}.md
 eleventyExcludeFromCollections: true
 ---
-# {{ post.data.title }}
+# {{ post.data.title }}{% if post.data.accident %} *(accident)*{% endif %}
 {% if post.data.subtitle %}
 *{{ post.data.subtitle }}*
 {% endif %}
@@ -29,3 +29,7 @@ eleventyExcludeFromCollections: true
 
 *Originally published at [{{ post.data.link }}]({{ post.data.link }})*
 {% endif %}
+
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ post.url }}*

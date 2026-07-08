@@ -15,3 +15,7 @@ Portraits and artifacts.
 
 {% for artifact in collections.artifacts %}- [{{ artifact.data.title | safe }}](https://linxule.com{{ artifact.url | replace(r/\/$/, "") }}.md) — {{ artifact.date | readableDate }}{% if artifact.data.creator %} · Creator: {{ artifact.data.creator }}{% endif %}{% if artifact.data.medium %} · Medium: {{ artifact.data.medium }}{% endif %}
 {% endfor %}
+
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/making/*

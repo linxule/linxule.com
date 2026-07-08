@@ -215,6 +215,8 @@ Everything below is navigation, not narrative — the site map, clean-markdown U
 
 **Talks** (`/talks/`) — Conference presentations, invited talks, and public lectures with video
 
+**Papers** (`/papers/`) — Formal research outputs with stable identifiers: per-paper landing pages with abstract, citation metadata, BibTeX, and full text where licensing permits
+
 **Teaching** (`/teaching/`) — Courses and curriculum
 
 **Search** (`/search/`) — Full-text search across all content (Pagefind-powered)
@@ -223,9 +225,9 @@ Everything below is navigation, not narrative — the site map, clean-markdown U
 
 ### Markdown Versions
 
-Every content page has a parallel `.md` version optimized for LLM consumption. Append `.md` to the URL path.
+Most content shapes have a parallel `.md` version: writing, portraits, artifacts, talks, papers, thinking, concepts, teaching, CV (en/zh), and the section indexes. Tag pages, prompter/creator pages, and series landings do not — they are curated HTML surfaces whose essays already twin.
 
-**What you get:** Clean markdown with metadata header (title, date, authors, keywords), full content without HTML/CSS/JS, image paths for reference, ~10x fewer tokens than parsing HTML.
+**What you get:** Clean markdown with metadata header (title, date, authors, keywords), full content without HTML/CSS/JS, image paths for reference, ~10x fewer tokens than parsing HTML. Each page's one cyan accident survives translation as a text marker — the accident line (or the emphasized fragment) is followed by `*(accident)*`. Every twin closes with a colophon naming its HTML sibling.
 
 **Pattern:** `{url}.md` — e.g. `/writing/some-post` → `/writing/some-post.md`
 
@@ -276,7 +278,7 @@ JSON manifest of all content pages with metadata:
 Useful for programmatic access, filtering, and RAG pipelines.
 
 **RSS Feed** (`/feed.xml`)
-Atom feed of the 20 most recent items across all content types (writing, portraits, artifacts, talks), sorted by date.
+Atom feed of the 20 most recent items across all content types (writing, portraits, artifacts, talks, papers), sorted by date.
 
 ### What's in the pages
 
