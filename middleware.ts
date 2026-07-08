@@ -16,6 +16,10 @@ export default function middleware(request: Request) {
   const url = new URL(request.url);
   const pathname = url.pathname.replace(/\/$/, '') || '/';
 
+  if (pathname.endsWith('.md')) {
+    return next();
+  }
+
   // Root → /index.md
   if (pathname === '/') {
     return rewrite(new URL(`/index.md${url.search}`, request.url));
