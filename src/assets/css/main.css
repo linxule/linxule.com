@@ -26,6 +26,7 @@
     --measure: 38rem;
 
     /* Scale - machine voice sizes */
+    --size-glyph: 0.55rem;
     --size-whisper: 0.6rem;
     --size-label: 0.65rem;
     --size-meta: 0.7rem;
@@ -33,7 +34,12 @@
     --size-note: 0.8rem;
     --size-quiet: 0.95rem;
 
+    /* Scale - human voice, between body and headings */
+    --size-entry: 1.1rem;
+    --size-statement: 1.2rem;
+
     /* Tracking - letter-spacing registers */
+    --tracking-whisper: 0.05em;
     --tracking-quiet: 0.1em;
     --tracking-label: 0.15em;
     --tracking-marker: 0.2em;
@@ -395,15 +401,16 @@ p {
    Rendering marker
    ======================================== */
 
+/* In-flow at the document foot — a closing gesture you reach, not viewport
+   chrome (the dot stays the page's only persistent fixture). Mirrors the
+   markdown twin's closing colophon. */
 .rendering {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
+    margin: 6rem auto 2rem;
+    text-align: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: var(--size-whisper);
     color: var(--ink-faint);
-    opacity: 0.3;
+    opacity: 0.45;
     transition: opacity 0.3s ease, color 0.3s ease;
 }
 
@@ -868,6 +875,10 @@ a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
     /* Disable smooth scrolling */
     html {
+        scroll-behavior: auto;
+    }
+
+    .writing-book {
         scroll-behavior: auto;
     }
 

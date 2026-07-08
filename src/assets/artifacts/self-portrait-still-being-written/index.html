@@ -376,6 +376,7 @@ function drawCaptions() {
 }
 
 // ---- loop ----
+let settleFrames = 30; /* reduced-motion: settle, then rest */
 function frame(ms) {
   const t = ms / 1000;
   // is the mirror being observed?
@@ -394,7 +395,7 @@ function frame(ms) {
   drawWash();
   drawWords(t);
   drawCaptions();
-  requestAnimationFrame(frame);
+  if (!reduced || settleFrames-- > 0) requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 })();

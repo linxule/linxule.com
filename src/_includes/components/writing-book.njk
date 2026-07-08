@@ -101,6 +101,7 @@
     const dots = document.querySelectorAll('#writing-nav .book-nav-dot');
     const spreads = book.querySelectorAll('.essay-spread');
     const scrollHint = document.getElementById('writing-scroll-hint');
+    const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
 
     // Update active dot on scroll
     book.addEventListener('scroll', () => {
@@ -121,7 +122,7 @@
     // Click dot to jump to spread
     dots.forEach((dot, i) => {
         dot.addEventListener('click', () => {
-            spreads[i].scrollIntoView({ behavior: 'smooth' });
+            spreads[i].scrollIntoView({ behavior: scrollBehavior });
         });
     });
 
@@ -136,14 +137,14 @@
                 Math.floor(currentScroll / spreadHeight) + 1,
                 spreads.length - 1
             );
-            spreads[nextIndex].scrollIntoView({ behavior: 'smooth' });
+            spreads[nextIndex].scrollIntoView({ behavior: scrollBehavior });
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             const prevIndex = Math.max(
                 Math.ceil(currentScroll / spreadHeight) - 1,
                 0
             );
-            spreads[prevIndex].scrollIntoView({ behavior: 'smooth' });
+            spreads[prevIndex].scrollIntoView({ behavior: scrollBehavior });
         }
     });
 

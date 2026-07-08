@@ -3,27 +3,32 @@ layout: layouts/base.njk
 marker: "papers"
 ---
 <style>
-    .paper { max-width: var(--measure, 38rem); margin: 10rem auto 6rem; padding: 0 2rem; }
-    .paper-venue { font-family: "IBM Plex Mono", monospace; font-size: .78rem; letter-spacing: .05em; text-transform: uppercase; opacity: .65; }
-    .paper h1 { font-size: 1.9rem; line-height: 1.22; margin: .6rem 0 1rem; }
-    .paper-authors { font-style: italic; font-size: 1.05rem; margin-bottom: .4rem; }
-    .paper-meta { font-size: .9rem; opacity: .8; margin-bottom: 1.5rem; }
-    .paper-meta a { text-decoration: none; border-bottom: 1px solid currentColor; }
-    .paper-pdf { font-family: "IBM Plex Mono", monospace; font-size: .9rem; margin: 1.5rem 0; }
+    /* Law-zone shape — token vocabulary throughout (design.md: Jurisdiction) */
+    .paper { max-width: var(--measure); margin: 10rem auto 6rem; padding: 0 2rem; }
+    .paper-venue { font-family: 'IBM Plex Mono', monospace; font-size: var(--size-aside); letter-spacing: var(--tracking-whisper); text-transform: uppercase; color: var(--ink-faint); }
+    .paper h1 { font-size: clamp(1.3rem, 2.2vw, 1.8rem); font-weight: 300; line-height: 1.3; margin: .6rem 0 1rem; }
+    .paper-authors { font-style: italic; font-size: var(--size-entry); margin-bottom: .4rem; }
+    .paper-meta { font-size: 0.9rem; color: var(--ink-light); margin-bottom: 1.5rem; }
+    .paper-meta a { text-decoration: none; border-bottom: 1px solid var(--ink-ghost); transition: color 0.2s ease, border-color 0.2s ease; }
+    .paper-meta a:hover { border-color: var(--bloom); }
+    .paper-pdf { font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; margin: 1.5rem 0; }
     .paper-abstract { margin: 2rem 0; }
-    .paper-abstract h2 { font-size: .82rem; font-family: "IBM Plex Mono", monospace; letter-spacing: .05em; text-transform: uppercase; opacity: .65; margin-bottom: .5rem; }
-    .paper-links { display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 2rem 0; font-family: "IBM Plex Mono", monospace; font-size: .85rem; }
-    .paper-cite { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,.12); font-size: .85rem; }
-    .paper-cite .label { font-family: "IBM Plex Mono", monospace; letter-spacing: .05em; text-transform: uppercase; opacity: .65; }
-    .paper-cite code { display: block; white-space: pre-wrap; background: rgba(0,0,0,.035); padding: 1rem; border-radius: 2px; margin-top: .6rem; font-family: "IBM Plex Mono", monospace; font-size: .8rem; line-height: 1.5; }
+    .paper-abstract h2 { font-family: 'IBM Plex Mono', monospace; font-size: var(--size-whisper); font-weight: 400; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--ink-ghost); margin-bottom: .5rem; }
+    .paper-abstract p { line-height: 1.8; }
+    .paper-links { display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 2rem 0; font-family: 'IBM Plex Mono', monospace; font-size: var(--size-aside); }
+    .paper-cite { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--ink-ghost); font-size: 0.85rem; }
+    .paper-cite .label { font-size: var(--size-whisper); letter-spacing: var(--tracking-label); color: var(--ink-ghost); } /* ghost-label, matching the other block openers */
+    .paper-cite code { display: block; white-space: pre-wrap; background: var(--paper-dark); padding: 1rem; border-radius: 2px; margin-top: .6rem; font-family: 'IBM Plex Mono', monospace; font-size: var(--size-note); line-height: 1.6; }
     .paper-bibtex { margin-top: 1rem; }
-    .paper-bibtex summary { font-family: "IBM Plex Mono", monospace; font-size: .78rem; letter-spacing: .05em; text-transform: uppercase; opacity: .65; cursor: pointer; }
-    .paper-bibtex pre { background: rgba(0,0,0,.035); padding: 1rem; border-radius: 2px; margin-top: .6rem; overflow-x: auto; }
-    .paper-bibtex code { font-family: "IBM Plex Mono", monospace; font-size: .76rem; line-height: 1.5; white-space: pre; }
-    .paper-license { margin-top: 1.5rem; font-size: .8rem; opacity: .7; }
+    .paper-bibtex summary { font-family: 'IBM Plex Mono', monospace; font-size: var(--size-whisper); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--ink-ghost); cursor: pointer; transition: color 0.2s ease; }
+    .paper-bibtex summary:hover { color: var(--bloom); }
+    .paper-bibtex pre { background: var(--paper-dark); padding: 1rem; border-radius: 2px; margin-top: .6rem; overflow-x: auto; }
+    .paper-bibtex code { font-family: 'IBM Plex Mono', monospace; font-size: var(--size-aside); line-height: 1.6; white-space: pre; }
+    .paper-license { margin-top: 1.5rem; font-size: var(--size-note); color: var(--ink-light); }
+    @media (max-width: 768px) { .paper { margin: 3rem auto 4rem; padding: 0 1.5rem; } }
 </style>
-<article class="paper">
-    <div class="paper-venue">{{ venue }}{% if venueType == 'journal' %} · Article{% elif venueType == 'preprint' %} · Preprint{% endif %}{% if year %} · {{ year }}{% endif %}</div>
+<article class="paper" data-pagefind-body data-pagefind-filter="type:paper">
+    <div class="paper-venue">{{ venue }}{% if venueType == 'journal' %} · Article{% elif venueType == 'preprint' %} · Preprint{% endif %}{% if year %} · <span class="accident">{{ year }}</span>{% endif %}</div>
     <h1>{{ paperTitle | default(title) }}</h1>
     <div class="paper-authors">{% for a in authors %}{{ a.name }}{% if not loop.last %}, {% endif %}{% endfor %}</div>
     <div class="paper-meta">

@@ -5,17 +5,20 @@ marker: "papers"
 description: "Peer-reviewed papers and preprints by Xule Lin, with self-hosted full text where licensing permits."
 ---
 <style>
-    .papers-index { max-width: var(--measure, 38rem); margin: 10rem auto 6rem; padding: 0 2rem; }
-    .papers-index h1 { font-size: 2rem; margin-bottom: 1rem; }
-    .papers-index .lede { opacity: .8; margin-bottom: 2.5rem; }
+    /* Law-zone shape — token vocabulary throughout (design.md: Jurisdiction) */
+    .papers-index { max-width: var(--measure); margin: 10rem auto 6rem; padding: 0 2rem; }
+    .papers-index .page-title { font-size: 1rem; font-weight: 400; margin-bottom: 1rem; }
+    .papers-index .lede { font-size: 0.9rem; color: var(--ink-light); margin-bottom: 2.5rem; }
     .papers-index ul { list-style: none; padding: 0; }
     .papers-index li { margin-bottom: 1.6rem; line-height: 1.5; }
-    .papers-index li a { font-style: italic; font-size: 1.15rem; text-decoration: none; border-bottom: 1px solid currentColor; }
-    .papers-index .ref { display: block; font-size: .9rem; opacity: .7; margin-top: .2rem; }
+    .papers-index li a { font-style: italic; font-size: var(--size-entry); text-decoration: none; border-bottom: 1px solid var(--ink-ghost); transition: color 0.2s ease, border-color 0.2s ease; }
+    .papers-index li a:hover { border-color: var(--bloom); }
+    .papers-index .ref { display: block; font-size: 0.9rem; color: var(--ink-light); margin-top: .2rem; }
+    @media (max-width: 768px) { .papers-index { margin: 3rem auto 4rem; padding: 0 1.5rem; } }
 </style>
 <section class="papers-index">
-    <h1>Papers</h1>
-    <p class="lede">Formal research outputs with stable identifiers. Full academic record on the <a href="/cv/">CV</a>.</p>
+    <h1 class="page-title">papers</h1>
+    <p class="lede">Formal research outputs with <span class="accident">stable identifiers</span>. Full academic record on the <a href="/cv/">CV</a>.</p>
     <ul>
         <li>
             <a href="/papers/interpretive-orchestration/">Interpretive Orchestration</a>

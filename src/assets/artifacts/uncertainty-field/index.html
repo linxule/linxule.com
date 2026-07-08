@@ -884,6 +884,9 @@ const filamentViolet = new THREE.Color(0xa88fd1);
 const filamentAmber = new THREE.Color(0xe8b86d);
 const filamentTempColor = new THREE.Color();
 
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let settleFrames = 90; /* reduced-motion: settle, then rest */
+
 function updateFilaments(time) {
   if (!filaments || !filaments.length) return;
   for (let i = 0; i < filaments.length; i++) {
@@ -931,7 +934,7 @@ function updateFilaments(time) {
 }
 
 function animate() {
-  requestAnimationFrame(animate);
+  if (!reducedMotion || settleFrames-- > 0) requestAnimationFrame(animate);
 
   const elapsed = clock.getElapsedTime();
   state.breath = Math.sin(elapsed * 0.4) * 0.5 + 0.5;

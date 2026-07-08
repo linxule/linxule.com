@@ -71,7 +71,7 @@ marker: "making"
     }
 
     .context-poem:hover .context-line.accident {
-        color: var(--accident);
+        color: var(--bloom);
     }
 
     .artifact-info {
@@ -600,7 +600,7 @@ marker: "making"
             {% for image in images %}
             <figure class="artifact-gallery-item" data-src="{{ image.src }}"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
                 {% if image.src | isHTMLFile %}
-                <iframe src="{{ image.src }}" title="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" sandbox="allow-scripts allow-same-origin" loading="{% if loop.index > 2 %}lazy{% else %}eager{% endif %}"></iframe>
+                <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" sandbox="allow-scripts allow-same-origin" loading="{% if loop.index > 2 %}lazy{% else %}eager{% endif %}"></iframe>
                 {% else %}
                 <img src="{{ image.src }}" alt="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" draggable="false">
                 {% endif %}
@@ -615,7 +615,7 @@ marker: "making"
         {% elif src | isHTMLFile %}
         <figure class="artifact-display artifact-display--interactive" id="artifact-display">
             <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">expand</button>
-            <iframe src="{{ src }}" title="{{ title }}" class="artifact-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+            <iframe src="{{ src }}?v={{ site.version }}" title="{{ title }}" class="artifact-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
         </figure>
         {% else %}
         <figure class="artifact-display" id="artifact-display">
