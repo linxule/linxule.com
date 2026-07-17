@@ -94,7 +94,7 @@ for (const file of readdirSync(WRITING_DIR)) {
 for (const file of readdirSync(PORTRAITS_DIR)) {
   if (!file.endsWith(".md")) continue;
   const txt = readFileSync(path.join(PORTRAITS_DIR, file), "utf8");
-  const m = txt.match(/^images:[ \t]*\n[ \t]*-[ \t]*src:[ \t]*(\/assets\/images\/portraits\/\S+\.(?:png|webp))/im);
+  const m = txt.match(/^images:[ \t]*\n[ \t]*-[ \t]*src:[ \t]*(\/assets\/images\/portraits\/\S+\.(?:png|webp|jpe?g))/im);
   if (!m) continue;
   const srcFile = "src" + m[1];
   await card(srcFile, path.join(path.dirname(srcFile), "og.jpg"));

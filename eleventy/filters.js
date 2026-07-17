@@ -184,9 +184,12 @@ export default function(eleventyConfig) {
     const artifactSvg = src.match(/^\/assets\/images\/artifacts\/([^/]+)\.svg$/i);
     if (artifactSvg) return `/assets/images/artifacts/${artifactSvg[1]}-og.jpg`;
     const lower = src.toLowerCase();
-    if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".svg")) return src;
-    const portrait = src.match(/^(\/assets\/images\/portraits\/[^/]+)\/[^/]+\.(?:png|webp)$/i);
+    // Portrait heroes map to the generated card whatever their format (jpg heroes
+    // exist since 2026-07 — must be matched BEFORE the generic .jpg passthrough).
+    // Idempotent: <dir>/og.jpg maps to itself.
+    const portrait = src.match(/^(\/assets\/images\/portraits\/[^/]+)\/[^/]+\.(?:png|webp|jpe?g)$/i);
     if (portrait) return `${portrait[1]}/og.jpg`;
+    if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".svg")) return src;
     const cover = src.match(/^\/writing\/attachments\/([^/]+)\.(?:png|webp)$/i);
     if (cover) return `/writing/attachments/${cover[1]}-og.jpg`;
     return src;
