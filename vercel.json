@@ -156,11 +156,6 @@
       "statusCode": 301
     },
     {
-      "source": "/writing/writing-in-markdown",
-      "destination": "/",
-      "statusCode": 301
-    },
-    {
       "source": "/publications/:path*",
       "destination": "/cv#publications",
       "statusCode": 301
