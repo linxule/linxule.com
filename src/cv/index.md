@@ -16,6 +16,8 @@ seoDescription: "Xule Lin (林徐乐) — Imperial College London PhD, joining S
 
 - SKEMA Business School, Paris, August 2026 –
 	- Assistant Professor, SKEMA Centre for Artificial Intelligence
+- <br/>Imperial Business School, Imperial College London, 2025 – 2026
+	- Research Associate, Department of Management and Entrepreneurship
 
 # Education
 

@@ -16,10 +16,12 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 
 - SKEMA商学院 (SKEMA Business School)，巴黎，2026年8月起
 	- 助理教授，SKEMA人工智能中心
+- <br/>帝国理工商学院 (Imperial Business School)，英国伦敦，2025 – 2026
+	- 研究员 (Research Associate)，管理与创业系
 
 # 教育背景
 
-- 帝国理工商学院 (Imperial Business School)，英国伦敦，2019 – 2025
+- 帝国理工商学院，英国伦敦，2019 – 2025
 	- 哲学博士，管理学与创业学
 	- 论文题目：重新思考组织设计：去中心化自治组织 (DAOs) 中代币赋能的协调与治理适应 (_Rethinking Organizational Design: Token-Enabled Coordination and Governance Adaptation in Decentralized Autonomous Organizations (DAOs)_)(**Mike Wright教授纪念奖**，最佳博士论文)
 	- 论文委员会：Erkko Autio、Ying-Ying Hsieh、柯文凯 (Kevin Corley)、Viviana Fang He(伦敦大学学院 UCL)
@@ -155,15 +157,15 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 # 教学经历
 
 - 信息系统管理 (Information Systems Management)，SKEMA商学院，2027
-	- 讲师 (与课程负责人 Michael Lee 共同任教)；入门课程，巴黎与里尔校区
-	- 涵盖业务流程、企业软件 (ERP/CRM/SaaS/IaaS)、人工智能与硬件；课程材料将从零设计，包含课堂流程图绘制与商业智能 (BI) 仪表盘评估
+	- 授课教师 (与课程负责人 Michael Lee 共同授课)；入门课程，巴黎与里尔校区
+	- 涵盖业务流程、企业软件 (ERP/CRM/SaaS/IaaS)、人工智能与硬件；课程材料将从零设计，并以课堂流程图绘制和商业智能 (BI) 仪表盘为考核内容
 - 商业人工智能 (AI for Business)，SKEMA商学院，2026
 	- 与 Margherita Pagani (SKEMA人工智能中心主任) 共同授课；MS Chef de Projet IA，巴黎
-	- 设计了为期四讲的课程脉络，涵盖前沿模型与基准测试、智能体编排 (agentic orchestration)、AI采纳的经济学分析、评估与判断
-	- 围绕学生的工学交替 (alternance) 实习设计考核：一项企业实践作业，学生在实习期间开展职场观察，并在课堂上进行诠释
+	- 设计了由四讲组成的课程结构，涵盖前沿模型与基准测试、智能体编排 (agentic orchestration)、AI采纳经济学、评估与判断
+	- 围绕学生的工学交替 (alternance) 构建了课程：一项企业实践作业，学生在实习岗位上开展观察，并在课堂上进行诠释
 - 技术技能：实用AI与数字工具 (Tech Skills: Practical AI and Digital Tools)，SKEMA商学院，2026
-	- 工作坊讲师；产品管理与用户体验设计硕士项目 (MSc Product Management & UX Design)，巴黎
-	- 面向产品管理的AI智能体构建实践课程，并讲授贯穿产品生命周期的生成式AI (GenAI) 工具应用
+	- 工作坊讲师；MSc Product Management & UX Design，巴黎
+	- 动手实践课程：构建面向产品管理的AI智能体，并在产品全生命周期中应用生成式AI (generative AI) 工具
 - 系统性文献综述 (Systematic Reviews)，帝国理工商学院，2025
 	- 与Erkko Autio共同授课(研究型硕士模块)
 	- 共同设计AI增强系统性文献综述课程；培训博士生进行战略性任务委派、输出验证和学术成果归属
