@@ -154,6 +154,16 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 
 # 教学经历
 
+- 信息系统管理 (Information Systems Management)，SKEMA商学院，2027
+	- 讲师 (与课程负责人 Michael Lee 共同任教)；入门课程，巴黎与里尔校区
+	- 涵盖业务流程、企业软件 (ERP/CRM/SaaS/IaaS)、人工智能与硬件；课程材料将从零设计，包含课堂流程图绘制与商业智能 (BI) 仪表盘评估
+- 商业人工智能 (AI for Business)，SKEMA商学院，2026
+	- 与 Margherita Pagani (SKEMA人工智能中心主任) 共同授课；MS Chef de Projet IA，巴黎
+	- 设计了为期四讲的课程脉络，涵盖前沿模型与基准测试、智能体编排 (agentic orchestration)、AI采纳的经济学分析、评估与判断
+	- 围绕学生的工学交替 (alternance) 实习设计考核：一项企业实践作业，学生在实习期间开展职场观察，并在课堂上进行诠释
+- 技术技能：实用AI与数字工具 (Tech Skills: Practical AI and Digital Tools)，SKEMA商学院，2026
+	- 工作坊讲师；产品管理与用户体验设计硕士项目 (MSc Product Management & UX Design)，巴黎
+	- 面向产品管理的AI智能体构建实践课程，并讲授贯穿产品生命周期的生成式AI (GenAI) 工具应用
 - 系统性文献综述 (Systematic Reviews)，帝国理工商学院，2025
 	- 与Erkko Autio共同授课(研究型硕士模块)
 	- 共同设计AI增强系统性文献综述课程；培训博士生进行战略性任务委派、输出验证和学术成果归属
@@ -223,7 +233,10 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 
 # 服务
 
-- 学生代表
+- 分组讨论主持人
+	- _"AI Across the Research Pipeline,"_ [SMS虚拟工作坊会议](https://www.strategicmanagement.net/conferences-events/2026-virtual-workshop-conference/) (SMS研究方法社区)，线上，2026
+		- 主持关于AI应用于研究全流程的分组反馈研讨；小组成员包括 Felipe Csaszar、Riitta Katila、Ruixiang Song
+- <br/>学生代表
 	- [伦敦定性研究社区 (London Qualitative Community, LQC)](https://londonqualcommunity.com/)，2023至今
 		- 建设网站并设计标志
 	- [组织中的去中心化 (Decentralization in Organizations, DiO) 社区](https://dio-community.org/)，2023至今

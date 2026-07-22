@@ -154,6 +154,16 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Teaching
 
+- Information Systems Management, SKEMA Business School, 2027
+	- Instructor (with course lead Michael Lee); intro course, Paris and Lille campuses
+	- Covers business processes, enterprise software (ERP/CRM/SaaS/IaaS), AI, and hardware; materials to be designed from scratch, with in-class flowcharting and BI-dashboard assessments
+- AI for Business, SKEMA Business School, 2026
+	- Co-instructor with Margherita Pagani (Director, SKEMA Centre for Artificial Intelligence); MS Chef de Projet IA, Paris
+	- Designed a four-session arc covering frontier models and benchmarks, agentic orchestration, AI adoption economics, evaluation and judgment
+	- Built around students' work-study (alternance) placements: a company-based assignment in which students observe on placement and interpret in class
+- Tech Skills: Practical AI and Digital Tools, SKEMA Business School, 2026
+	- Workshop instructor; MSc Product Management & UX Design, Paris
+	- Hands-on sessions on building AI agents for product management and applying generative AI tools across the product lifecycle
 - Systematic Reviews, Imperial Business School, 2025
 	- Co-instructor with Erkko Autio (MRes Module)
 	- Co-designed curriculum on AI-augmented systematic reviews; train doctoral students in strategic delegation, output validation, and intellectual ownership
@@ -223,7 +233,10 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Service
 
-- Student Representative
+- Breakout Facilitator
+	- _"AI Across the Research Pipeline,"_ [SMS Virtual Workshop Conference](https://www.strategicmanagement.net/conferences-events/2026-virtual-workshop-conference/) (SMS Research Methods Community), Online, 2026
+		- Facilitated a breakout feedback session on integrating AI across the research pipeline; panel featured Felipe Csaszar, Riitta Katila, and Ruixiang Song
+- <br/>Student Representative
 	- [London Qualitative Community (LQC)](https://londonqualcommunity.com/), 2023 – Present
 		- Built website and designed logo
 	- [Decentralization in Organization (DiO) Community](https://dio-community.org/), 2023 – Present
