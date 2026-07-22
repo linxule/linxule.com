@@ -159,7 +159,7 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 - 信息系统管理 (Information Systems Management)，SKEMA商学院，2027
 	- 授课教师 (与课程负责人 Michael Lee 共同授课)；入门课程，巴黎与里尔校区
 	- 涵盖业务流程、企业软件 (ERP/CRM/SaaS/IaaS)、人工智能与硬件；课程材料将从零设计，并以课堂流程图绘制和商业智能 (BI) 仪表盘为考核内容
-- 商业人工智能 (AI for Business)，SKEMA商学院，2026
+- 人工智能商业应用 (AI for Business)，SKEMA商学院，2026
 	- 与 Margherita Pagani (SKEMA人工智能中心主任) 共同授课；MS Chef de Projet IA，巴黎
 	- 设计了由四讲组成的课程结构，涵盖前沿模型与基准测试、智能体编排 (agentic orchestration)、AI采纳经济学、评估与判断
 	- 围绕学生的工学交替 (alternance) 构建了课程：一项企业实践作业，学生在实习岗位上开展观察，并在课堂上进行诠释
