@@ -51,6 +51,33 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
     }
 
     /* ========================================
+       Desktop book mode: hard containment (2026-07-28)
+       A specimen set taller than the 100vh spread used to stretch the
+       grid row past the spread; with align-content:center the transparent
+       .spread-text bled ~500px UP over the previous spread and swallowed
+       the filter-chip clicks (10-image "the unfinished sentence" broke the
+       portraits chips). Cap the column and clip the spread. body overflow
+       is locked because the .rendering marker adds ~144px of document
+       height below the book — an un-snapped document scroll that parks
+       the book between spreads (ghost-title / blurred-specimen state).
+       Mobile (≤768px) is normal document flow and needs none of this.
+       ======================================== */
+    @media (min-width: 769px) {
+        body {
+            overflow: hidden;
+        }
+
+        .spread {
+            overflow: hidden;
+        }
+
+        .spread-specimens {
+            max-height: calc(100vh - 16rem);
+            overflow: hidden;
+        }
+    }
+
+    /* ========================================
        Header Spread (Chapter Openers)
        ======================================== */
 
