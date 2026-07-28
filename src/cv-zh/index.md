@@ -10,7 +10,7 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 
 ### 英国伦敦帝国理工学院 (Imperial College London) 南肯辛顿校区，伦敦 SW7 2AZ
 
-### [x@linxule.com](mailto:x@linxule.com) | [linxule.com](https://linxule.com/)
+### [x@linxule.com](mailto:x@linxule.com) | [linxule.com](https://linxule.com/) | [github.com/linxule](https://github.com/linxule)
 
 # 学术任职
 
@@ -92,15 +92,10 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 - <br/>[**任务结构矩阵 (交互式)**](https://linxule.com/tsm/)
   - Carliss Baldwin 任务结构矩阵的动画解读，附实时结构发现算法
   - SEAM 系列的交互式配套工具
-- <br/>[**LOOM (Locus of Observed Meanings)** 系列](/writing/series/loom/)([GitHub](https://github.com/linxule/loom))
-  - 与柯文凯 (Kevin Corley，帝国理工学院) 和AI协作者(如Claude、o1 pro)合作
-  - 短篇论文，研究AI增强定性研究和组织分析中的方法论问题。例如：
-    - [Dialogue as Method: A Letter on Knowledge Co-Creation in the Age of AI](/writing/loom-iv-dialogue-as-method/)
-    - [The Third Space: Where Intelligence Emerges Through Human-AI Dialogue](/writing/loom-v-the-third-space/)
-    - [The AI Whisperer: How AI Is Transforming Research](/writing/loom-xii-the-ai-whisperer/)
-- [**Organizational Futures** 系列](/writing/series/organizational-futures/)
-  - 短篇论文，反思后AGI时代的组织未来。例如：
-    - [Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations/)
+- <br/>短篇随笔系列：聚焦AI增强研究与组织未来 ([写作](/writing/) | [GitHub](https://github.com/linxule/loom)，CC BY 4.0许可)
+  - 44篇英文随笔，其中40篇亦有中文版，分属六个系列：[LOOM (Locus of Observed Meanings)](/writing/series/loom/)、[Organizational Futures](/writing/series/organizational-futures/)、Research with AI、Epistemic Voids、AI Whispers 与 [SEAM](/writing/series/seam/)
+  - 与柯文凯 (Kevin Corley，帝国理工学院) 及AI协作者合作撰写；为诠释编排 (Interpretive Orchestration) 框架的方法论配套读物
+  - 精选随笔：[Dialogue as Method](/writing/loom-iv-dialogue-as-method/)、[The Third Space](/writing/loom-v-the-third-space/)、[Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations/)
 - Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). 《欧洲商业评论》_The European Business Review_.
 
 # 组织研讨会
@@ -187,43 +182,43 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 
 # 技能
 
-- 定性研究
+- 定性与计算方法
 	- 扎根理论 (Grounded Theory)、访谈、民族志
-	- [BERTopic](https://maartengr.github.io/BERTopic/index.html)、ATLAS.ti
-- <br/>编程语言与软件工具
+	- [BERTopic](https://maartengr.github.io/BERTopic/index.html)、ATLAS.ti；AI增强定性分析 (SIGNA)
+- <br/>编程与AI基础设施
 	- Python、R、TypeScript
+	- MCP (Model Context Protocol) 服务器与客户端开发、智能体插件与技能 (agent plugins & skills)、多提供商LLM编排
 
-# 研究工具与产出
+# 软件、数据与研究成果
 
-- 研究基础设施
+- 研究软件 (开源)
 	- [Interpretive Orchestration Plugin](https://github.com/linxule/interpretive-orchestration)
-		- Claude Code插件，实现三阶段人机协作方法论，配备专门代理用于诠释性定性研究
+		- Lin & Corley (2026, _Strategic Organization_) 论文的配套软件：Claude Code插件，通过专门的代理 (agents) 与技能 (skills) 实现三阶段诠释编排方法论
 	- [OpenInterviewer](https://github.com/linxule/openinterviewer)
-		- 开源AI定性研究访谈平台，支持大规模自适应访谈，具备研究管理和跨访谈综合分析功能
+		- 开源平台 (MIT许可)，支持AI主导的大规模自适应定性访谈，具备研究项目管理与跨访谈综合分析功能；面向缺乏基础设施的研究者提供一键部署
 	- [Memex Plugin](https://github.com/linxule/memex-plugin)
-		- Claude Code插件，实现跨会话的持久化、可搜索协作记忆，以结构化备忘录存储于Obsidian知识库
-- <br/>人机协作AI系统
+		- Claude Code插件 (MIT许可)，实现跨会话的持久化、可搜索协作记忆，以结构化备忘录存储于Obsidian知识库
+	- [Carrel](https://github.com/linxule/carrel)
+		- 面向学术研究者的AI增强研究环境入门工具包；打包为可移植、跨厂商的Agent Skill
+- <br/>Agent与MCP基础设施
 	- [Vox MCP Server](https://github.com/linxule/vox-mcp)
 		- 面向MCP客户端的多模型AI网关，支持8个提供商及本地模型，具备对话线程管理，无系统提示注入
 	- Lotus Wisdom MCP Server([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
-		- Model Context Protocol服务器，通过多视角推理实现结构化沉思式问题解决
-	- Multi-Agent AI Systems for Collaborative Research([视频演示](https://www.linkedin.com/posts/linxule_ai-accountability-privacy-activity-7214639418110803969-oe2y) | [博客文章](https://www.linkedin.com/pulse/exploring-potential-multi-agent-ai-systems-research-beyond-xule-lin-3odjc))
-		- 通过OpenRouter编排基于角色的AI讨论的Streamlit应用，用于人机协作研究
-	- Interactive Knowledge Building Chatbots([GitHub](https://github.com/linxule/openai-assistants-discord-bot))
-		- 使用OpenAI Assistants API的Discord机器人，具有来源归属和验证功能
-		- 使用LangChain和Streamlit的RAG应用，用于可验证的知识探索
-- <br/>AI研究工具与框架
-	- AI提示工程框架 (AI Prompt Engineering Framework)
-		- [AI Research Prompts](https://github.com/linxule/prompts)：系统性策划的提示，通过认知技术和专门的任务解决方案增强LLM能力，用于研究语言模型行为和人机交互
-	- 研究用定制GPTs (Custom GPTs for Research)
-		- [BERTopic Navigator](https://chatgpt.com/g/g-FvlPlwLn1-bertopic-navigator)：整合ChatGPT与BERTopic，实现增强的主题建模
-		- [Red Pen Scholar](https://chatgpt.com/g/g-wDUM3ows9-red-pen-scholar)：基于芝加哥大学Little Red Schoolhouse写作项目原则的写作助手，提供透明反馈
-		- [Academic Notes Assistant](https://chatgpt.com/g/g-pIFoLpzVx-academic-notes-assistant)：用于系统性来源归属和验证的研究工具
-- <br/>研究资源与知识库
-	- HuggingFace：[Management & Organization Research Collection](https://huggingface.co/collections/linxule/papers-haio-67262052e8dab420994a9343)
-		- 关于人机交互、AI治理和负责任开发的策划论文
-	- GitHub：["Make LLMs Better" Collection](https://github.com/stars/linxule/lists/make-llms-better)
-		- 道德提示、负责任数据处理和透明工作流的最佳实践
+		- 通过多视角推理实现结构化沉思式问题解决的MCP服务器；提供跨MCP客户端可用的托管端点(约每月640次下载，npm，2026年年中数据)
+	- [MCP Music Studio](https://github.com/linxule/mcp-music-studio)
+		- 面向AI的双模式创意音乐工作室：ABC记谱作曲(自动生成乐谱)与Strudel实时编码演奏；已被第三方维护者独立移植至心流 (iFlow) MCP平台
+	- [kimi-plugin-cc](https://github.com/linxule/kimi-plugin-cc)
+		- 为智能体编程环境(Claude Code、Codex)引入独立的第二模型，用于差异审查 (diff review)、对抗性质询与委托任务，配备钩子 (hook) 强制执行的安全边界
+	- [deepthonk](https://github.com/linxule/deepthonk)
+		- OpenDeepThink算法(Zhou等，2026)的提供商中立实现，用于基于群体的答案精炼，以可检视的MCP资源形式提供(约每月780次下载，npm，2026年年中数据)
+	- [MinerU MCP](https://github.com/linxule/mineru-mcp)
+		- 面向AI研究工作流的文档与PDF提取桥接工具 (MIT许可)(约每月830次下载，npm，2026年年中数据)
+- <br/>数据与提示词
+	- daogov：DAO治理协调公开数据集(准备中)
+		- 78个去中心化组织，26万条治理讨论，约4030万字(详见"工作论文")
+	- [AI Research Prompts](https://github.com/linxule/prompts)
+		- 面向研究用途的认知技术策划提示词库；Lotus Wisdom框架的源起
+- <br/>完整的开源与公开项目作品集：[linxule.com/projects](/projects/)
 
 # 审稿服务
 

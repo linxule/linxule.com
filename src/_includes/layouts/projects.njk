@@ -1,0 +1,285 @@
+---
+layout: layouts/base.njk
+marker: "projects"
+---
+
+<style>
+    main {
+        padding: 10rem 4rem 6rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .spread-opening {
+        min-height: 70vh;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 4rem;
+        align-items: end;
+        padding-bottom: 8rem;
+        position: relative;
+    }
+
+    .page-marker {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: var(--size-meta);
+        color: var(--ink-faint);
+    }
+
+    .section-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: var(--size-meta);
+        letter-spacing: var(--tracking-marker);
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+
+    .thesis-statement {
+        font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+        font-weight: 300;
+        line-height: 1.9;
+        max-width: 500px;
+    }
+
+    .thesis-continued {
+        font-size: 1.05rem;
+        color: var(--ink-light);
+        max-width: 500px;
+        margin-top: 2rem;
+    }
+
+    .thesis-line {
+        display: block;
+        line-height: 2;
+    }
+
+    .thesis-line:nth-child(1) { margin-left: 0; }
+    .thesis-line:nth-child(2) { margin-left: 1.5rem; }
+    .thesis-line:nth-child(3) { margin-left: 0.75rem; }
+    .thesis-line:nth-child(4) { margin-left: 2.25rem; }
+
+    .horizon {
+        width: 100%;
+        height: 1px;
+        background: var(--ink-ghost);
+        margin: 5rem 0;
+    }
+
+    .group {
+        padding: 2rem 0;
+    }
+
+    .group-name {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: var(--size-label);
+        letter-spacing: var(--tracking-label);
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        padding-top: 0.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Wave — block-level stagger. Start tight, swing wide, pull back,
+       swing wider, settle. Offsets are keyed one past the group label, which
+       is the section's first child. Reset on mobile (scanning wants straight
+       lines). */
+    .project {
+        padding: 1.2rem 0;
+        max-width: 44rem;
+        margin-left: 2rem;
+    }
+
+    .project:nth-child(2) { margin-left: 1.5rem; }
+    .project:nth-child(3) { margin-left: 4rem; }
+    .project:nth-child(4) { margin-left: 2.5rem; }
+    .project:nth-child(5) { margin-left: 5.5rem; }
+    .project:nth-child(6) { margin-left: 1rem; }
+    .project:nth-child(7) { margin-left: 3.5rem; }
+    .project:nth-child(8) { margin-left: 2rem; }
+    .project:nth-child(9) { margin-left: 4.5rem; }
+
+    .project-name {
+        font-size: var(--size-entry);
+        font-weight: 400;
+        text-decoration: none;
+        color: var(--ink);
+        transition: color 0.3s ease;
+    }
+
+    .project-name.unlinked {
+        color: var(--ink-light);
+    }
+
+    a.project-name:hover,
+    a.project-name:focus-visible {
+        color: var(--bloom);
+    }
+
+    .project-description {
+        font-size: var(--size-quiet);
+        color: var(--ink-light);
+        line-height: 1.8;
+        margin-top: 0.4rem;
+        margin-left: 1rem;
+    }
+
+    /* The byline composite — attribution register: license, adoption signal. */
+    .project-meta {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-quiet);
+        color: var(--ink-faint);
+        margin-top: 0.6rem;
+        margin-left: 1rem;
+        line-height: 1.6;
+    }
+
+    /* The nav-link composite — secondary destinations (live surface, mirror). */
+    .project-links {
+        margin-top: 0.5rem;
+        margin-left: 1rem;
+    }
+
+    .project-links a {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: var(--size-meta);
+        color: var(--ink-faint);
+        text-decoration: none;
+        transition: color 0.2s ease;
+        margin-right: 1.5rem;
+    }
+
+    .project-links a:hover,
+    .project-links a:focus-visible {
+        color: var(--bloom);
+    }
+
+    .group-note {
+        margin-top: 2.5rem;
+        margin-left: 2rem;
+        max-width: 38rem;
+        font-size: var(--size-note);
+        color: var(--ink-light);
+        line-height: 1.9;
+    }
+
+    .group-note-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: var(--size-meta);
+        color: var(--ink-faint);
+        text-decoration: none;
+        white-space: nowrap;
+        transition: color 0.2s ease;
+    }
+
+    .group-note-link:hover,
+    .group-note-link:focus-visible {
+        color: var(--bloom);
+    }
+
+    .page-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .back-link {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: var(--size-meta);
+        color: var(--ink-faint);
+        text-decoration: none;
+    }
+
+    .back-link:hover,
+    .back-link:focus-visible {
+        color: var(--bloom);
+    }
+
+    @media (max-width: 900px) {
+        main {
+            padding: 8rem 2rem 4rem;
+        }
+
+        .spread-opening {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .thesis-line:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .project:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .project-description,
+        .project-meta,
+        .project-links,
+        .group-note {
+            margin-left: 0;
+        }
+    }
+</style>
+
+<div data-pagefind-body data-pagefind-filter="type:projects">
+<section class="spread-opening">
+    <span class="page-marker">007</span>
+    <div>
+        <div class="section-label">Projects</div>
+    </div>
+    <div>
+        <p class="thesis-statement">{{ thesis }}</p>
+        {% if thesis_continued %}
+        <div class="thesis-continued">
+            {% for line in thesis_continued %}
+            <span class="thesis-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="horizon"></div>
+
+{% for group in groups %}
+<section class="group">
+    <div class="group-name">{{ group.name }}</div>
+    {% for project in group.projects %}
+    <div class="project">
+        {% if project.href %}
+        <a class="project-name" href="{{ project.href }}">{{ project.name }}</a>
+        {% else %}
+        <span class="project-name unlinked">{{ project.name }}</span>
+        {% endif %}
+        <div class="project-description">{{ project.description }}</div>
+        {% if project.license or project.signal %}
+        <div class="project-meta">{{ project.license }}{% if project.license and project.signal %} · {% endif %}{{ project.signal }}</div>
+        {% endif %}
+        {% if project.links %}
+        <div class="project-links">
+            {% for link in project.links %}<a href="{{ link.href }}">{{ link.label }} →</a>{% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% if group.note %}
+    <p class="group-note">
+        {{ group.note.text }}
+        {% if group.note.href %}<a class="group-note-link" href="{{ group.note.href }}">{{ group.note.label }} →</a>{% endif %}
+    </p>
+    {% endif %}
+</section>
+{% if not loop.last %}
+<div class="horizon"></div>
+{% endif %}
+{% endfor %}
+
+<footer class="page-footer">
+    <a href="/" class="back-link">← return</a>
+</footer>
+</div>

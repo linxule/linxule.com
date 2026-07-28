@@ -1,0 +1,43 @@
+---
+permalink: /projects.md
+eleventyExcludeFromCollections: true
+---
+{%- for page in collections.all -%}
+{%- if page.url == "/projects/" or page.url == "/projects" -%}
+# {{ page.data.title }}
+
+{{ page.data.thesis | safe }}
+{% for line in page.data.thesis_continued %}
+{{ (line.text | default(line)) | safe }}{% if line.accident %} *(accident)*{% endif %}
+{%- endfor %}
+
+{% for group in page.data.groups %}
+## {{ group.name | safe }}
+{% for project in group.projects %}
+### {{ project.name | safe }}
+{% if project.href %}
+{%- set projectUrl = ("https://linxule.com" + project.href) if project.href.startsWith("/") else project.href %}
+- **Link**: [{{ projectUrl }}]({{ projectUrl }})
+{%- endif %}
+{%- if project.license %}
+- **License**: {{ project.license }}
+{%- endif %}
+{%- if project.signal %}
+- **Note**: {{ project.signal | safe }}
+{%- endif %}
+{%- for link in project.links %}
+- **See also**: [{{ link.label }}]({% if link.href.startsWith("/") %}https://linxule.com{{ link.href }}{% else %}{{ link.href }}{% endif %})
+{%- endfor %}
+
+{{ project.description | safe }}
+{% endfor %}
+{%- if group.note %}
+{{ group.note.text | safe }}{% if group.note.href %} → [{{ group.note.label }}]({% if group.note.href.startsWith("/") %}https://linxule.com{{ group.note.href }}{% else %}{{ group.note.href }}{% endif %}){% endif %}
+{% endif %}
+{%- endfor %}
+
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/projects/*
+{%- endif -%}
+{%- endfor -%}

@@ -138,7 +138,7 @@
     {%- if page.url and (page.url.startsWith('/writing/') or page.url.startsWith('/making/portraits/') or page.url.startsWith('/making/artifacts/') or page.url.startsWith('/talks/') or page.url.startsWith('/papers/')) and not page.url.startsWith('/writing/series/') and page.url != '/writing/' and page.url != '/talks/' and page.url != '/making/portraits/' and page.url != '/making/artifacts/' and page.url != '/papers/' %}
     {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
     {%- endif %}
-    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' or page.url == '/papers/' or page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' %}
+    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' or page.url == '/papers/' or page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' or page.url == '/projects/' %}
     {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
     {%- endif %}
     {%- if page.url == '/' %}
@@ -281,6 +281,31 @@
         "inDefinedTermSet": "{{ site.url }}/concepts/",
         "creator": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"}
       }{% if not loop.last %}, {% endif %}{% endfor %}]
+    }
+    </script>
+    {% endif %}
+    {% if page.url == '/projects/' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": "{{ site.url }}/projects/",
+      "name": {{ ("Projects — " + site.author) | dump | safe }},
+      "url": "{{ site.url }}/projects/",
+      "inLanguage": "en",
+      "author": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "usageInfo": "{{ site.url }}/llms.txt",
+      "copyrightHolder": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
+      "hasPart": [{% set comma = joiner(",") %}{% for group in groups %}{% for project in group.projects | selectattr("href") %}{{ comma() }}{
+        "@type": {% if project.href.startsWith("https://github.com/") %}"SoftwareSourceCode"{% else %}"WebSite"{% endif %},
+        "name": {{ project.name | dump | safe }},
+        "description": {{ project.description | dump | safe }},
+        "url": {{ (project.href if project.href.startsWith("http") else site.url + project.href) | dump | safe }},{% if project.href.startsWith("https://github.com/") %}
+        "codeRepository": {{ project.href | dump | safe }},{% endif %}{% if project.license %}
+        "license": "https://spdx.org/licenses/{{ project.license }}.html",{% endif %}
+        "author": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"}
+      }{% endfor %}{% endfor %}]
     }
     </script>
     {% endif %}

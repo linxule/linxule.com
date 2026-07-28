@@ -286,7 +286,7 @@
       "statusCode": 301
     },
     {
-      "source": "/projects/:path*",
+      "source": "/projects/:path+",
       "destination": "/writing",
       "statusCode": 301
     },

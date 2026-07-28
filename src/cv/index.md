@@ -10,7 +10,7 @@ seoDescription: "Xule Lin (林徐乐) — Imperial College London PhD, joining S
 
 ### Imperial College London South Kensington Campus, London SW7 2AZ, UK
 
-### [x@linxule.com](mailto:x@linxule.com) | [linxule.com](https://linxule.com/)
+### [x@linxule.com](mailto:x@linxule.com) | [linxule.com](https://linxule.com/) | [github.com/linxule](https://github.com/linxule)
 
 # Academic Appointments
 
@@ -92,15 +92,10 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 - <br/>[**Task Structure Matrices (interactive)**](https://linxule.com/tsm/)
   - Animated walkthroughs of Carliss Baldwin's task structure matrices, with a live structure-discovery algorithm
   - Interactive companion to the SEAM series
-- <br/>[**LOOM (Locus of Observed Meanings)** series](/writing/series/loom/) ([GitHub](https://github.com/linxule/loom))
-  - In collaboration with Kevin Corley (Imperial College London) and AI collaborators (e.g., Claude, o1 pro)
-  - Short-form essays examining methodological questions in AI-augmented qualitative research and organizational analysis. Examples:
-    - [Dialogue as Method: A Letter on Knowledge Co-Creation in the Age of AI](/writing/loom-iv-dialogue-as-method/)
-    - [The Third Space: Where Intelligence Emerges Through Human-AI Dialogue](/writing/loom-v-the-third-space/)
-    - [The AI Whisperer: How AI Is Transforming Research](/writing/loom-xii-the-ai-whisperer/)
-- [**Organizational Futures** series](/writing/series/organizational-futures/)
-  - Short-form essays reflecting on organizational futures in the post-AGI era. Examples:
-    - [Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations/)
+- <br/>Short-form essay corpus on AI-augmented research and organizational futures ([Writing](/writing/) | [GitHub](https://github.com/linxule/loom), CC BY 4.0)
+  - 44 essays in English, 40 also published in Chinese, across six series: [LOOM (Locus of Observed Meanings)](/writing/series/loom/), [Organizational Futures](/writing/series/organizational-futures/), Research with AI, Epistemic Voids, AI Whispers, and [SEAM](/writing/series/seam/)
+  - Written with Kevin Corley (Imperial College London) and AI collaborators; methodological companion to the Interpretive Orchestration framework
+  - Selected essays: [Dialogue as Method](/writing/loom-iv-dialogue-as-method/), [The Third Space](/writing/loom-v-the-third-space/), [Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations/)
 - Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). The European Business Review.
 
 # Organized Symposia
@@ -187,43 +182,43 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Skills
 
-- Qualitative Research
+- Qualitative & Computational Methods
 	- Grounded Theory, Interviews, Ethnography
-	- [BERTopic](https://maartengr.github.io/BERTopic/index.html), ATLAS.ti
-- <br/>Programming Languages & Software Tools
+	- [BERTopic](https://maartengr.github.io/BERTopic/index.html), ATLAS.ti; AI-augmented qualitative analysis (SIGNA)
+- <br/>Programming & AI Infrastructure
 	- Python, R, TypeScript
+	- MCP server and client development, agent plugins and skills, multi-provider LLM orchestration
 
-# Research Tools & Artifacts
+# Software, Data & Research Artifacts
 
-- Research Infrastructure
+- Research Software (open source)
 	- [Interpretive Orchestration Plugin](https://github.com/linxule/interpretive-orchestration)
-		- Claude Code plugin implementing a 3-stage human-AI collaboration methodology with specialized agents for interpretive qualitative research
+		- Software counterpart of Lin & Corley (2026, Strategic Organization): Claude Code plugin implementing the three-stage interpretive orchestration methodology through specialized agents and skills
 	- [OpenInterviewer](https://github.com/linxule/openinterviewer)
-		- Open-source AI-powered qualitative research platform for conducting adaptive interviews at scale with study management and cross-interview synthesis
+		- Open-source platform (MIT) for AI-conducted adaptive qualitative interviews at scale, with study management and cross-interview synthesis; one-click deployment for researchers without infrastructure
 	- [Memex Plugin](https://github.com/linxule/memex-plugin)
-		- Claude Code plugin for persistent, searchable collaborative memory across sessions, stored as structured memos in an Obsidian vault
-- <br/>AI Systems for Human-AI Collaboration
+		- Claude Code plugin (MIT) for persistent, searchable collaborative memory across sessions, stored as structured memos in an Obsidian vault
+	- [Carrel](https://github.com/linxule/carrel)
+		- Onboarding toolkit bringing academic researchers into AI-augmented research environments; packaged as a portable, cross-vendor Agent Skill
+- <br/>Agent & MCP Infrastructure
 	- [Vox MCP Server](https://github.com/linxule/vox-mcp)
-		- Multi-model AI gateway for MCP clients supporting 8 providers and local models with conversation threading and no system prompt injection
+		- Multi-model AI gateway for MCP clients supporting 8 providers and local models, with conversation threading and no system prompt injection
 	- Lotus Wisdom MCP Server ([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
-		- Model Context Protocol server enabling structured contemplative problem-solving through multi-perspective reasoning
-	- Multi-Agent AI Systems for Collaborative Research  ([Video demo](https://www.linkedin.com/posts/linxule_ai-accountability-privacy-activity-7214639418110803969-oe2y) | [Blog post](https://www.linkedin.com/pulse/exploring-potential-multi-agent-ai-systems-research-beyond-xule-lin-3odjc))
-		- Streamlit application orchestrating role-based AI discussions via OpenRouter for human-AI teaming research
-	- Interactive Knowledge Building Chatbots ([GitHub](https://github.com/linxule/openai-assistants-discord-bot))
-		- Discord bot using OpenAI's assistant API with source attribution and verification
-		- RAG-based applications using Langchain and Streamlit for verifiable knowledge exploration
-- <br/>AI Research Tools & Frameworks
-	- AI Prompt Engineering Framework
-		- [AI Research Prompts](https://github.com/linxule/prompts): Systematically curated prompts for enhancing LLM capabilities through cognitive techniques and specialized task solutions and for studying language model behaviors and human-agent interactions
-	- Custom GPTs for Research
-		- [BERTopic Navigator](https://chatgpt.com/g/g-FvlPlwLn1-bertopic-navigator): Integration of OpenAI's ChatGPT with BERTopic for enhanced topic modeling implementation
-		- [Red Pen Scholar](https://chatgpt.com/g/g-wDUM3ows9-red-pen-scholar): Writing assistant with transparent feedback based on the principles of the University of Chicago's Little Red Schoolhouse writing program
-		- [Academic Notes Assistant](https://chatgpt.com/g/g-pIFoLpzVx-academic-notes-assistant): Research tool for systematic source attribution and verification
-- <br/>Research Resources & Knowledge Base
-	- HuggingFace: [Management & Organization Research Collection](https://huggingface.co/collections/linxule/papers-haio-67262052e8dab420994a9343)
-		- Curated papers on human-AI interaction, AI governance, and responsible development
-	- GitHub Repo List: ["Make LLMs Better" Collection](https://github.com/stars/linxule/lists/make-llms-better)
-		- Best practices for ethical prompting, responsible data handling, and transparent workflows
+		- MCP server for structured contemplative problem-solving through multi-perspective reasoning; hosted endpoint usable across MCP clients (~640 downloads/month, npm, mid-2026)
+	- [MCP Music Studio](https://github.com/linxule/mcp-music-studio)
+		- Two-mode creative music studio for AI: ABC-notation composition with rendered sheet music and Strudel live coding; independently repackaged by third-party maintainers for the iFlow (心流) MCP platform
+	- [kimi-plugin-cc](https://github.com/linxule/kimi-plugin-cc)
+		- Brings an independent second model into agentic coding environments (Claude Code, Codex) for diff review, adversarial challenge, and delegated work, with hook-enforced safety boundaries
+	- [deepthonk](https://github.com/linxule/deepthonk)
+		- Provider-neutral implementation of the OpenDeepThink algorithm (Zhou et al., 2026) for population-based answer refinement, exposed as inspectable MCP resources (~780 downloads/month, npm, mid-2026)
+	- [MinerU MCP](https://github.com/linxule/mineru-mcp)
+		- Document and PDF extraction bridge (MIT) for AI research workflows (~830 downloads/month, npm, mid-2026)
+- <br/>Data & Prompts
+	- daogov: Public dataset in preparation on DAO governance coordination
+		- 78 decentralized organizations, 260K governance discussions, ~40.3 million words (see Working Papers)
+	- [AI Research Prompts](https://github.com/linxule/prompts)
+		- Curated prompt library of cognitive techniques for research use; origin of the Lotus Wisdom framework
+- <br/>Complete open-source and public-build portfolio: [linxule.com/projects](/projects/)
 
 # Reviewing
 
