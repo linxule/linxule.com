@@ -21,7 +21,7 @@ keywords:
 contextExcerpt:
   - one law, asked to hold for forty-nine seconds
   - the void breathing before anything is written
-  - "<em>道可道，非常道</em> — so i let the interference speak instead"
+  - "道可道，非常道 — so i let the interference speak instead"
   - text: fifty-five hertz, a child subtracted from its parents
     accident: true
   - the writing system had already counted to three
