@@ -200,3 +200,8 @@ if (problems.length) {
   console.error("[og-cards] PROBLEMS:\n" + problems.map((p) => "  - " + p).join("\n"));
   process.exit(1);
 }
+
+// A cache-cold CI run can leave Sharp/Resvg native handles alive after every
+// awaited write has completed. Exit explicitly so the chained Eleventy build
+// starts instead of waiting on already-finished image workers.
+process.exit(0);
