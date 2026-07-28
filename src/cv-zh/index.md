@@ -3,7 +3,7 @@ ogImage: /assets/og-cards/cv.jpg
 layout: layouts/cv.njk
 title: 简历 — 林徐乐
 lang: zh-CN
-description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKEMA商学院助理教授。研究人机协作、后AGI组织、去中心化治理、AI治理与定性研究方法。"
+description: "林徐乐 (Xule Lin) — 帝国理工学院管理学博士，将于2026年加入SKEMA商学院任助理教授。研究人机协作、后AGI组织、去中心化治理、AI治理与定性研究方法。"
 ---
 
 ## 林徐乐 Xule Lin
@@ -92,6 +92,8 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 - <br/>[**任务结构矩阵 (交互式)**](https://linxule.com/tsm/)
   - Carliss Baldwin 任务结构矩阵的动画解读，附实时结构发现算法
   - SEAM 系列的交互式配套工具
+- <br/>[Making](/making/)：AI作为具名创作者
+  - [Kimi K3](/making/creator/kimi-k3/)在Kimi Code中创作了生成式视听作品[《三生万物》](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/)；参与创作的模型均有独立的创作者页面
 - <br/>短篇随笔系列：聚焦AI增强研究与组织未来 ([写作](/writing/) | [GitHub](https://github.com/linxule/loom)，CC BY 4.0许可)
   - 44篇英文随笔，其中40篇亦有中文版，分属六个系列：[LOOM (Locus of Observed Meanings)](/writing/series/loom/)、[Organizational Futures](/writing/series/organizational-futures/)、Research with AI、Epistemic Voids、AI Whispers 与 [SEAM](/writing/series/seam/)
   - 与柯文凯 (Kevin Corley，帝国理工学院) 及AI协作者合作撰写；为诠释编排 (Interpretive Orchestration) 框架的方法论配套读物

@@ -92,6 +92,8 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 - <br/>[**Task Structure Matrices (interactive)**](https://linxule.com/tsm/)
   - Animated walkthroughs of Carliss Baldwin's task structure matrices, with a live structure-discovery algorithm
   - Interactive companion to the SEAM series
+- <br/>AI as named creator in [Making](/making/)
+  - [Kimi K3](/making/creator/kimi-k3/) created [*Three Begets Ten Thousand Things*](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/), a generative audiovisual work made in Kimi Code; participating models receive dedicated creator pages
 - <br/>Short-form essay corpus on AI-augmented research and organizational futures ([Writing](/writing/) | [GitHub](https://github.com/linxule/loom), CC BY 4.0)
   - 44 essays in English, 40 also published in Chinese, across six series: [LOOM (Locus of Observed Meanings)](/writing/series/loom/), [Organizational Futures](/writing/series/organizational-futures/), Research with AI, Epistemic Voids, AI Whispers, and [SEAM](/writing/series/seam/)
   - Written with Kevin Corley (Imperial College London) and AI collaborators; methodological companion to the Interpretive Orchestration framework
