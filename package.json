@@ -5,12 +5,21 @@
   "description": "Personal website - book aesthetic, algorithmic age",
   "scripts": {
     "start": "bun scripts/gen-og-cards.mjs && eleventy --serve",
-    "build": "bun scripts/gen-og-cards.mjs && rm -rf _site && eleventy && bun scripts/check-og-images.mjs && bun scripts/check-renderings.mjs && bun test scripts/check-sitemap-redirects.test.mjs && bun scripts/check-sitemap-redirects.mjs && bunx pagefind --site _site && bash scripts/indexnow-submit.sh",
+    "build": "bun run build:site && bun run verify",
+    "build:site": "bun scripts/gen-og-cards.mjs && rm -rf _site && eleventy && bunx pagefind --site _site && bun scripts/build-freshness.mjs --write",
+    "verify": "bun run freshness:check && bun run og:lint && bun run renderings:lint && bun run built-json:lint && bun run artifact:test && bun run play:test && bun run sitemap:test && bun run sitemap:lint",
+    "freshness:check": "bun scripts/build-freshness.mjs --check",
+    "built-json:lint": "bun scripts/check-built-json.mjs",
+    "test:making": "bun run freshness:check && playwright test tests/making",
+    "serve:built": "bun scripts/serve-built-site.mjs",
+    "publish:indexnow": "bun run freshness:check && bash scripts/indexnow-submit.sh",
     "og:cards": "bun scripts/gen-og-cards.mjs",
     "og:lint": "bun scripts/check-og-images.mjs",
     "renderings:lint": "bun scripts/check-renderings.mjs",
     "sitemap:lint": "bun scripts/check-sitemap-redirects.mjs",
-    "sitemap:test": "bun test scripts/check-sitemap-redirects.test.mjs"
+    "sitemap:test": "bun test scripts/check-sitemap-redirects.test.mjs",
+    "artifact:test": "bun test scripts/check-artifact-pipeline.test.mjs",
+    "play:test": "bun test scripts/check-play-integration.test.mjs"
   },
   "dependencies": {
     "@11ty/eleventy": "^3.1.2",
@@ -19,6 +28,7 @@
     "markdown-it-footnote": "^4.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.0",
     "@resvg/resvg-js": "^2.6.2",
     "@vercel/functions": "^3.4.2",
     "pagefind": "^1.4.0",

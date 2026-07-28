@@ -365,9 +365,11 @@ marker: "making"
     .context-label {
         font-family: 'IBM Plex Mono', monospace;
         font-size: 0.6rem;
+        font-weight: 400;
         letter-spacing: 0.15em;
         color: var(--ink-ghost);
         text-transform: uppercase;
+        margin-top: 0;
         margin-bottom: 1rem;
     }
 
@@ -565,7 +567,9 @@ marker: "making"
     }
 </style>
 
-<article class="artifact-spread" data-pagefind-body data-pagefind-filter="type:artifact">
+{% set artifactIframeCapabilities = iframeCapabilities | default(["allow-scripts"]) %}
+<div class="artifact-page" data-pagefind-body data-pagefind-filter="type:artifact">
+<article class="artifact-spread">
 
     <div class="context-field">
         <div class="artifact-num">ARTIFACT NO. {{ seriesNumber | default("01") }}</div>
@@ -598,9 +602,10 @@ marker: "making"
         {% if images and images.length > 1 %}
         <div class="artifact-gallery" id="artifact-gallery">
             {% for image in images %}
-            <figure class="artifact-gallery-item" data-src="{{ image.src }}{% if image.src | isHTMLFile %}?v={{ site.version }}{% endif %}"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
+            {% set imageIframeCapabilities = image.iframeCapabilities | default(artifactIframeCapabilities) %}
+            <figure class="artifact-gallery-item" data-src="{{ image.src }}{% if image.src | isHTMLFile %}?v={{ site.version }}{% endif %}" data-sandbox="{{ imageIframeCapabilities | join(' ') }}" data-title="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" tabindex="0" role="button"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
                 {% if image.src | isHTMLFile %}
-                <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" sandbox="allow-scripts allow-same-origin" loading="{% if loop.index > 2 %}lazy{% else %}eager{% endif %}"></iframe>
+                <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" sandbox="{{ imageIframeCapabilities | join(' ') }}" loading="{% if loop.index > 2 %}lazy{% else %}eager{% endif %}" tabindex="-1" aria-hidden="true"></iframe>
                 {% else %}
                 <img src="{{ image.src }}" alt="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" draggable="false">
                 {% endif %}
@@ -608,18 +613,18 @@ marker: "making"
             </figure>
             {% endfor %}
         </div>
-        <div class="artifact-gallery-fullscreen" id="artifact-gallery-fullscreen">
-            <button class="fullscreen-close" id="gallery-fullscreen-close">close</button>
-            <iframe id="gallery-fullscreen-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+        <div class="artifact-gallery-fullscreen" id="artifact-gallery-fullscreen" role="dialog" aria-modal="true" aria-label="{{ title }} expanded view" aria-hidden="true">
+            <button class="fullscreen-close" id="gallery-fullscreen-close" aria-label="Close expanded view">close</button>
+            <iframe id="gallery-fullscreen-iframe" title="{{ title }} expanded artifact" sandbox="{{ artifactIframeCapabilities | join(' ') }}"></iframe>
         </div>
         {% elif src | isHTMLFile %}
         <figure class="artifact-display artifact-display--interactive" id="artifact-display">
-            <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">expand</button>
-            <iframe src="{{ src }}?v={{ site.version }}" title="{{ title }}" class="artifact-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+            <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Expand artifact" aria-expanded="false" aria-controls="artifact-display">expand</button>
+            <iframe src="{{ src }}?v={{ site.version }}" title="{{ title }}" class="artifact-iframe" sandbox="{{ artifactIframeCapabilities | join(' ') }}"></iframe>
         </figure>
         {% else %}
         <figure class="artifact-display" id="artifact-display">
-            <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">expand</button>
+            <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Expand artifact" aria-expanded="false" aria-controls="artifact-display">expand</button>
             <div class="artifact-viewport" id="artifact-viewport">
                 {% if src %}
                 <img src="{{ src }}" alt="{{ title }}" draggable="false">
@@ -636,13 +641,13 @@ marker: "making"
 <section class="artifact-context">
     {% if contextBefore %}
     <div class="context-block">
-        <div class="context-label">before making</div>
+        <h2 class="context-label">before making</h2>
         <div class="context-text">{{ contextBefore | safe }}</div>
     </div>
     {% endif %}
     {% if contextAfter %}
     <div class="context-block">
-        <div class="context-label">after making</div>
+        <h2 class="context-label">after making</h2>
         <div class="context-text">{{ contextAfter | safe }}</div>
     </div>
     {% endif %}
@@ -652,8 +657,17 @@ marker: "making"
 {% if content | trim %}
 <section class="collaborator-context">
     <div class="collaborator-block">
-        <div class="context-label">context</div>
+        <h2 class="context-label">context</h2>
         <div class="context-text">{{ content | safe }}</div>
+    </div>
+</section>
+{% endif %}
+
+{% if mediaDescription %}
+<section class="collaborator-context media-description" aria-labelledby="media-description-title">
+    <div class="collaborator-block">
+        <h2 class="context-label" id="media-description-title">media description</h2>
+        <div class="context-text">{{ mediaDescription | safe }}</div>
     </div>
 </section>
 {% endif %}
@@ -661,11 +675,13 @@ marker: "making"
 {% if witnesses %}
 <section class="witnesses-context">
     <div class="witnesses-block">
-        <div class="context-label">witnesses</div>
+        <h2 class="context-label">witnesses</h2>
         <div class="context-text">{{ witnesses | safe }}</div>
     </div>
 </section>
 {% endif %}
+</div>
+{# end artifact Pagefind body #}
 
 <nav class="artifact-nav">
     <a href="/making/" class="nav-link">← making</a>
@@ -674,30 +690,93 @@ marker: "making"
 
 <script>
 (function() {
+    const focusableSelector = 'button:not([disabled]), a[href], iframe, [tabindex]:not([tabindex="-1"])';
+
+    function trapFocus(event, root) {
+        if (event.key !== 'Tab') return;
+        const focusable = Array.from(root.querySelectorAll(focusableSelector))
+            .filter(element => !element.inert && element.getClientRects().length);
+        if (!focusable.length) {
+            event.preventDefault();
+            return;
+        }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    }
+
+    function inertOutside(element) {
+        const changed = [];
+        let current = element;
+        while (current && current.parentElement) {
+            Array.from(current.parentElement.children).forEach(sibling => {
+                if (sibling !== current && !sibling.inert) {
+                    sibling.inert = true;
+                    changed.push(sibling);
+                }
+            });
+            current = current.parentElement;
+            if (current === document.body) break;
+        }
+        return function restoreOutside() {
+            changed.forEach(sibling => {
+                sibling.inert = false;
+            });
+        };
+    }
+
     // Gallery mode — multiple artifacts
     const gallery = document.getElementById('artifact-gallery');
     if (gallery) {
         const fullscreenOverlay = document.getElementById('artifact-gallery-fullscreen');
         const fullscreenIframe = document.getElementById('gallery-fullscreen-iframe');
         const closeBtn = document.getElementById('gallery-fullscreen-close');
+        let galleryTrigger = null;
+        let restoreGalleryOutside = null;
+
+        function openFullscreen(item) {
+            galleryTrigger = item;
+            fullscreenIframe.setAttribute('sandbox', item.getAttribute('data-sandbox') || '');
+            fullscreenIframe.title = item.getAttribute('data-title') || 'Expanded artifact';
+            fullscreenIframe.src = item.getAttribute('data-src');
+            fullscreenOverlay.classList.add('active');
+            fullscreenOverlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            restoreGalleryOutside = inertOutside(fullscreenOverlay);
+            closeBtn.focus();
+        }
 
         gallery.querySelectorAll('.artifact-gallery-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const src = item.getAttribute('data-src');
-                fullscreenIframe.src = src;
-                fullscreenOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
+            item.addEventListener('click', () => openFullscreen(item));
+            item.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openFullscreen(item);
+                }
             });
         });
 
         function closeFullscreen() {
             fullscreenOverlay.classList.remove('active');
+            fullscreenOverlay.setAttribute('aria-hidden', 'true');
             fullscreenIframe.src = '';
             document.body.style.overflow = '';
+            if (restoreGalleryOutside) restoreGalleryOutside();
+            restoreGalleryOutside = null;
+            if (galleryTrigger) galleryTrigger.focus();
         }
 
         if (closeBtn) closeBtn.addEventListener('click', closeFullscreen);
         document.addEventListener('keydown', (e) => {
+            if (fullscreenOverlay.classList.contains('active')) {
+                trapFocus(e, fullscreenOverlay);
+            }
             if (e.key === 'Escape' && fullscreenOverlay.classList.contains('active')) {
                 closeFullscreen();
             }
@@ -716,21 +795,34 @@ marker: "making"
     // Interactive artifacts (iframes): only fullscreen, no pan/zoom
     if (isInteractive) {
         let isFullscreen = false;
+        let restoreInteractiveOutside = null;
+
+        function setInteractiveFullscreen(nextState, restoreFocus = false) {
+            isFullscreen = nextState;
+            container.classList.toggle('fullscreen', isFullscreen);
+            fullscreenBtn.textContent = isFullscreen ? 'close' : 'expand';
+            fullscreenBtn.setAttribute('aria-expanded', String(isFullscreen));
+            fullscreenBtn.setAttribute('aria-label', isFullscreen ? 'Close expanded artifact' : 'Expand artifact');
+            document.body.style.overflow = isFullscreen ? 'hidden' : '';
+            if (isFullscreen) {
+                restoreInteractiveOutside = inertOutside(container);
+            } else if (restoreInteractiveOutside) {
+                restoreInteractiveOutside();
+                restoreInteractiveOutside = null;
+            }
+            if (restoreFocus) fullscreenBtn.focus();
+        }
+
         if (fullscreenBtn) {
             fullscreenBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                isFullscreen = !isFullscreen;
-                container.classList.toggle('fullscreen', isFullscreen);
-                fullscreenBtn.textContent = isFullscreen ? 'close' : 'expand';
-                document.body.style.overflow = isFullscreen ? 'hidden' : '';
+                setInteractiveFullscreen(!isFullscreen);
             });
         }
         document.addEventListener('keydown', (e) => {
+            if (isFullscreen) trapFocus(e, container);
             if (e.key === 'Escape' && isFullscreen) {
-                isFullscreen = false;
-                container.classList.remove('fullscreen');
-                fullscreenBtn.textContent = 'expand';
-                document.body.style.overflow = '';
+                setInteractiveFullscreen(false, true);
             }
         });
         return;
@@ -745,6 +837,7 @@ marker: "making"
     let startX, startY;
     let startPanX, startPanY;
     let isFullscreen = false;
+    let restoreStaticOutside = null;
 
     const MIN_SCALE = 0.5;
     const MAX_SCALE = 5;
@@ -762,7 +855,15 @@ marker: "making"
         isFullscreen = !isFullscreen;
         container.classList.toggle('fullscreen', isFullscreen);
         fullscreenBtn.textContent = isFullscreen ? 'close' : 'expand';
+        fullscreenBtn.setAttribute('aria-expanded', String(isFullscreen));
+        fullscreenBtn.setAttribute('aria-label', isFullscreen ? 'Close expanded artifact' : 'Expand artifact');
         document.body.style.overflow = isFullscreen ? 'hidden' : '';
+        if (isFullscreen) {
+            restoreStaticOutside = inertOutside(container);
+        } else if (restoreStaticOutside) {
+            restoreStaticOutside();
+            restoreStaticOutside = null;
+        }
 
         // Reset zoom when entering/exiting fullscreen
         scale = 1;
@@ -784,8 +885,10 @@ marker: "making"
 
     // Escape to exit fullscreen
     document.addEventListener('keydown', (e) => {
+        if (isFullscreen) trapFocus(e, container);
         if (e.key === 'Escape' && isFullscreen) {
             toggleFullscreen();
+            fullscreenBtn.focus();
         }
     });
 

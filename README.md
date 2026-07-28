@@ -144,6 +144,11 @@ DNS-AID is limited to `_index._agents.linxule.com` and should not advertise A2A 
 bun run build   # Outputs to _site/
 ```
 
+- `bun run publish:indexnow` submits the current fresh build only on Vercel
+  Production. For an intentional manual submission, use
+  `INDEXNOW_KEY="$(tail -n 1 src/indexnow-key.njk)" INDEXNOW_FORCE=1 bun run publish:indexnow`.
+  The key is the public verification token rendered by `src/indexnow-key.njk`,
+  not a secret; Vercel Production supplies the same value as `INDEXNOW_KEY`.
 - **Vercel**: Auto-detects Eleventy, deploys on push
 - **Netlify**: Same, or drag `_site/` folder
 - **GitHub Pages**: Use GitHub Action

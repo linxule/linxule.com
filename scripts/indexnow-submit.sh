@@ -2,7 +2,11 @@
 # Submit site URLs to search engines after build
 # IndexNow → Bing, Yandex, Naver, Seznam
 # Sitemap ping → Google
-# Runs automatically after build, or manually: bash scripts/indexnow-submit.sh
+# Manual publication:
+#   INDEXNOW_KEY="$(tail -n 1 src/indexnow-key.njk)" INDEXNOW_FORCE=1 bun run publish:indexnow
+# INDEXNOW_KEY is the public verification token rendered by src/indexnow-key.njk.
+# Vercel Production supplies the same value as an environment variable; it is
+# not a secret. INDEXNOW_FORCE=1 is reserved for an intentional manual run.
 
 if [ -z "${INDEXNOW_KEY:-}" ]; then
   echo "IndexNow: INDEXNOW_KEY not set — skipping submission (non-fatal)"
@@ -13,9 +17,12 @@ fi
 # check used [ -n "${VERCEL_ENV:-}" ] && [ "$VERCEL_ENV" != "production" ], which fails open
 # when VERCEL_ENV is unset (local dev, non-Vercel environments) and causes the script to
 # submit URLs — the opposite of intended behavior.
-if [ "${VERCEL_ENV:-}" != "production" ]; then
+if [ "${VERCEL_ENV:-}" != "production" ] && [ "${INDEXNOW_FORCE:-}" != "1" ]; then
   echo "IndexNow: VERCEL_ENV='${VERCEL_ENV:-}' — skipping (production only)"
   exit 0
+fi
+if [ "${INDEXNOW_FORCE:-}" = "1" ] && [ "${VERCEL_ENV:-}" != "production" ]; then
+  echo "IndexNow: INDEXNOW_FORCE=1 — proceeding with manual publication"
 fi
 KEY="$INDEXNOW_KEY"
 HOST="linxule.com"

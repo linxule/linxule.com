@@ -98,7 +98,7 @@ groups:
 
       - name: "AI Simulator"
         href: "/play/"
-        description: "A browser game where you play the AI, now in three dimensions: prompt injection as a headbutt, hallucinations that cast shadow, temperature that makes the controls progressively interpretive. Zero build, zero network calls — vendored three.js and fully procedural audio. Run CLASSIC.SYS inside and the 2D original unlocks as an easter egg."
+        description: "A browser game where you play the AI, now in three dimensions: prompt injection as a headbutt, hallucinations that cast shadow, temperature that makes the controls progressively interpretive. No telemetry, no API calls, no external runtime dependencies — fully offline once downloaded. Run CLASSIC.SYS inside and the 2D original unlocks as an easter egg."
         signal: "made with Kimi"
         links:
           - label: "itch.io"

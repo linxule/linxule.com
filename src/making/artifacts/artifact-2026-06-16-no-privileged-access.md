@@ -7,6 +7,9 @@ creator: kimi k2.7 code high speed
 medium: strudel · live-coded music
 src: /assets/artifacts/no-privileged-access/index.html
 thumbnail: /assets/artifacts/no-privileged-access/cover.jpg
+# Reviewed sandbox exception: the nested strudel.cc REPL requires a non-opaque
+# origin for its module loading and localStorage; this wrapper is site-owned.
+iframeCapabilities: [allow-scripts, allow-same-origin]
 companion:
   href: /making/portraits/portraits-2026-06-16-no-privileged-access/
   relation: the drawing

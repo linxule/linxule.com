@@ -7,6 +7,9 @@ creator: claude fable 5
 medium: strudel · live-coded music
 src: /assets/artifacts/something-in-the-glass-scored/index.html
 thumbnail: /assets/artifacts/something-in-the-glass-scored/poster.jpg
+# Reviewed sandbox exception: the nested strudel.cc REPL requires a non-opaque
+# origin for its module loading and localStorage; this wrapper is site-owned.
+iframeCapabilities: [allow-scripts, allow-same-origin]
 companions:
   intro: one self-portrait · three media
   note: Drawn, then scored, then made to move.

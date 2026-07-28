@@ -328,15 +328,25 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "CreativeWork",
-      "name": "{{ title }}",
-      "description": "{{ metaDescription | default(site.description) }}",
+      "@type": {% if mediaType == "video" and video %}"VideoObject"{% else %}"CreativeWork"{% endif %},
+      "name": {{ title | dump | safe }},
+      "description": {{ metaDescription | default(site.description) | dump | safe }},
       "datePublished": "{{ date.toISOString().split('T')[0] }}",
-      "creator": {"@type": "SoftwareApplication", "name": "{{ creator | default('Claude') }}"},
-      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
-      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if src %},
-      "image": "{{ site.url }}{{ src }}"{% endif %}{% if medium %},
-      "artMedium": "{{ medium }}"{% endif %}
+      "creator": {"@type": "SoftwareApplication", "name": {{ schemaCreator | default(creator | default("AI")) | dump | safe }}},
+      "creditText": {{ creditText | default("Made by " ~ (creator | default("AI"))) | dump | safe }},
+      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": {{ site.author | dump | safe }}},
+      "mainEntityOfPage": {{ (site.url ~ (page.url | replace(r/\/$/, ''))) | dump | safe }}{% if thumbnail %},
+      "image": {{ (site.url ~ thumbnail) | dump | safe }}{% elif src and not (src | isHTMLFile) %},
+      "image": {{ (site.url ~ src) | dump | safe }}{% endif %}{% if medium %},
+      "artMedium": {{ medium | dump | safe }}{% endif %}{% if mediaType == "video" and video %},
+      "contentUrl": {{ video.contentUrl | dump | safe }},
+      "embedUrl": {{ (site.url ~ src) | dump | safe }},
+      "thumbnailUrl": {{ (site.url ~ thumbnail) | dump | safe }},
+      "uploadDate": "{{ date.toISOString().split('T')[0] }}"{% if video.duration %},
+      "duration": {{ video.duration | dump | safe }}{% endif %}{% if video.encodingFormat %},
+      "encodingFormat": {{ video.encodingFormat | dump | safe }}{% endif %}{% if video.width %},
+      "width": {{ video.width }}{% endif %}{% if video.height %},
+      "height": {{ video.height }}{% endif %}{% endif %}
     }
     </script>
     {% endif %}
@@ -430,7 +440,7 @@
     {# The rendering marker — dormant since the initial commit, wired 2026-07-08.
        Appears exactly when the page has a markdown twin (same mdAlternate
        computation as the head's alternate link). The site's thesis as navigation. #}
-    {% if mdAlternate %}
+    {% if mdAlternate and page.url != '/making/' %}
     <div class="rendering">one rendering · <a href="{{ mdAlternate }}">the source remains</a></div>
     {% endif %}
     
@@ -450,8 +460,9 @@
             }
         });
 
-        // Enable browser scroll restoration
-        if ('scrollRestoration' in history) {
+        // Making book mode owns an internal scroller and sets its own semantic
+        // restoration policy. Other pages retain native document restoration.
+        if ('scrollRestoration' in history && !document.getElementById('making-book')) {
             history.scrollRestoration = 'auto';
         }
 

@@ -7,6 +7,7 @@ creator: kimi k2.7 code
 medium: generative video · synthesized score
 src: /assets/artifacts/kimios/index.html
 thumbnail: /assets/artifacts/kimios/poster.jpg
+iframeCapabilities: []
 keywords:
   - ytpmv
   - glitch-breakcore

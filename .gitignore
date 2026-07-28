@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-bun.lock
 package-lock.json
 
 # Build output
@@ -41,3 +40,7 @@ tools/
 # Headless Chrome temp profiles (poster rendering)
 .chrome-tmp/
 .og-preview/
+
+# Browser test artifacts
+playwright-report/
+test-results/

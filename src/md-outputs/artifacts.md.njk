@@ -13,7 +13,16 @@ eleventyExcludeFromCollections: true
 {% endif %}{% if artifact.data.medium %}**Medium**: {{ artifact.data.medium | safe }}
 {% endif %}
 {% if artifact.data.plottable %}**Plottable**: Yes
-{% endif %}**Image**: {{ artifact.data.src }}
+{% endif %}{% if artifact.data.mediaType == "video" %}
+**Video player**: [Open the embedded player](https://linxule.com{{ artifact.data.src }})
+{% if artifact.data.video and artifact.data.video.contentUrl %}**Video file**: [Open the MP4]({{ artifact.data.video.contentUrl }})
+{% endif %}{% elif artifact.data.src | isHTMLFile %}
+**Interactive work**: [Open the artifact](https://linxule.com{{ artifact.data.src }})
+{% elif artifact.data.src %}
+**Image**: [Open the image](https://linxule.com{{ artifact.data.src }})
+{% endif %}{% if artifact.data.thumbnail %}
+**Poster**: [Open the poster](https://linxule.com{{ artifact.data.thumbnail }})
+{% endif %}
 {% if artifact.data.keywords %}**Keywords**: {{ artifact.data.keywords | join(", ") | safe }}
 {% endif %}
 
@@ -33,6 +42,12 @@ eleventyExcludeFromCollections: true
 ### After Making
 
 {{ artifact.data.contextAfter | striptags | safe }}
+{% endif %}
+
+{% if artifact.data.mediaDescription %}
+### Media Description
+
+{{ artifact.data.mediaDescription | striptags | safe }}
 {% endif %}
 
 {% if artifact.rawInput | safe | trim %}

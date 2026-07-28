@@ -426,7 +426,8 @@ eleventyComputed:
             {%- for image in artifact.data.images -%}
             {% if image.src | isHTMLFile %}
             <a href="{{ artifact.url }}" class="specimen specimen--interactive">
-                <iframe src="{{ image.src }}" title="{{ image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index) }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+                {%- set iframeCapabilities = image.iframeCapabilities | default(artifact.data.iframeCapabilities | default(["allow-scripts"])) -%}
+                <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index) }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="{{ iframeCapabilities | join(' ') }}"></iframe>
                 <span class="specimen-overlay"></span>
                 <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
             </a>
@@ -443,7 +444,8 @@ eleventyComputed:
             </a>
             {% elif artifact.data.src | isHTMLFile %}
             <a href="{{ artifact.url }}" class="specimen specimen--interactive">
-                <iframe src="{{ artifact.data.src }}" title="{{ artifact.data.title }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+                {%- set iframeCapabilities = artifact.data.iframeCapabilities | default(["allow-scripts"]) -%}
+                <iframe src="{{ artifact.data.src }}?v={{ site.version }}" title="{{ artifact.data.title }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="{{ iframeCapabilities | join(' ') }}"></iframe>
                 <span class="specimen-overlay"></span>
             </a>
             {% else %}
