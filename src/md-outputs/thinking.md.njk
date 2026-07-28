@@ -3,30 +3,30 @@ permalink: /thinking.md
 eleventyExcludeFromCollections: true
 ---
 {%- set thinking = collections.thinking[0] -%}
-# {{ thinking.data.title }}
+# {{ thinking.data.title | safe }}
 
-**Thesis**: {{ thinking.data.thesis }}
+**Thesis**: {{ thinking.data.thesis | safe }}
 
-{% for line in thinking.data.thesis_continued %}{{ line }}
+{% for line in thinking.data.thesis_continued %}{{ line | safe }}
 {% endfor %}
 
 ## Problem
 
-{% for statement in thinking.data.problem %}- {{ statement }}
+{% for statement in thinking.data.problem %}- {{ statement | safe }}
 {% endfor %}
 
 ## Observations
 
 {% for observation in thinking.data.observations %}
-### {{ observation.title }}
+### {{ observation.title | safe }}
 
-{% for fragment in observation.fragments %}- {{ fragment.text | default(fragment) }}{% if fragment.accident %} *(accident)*{% endif %}
+{% for fragment in observation.fragments %}- {{ (fragment.text | default(fragment)) | safe }}{% if fragment.accident %} *(accident)*{% endif %}
 {% endfor %}
 {% endfor %}
 
 ## Orientations
 
-{% for item in thinking.data.orientations %}- {{ item }}
+{% for item in thinking.data.orientations %}- {{ item | safe }}
 {% endfor %}
 
 ---

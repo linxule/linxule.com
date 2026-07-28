@@ -6,33 +6,33 @@ pagination:
 permalink: "{{ artifact.url | stripTrailingSlash }}.md"
 eleventyExcludeFromCollections: true
 ---
-# {{ artifact.data.title }}
+# {{ artifact.data.title | safe }}
 
 **Date**: {{ artifact.date | readableDate }}
-{% if artifact.data.creator %}**Creator**: {{ artifact.data.creator }}
-{% endif %}{% if artifact.data.medium %}**Medium**: {{ artifact.data.medium }}
+{% if artifact.data.creator %}**Creator**: {{ artifact.data.creator | safe }}
+{% endif %}{% if artifact.data.medium %}**Medium**: {{ artifact.data.medium | safe }}
 {% endif %}
 {% if artifact.data.plottable %}**Plottable**: Yes
 {% endif %}**Image**: {{ artifact.data.src }}
-{% if artifact.data.keywords %}**Keywords**: {{ artifact.data.keywords | join(", ") }}
+{% if artifact.data.keywords %}**Keywords**: {{ artifact.data.keywords | join(", ") | safe }}
 {% endif %}
 
 {% if artifact.data.contextExcerpt %}
 ## Context
 
-{% for line in artifact.data.contextExcerpt %}> {{ line.text | default(line) }}{% if line.accident %} *(accident)*{% endif %}
+{% for line in artifact.data.contextExcerpt %}> {{ (line.text | default(line)) | safe }}{% if line.accident %} *(accident)*{% endif %}
 {% endfor %}
 {% endif %}
 {% if artifact.data.contextBefore %}
 ### Before Making
 
-{{ artifact.data.contextBefore | striptags }}
+{{ artifact.data.contextBefore | striptags | safe }}
 {% endif %}
 
 {% if artifact.data.contextAfter %}
 ### After Making
 
-{{ artifact.data.contextAfter | striptags }}
+{{ artifact.data.contextAfter | striptags | safe }}
 {% endif %}
 
 {% if artifact.rawInput | safe | trim %}
@@ -46,7 +46,7 @@ eleventyExcludeFromCollections: true
 
 ## Witnesses
 
-{{ artifact.data.witnesses | striptags }}
+{{ artifact.data.witnesses | striptags | safe }}
 {% endif %}
 
 ---

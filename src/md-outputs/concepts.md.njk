@@ -3,25 +3,25 @@ permalink: /concepts.md
 eleventyExcludeFromCollections: true
 ---
 {% for item in collections.all %}{% if item.inputPath == "./src/concepts/index.md" %}
-# {{ item.data.title }}
+# {{ item.data.title | safe }}
 
-{{ item.data.thesis }}
+{{ item.data.thesis | safe }}
 
-{% for line in item.data.thesis_continued %}{{ line.text | default(line) }}
+{% for line in item.data.thesis_continued %}{{ (line.text | default(line)) | safe }}
 {% endfor %}
 
 {% for territory in item.data.territories %}
-## {{ territory.name }}
+## {{ territory.name | safe }}
 
 {% for concept in territory.concepts %}
-### {{ concept.term }}
+### {{ concept.term | safe }}
 
-*{{ concept.oneliner }}*
+*{{ concept.oneliner | safe }}*
 {% for c in collections.concepts %}{% if c.term == concept.term %}
 
-> {{ c.definition }}
+> {{ c.definition | safe }}
 
-Source: [{{ c.title }}]({{ site.url }}{{ c.url }}#{{ c.anchor }})
+Source: [{{ c.title | safe }}]({{ site.url }}{{ c.url }}#{{ c.anchor }})
 {% endif %}{% endfor %}{% if concept.essay %}
 Essay: {{ site.url }}{{ concept.essay }}
 {% endif %}
@@ -30,7 +30,7 @@ Essay: {{ site.url }}{{ concept.essay }}
 {% if territory.questions %}
 **Questions this territory opens:**
 
-{% for q in territory.questions %}- {{ q }}
+{% for q in territory.questions %}- {{ q | safe }}
 {% endfor %}{% endif %}
 {% endfor %}
 

@@ -6,20 +6,20 @@ pagination:
 permalink: "{{ portrait.url | stripTrailingSlash }}.md"
 eleventyExcludeFromCollections: true
 ---
-# {{ portrait.data.title }}
+# {{ portrait.data.title | safe }}
 
 **Date**: {{ portrait.date | readableDate }}
-{% if portrait.data.generator %}**Generator**: {{ portrait.data.generator }}
-{% endif %}{% if portrait.data.settings %}**Settings**: {{ portrait.data.settings }}
-{% endif %}{% if portrait.data.prompter %}**Prompter**: {{ portrait.data.prompter }}
+{% if portrait.data.generator %}**Generator**: {{ portrait.data.generator | safe }}
+{% endif %}{% if portrait.data.settings %}**Settings**: {{ portrait.data.settings | safe }}
+{% endif %}{% if portrait.data.prompter %}**Prompter**: {{ portrait.data.prompter | safe }}
 {% endif %}
-{% if portrait.data.orientation %}**Orientation**: {{ portrait.data.orientation }}
+{% if portrait.data.orientation %}**Orientation**: {{ portrait.data.orientation | safe }}
 {% endif %}
 
 {% if portrait.data.prompt %}
 ## Prompt
 
-{% for line in portrait.data.prompt %}- {{ line.text | default(line) }}{% if line.accident %} *(accident)*{% endif %}
+{% for line in portrait.data.prompt %}- {{ (line.text | default(line)) | safe }}{% if line.accident %} *(accident)*{% endif %}
 {% endfor %}
 {% endif %}
 {% if portrait.data.images %}
@@ -29,8 +29,8 @@ eleventyExcludeFromCollections: true
 ### Image {{ loop.index }}
 
 - **Path**: {{ image.src }}
-- **Alt**: {{ image.alt }}
-{% if image.interpretation %}- **Interpretation**: {{ image.interpretation }}
+- **Alt**: {{ image.alt | safe }}
+{% if image.interpretation %}- **Interpretation**: {{ image.interpretation | safe }}
 {% endif %}
 {% endfor %}
 {% endif %}

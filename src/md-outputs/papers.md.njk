@@ -6,10 +6,10 @@ pagination:
 permalink: /papers/{{ paper.fileSlug }}.md
 eleventyExcludeFromCollections: true
 ---
-# {{ paper.data.paperTitle | default(paper.data.title) }}
+# {{ (paper.data.paperTitle | default(paper.data.title)) | safe }}
 
-**Authors**: {% for a in paper.data.authors %}{{ a.name }}{% if not loop.last %}, {% endif %}{% endfor %}
-**Venue**: {{ paper.data.venue }}{% if paper.data.year %} ({{ paper.data.year }}){% endif %}
+**Authors**: {% for a in paper.data.authors %}{{ a.name | safe }}{% if not loop.last %}, {% endif %}{% endfor %}
+**Venue**: {{ paper.data.venue | safe }}{% if paper.data.year %} ({{ paper.data.year }}){% endif %}
 {% if paper.data.doi %}**DOI**: https://doi.org/{{ paper.data.doi }}
 {% endif %}{% if paper.data.arxivId %}**arXiv**: {{ paper.data.arxivId }}
 {% endif %}{% if paper.data.license %}**License**: {{ paper.data.license }}
@@ -17,17 +17,17 @@ eleventyExcludeFromCollections: true
 {% if paper.data.abstract %}
 ## Abstract
 
-{{ paper.data.abstract }}
+{{ paper.data.abstract | safe }}
 {% endif %}
 {% if paper.data.links %}
 ## Links
 
-{% for l in paper.data.links %}- [{{ l.label }}]({{ l.href }})
+{% for l in paper.data.links %}- [{{ l.label | safe }}]({{ l.href | safe }})
 {% endfor %}
 {% endif %}
 ## Cite
 
-{% for a in paper.data.authors %}{{ a.name }}{% if not loop.last %}, {% endif %}{% endfor %} ({{ paper.data.year }}). {{ paper.data.paperTitle | default(paper.data.title) }}. {% if paper.data.venue %}{{ paper.data.venue }}. {% endif %}{% if paper.data.doi %}https://doi.org/{{ paper.data.doi }}{% elif paper.data.arxivId %}arXiv:{{ paper.data.arxivId }}{% endif %}
+{% for a in paper.data.authors %}{{ a.name | safe }}{% if not loop.last %}, {% endif %}{% endfor %} ({{ paper.data.year }}). {{ (paper.data.paperTitle | default(paper.data.title)) | safe }}. {% if paper.data.venue %}{{ paper.data.venue | safe }}. {% endif %}{% if paper.data.doi %}https://doi.org/{{ paper.data.doi }}{% elif paper.data.arxivId %}arXiv:{{ paper.data.arxivId }}{% endif %}
 
 ---
 

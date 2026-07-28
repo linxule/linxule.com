@@ -6,14 +6,14 @@ pagination:
 permalink: /talks/{{ talk.fileSlug }}.md
 eleventyExcludeFromCollections: true
 ---
-# {{ talk.data.title }}
+# {{ talk.data.title | safe }}
 
-{% if talk.data.event %}**Event**: {{ talk.data.event }}
+{% if talk.data.event %}**Event**: {{ talk.data.event | safe }}
 {% endif %}**Date**: {{ talk.date | readableDate }}
-{% if talk.data.speakers %}**Speakers**: {{ talk.data.speakers | join(", ") }}
+{% if talk.data.speakers %}**Speakers**: {{ talk.data.speakers | join(", ") | safe }}
 {% endif %}{% if talk.data.youtube %}**Video**: https://www.youtube.com/watch?v={{ talk.data.youtube }}
 {% endif %}{% if talk.data.slides %}**Slides**: {% if talk.data.slides.startsWith("/") %}{{ site.url }}{{ talk.data.slides }}{% else %}{{ talk.data.slides }}{% endif %}
-{% endif %}{% if talk.data.keywords %}**Keywords**: {{ talk.data.keywords | join(", ") }}
+{% endif %}{% if talk.data.keywords %}**Keywords**: {{ talk.data.keywords | join(", ") | safe }}
 {% endif %}
 
 ---

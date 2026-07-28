@@ -105,5 +105,24 @@ eleventyExcludeFromCollections: true
       "onSite": {{ paper.data.onSite | dump | safe }}{% endif %}
     }{% if not loop.last %},{% endif %}
 {%- endfor %}
+  ],
+  "projects": [
+{%- set comma = joiner(",") %}
+{%- for page in collections.all %}
+{%- if page.url == "/projects/" or page.url == "/projects" %}
+{%- for group in page.data.groups %}
+{%- for project in group.projects | selectattr("href") %}{{ comma() }}
+    {
+      "name": {{ project.name | dump | safe }},
+      "url": {{ (project.href if project.href.startsWith("http") else site.url + project.href) | dump | safe }},
+      "description": {{ project.description | dump | safe }},{% if project.license %}
+      "license": {{ project.license | dump | safe }},{% endif %}{% if project.signal %}
+      "note": {{ project.signal | dump | safe }},{% endif %}
+      "group": {{ group.name | dump | safe }}
+    }
+{%- endfor %}
+{%- endfor %}
+{%- endif %}
+{%- endfor %}
   ]
 }
