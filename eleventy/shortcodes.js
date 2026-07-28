@@ -122,6 +122,9 @@ export default function(eleventyConfig) {
         formats: ["avif", "webp", "png"],
         outputDir: "./.cache/@11ty/img/",
         urlPath: "/assets/images/optimized/",
+        cacheOptions: {
+          directory: "./node_modules/.cache/eleventy-img-fetch/",
+        },
         filenameFormat: function (id, src, width, format) {
           // Include parent folder to avoid collisions (01.png exists in multiple folders)
           const parentDir = path.basename(path.dirname(src));

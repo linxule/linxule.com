@@ -6,7 +6,7 @@
   "scripts": {
     "start": "bun scripts/gen-og-cards.mjs && eleventy --serve",
     "build": "bun run build:site && bun run verify",
-    "build:site": "bun scripts/gen-og-cards.mjs && rm -rf _site && eleventy && bunx pagefind --site _site && bun scripts/build-freshness.mjs --write",
+    "build:site": "bun scripts/gen-og-cards.mjs && bun scripts/sync-image-cache.mjs restore && rm -rf _site && eleventy && bun scripts/sync-image-cache.mjs save && bunx pagefind --site _site && bun scripts/build-freshness.mjs --write",
     "verify": "bun run freshness:check && bun run og:lint && bun run renderings:lint && bun run built-json:lint && bun run artifact:test && bun run play:test && bun run sitemap:test && bun run sitemap:lint",
     "freshness:check": "bun scripts/build-freshness.mjs --check",
     "built-json:lint": "bun scripts/check-built-json.mjs",

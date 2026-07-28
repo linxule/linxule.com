@@ -16,7 +16,9 @@ jobs:
       - run: bunx playwright install --with-deps chromium
       - uses: actions/cache@v4
         with:
-          path: .cache/@11ty/img
-          key: ${{ runner.os }}-eleventy-img-${{ hashFiles('src/**/*.png', 'src/**/*.jpg', 'src/**/*.jpeg', 'src/**/*.webp', 'src/**/*.svg', 'eleventy/shortcodes.js', 'eleventy/transforms.js') }}
+          path: |
+            node_modules/.cache/site-img
+            node_modules/.cache/eleventy-img-fetch
+          key: ${{ runner.os }}-eleventy-img-v2-${{ hashFiles('src/**/*.png', 'src/**/*.jpg', 'src/**/*.jpeg', 'src/**/*.webp', 'src/**/*.svg', 'eleventy/shortcodes.js', 'eleventy/transforms.js') }}
       - run: bun run build
       - run: bun run test:making

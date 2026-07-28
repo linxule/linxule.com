@@ -43,6 +43,9 @@ export default function(eleventyConfig) {
           formats,
           outputDir: "./.cache/@11ty/img/",
           urlPath: "/assets/images/optimized/",
+          cacheOptions: {
+            directory: "./node_modules/.cache/eleventy-img-fetch/",
+          },
           filenameFormat: function(id, src, width, format) {
             const parentDir = path.basename(path.dirname(src));
             const name = path.basename(src, path.extname(src));
