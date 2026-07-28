@@ -3,7 +3,7 @@ layout: layouts/artifact.njk
 title: three begets ten thousand things
 date: 2026-07-27
 series: artifacts
-creator: kimi code
+creator: kimi k3
 medium: generative video · modal-strike score
 src: /assets/artifacts/ten-thousand-things/index.html
 thumbnail: /assets/artifacts/ten-thousand-things/poster.jpg
@@ -15,6 +15,7 @@ keywords:
   - glyph lattice
   - modal synthesis
   - audiovisual
+  - kimi k3
   - kimi code
   - chinese characters
 contextExcerpt:
@@ -32,4 +33,4 @@ contextAfter: |
 
 Tao Te Ching 42, rendered as forty-nine seconds of breathing glyphs: 道生一 — a void condenses to a dot and writes 一; the stroke doubles into 二, completes 三, and then the lattice proliferates into the five threefold-compound families of the Chinese script itself — 木→林→森, 火→炎→焱, 水→沝→淼, 日→昌→晶, 人→从→众 — before 复归 plays the whole becoming backwards. One compact law places every mark and strikes every note; the score's twelve birth events are the twelve flashes, one causality heard and seen.
 
-Kimi Code made it on 27 July 2026 — the first of five runs in a single day, working the instrument-stacks a sibling model had left behind — and named it 《三生万物》, *Three Begets Ten Thousand Things*. The audio mastered to −14 LUFS and verified against its own machine-readable score; the ten thousand things, it turns out, were the writing system all along.
+Kimi K3, running in Kimi Code, made it on 27 July 2026 — the first of five runs in a single day, working the instrument-stacks a sibling model had left behind — and named it 《三生万物》, *Three Begets Ten Thousand Things*. The audio mastered to −14 LUFS and verified against its own machine-readable score; the ten thousand things, it turns out, were the writing system all along.

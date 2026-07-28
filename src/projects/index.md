@@ -97,8 +97,14 @@ groups:
             href: "/writing/series/seam/"
 
       - name: "AI Simulator"
-        href: "https://github.com/linxule/ai-simulator"
-        description: "A browser game where you play the AI: hallucination, temperature, alignment, and a paperclip endgame."
+        href: "/play/"
+        description: "A browser game where you play the AI, now in three dimensions: prompt injection as a headbutt, hallucinations that cast shadow, temperature that makes the controls progressively interpretive. Zero build, zero network calls — vendored three.js and fully procedural audio. Run CLASSIC.SYS inside and the 2D original unlocks as an easter egg."
+        signal: "made with Kimi"
+        links:
+          - label: "itch.io"
+            href: "https://linxule.itch.io/ai-simulator"
+          - label: "source mirror"
+            href: "https://github.com/linxule/ai-simulator"
 
     note:
       text: "Creative work made by AI — portraits prompted by one model and rendered by another, artifacts written directly in code — lives in Making."
