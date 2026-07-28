@@ -809,6 +809,20 @@ a:focus-visible {
     filter: grayscale(0%);
 }
 
+.specimen-lightbox-trigger {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border: 0;
+    background: transparent;
+    cursor: zoom-in;
+}
+
+.specimen-lightbox-trigger:focus-visible {
+    outline: 2px solid var(--bloom);
+    outline-offset: -4px;
+}
+
 /* ========================================
    Lightbox
    ======================================== */
@@ -866,6 +880,42 @@ a:focus-visible {
 .lightbox-close:focus-visible {
     color: var(--paper);
     outline: none;
+}
+
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    transform: translateY(-50%);
+    border: 0;
+    background: none;
+    color: var(--paper);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.lightbox-prev {
+    left: 2rem;
+}
+
+.lightbox-next {
+    right: 2rem;
+}
+
+.lightbox-nav:focus-visible {
+    outline: 2px solid var(--bloom);
+    outline-offset: 4px;
+}
+
+.lightbox-counter {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    color: var(--paper);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: var(--size-meta);
 }
 
 /* ========================================

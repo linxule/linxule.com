@@ -51,29 +51,48 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
     }
 
     /* ========================================
-       Desktop book mode: hard containment (2026-07-28)
+       Desktop book mode: containment backstop (2026-07-28)
        A specimen set taller than the 100vh spread used to stretch the
        grid row past the spread; with align-content:center the transparent
        .spread-text bled ~500px UP over the previous spread and swallowed
        the filter-chip clicks (10-image "the unfinished sentence" broke the
        portraits chips). Cap the column and clip the spread. body overflow
-       is locked because the .rendering marker adds ~144px of document
-       height below the book — an un-snapped document scroll that parks
-       the book between spreads (ghost-title / blurred-specimen state).
-       Mobile (≤768px) is normal document flow and needs none of this.
+       is locked so the book remains the sole scroll owner, preventing an
+       un-snapped document scroll from parking it between spreads.
+       Book mode requires enough width and height to hold a spread. Narrow or
+       short viewports use normal document flow and need none of this.
        ======================================== */
-    @media (min-width: 769px) {
+    @media (min-width: 901px) and (min-height: 700px) {
         body {
             overflow: hidden;
         }
 
         .spread {
             overflow: hidden;
+            padding-top: 4rem;
+            padding-bottom: 4rem;
         }
 
         .spread-specimens {
-            max-height: calc(100vh - 16rem);
+            max-height: calc(100vh - 8rem);
             overflow: hidden;
+        }
+
+        /*
+         * Keep two-row galleries inside the available height at every desktop
+         * width. Width-driven images can otherwise outgrow this column on wide
+         * screens and leave overflow:hidden to crop the lower row.
+         */
+        .spread-specimens .specimen img {
+            max-height: calc((100vh - 9rem) / 2);
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            margin: 0 auto;
+        }
+
+        .spread[data-orientation="portrait"] .spread-specimens {
+            max-height: min(65vh, calc(100vh - 8rem));
         }
     }
 
@@ -308,6 +327,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
         align-self: center;
+        position: relative;
     }
 
     /* Single specimen: centered, constrained */
@@ -330,8 +350,6 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
     /* Portrait orientation: constrained height */
     .spread[data-orientation="portrait"] .spread-specimens {
         grid-template-columns: 1fr 1fr;
-        max-height: 65vh;
-        overflow: hidden;
     }
 
     .spread[data-orientation="portrait"] .specimen img {
@@ -383,6 +401,29 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
     .specimen:hover .specimen-num {
         opacity: 1;
+    }
+
+    .specimen-more {
+        position: absolute;
+        right: 0.75rem;
+        bottom: 0.75rem;
+        z-index: 2;
+        min-width: 3rem;
+        min-height: 3rem;
+        padding: 0.65rem;
+        border: 1px solid var(--paper);
+        background: rgba(26, 26, 26, 0.88);
+        color: var(--paper);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        cursor: pointer;
+    }
+
+    .specimen-more:hover,
+    .specimen-more:focus-visible {
+        color: var(--bloom);
+        outline: 2px solid var(--bloom);
+        outline-offset: 2px;
     }
 
     /* Interactive (iframe) specimens */
@@ -563,11 +604,36 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         }
     }
 
+    @media (min-width: 901px) and (max-width: 1100px) and (min-height: 700px) {
+        .spread {
+            gap: 2rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .spread-line {
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+
+        .spread-line:nth-child(n) {
+            margin-left: 0;
+        }
+
+        .spread-poem {
+            margin-bottom: 1rem;
+        }
+
+        .spread-meta {
+            padding-top: 1rem;
+        }
+    }
+
     /* ========================================
-       Mobile: Remove scroll-snap, simplify layout
+       Normal flow: narrow or short viewports
        ======================================== */
 
-    @media (max-width: 768px) {
+    @media (max-width: 900px), (max-height: 699px) {
         /* Remove scroll-snap behavior */
         .making-book {
             scroll-snap-type: none;
@@ -582,6 +648,12 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
             min-height: auto;
             padding: 3rem 1.5rem;
             gap: 1.5rem;
+        }
+
+        .spread-specimens,
+        .spread[data-orientation="portrait"] .spread-specimens {
+            max-height: none;
+            overflow: visible;
         }
 
         .spread.header-spread {
@@ -647,14 +719,14 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
 {%- set portraitCount = collections.portraits.length -%}
 
-<div class="making-book" id="making-book">
+<div class="making-book" id="making-book" role="region" aria-label="Making book">
 
     <!-- ============================
          Chapter 1: Portraits
          ============================ -->
 
     <!-- Header Spread -->
-    <section class="spread header-spread" data-spread="0" data-type="portrait" id="portraits">
+    <section class="spread header-spread" data-spread="0" data-type="portrait" data-book-target="portraits" id="portraits">
         <div class="header-links">
             <a href="/search/" class="search-link">search</a>
             <span class="page-marker">002</span>
@@ -685,7 +757,8 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
     <!-- Portrait Spreads -->
     {%- for portrait in collections.portraits -%}
-    <section class="spread" data-spread="{{ loop.index }}" data-type="portrait" data-orientation="{{ portrait.data.orientation | default('landscape') }}">
+    {%- set galleryId = "portrait-gallery-" ~ loop.index -%}
+    <section class="spread" data-spread="{{ loop.index }}" data-type="portrait" data-orientation="{{ portrait.data.orientation | default('landscape') }}" data-book-target="portrait:{{ portrait.fileSlug | default(loop.index) }}">
 
         <div class="spread-text">
             <div class="spread-poem">
@@ -710,12 +783,18 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
         <div class="spread-specimens">
             {%- for image in portrait.data.images -%}
-            <figure class="specimen" data-src="{{ image.src }}">
+            {%- if loop.index <= 4 -%}
+            <figure class="specimen" data-src="{{ image.src }}" data-gallery-id="{{ galleryId }}" data-gallery-index="{{ loop.index0 }}">
                 {% optimizedImage image.src, image.alt | default(portrait.data.title), "(max-width: 900px) 50vw, 25vw" %}
                 <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
             </figure>
+            {%- endif -%}
             {%- endfor -%}
+            {%- if portrait.data.images.length > 4 -%}
+            <button type="button" class="specimen-more" data-gallery-id="{{ galleryId }}" data-gallery-index="4" aria-label="View {{ portrait.data.images.length - 4 }} more images, starting with image 5">+{{ portrait.data.images.length - 4 }} more</button>
+            {%- endif -%}
         </div>
+        <script type="application/json" id="{{ galleryId }}">{{ portrait.data.images | dump | safe }}</script>
 
     </section>
     {%- endfor -%}
@@ -725,7 +804,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
          ============================ -->
 
     <!-- Artifact Header Spread -->
-    <section class="spread header-spread" data-spread="{{ portraitCount + 1 }}" data-type="artifact" id="artifacts">
+    <section class="spread header-spread" data-spread="{{ portraitCount + 1 }}" data-type="artifact" data-book-target="artifacts" id="artifacts">
         <div class="section-label">ARTIFACTS</div>
 
         <div class="page-description">
@@ -747,7 +826,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
     <!-- Artifact Spreads -->
     {%- for artifact in collections.artifacts -%}
-    <section class="spread" data-spread="{{ portraitCount + 1 + loop.index }}" data-type="artifact">
+    <section class="spread" data-spread="{{ portraitCount + 1 + loop.index }}" data-type="artifact" data-book-target="artifact:{{ artifact.fileSlug | default(loop.index) }}">
 
         <div class="spread-text">
             {%- if artifact.data.contextExcerpt -%}
@@ -785,7 +864,8 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
             {%- for image in artifact.data.images -%}
             {% if image.src | isHTMLFile %}
             <a href="{{ artifact.url }}" class="specimen specimen--interactive">
-                <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index) }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+                {%- set iframeCapabilities = image.iframeCapabilities | default(artifact.data.iframeCapabilities | default(["allow-scripts"])) -%}
+                <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index) }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="{{ iframeCapabilities | join(' ') }}"></iframe>
                 <span class="specimen-overlay"></span>
                 <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
             </a>
@@ -798,7 +878,8 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
             {%- endfor -%}
             {% elif artifact.data.src | isHTMLFile %}
             <a href="{{ artifact.url }}" class="specimen specimen--interactive">
-                <iframe src="{{ artifact.data.src }}?v={{ site.version }}" title="{{ artifact.data.title }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+                {%- set iframeCapabilities = artifact.data.iframeCapabilities | default(["allow-scripts"]) -%}
+                <iframe src="{{ artifact.data.src }}?v={{ site.version }}" title="{{ artifact.data.title }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="{{ iframeCapabilities | join(' ') }}"></iframe>
                 <span class="specimen-overlay"></span>
             </a>
             {% else %}
@@ -815,7 +896,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
          Back Matter: Tools + Footer
          ============================ -->
 
-    <section class="back-matter" id="tools">
+    <section class="back-matter" id="tools" data-book-target="tools">
         <section class="tools-section">
             <div class="tools-label">Tools</div>
             <div class="tools-grid">
@@ -828,6 +909,8 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
         <footer class="page-footer">
             <a href="/" class="back-link">← return</a>
+            <span aria-hidden="true"> · </span>
+            <a href="/making.md">the source remains</a>
         </footer>
     </section>
 
@@ -835,7 +918,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
 <!-- Section Navigation -->
 <nav class="book-nav" id="book-nav">
-    <button class="book-nav-dot active" data-section="portraits" aria-label="Portraits"></button>
+    <button class="book-nav-dot active" data-section="portraits" aria-label="Portraits" aria-current="true"></button>
     <span class="book-nav-separator"></span>
     <button class="book-nav-dot" data-section="artifacts" aria-label="Artifacts"></button>
     <span class="book-nav-separator"></span>
@@ -845,10 +928,26 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 <script>
 (function() {
     const book = document.getElementById('making-book');
-    const allSpreads = book.querySelectorAll('.spread');
+    const bookTargets = Array.from(book.querySelectorAll('[data-book-target]'));
     const dots = document.querySelectorAll('#book-nav .book-nav-dot');
     const scrollHint = document.getElementById('scroll-hint');
-    const STORAGE_KEY = 'making-scroll-position';
+    const STORAGE_KEY = 'making-scroll-target';
+    const bookMode = window.matchMedia('(min-width: 901px) and (min-height: 700px)');
+    let programmaticTarget = null;
+    let programmaticTargetTimeout;
+
+    function updateBookFocusability() {
+        if (bookMode.matches) {
+            book.setAttribute('tabindex', '0');
+        } else {
+            book.removeAttribute('tabindex');
+        }
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = bookMode.matches ? 'manual' : 'auto';
+        }
+    }
+
+    updateBookFocusability();
 
     // Section boundaries
     const portraitCount = book.querySelectorAll('.spread[data-type="portrait"]').length;
@@ -862,25 +961,45 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         tools: document.getElementById('tools')
     };
 
-    // Hash navigation takes priority over scroll restore
-    if (window.location.hash) {
-        const target = sectionTargets[window.location.hash.slice(1)];
+    function findTarget(name) {
+        return bookTargets.find(target => target.dataset.bookTarget === name);
+    }
+
+    function closestTarget() {
+        return bookTargets.reduce((closest, target) => {
+            const distance = Math.abs(target.offsetTop - book.scrollTop);
+            return !closest || distance < closest.distance ? { target, distance } : closest;
+        }, null)?.target;
+    }
+
+    function restoreBookTarget() {
+        if (!bookMode.matches) return;
+        const hashTarget = window.location.hash && sectionTargets[window.location.hash.slice(1)];
+        const savedTarget = !hashTarget && findTarget(sessionStorage.getItem(STORAGE_KEY));
+        const target = hashTarget || savedTarget;
         if (target) {
-            setTimeout(() => {
-                target.scrollIntoView({ behavior: 'instant' });
-            }, 0);
-        }
-    } else {
-        const savedIndex = sessionStorage.getItem(STORAGE_KEY);
-        if (savedIndex !== null) {
-            const index = parseInt(savedIndex, 10);
-            if (index > 0 && index < allSpreads.length) {
-                setTimeout(() => {
-                    allSpreads[index].scrollIntoView({ behavior: 'instant' });
-                }, 0);
+            programmaticTarget = target;
+            clearTimeout(programmaticTargetTimeout);
+            programmaticTargetTimeout = setTimeout(() => {
+                programmaticTarget = null;
+            }, 500);
+            // Restore the book's own scroll position directly. scrollIntoView()
+            // can instead restore the document viewport during a reload race.
+            const restore = () => {
+                if (bookMode.matches) {
+                    book.scrollTo({ top: target.offsetTop, behavior: 'instant' });
+                }
+            };
+            restore();
+            requestAnimationFrame(restore);
+            window.addEventListener('pageshow', restore, { once: true });
+            if (document.readyState !== 'complete') {
+                window.addEventListener('load', restore, { once: true });
             }
         }
     }
+
+    restoreBookTarget();
 
     // Determine active section from scroll position
     function getActiveSection(currentIndex) {
@@ -895,11 +1014,19 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         const spreadHeight = window.innerHeight;
         const currentIndex = Math.round(scrollPos / spreadHeight);
 
-        sessionStorage.setItem(STORAGE_KEY, currentIndex.toString());
+        if (!bookMode.matches) return;
+        const semanticTarget = programmaticTarget || closestTarget();
+        if (semanticTarget) sessionStorage.setItem(STORAGE_KEY, semanticTarget.dataset.bookTarget);
 
         const activeSection = getActiveSection(currentIndex);
         dots.forEach(dot => {
-            dot.classList.toggle('active', dot.dataset.section === activeSection);
+            const isActive = dot.dataset.section === activeSection;
+            dot.classList.toggle('active', isActive);
+            if (isActive) {
+                dot.setAttribute('aria-current', 'true');
+            } else {
+                dot.removeAttribute('aria-current');
+            }
         });
 
         if (scrollPos > 50 && scrollHint) {
@@ -913,9 +1040,33 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         dot.addEventListener('click', () => {
             const target = sectionTargets[dot.dataset.section];
             if (target) {
+                if (bookMode.matches && target.dataset.bookTarget) {
+                    programmaticTarget = target;
+                    clearTimeout(programmaticTargetTimeout);
+                    programmaticTargetTimeout = setTimeout(() => {
+                        programmaticTarget = null;
+                    }, 1500);
+                    sessionStorage.setItem(STORAGE_KEY, target.dataset.bookTarget);
+                }
                 target.scrollIntoView({ behavior: scrollBehavior });
             }
         });
+    });
+
+    book.addEventListener('scrollend', () => {
+        if (!programmaticTarget) return;
+        sessionStorage.setItem(STORAGE_KEY, programmaticTarget.dataset.bookTarget);
+        programmaticTarget = null;
+        clearTimeout(programmaticTargetTimeout);
+    });
+
+    bookMode.addEventListener('change', () => {
+        programmaticTarget = null;
+        clearTimeout(programmaticTargetTimeout);
+        sessionStorage.removeItem(STORAGE_KEY);
+        book.scrollTop = 0;
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        updateBookFocusability();
     });
 
 })();

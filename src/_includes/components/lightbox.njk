@@ -1,24 +1,18 @@
 {#
-  Shared Lightbox Component
+  Shared image gallery lightbox.
 
-  Usage: {% include "components/lightbox.njk" %}
-
-  Requires:
-  - .specimen elements with data-src attribute
-  - Images inside specimens should have alt text
-
-  Features:
-  - Keyboard accessible (Enter/Space to open, Escape to close)
-  - Focus trap when open
-  - Focus returns to trigger on close
-  - ARIA attributes for screen readers
-  - Respects prefers-reduced-motion
+  A trigger may provide data-gallery-id and data-gallery-index. The gallery ID
+  points to a JSON script containing every image, including images deliberately
+  omitted from an index spread. Plain .specimen[data-src] elements keep working
+  as a one-spread fallback gallery.
 #}
 
-<!-- Lightbox Modal -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox" aria-hidden="true">
-    <button class="lightbox-close" aria-label="Close lightbox">close</button>
+    <button type="button" class="lightbox-close" aria-label="Close lightbox">close</button>
+    <button type="button" class="lightbox-nav lightbox-prev" aria-label="Previous image">←</button>
     <img alt="Enlarged image view">
+    <button type="button" class="lightbox-nav lightbox-next" aria-label="Next image">→</button>
+    <p class="lightbox-counter" aria-live="polite"></p>
 </div>
 
 <script>
@@ -28,102 +22,181 @@
 
     const lightboxImg = lightbox.querySelector('img');
     const closeBtn = lightbox.querySelector('.lightbox-close');
+    const prevBtn = lightbox.querySelector('.lightbox-prev');
+    const nextBtn = lightbox.querySelector('.lightbox-next');
+    const counter = lightbox.querySelector('.lightbox-counter');
     const specimens = document.querySelectorAll('.specimen[data-src]');
+    const galleryTriggers = document.querySelectorAll('[data-gallery-id][data-gallery-index]');
 
-    let triggerElement = null; // Track which element opened the lightbox
+    let triggerElement = null;
+    let activeGallery = [];
+    let activeIndex = 0;
+    let inertedElements = [];
+    let previousBodyOverflow = "";
 
-    // Make specimens focusable and add ARIA
     specimens.forEach((specimen, index) => {
-        specimen.setAttribute('tabindex', '0');
-        specimen.setAttribute('role', 'button');
         const img = specimen.querySelector('img');
         const altText = img ? img.alt : 'Image ' + (index + 1);
-        specimen.setAttribute('aria-label', 'View ' + altText + ' full size');
+        const label = 'View ' + altText + ' full size';
+        const hasInteractiveChild = specimen.querySelector('a, button, input, select, textarea');
+
+        if (hasInteractiveChild) {
+            const viewButton = document.createElement('button');
+            viewButton.type = 'button';
+            viewButton.className = 'specimen-lightbox-trigger';
+            viewButton.setAttribute('aria-label', label);
+            viewButton.addEventListener('click', () => openLightbox(specimen, viewButton));
+            specimen.appendChild(viewButton);
+        } else {
+            specimen.setAttribute('tabindex', '0');
+            specimen.setAttribute('role', 'button');
+            specimen.setAttribute('aria-label', label);
+        }
     });
 
-    function openLightbox(specimen) {
-        triggerElement = specimen;
-        const img = specimen.querySelector('img');
-        const src = specimen.dataset.src || (img ? img.src : '');
-        const alt = img ? img.alt : '';
+    function fallbackGallery(specimen) {
+        const spread = specimen.closest('.spread, .specimens-field, article') || document;
+        return Array.from(spread.querySelectorAll('.specimen[data-src]')).map(item => {
+            const image = item.querySelector('img');
+            return { src: item.dataset.src || image?.src || '', alt: image?.alt || '' };
+        });
+    }
 
-        lightboxImg.src = src;
-        lightboxImg.alt = alt;
+    function galleryFor(trigger) {
+        const galleryId = trigger.dataset.galleryId;
+        if (!galleryId) return fallbackGallery(trigger);
+        const source = document.getElementById(galleryId);
+        if (!source) return fallbackGallery(trigger);
+        try {
+            return JSON.parse(source.textContent).map(item => ({
+                src: item.src,
+                alt: item.alt || ''
+            }));
+        } catch {
+            return fallbackGallery(trigger);
+        }
+    }
+
+    function renderImage() {
+        const item = activeGallery[activeIndex];
+        if (!item) return;
+        lightboxImg.src = item.src;
+        lightboxImg.alt = item.alt;
+        counter.textContent = `${activeIndex + 1} / ${activeGallery.length}`;
+        const hasMultiple = activeGallery.length > 1;
+        prevBtn.hidden = !hasMultiple;
+        nextBtn.hidden = !hasMultiple;
+    }
+
+    function setBackgroundInert(inert) {
+        if (inert) {
+            let child = lightbox;
+            while (child.parentElement) {
+                Array.from(child.parentElement.children).forEach(sibling => {
+                    if (sibling !== child && !sibling.inert) {
+                        sibling.inert = true;
+                        inertedElements.push(sibling);
+                    }
+                });
+                child = child.parentElement;
+            }
+        } else {
+            inertedElements.forEach(element => { element.inert = false; });
+            inertedElements = [];
+        }
+    }
+
+    function openLightbox(trigger, returnTarget = trigger) {
+        triggerElement = returnTarget;
+        activeGallery = galleryFor(trigger);
+        const explicitIndex = trigger.dataset.galleryIndex;
+        const inferredIndex = explicitIndex === undefined
+            ? activeGallery.findIndex(item => item.src === trigger.dataset.src)
+            : Number.parseInt(explicitIndex, 10);
+        activeIndex = Math.min(
+            Math.max(Number.isNaN(inferredIndex) || inferredIndex < 0 ? 0 : inferredIndex, 0),
+            Math.max(activeGallery.length - 1, 0)
+        );
+        renderImage();
         lightbox.classList.add('active');
         lightbox.setAttribute('aria-hidden', 'false');
+        previousBodyOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
-
-        // Focus the close button
-        closeBtn.focus();
+        setBackgroundInert(true);
+        // Visibility is part of the lightbox transition; focus only once the
+        // control is actually focusable, then re-check that the modal is open.
+        setTimeout(() => {
+            if (lightbox.classList.contains('active')) closeBtn.focus();
+        }, 320);
     }
 
     function closeLightbox() {
         lightbox.classList.remove('active');
         lightbox.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-
-        // Return focus to trigger element
+        setBackgroundInert(false);
+        document.body.style.overflow = previousBodyOverflow;
         if (triggerElement) {
             triggerElement.focus();
             triggerElement = null;
         }
     }
 
-    // Click to open
     specimens.forEach(specimen => {
-        specimen.addEventListener('click', (e) => {
-            // Don't open if clicking a link inside
-            if (e.target.tagName === 'A') return;
+        specimen.addEventListener('click', event => {
+            if (event.target.closest('a, button')) return;
             openLightbox(specimen);
         });
-
-        // Keyboard: Enter/Space to open
-        specimen.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
+        specimen.addEventListener('keydown', event => {
+            if (specimen.querySelector('a, button, input, select, textarea')) return;
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
                 openLightbox(specimen);
             }
         });
     });
 
-    // Click anywhere in lightbox to close
-    lightbox.addEventListener('click', closeLightbox);
-
-    // Close button click (stop propagation to prevent double-fire)
-    closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeLightbox();
+    galleryTriggers.forEach(trigger => {
+        if (trigger.matches('.specimen[data-src]')) return;
+        trigger.addEventListener('click', () => openLightbox(trigger));
     });
 
-    // Escape key to close
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-            closeLightbox();
+    prevBtn.addEventListener('click', () => {
+        activeIndex = (activeIndex - 1 + activeGallery.length) % activeGallery.length;
+        renderImage();
+    });
+    nextBtn.addEventListener('click', () => {
+        activeIndex = (activeIndex + 1) % activeGallery.length;
+        renderImage();
+    });
+    closeBtn.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', event => {
+        if (event.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', event => {
+        if (!lightbox.classList.contains('active')) return;
+        if (event.key === 'Escape') closeLightbox();
+        if (event.key === 'ArrowLeft' && activeGallery.length > 1) {
+            activeIndex = (activeIndex - 1 + activeGallery.length) % activeGallery.length;
+            renderImage();
+        }
+        if (event.key === 'ArrowRight' && activeGallery.length > 1) {
+            activeIndex = (activeIndex + 1) % activeGallery.length;
+            renderImage();
         }
     });
 
-    // Focus trap - keep focus inside lightbox when open
-    lightbox.addEventListener('keydown', (e) => {
-        if (e.key !== 'Tab') return;
-        if (!lightbox.classList.contains('active')) return;
-
-        // Only focusable elements in lightbox are close button and image
-        const focusableElements = [closeBtn, lightboxImg];
-        const firstFocusable = focusableElements[0];
-        const lastFocusable = focusableElements[focusableElements.length - 1];
-
-        if (e.shiftKey) {
-            // Shift+Tab: if on first element, go to last
-            if (document.activeElement === firstFocusable) {
-                e.preventDefault();
-                lastFocusable.focus();
-            }
-        } else {
-            // Tab: if on last element, go to first
-            if (document.activeElement === lastFocusable) {
-                e.preventDefault();
-                firstFocusable.focus();
-            }
+    lightbox.addEventListener('keydown', event => {
+        if (event.key !== 'Tab' || !lightbox.classList.contains('active')) return;
+        const focusable = [closeBtn, prevBtn, nextBtn].filter(element => !element.hidden);
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
         }
     });
 })();
