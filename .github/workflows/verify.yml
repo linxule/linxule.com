@@ -8,11 +8,15 @@ on:
 jobs:
   site:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bunx playwright install --with-deps chromium
+      - uses: actions/cache@v4
+        with:
+          path: .cache/@11ty/img
+          key: ${{ runner.os }}-eleventy-img-${{ hashFiles('src/**/*.png', 'src/**/*.jpg', 'src/**/*.jpeg', 'src/**/*.webp', 'src/**/*.svg', 'eleventy/shortcodes.js', 'eleventy/transforms.js') }}
       - run: bun run build
       - run: bun run test:making
