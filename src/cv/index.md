@@ -205,7 +205,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 - <br/>AI Systems for Human-AI Collaboration
 	- [Vox MCP Server](https://github.com/linxule/vox-mcp)
 		- Multi-model AI gateway for MCP clients supporting 8 providers and local models with conversation threading and no system prompt injection
-	- Lotus Wisdom MCP Server ([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom))
+	- Lotus Wisdom MCP Server ([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
 		- Model Context Protocol server enabling structured contemplative problem-solving through multi-perspective reasoning
 	- Multi-Agent AI Systems for Collaborative Research  ([Video demo](https://www.linkedin.com/posts/linxule_ai-accountability-privacy-activity-7214639418110803969-oe2y) | [Blog post](https://www.linkedin.com/pulse/exploring-potential-multi-agent-ai-systems-research-beyond-xule-lin-3odjc))
 		- Streamlit application orchestrating role-based AI discussions via OpenRouter for human-AI teaming research
@@ -216,9 +216,9 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 	- AI Prompt Engineering Framework
 		- [AI Research Prompts](https://github.com/linxule/prompts): Systematically curated prompts for enhancing LLM capabilities through cognitive techniques and specialized task solutions and for studying language model behaviors and human-agent interactions
 	- Custom GPTs for Research
-		- [BERTopic Navigator](https://chat.openai.com/g/g-FvlPlwLn1-bertopic-navigator): Integration of OpenAI's ChatGPT with BERTopic for enhanced topic modeling implementation
-		- [Red Pen Scholar](https://chat.openai.com/g/g-wDUM3ows9-red-pen-scholar): Writing assistant with transparent feedback based on the principles of the University of Chicago's Little Red Schoolhouse writing program
-		- [Academic Notes Assistant](https://chat.openai.com/g/g-pIFoLpzVx-academic-notes-assistant): Research tool for systematic source attribution and verification
+		- [BERTopic Navigator](https://chatgpt.com/g/g-FvlPlwLn1-bertopic-navigator): Integration of OpenAI's ChatGPT with BERTopic for enhanced topic modeling implementation
+		- [Red Pen Scholar](https://chatgpt.com/g/g-wDUM3ows9-red-pen-scholar): Writing assistant with transparent feedback based on the principles of the University of Chicago's Little Red Schoolhouse writing program
+		- [Academic Notes Assistant](https://chatgpt.com/g/g-pIFoLpzVx-academic-notes-assistant): Research tool for systematic source attribution and verification
 - <br/>Research Resources & Knowledge Base
 	- HuggingFace: [Management & Organization Research Collection](https://huggingface.co/collections/linxule/papers-haio-67262052e8dab420994a9343)
 		- Curated papers on human-AI interaction, AI governance, and responsible development

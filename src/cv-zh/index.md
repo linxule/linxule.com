@@ -205,7 +205,7 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 - <br/>人机协作AI系统
 	- [Vox MCP Server](https://github.com/linxule/vox-mcp)
 		- 面向MCP客户端的多模型AI网关，支持8个提供商及本地模型，具备对话线程管理，无系统提示注入
-	- Lotus Wisdom MCP Server([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom))
+	- Lotus Wisdom MCP Server([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
 		- Model Context Protocol服务器，通过多视角推理实现结构化沉思式问题解决
 	- Multi-Agent AI Systems for Collaborative Research([视频演示](https://www.linkedin.com/posts/linxule_ai-accountability-privacy-activity-7214639418110803969-oe2y) | [博客文章](https://www.linkedin.com/pulse/exploring-potential-multi-agent-ai-systems-research-beyond-xule-lin-3odjc))
 		- 通过OpenRouter编排基于角色的AI讨论的Streamlit应用，用于人机协作研究
@@ -216,9 +216,9 @@ description: "林徐乐（Xule Lin）— 帝国理工学院博士研究员，SKE
 	- AI提示工程框架 (AI Prompt Engineering Framework)
 		- [AI Research Prompts](https://github.com/linxule/prompts)：系统性策划的提示，通过认知技术和专门的任务解决方案增强LLM能力，用于研究语言模型行为和人机交互
 	- 研究用定制GPTs (Custom GPTs for Research)
-		- [BERTopic Navigator](https://chat.openai.com/g/g-FvlPlwLn1-bertopic-navigator)：整合ChatGPT与BERTopic，实现增强的主题建模
-		- [Red Pen Scholar](https://chat.openai.com/g/g-wDUM3ows9-red-pen-scholar)：基于芝加哥大学Little Red Schoolhouse写作项目原则的写作助手，提供透明反馈
-		- [Academic Notes Assistant](https://chat.openai.com/g/g-pIFoLpzVx-academic-notes-assistant)：用于系统性来源归属和验证的研究工具
+		- [BERTopic Navigator](https://chatgpt.com/g/g-FvlPlwLn1-bertopic-navigator)：整合ChatGPT与BERTopic，实现增强的主题建模
+		- [Red Pen Scholar](https://chatgpt.com/g/g-wDUM3ows9-red-pen-scholar)：基于芝加哥大学Little Red Schoolhouse写作项目原则的写作助手，提供透明反馈
+		- [Academic Notes Assistant](https://chatgpt.com/g/g-pIFoLpzVx-academic-notes-assistant)：用于系统性来源归属和验证的研究工具
 - <br/>研究资源与知识库
 	- HuggingFace：[Management & Organization Research Collection](https://huggingface.co/collections/linxule/papers-haio-67262052e8dab420994a9343)
 		- 关于人机交互、AI治理和负责任开发的策划论文
