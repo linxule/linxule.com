@@ -67,4 +67,4 @@ bun run build  # Production build + Pagefind index
 
 ## Deployment
 
-Vercel, `linxule.com`. `git push` auto-deploys. Details in `.claude/docs/infrastructure.md`.
+Vercel, `linxule.com`. **Git auto-deploy is DISABLED** (since 2026-07-28, `vercel.json` `git.deploymentEnabled: false` — 45-min cold builds kept erroring). `git push` only triggers the Verify GitHub Action; to deploy, run `bunx vercel build --prod` then `bunx vercel deploy --prebuilt --prod` (needs sandbox off). Note: prebuilt deploys don't populate Vercel's build cache. Details in `.claude/docs/infrastructure.md`.
