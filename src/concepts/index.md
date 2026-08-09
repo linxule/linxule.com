@@ -78,4 +78,20 @@ territories:
       - "Which decisions need center, and whose?"
       - "What becomes visible that should stay hidden?"
       - "Can governance be formalized without losing what makes it human?"
+
+  - name: "Actors, composed"
+    concepts:
+      - term: "Artificial Organizing"
+        oneliner: "Once, organizations coordinated actors. Now they compose them."
+
+      - term: "Practical Agency"
+        oneliner: "Something can act without becoming someone."
+
+      - term: "Runtime Organization"
+        oneliner: "The work continues while its actors are rewritten."
+
+    questions:
+      - "What becomes invisible when the actors themselves are composed?"
+      - "Who holds the rights to assemble, hide, or dissolve an actor?"
+      - "When the position persists but its occupant changes, what continued?"
 ---
