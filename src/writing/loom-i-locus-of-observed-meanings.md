@@ -17,7 +17,7 @@ keywords:
   - meaning-making
   - interpretation
   - subjectivism
-link: https://threadcounts.substack.com/p/loom-locus-of-observed-meanings
+link: https://www.threadcounts.org/p/loom-locus-of-observed-meanings
 date: 2024-12-23
 ---
 
@@ -149,4 +149,3 @@ Kevin is a Professor of Management at Imperial Business School ([College Profile
 ### AI
 
 Our AI collaborator for this essay is [Claude 3.5 Sonnet (new)](http://claude.ai). Claude was given our meeting transcripts and collaborated with us via multiple chats (each including multiple rounds of discussions) on this piece.
-

@@ -6,9 +6,13 @@
  * Run from xule-site directory: node scripts/migrate-loom.cjs
  *
  * Options:
+ *   --check      Report missing target files without writing anything
  *   --dry-run    Show what would be migrated without writing files
  *   --single     Migrate a single file (provide path as argument)
- *   --force      Overwrite existing target files (default: skip them)
+ *   --help       Show usage without scanning or writing files
+ *
+ * Existing site files are never overwritten. They contain site-specific metadata,
+ * image paths, and editorial changes that are not safe to regenerate wholesale.
  */
 
 const fs = require('fs');
@@ -37,6 +41,19 @@ const CONFIG = {
       series: 'Epistemic Voids'
     },
     {
+      path: 'research-with-ai',
+      glob: '*.md',
+      seriesPrefix: 'Research with AI',
+      numberedPrefix: 'rwa',
+      slugPrefix: 'research-with-ai',
+      seriesNumberStyle: 'roman'
+    },
+    {
+      path: 'ai-whispers',
+      glob: '*.md',
+      series: 'AI Whispers'
+    },
+    {
       path: 'organizational-futures',
       glob: '*.md',
       series: 'Organizational Futures'
@@ -45,6 +62,14 @@ const CONFIG = {
       path: 'individual-posts',
       glob: '*.md',
       series: null // No series for standalone posts
+    },
+    {
+      path: 'seam',
+      glob: '*.md',
+      seriesPrefix: 'SEAM',
+      numberedPrefix: 'seam',
+      slugPrefix: 'seam',
+      seriesNumberStyle: 'padded'
     }
   ]
 };
@@ -91,6 +116,18 @@ function generateSlug(filename, source) {
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '');
     }
+  } else if (source.numberedPrefix) {
+    const numberPattern = new RegExp(`^${source.numberedPrefix}_(\\d+)[-_]?`);
+    const numMatch = slug.match(numberPattern);
+    if (numMatch) {
+      slug = slug.replace(numberPattern, `${source.slugPrefix}-${numMatch[1]}-`);
+    }
+    slug = slug
+      .toLowerCase()
+      .replace(/[_\s]+/g, '-')
+      .replace(/[^a-z0-9-]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
   } else {
     // Other series: clean up the filename
     slug = slug
@@ -118,6 +155,17 @@ function getSeriesName(filename, source) {
     }
   }
 
+  if (source.numberedPrefix) {
+    const numMatch = filename.match(new RegExp(`^${source.numberedPrefix}_(\\d+)`));
+    if (numMatch) {
+      const num = parseInt(numMatch[1]);
+      const formatted = source.seriesNumberStyle === 'roman'
+        ? toRoman(num)
+        : String(num).padStart(2, '0');
+      return `${source.seriesPrefix} · ${formatted}`;
+    }
+  }
+
   return source.seriesPrefix || null;
 }
 
@@ -141,7 +189,7 @@ function transformFrontmatter(frontmatter, seriesName) {
 }
 
 // Migrate a single file
-function migrateFile(sourcePath, source, dryRun = false, force = false) {
+function migrateFile(sourcePath, source, { dryRun = false, check = false } = {}) {
   const filename = path.basename(sourcePath);
   const content = fs.readFileSync(sourcePath, 'utf8');
   const { frontmatter, body } = parseFrontmatter(content);
@@ -153,45 +201,46 @@ function migrateFile(sourcePath, source, dryRun = false, force = false) {
 
   const targetPath = path.join(CONFIG.targetDir, slug);
 
-  if (dryRun) {
+  if (check) {
+    const exists = fs.existsSync(targetPath);
+    console.log(`${exists ? 'OK' : 'MISSING'}: ${source.path}/${filename} → ${slug}`);
+    return { source: sourcePath, target: targetPath, slug, series: seriesName, status: exists ? 'ok' : 'missing' };
+  } else if (dryRun) {
     console.log(`[DRY RUN] Would migrate:`);
     console.log(`  From: ${sourcePath}`);
     console.log(`  To:   ${targetPath}`);
     console.log(`  Series: ${seriesName || '(none)'}`);
     console.log('');
+    return { source: sourcePath, target: targetPath, slug, series: seriesName, status: 'dry-run' };
   } else {
     if (writtenTargets.has(targetPath)) {
       console.warn(`WARNING: slug collision — ${slug} already written this run; skipping ${filename}`);
-      return { source: sourcePath, target: targetPath, slug, series: seriesName, skipped: true };
-    }
-    if (fs.existsSync(targetPath) && !force) {
-      console.warn(`SKIP: ${slug} already exists (use --force to overwrite); skipping ${filename}`);
-      return { source: sourcePath, target: targetPath, slug, series: seriesName, skipped: true };
+      return { source: sourcePath, target: targetPath, slug, series: seriesName, status: 'skipped' };
     }
     if (fs.existsSync(targetPath)) {
-      console.warn(`WARNING: overwriting existing ${slug} (--force)`);
+      console.warn(`SKIP: ${slug} already exists; preserving site-specific content`);
+      return { source: sourcePath, target: targetPath, slug, series: seriesName, status: 'skipped' };
     }
     fs.writeFileSync(targetPath, newContent);
     writtenTargets.add(targetPath);
     console.log(`Migrated: ${filename} → ${slug}`);
+    return { source: sourcePath, target: targetPath, slug, series: seriesName, status: 'migrated' };
   }
-
-  return { source: sourcePath, target: targetPath, slug, series: seriesName };
 }
 
 // Main migration function
 function migrate(options = {}) {
-  const { dryRun = false, singleFile = null, force = false } = options;
+  const { dryRun = false, check = false, singleFile = null } = options;
   const results = [];
 
   console.log('LOOM Post Migration');
   console.log('===================');
   console.log(`Target: ${CONFIG.targetDir}`);
-  console.log(`Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}`);
+  console.log(`Mode: ${check ? 'CHECK' : dryRun ? 'DRY RUN' : 'LIVE'}`);
   console.log('');
 
   // Ensure target directory exists
-  if (!dryRun && !fs.existsSync(CONFIG.targetDir)) {
+  if (!dryRun && !check && !fs.existsSync(CONFIG.targetDir)) {
     fs.mkdirSync(CONFIG.targetDir, { recursive: true });
   }
 
@@ -202,7 +251,7 @@ function migrate(options = {}) {
       const sourceDir = path.join(CONFIG.loomRepo, source.path);
       const rel = path.relative(sourceDir, resolvedSingle);
       if (rel && !rel.startsWith('..') && !path.isAbsolute(rel)) {
-        results.push(migrateFile(resolvedSingle, source, dryRun, force));
+        results.push(migrateFile(resolvedSingle, source, { dryRun, check }));
         break;
       }
     }
@@ -228,13 +277,20 @@ function migrate(options = {}) {
 
       for (const file of files) {
         const sourcePath = path.join(sourceDir, file);
-        results.push(migrateFile(sourcePath, source, dryRun, force));
+        results.push(migrateFile(sourcePath, source, { dryRun, check }));
       }
     }
   }
 
   console.log('\n===================');
-  console.log(`Total: ${results.length} files ${dryRun ? 'would be ' : ''}migrated`);
+  const counts = results.reduce((acc, result) => {
+    acc[result.status] = (acc[result.status] || 0) + 1;
+    return acc;
+  }, {});
+  console.log(`Checked: ${results.length}`);
+  for (const status of ['migrated', 'skipped', 'ok', 'missing', 'dry-run']) {
+    if (counts[status]) console.log(`${status}: ${counts[status]}`);
+  }
 
   // Surface slug collisions (multiple sources mapping to the same target)
   const slugSources = {};
@@ -252,9 +308,24 @@ function migrate(options = {}) {
 
 // CLI handling
 const args = process.argv.slice(2);
+if (args.includes('--help') || args.includes('-h')) {
+  console.log(`Usage: node scripts/migrate-loom.cjs [options]\n\nOptions:\n  --check          Report missing target files without writing\n  --dry-run        Preview target paths without writing\n  --single <path>  Process one Loom Markdown file\n  --help, -h       Show this help\n\nExisting site files are always preserved.`);
+  process.exit(0);
+}
+if (args.includes('--force')) {
+  console.error('Refusing --force: existing site files contain site-specific metadata and edits.');
+  process.exit(2);
+}
 const dryRun = args.includes('--dry-run');
-const force = args.includes('--force');
+const check = args.includes('--check');
 const singleIndex = args.indexOf('--single');
 const singleFile = singleIndex >= 0 ? args[singleIndex + 1] : null;
+if (singleIndex >= 0 && (!singleFile || singleFile.startsWith('--'))) {
+  console.error('--single requires a Markdown file path.');
+  process.exit(2);
+}
 
-migrate({ dryRun, singleFile, force });
+const results = migrate({ dryRun, check, singleFile });
+if (check && results.some(result => result.status === 'missing')) {
+  process.exitCode = 1;
+}

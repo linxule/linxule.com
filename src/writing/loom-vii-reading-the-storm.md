@@ -18,7 +18,7 @@ keywords:
   - mediated meaning-making
   - post-post-truth
   - layered mediation
-link: https://threadcounts.substack.com/p/loom-vii-reading-the-storm
+link: https://www.threadcounts.org/p/loom-vii-reading-the-storm
 date: 2025-03-02
 ---
 

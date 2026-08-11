@@ -17,7 +17,7 @@ keywords:
   - social dynamics
   - structured interaction
   - emergent patterns
-link: https://threadcounts.substack.com/p/loom-ii-the-organizational-weave
+link: https://www.threadcounts.org/p/loom-ii-the-organizational-weave
 date: 2024-12-27
 ---
 

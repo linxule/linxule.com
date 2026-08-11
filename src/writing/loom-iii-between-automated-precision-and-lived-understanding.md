@@ -18,7 +18,7 @@ keywords:
   - human interpretation
   - academic identity
   - intellectual craftsmanship
-link: https://threadcounts.substack.com/p/loom-iii-between-automated-precision
+link: https://www.threadcounts.org/p/loom-iii-between-automated-precision
 date: 2025-01-12
 ---
 

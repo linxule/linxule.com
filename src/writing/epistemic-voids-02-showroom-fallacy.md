@@ -15,7 +15,7 @@ keywords:
   - LLMs
   - transformer architecture
   - calculator fallacy
-link: https://threadcounts.substack.com/p/epistemic-voids-2-showroom-fallacy
+link: https://www.threadcounts.org/p/epistemic-voids-2-showroom-fallacy
 date: 2025-12-02
 ---
 

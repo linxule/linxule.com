@@ -18,7 +18,7 @@ keywords:
   - earth-moon dynamic
   - binary star dynamic
   - six dimensions of understanding
-link: https://threadcounts.substack.com/p/loom-xiii-celestial-collaboration
+link: https://www.threadcounts.org/p/loom-xiii-celestial-collaboration
 date: 2025-06-06
 ---
 

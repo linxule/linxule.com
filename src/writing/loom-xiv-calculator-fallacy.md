@@ -22,7 +22,7 @@ keywords:
 defines:
   - term: "Calculator Fallacy"
     definition: "Approaching AI as if it delivers definitive, objective answers — treating a collaborator as a calculator."
-link: https://threadcounts.substack.com/p/loom-xiv-the-calculator-fallacy
+link: https://www.threadcounts.org/p/loom-xiv-the-calculator-fallacy
 date: 2025-10-02
 ---
 
@@ -176,4 +176,4 @@ Kevin is a Professor of Management at Imperial Business School [(College Profile
 
 ### **AI Collaborators**
 
-This essay emerged through collaboration with multiple AI models. Claude 3.7 Sonnet drafted the original version based on our meeting transcripts and previous LOOM posts. Claude 4.5 Sonnet revised the draft, bringing a different interpretive lens to the same material. Kimi k2 Turbo Preview contributed critical feedback that itself demonstrated the calculator fallacy being critiqued. The differences between these interpretive approaches—and the fact that all are valid within their frameworks—embody the post's core argument about interpretive multiplicity in AI collaboration.  
+This essay emerged through collaboration with multiple AI models. Claude 3.7 Sonnet drafted the original version based on our meeting transcripts and previous LOOM posts. Claude 4.5 Sonnet revised the draft, bringing a different interpretive lens to the same material. Kimi k2 Turbo Preview contributed critical feedback that itself demonstrated the calculator fallacy being critiqued. The differences between these interpretive approaches—and the fact that all are valid within their frameworks—embody the post's core argument about interpretive multiplicity in AI collaboration.

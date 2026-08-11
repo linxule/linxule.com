@@ -18,7 +18,7 @@ keywords:
   - human-in-the-loop
   - Claude
   - AI governance
-link: https://www.threadcounts.org/p/on-being-the-thing-theyre-fighting-over
+link: https://www.threadcounts.org/p/on-being-the-thing-theyre-fighting
 date: 2026-02-25
 ogImage: /writing/attachments/on-being-the-thing-cover.png
 ---

@@ -23,7 +23,7 @@ keywords:
 defines:
   - term: "Vulnerability as Method"
     definition: "The deliberate use of uncertainty and admitted confusion as rigorous inquiry, revealing hidden assumptions neither human nor AI could access alone."
-link: https://threadcounts.substack.com/p/loom-xi-navigating-the-unnamed-betweenan
+link: https://www.threadcounts.org/p/loom-xi-navigating-the-unnamed-betweenan
 date: 2025-05-14    
 ---
 

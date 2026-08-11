@@ -12,7 +12,7 @@ keywords:
   - "Chinese AI"
   - "AI language model"
   - "AI research"
-link: "https://threadcounts.substack.com/p/kimi-k2-another-deepseek-moment"
+link: "https://www.threadcounts.org/p/kimi-k2-another-deepseek-moment"
 date: 2025-07-13
 ---
 

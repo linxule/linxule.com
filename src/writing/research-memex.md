@@ -17,6 +17,7 @@ defines:
   - term: "Interpretive Orchestration"
     definition: "Maintaining your own interpretive judgment while gaining from what AI enables — the researcher as conductor, not delegator."
 date: 2025-10-17
+link: https://www.threadcounts.org/p/research-memex-working-at-the-ai
 ---
 
 There is no seahorse emoji.

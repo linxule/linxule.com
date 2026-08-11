@@ -11,10 +11,14 @@ The LOOM repo (`/Users/xulelin/Documents/GitHub/loom`) is actively maintained. N
 ```bash
 # From xule-site directory:
 
+# Check whether every supported Loom source has a site target (no writes;
+# exits nonzero when a target is missing)
+node scripts/migrate-loom.cjs --check
+
 # Preview what would be migrated (dry run)
 node scripts/migrate-loom.cjs --dry-run
 
-# Migrate all posts
+# Migrate missing posts; existing site files are always preserved
 node scripts/migrate-loom.cjs
 
 # Migrate a single new post
@@ -26,15 +30,20 @@ node scripts/migrate-loom.cjs --single /path/to/new-post.md
 1. **Reads** posts from these LOOM directories:
    - `posts/` → Main LOOM series (I, II, III...)
    - `epistemic-voids/` → Epistemic Voids series
+   - `research-with-ai/` → Research with AI series (I, II, III...)
+   - `ai-whispers/` → AI Whispers series
    - `organizational-futures/` → Organizational Futures series
    - `individual-posts/` → Standalone posts (no series)
+   - `seam/` → SEAM series (01, 02, 03...)
 
 2. **Transforms** each post:
    - Adds `layout: layouts/writing.njk` to frontmatter
    - Adds appropriate `series` field (e.g., "LOOM · V", "Epistemic Voids")
    - Converts filename to URL-friendly slug
 
-3. **Writes** to `src/writing/`
+3. **Writes** missing targets to `src/writing/`. Existing targets are never
+   overwritten because they can contain site-specific metadata, image paths,
+   and editorial changes.
 
 ### Series Naming
 
@@ -43,8 +52,11 @@ node scripts/migrate-loom.cjs --single /path/to/new-post.md
 | posts/loom_post_01_* | LOOM · I | "LOOM · I" |
 | posts/loom_post_15_* | LOOM · XV | "LOOM · XV" |
 | epistemic-voids/* | Epistemic Voids | "Epistemic Voids" |
+| research-with-ai/rwa_01_* | Research with AI · I | "Research with AI · I" |
+| ai-whispers/* | AI Whispers | "AI Whispers" |
 | organizational-futures/* | Organizational Futures | "Organizational Futures" |
 | individual-posts/* | (none) | No series field |
+| seam/seam_02_* | SEAM · 02 | "SEAM · 02" |
 
 ### Filename Conversion Examples
 
@@ -53,6 +65,7 @@ loom_post_01_Locus-of-Observed-Meanings.md → loom-i-locus-of-observed-meanings
 loom_post_15_Theorizing_by_Building.md    → loom-xv-theorizing-by-building.md
 epistemic_voids_01_citation_theater.md    → epistemic-voids-01-citation-theater.md
 research_memex.md                         → research-memex.md
+seam_02_the_saturday_meeting.md           → seam-02-the-saturday-meeting.md
 ```
 
 ### Adding a New Post
@@ -73,6 +86,10 @@ When a new post is published to the LOOM repo:
    # ... rest of original frontmatter
    ---
    ```
+
+   Then add the 130–160 character `description`, copy any attachments, convert
+   body image references to absolute `/writing/attachments/...` paths, and set
+   `ogImage` when the post has a cover.
 
 3. **Test locally:**
    ```bash
@@ -112,7 +129,7 @@ authors:
 keywords:
   - keyword1
   - keyword2
-link: https://threadcounts.substack.com/p/...  # Optional
+link: https://www.threadcounts.org/p/...  # Optional
 date: 2024-12-23
 ---
 ```

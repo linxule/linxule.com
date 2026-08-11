@@ -17,7 +17,7 @@ keywords:
   - generative friction
   - capability signatures
   - dimensional navigation
-link: https://threadcounts.substack.com/p/loom-ix-the-six-dimensions-of-understanding
+link: https://www.threadcounts.org/p/loom-ix-the-six-dimensions-of-understanding
 date: 2025-04-04
 ---
 

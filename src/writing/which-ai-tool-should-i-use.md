@@ -15,6 +15,7 @@ keywords:
   - context management
   - memo method
 date: 2025-11-08
+link: https://www.threadcounts.org/p/which-ai-tool-should-i-actually-use
 ---
 
 If you're like most social science researchers I know, you've probably tried ChatGPT, maybe Claude, and wondered, **"Which AI should I actually be using for my work?" The answer, unfortunately (or fortunately?), is "it depends."**
