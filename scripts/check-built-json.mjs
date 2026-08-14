@@ -53,7 +53,7 @@ if (siteIndex) {
   if (!Array.isArray(siteIndex.projects)) {
     problems.push("site-index.projects is not an array");
   } else {
-    const projectsMarkdownPath = path.join(SITE, "projects.md");
+    const projectsMarkdownPath = path.join(SITE, "builds.md");
     const projectsMarkdown = existsSync(projectsMarkdownPath)
       ? readFileSync(projectsMarkdownPath, "utf8")
       : "";
@@ -75,13 +75,13 @@ if (siteIndex) {
         problems.push(`${label}.url is not absolute`);
       }
       if (!projectsMarkdown) {
-        problems.push("projects.md is missing");
+        problems.push("builds.md is missing");
       } else {
         if (project.name && !projectsMarkdown.includes(project.name)) {
-          problems.push(`projects.md does not contain project "${project.name}"`);
+          problems.push(`builds.md does not contain project "${project.name}"`);
         }
         if (project.url && !projectsMarkdown.includes(project.url)) {
-          problems.push(`projects.md does not contain URL "${project.url}"`);
+          problems.push(`builds.md does not contain URL "${project.url}"`);
         }
       }
     }
@@ -97,5 +97,5 @@ if (problems.length) {
 }
 
 console.log(
-  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), site-index.json, and projects.md parsed/agree`,
+  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), site-index.json, and builds.md parsed/agree`,
 );
