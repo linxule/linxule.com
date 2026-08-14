@@ -67,6 +67,10 @@ export default function(eleventyConfig) {
         if (entry.isDirectory()) {
           copyIncremental(srcPath, destPath);
         } else if (entry.isFile()) {
+          // eleventy-img never emits filenames with spaces. Anything like
+          // "…-2912w 2.png" is a Finder "keep both" merge duplicate (a 2026-03
+          // cache-merge incident shipped 3.5GB of them in every deploy) — skip.
+          if (entry.name.includes(" ")) continue;
           let needsCopy = true;
           try {
             const destStat = fs.statSync(destPath);
