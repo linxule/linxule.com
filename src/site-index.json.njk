@@ -109,7 +109,7 @@ eleventyExcludeFromCollections: true
   "projects": [
 {%- set comma = joiner(",") %}
 {%- for page in collections.all %}
-{%- if page.url == "/projects/" or page.url == "/projects" %}
+{%- if page.url == "/builds/" or page.url == "/builds" %}
 {%- for group in page.data.groups %}
 {%- for project in group.projects | selectattr("href") %}{{ comma() }}
     {

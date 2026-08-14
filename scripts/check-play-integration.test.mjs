@@ -45,8 +45,8 @@ describe("/play integration", () => {
   });
 
   test("keeps primary and secondary links in both project renderings", () => {
-    const markdown = output("/projects.md");
-    const html = output("/projects/");
+    const markdown = output("/builds.md");
+    const html = output("/builds/");
     const expectedLinks = [
       PLAY_URL,
       "https://linxule.itch.io/ai-simulator",

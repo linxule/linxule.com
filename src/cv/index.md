@@ -220,7 +220,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 		- 78 decentralized organizations, 260K governance discussions, ~40.3 million words (see Working Papers)
 	- [AI Research Prompts](https://github.com/linxule/prompts)
 		- Curated prompt library of cognitive techniques for research use; origin of the Lotus Wisdom framework
-- <br/>Complete open-source and public-build portfolio: [linxule.com/projects](/projects/)
+- <br/>Complete open-source and public-build portfolio: [linxule.com/builds](/builds/)
 
 # Reviewing
 

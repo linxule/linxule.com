@@ -220,7 +220,7 @@ description: "林徐乐 (Xule Lin) — 帝国理工学院管理学博士，将�
 		- 78个去中心化组织，26万条治理讨论，约4030万字(详见"工作论文")
 	- [AI Research Prompts](https://github.com/linxule/prompts)
 		- 面向研究用途的认知技术策划提示词库；Lotus Wisdom框架的源起
-- <br/>完整的开源与公开项目作品集：[linxule.com/projects](/projects/)
+- <br/>完整的开源与公开项目作品集：[linxule.com/builds](/builds/)
 
 # 审稿服务
 

@@ -284,6 +284,16 @@
       "statusCode": 301
     },
     {
+      "source": "/projects",
+      "destination": "/builds",
+      "statusCode": 301
+    },
+    {
+      "source": "/projects.md",
+      "destination": "/builds.md",
+      "statusCode": 301
+    },
+    {
       "source": "/projects/md_academic",
       "destination": "/writing/macaw-markdown-academic-writing",
       "statusCode": 301

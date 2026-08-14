@@ -138,7 +138,7 @@
     {%- if page.url and (page.url.startsWith('/writing/') or page.url.startsWith('/making/portraits/') or page.url.startsWith('/making/artifacts/') or page.url.startsWith('/talks/') or page.url.startsWith('/papers/')) and not page.url.startsWith('/writing/series/') and page.url != '/writing/' and page.url != '/talks/' and page.url != '/making/portraits/' and page.url != '/making/artifacts/' and page.url != '/papers/' %}
     {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
     {%- endif %}
-    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' or page.url == '/papers/' or page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' or page.url == '/projects/' %}
+    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' or page.url == '/papers/' or page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' or page.url == '/builds/' %}
     {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
     {%- endif %}
     {%- if page.url == '/' %}
@@ -284,14 +284,14 @@
     }
     </script>
     {% endif %}
-    {% if page.url == '/projects/' %}
+    {% if page.url == '/builds/' %}
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      "@id": "{{ site.url }}/projects/",
-      "name": {{ ("Projects — " + site.author) | dump | safe }},
-      "url": "{{ site.url }}/projects/",
+      "@id": "{{ site.url }}/builds/",
+      "name": {{ ("Builds — " + site.author) | dump | safe }},
+      "url": "{{ site.url }}/builds/",
       "inLanguage": "en",
       "author": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
       "license": "https://creativecommons.org/licenses/by/4.0/",

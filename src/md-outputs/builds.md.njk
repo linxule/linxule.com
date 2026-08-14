@@ -1,9 +1,9 @@
 ---
-permalink: /projects.md
+permalink: /builds.md
 eleventyExcludeFromCollections: true
 ---
 {%- for page in collections.all -%}
-{%- if page.url == "/projects/" or page.url == "/projects" -%}
+{%- if page.url == "/builds/" or page.url == "/builds" -%}
 # {{ page.data.title }}
 
 {{ page.data.thesis | safe }}

@@ -150,7 +150,7 @@ const SECTIONS = {
   thinking: ["What becomes impossible to see when", "AI carries implicit theories of organizing."],
   concepts: ["A working vocabulary — naming is", "how you make a noticing portable."],
   teaching: ["Methods, cases, and tools for", "teaching and researching with AI."],
-  projects: ["Open-source tools and public", "infrastructure built alongside the research."],
+  builds: ["Open-source tools and public", "infrastructure built alongside the research."],
   cv: ["Organization scholar and", "human–AI collaboration researcher."],
 };
 for (const [key, taglineLines] of Object.entries(SECTIONS)) {

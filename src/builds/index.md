@@ -1,13 +1,13 @@
 ---
-ogImage: /assets/og-cards/projects.jpg
-layout: layouts/projects.njk
-title: projects
-seoTitle: "Projects — open-source tools and public builds"
+ogImage: /assets/og-cards/builds.jpg
+layout: layouts/builds.njk
+title: builds
+seoTitle: "Builds — open-source tools and public infrastructure"
 seoDescription: "Open-source MCP servers, Claude Code plugins, and research infrastructure by Xule Lin — kimi-plugin-cc, MCP Music Studio, Lotus Wisdom, OpenInterviewer."
-seoH1: "Projects — the open-source MCP servers, agent plugins, research tools, and public infrastructure Xule Lin builds alongside the research."
+seoH1: "Builds — the open-source MCP servers, agent plugins, research tools, and public infrastructure Xule Lin builds alongside the research."
 description: "The code and public infrastructure that came out of the experiments."
 
-thesis: "Some of these projects began as research questions."
+thesis: "Some of these builds began as research questions."
 
 thesis_continued:
   - "Others began because I wanted a music studio, a persistent memory,"
