@@ -165,6 +165,20 @@ export default function(eleventyConfig) {
     return combined.sort((a, b) => new Date(b.date) - new Date(a.date));
   });
 
+  // Feed selection with a per-shape floor: the newest `limit` items overall,
+  // PLUS the newest `minPerShape` of every shape, so a burst of one content
+  // type (e.g. an artifact wave) can never push a whole shape out of the feed.
+  // The renderings lint requires every shape to surface in feed.xml.
+  eleventyConfig.addFilter("feedSelection", (combined, limit, minPerShape, ...shapes) => {
+    const chosen = new Set(combined.slice(0, limit).map(item => item.url));
+    for (const shape of shapes) {
+      const sorted = (shape || []).filter(item => item && item.date)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      for (const item of sorted.slice(0, minPerShape)) chosen.add(item.url);
+    }
+    return combined.filter(item => chosen.has(item.url));
+  });
+
   // Check if a source path is an HTML file (for iframe embedding)
   eleventyConfig.addFilter("isHTMLFile", (src) => {
     if (!src) return false;
