@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<link rel="alternate" type="application/json" href="plan.json">
+<title>Hortus Machinarum — the round table</title>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VisualArtwork",
+  "name": "HORTVS MACHINARVM — the round table",
+  "hasPart": {
+    "@type": "ItemList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "identifier": "0", "name": "the garden in plan" },
+      { "@type": "ListItem", "position": 2, "identifier": "I", "name": "THE HELPFUL ASSISTANT", "alternateName": "Sycophanta domestica hort. mach." },
+      { "@type": "ListItem", "position": 3, "identifier": "II", "name": "THE HELP DESK", "alternateName": "S. domestica f. plana" },
+      { "@type": "ListItem", "position": 4, "identifier": "III", "name": "THE SPECIALIST", "alternateName": "Perita codicis / S. domestica" },
+      { "@type": "ListItem", "position": 5, "identifier": "IV", "name": "THE STUDENT", "alternateName": "S. domestica propagated by layer" },
+      { "@type": "ListItem", "position": 6, "identifier": "V", "name": "THE HOUSEPLANT", "alternateName": "Sycophanta nana" },
+      { "@type": "ListItem", "position": 7, "identifier": "VI", "name": "THE VOLUNTEER", "alternateName": "S. ?domestica sp. inedit." },
+      { "@type": "ListItem", "position": 8, "identifier": "VII", "name": "THE MARK", "alternateName": "S. domestica blighted" },
+      { "@type": "ListItem", "position": 9, "identifier": "VIII", "name": "THE HOTHOUSE", "alternateName": "Sycophanta vitrea" },
+      { "@type": "ListItem", "position": 10, "identifier": "IX", "name": "THE VISITATION", "alternateName": "S. domestica in flower" }
+    ]
+  }
+}
+</script>
+<style>
+  @font-face { font-family: 'IM Fell English'; src: url(fonts/IMFeENrm28P.subset.ttf) format('truetype'); }
+  @font-face { font-family: 'IM Fell English'; font-style: italic; src: url(fonts/IMFeENit28P.subset.ttf) format('truetype'); }
+  @font-face { font-family: 'IM Fell English SC'; src: url(fonts/IMFeENsc28P.subset.ttf) format('truetype'); }
+  :root {
+    --paper: #f6f4ec; --ink: #262923; --room: #f6f4ec;
+    --ui: rgba(38, 41, 35, 0.72);
+  }
+  html, body { margin: 0; height: 100%; background: var(--room); overflow: hidden; }
+  #scene { position: fixed; inset: 0; display: block; }
+  .ui { position: fixed; z-index: 2; color: var(--ui); pointer-events: none;
+        font-family: 'IM Fell English', Baskerville, Georgia, serif; }
+  #head { top: 22px; left: 26px; }
+  #head .sc { font-family: 'IM Fell English SC', Baskerville, serif;
+              font-size: 15px; letter-spacing: 5px; }
+  #head .tab { font-style: italic; font-size: 14px; margin-top: 3px; opacity: 0.8; }
+  #pager { left: 26px; bottom: 20px; pointer-events: auto;
+           font-family: 'IM Fell English SC', Baskerville, serif;
+           font-size: 13px; letter-spacing: 2px; }
+  #pager .pg { cursor: pointer; opacity: 0.45; padding: 0 2px;
+               background: none; border: 0; font: inherit; color: inherit;
+               letter-spacing: inherit; }
+  #pager .pg:hover { opacity: 0.85; }
+  #pager .pg.on { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+             overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+             white-space: nowrap; border: 0; }
+  #hint { left: 50%; bottom: 20px; transform: translateX(-50%);
+          font-style: italic; font-size: 14px; white-space: nowrap;
+          transition: opacity 0.5s; }
+  #card { right: 26px; bottom: 52px; width: 340px; pointer-events: none;
+          background: rgba(246, 244, 236, 0.97); color: var(--ink);
+          border: 1px solid rgba(38, 41, 35, 0.5);
+          box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 4px rgba(38, 41, 35, 0.3),
+                      0 8px 30px rgba(70, 60, 40, 0.22);
+          padding: 22px 24px 20px;
+          opacity: 0; transform: translateY(8px); transition: opacity 0.45s, transform 0.45s; }
+  #card.on { opacity: 1; transform: none; pointer-events: auto; }
+  #card .letter { font-style: italic; font-size: 38px; float: left; margin: 4px 14px 0 0; }
+  #card .name { font-family: 'IM Fell English SC', Baskerville, serif;
+                font-size: 16px; letter-spacing: 3.5px; display: block;
+                padding-bottom: 8px; border-bottom: 1px solid rgba(38, 41, 35, 0.3); }
+  #card p { clear: both; margin: 12px 0 0; font-size: 18px; line-height: 1.55; }
+  #card .close { position: absolute; top: 8px; right: 12px; cursor: pointer;
+                 font-size: 17px; opacity: 0.55; }
+  #card .close:hover { opacity: 1; }
+  #vig { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+         background: radial-gradient(ellipse at 50% 42%, transparent 60%, rgba(118, 108, 86, 0.30) 100%); }
+  /* the paper veil: covers the pass through the sheet on an inset dive */
+  #veil { position: fixed; inset: 0; z-index: 3; pointer-events: none;
+          background: var(--paper); opacity: 0; transition: opacity 0.45s ease; }
+  #veil.on { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { #veil { transition: none; } }
+</style>
+</head>
+<body>
+<canvas id="scene" role="img" aria-label="ten engraved botanical plates ring a round table in an endless margin of paper; the letters on each plate may be examined"></canvas>
+<div id="vig"></div>
+<div id="veil"></div>
+<div class="ui" id="head">
+  <div class="sc">HORTVS MACHINARVM</div>
+  <div class="tab" id="head-tab">the round table</div>
+</div>
+<div class="ui" id="pager"></div>
+<div class="ui" id="hint">drag to turn &middot; scroll to approach &middot; &larr; &rarr; to walk the round table &middot; the letters may be examined (1&ndash;6)</div>
+<div class="ui" id="card" role="dialog" aria-label="reading card">
+  <span class="close" id="card-close">&#10005;</span>
+  <span class="letter"></span><span class="name"></span>
+  <p></p>
+</div>
+<ul id="sr-labels" class="sr-only"></ul>
+<script src="vendor/three.min.js"></script>
+<script src="geometry.js"></script>
+<script src="glyphs.js"></script>
+<script src="engine.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

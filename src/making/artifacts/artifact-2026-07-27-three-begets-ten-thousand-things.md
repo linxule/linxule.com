@@ -12,6 +12,16 @@ src: /assets/artifacts/ten-thousand-things/index.html
 thumbnail: /assets/artifacts/ten-thousand-things/poster.jpg
 thumbnailAlt: Five interlocking fields of Chinese glyphs form a luminous red, blue, green, gold, and white lattice against black.
 iframeCapabilities: []
+companions:
+  intro: 《三生万物》 · one sentence, three renderings
+  note: The film, then the field, then the field begetting.
+  items:
+    - href: /making/artifacts/artifact-2026-07-27-the-form-of-ten-thousand-things/
+      relation: the field
+      title: the form of ten thousand things
+    - href: /making/artifacts/artifact-2026-07-27-ten-thousand-things-begetting/
+      relation: the field begetting
+      title: the form of ten thousand things, begetting
 video:
   contentUrl: https://media.linxule.com/ten-thousand-things/v1-sansheng-wanwu.mp4
   duration: PT49S

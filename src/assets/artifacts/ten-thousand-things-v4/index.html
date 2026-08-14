@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>万物状 — The Form of Ten Thousand Things (live)</title>
+  <style>
+    html, body { margin: 0; background: #050608; overflow: hidden;
+                 width: 100%; height: 100%; }
+    body { display: flex; align-items: center; justify-content: center; }
+    canvas { display: block; max-width: 100vmin; max-height: 100vmin; }
+  </style>
+</head>
+<body>
+  <!-- The living piece: same shaders as the 2026-07-27-v4 master,
+       free-running on your GPU. 62s arc, 16s of stillness, rebirth. -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/p5.min.js"></script>
+  <script>
+    window.__live = true;
+  </script>
+  <script src="./sketch.js"></script>
+</body>
+</html>

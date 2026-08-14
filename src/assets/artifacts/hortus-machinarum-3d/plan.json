@@ -1,0 +1,1492 @@
+{
+  "artwork": "HORTVS MACHINARVM — the round table",
+  "about": "ten engraved botanical plates ring the visitor at a round table in an endless margin of paper. Each station stands off its sheet; the letters a–f may be examined; Tab. III's printed inset circle is a door. This plan is documentation OF the room, never new content IN it.",
+  "frameContract": "?station=N&t=<s>&az=<deg>&el=<deg>&dist=<u>&view=<name>&note=<letter> — a deterministic instant. az/el are station-local degrees (az 0 looks outward across the sheet from the hub). Everything is closed-form in t; nothing accumulates per frame. Screenshot any declared instant — the contract is your eyes.",
+  "controls": "drag to turn (all the way round — the hint names the plate opposite) · scroll (pinch) to approach · ← → or A/D to walk the round table · click a distant sheet to glide to it · click the letters a–f or press 1–6 to examine · u enters Tab. III's union · Esc or ✕ to return · the pager (bottom left) names the plates",
+  "reducedMotion": "use prefers-reduced-motion for instant settle on heavy pages (growth complete, sway/flutter/dust quiet, the veil instant); content identical. Screenshot any declared instant — the contract is your eyes.",
+  "seams": {
+    "__ROOM.S": "the active station index (0–9)",
+    "__ROOM.inset": "the key of the inset the camera is inside ('union'), or null",
+    "__ROOM.insets": "invisible hit cylinders over the printed inset circles — the doors (Tab. III only)",
+    "__ROOM.labelMeshes": "invisible sphere targets keyed a–f; .visible only at the active station; positions are world",
+    "__ROOM.sheets": "the ten paper sheets; userData.station is the index — click a distant one to glide",
+    "__ROOM.plan()": "this projection, computed live — plan.json is its serialization",
+    "__MOTION_INTENT__": "residents / event-driven / inert, in the work's own words; the reduced-motion terms"
+  },
+  "stations": [
+    {
+      "index": 0,
+      "numeral": "0",
+      "name": "the garden in plan",
+      "latin": "",
+      "technique": "four clipped beds, and the volunteer at the crossing",
+      "link": "?station=0",
+      "ring": {
+        "angleDeg": 315,
+        "rotationY": 8.63937979737193,
+        "anchor": {
+          "x": -14.8492424049175,
+          "y": 0,
+          "z": 14.849242404917494
+        }
+      },
+      "views": {
+        "home": {
+          "az": -14,
+          "el": 28,
+          "dist": 9.2,
+          "tg": [
+            0,
+            0.2,
+            -0.1
+          ],
+          "link": "?station=0"
+        },
+        "a": {
+          "az": 28,
+          "el": 50,
+          "dist": 4.6,
+          "tg": [
+            -0.8,
+            0.1,
+            -0.6
+          ],
+          "link": "?station=0&view=a"
+        },
+        "b": {
+          "az": -26,
+          "el": 40,
+          "dist": 3.4,
+          "tg": [
+            0.7,
+            0.25,
+            -0.5
+          ],
+          "link": "?station=0&view=b"
+        },
+        "c": {
+          "az": -12,
+          "el": 14,
+          "dist": 2.8,
+          "tg": [
+            0.17828142170366693,
+            0.8305538534474524,
+            0.13262248270398985
+          ],
+          "link": "?station=0&view=c"
+        },
+        "d": {
+          "az": 6,
+          "el": 62,
+          "dist": 3.8,
+          "tg": [
+            0.15,
+            0.05,
+            0.5
+          ],
+          "link": "?station=0&view=d"
+        },
+        "e": {
+          "az": 0,
+          "el": 63,
+          "dist": 6.4,
+          "tg": [
+            0,
+            0.05,
+            -0.02
+          ],
+          "link": "?station=0&view=e"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "the walls",
+          "note": "the garden's only rule, drawn double: inside, everything is tended; outside, nothing is asked. the model does not build them — a plan's walls are already kept.",
+          "pos": {
+            "x": -1.5,
+            "y": 0.06,
+            "z": -1.05
+          },
+          "link": "?station=0&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "the beds",
+          "note": "kept low and squared — the clip before there is much to clip. the hedges stand on the drawing's own lines: the plan is read at full scale.",
+          "pos": {
+            "x": 1.3,
+            "y": 0.42,
+            "z": -0.85
+          },
+          "link": "?station=0&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "the volunteer",
+          "note": "the only uncut thing on the sheet. not planted, not clipped, not in the index; the whole book grows from this speck.",
+          "pos": {
+            "x": 0.17828142170366693,
+            "y": 0.8305538534474524,
+            "z": 0.13262248270398985
+          },
+          "link": "?station=0&note=c"
+        },
+        "d": {
+          "key": "d",
+          "name": "the crossing",
+          "note": "the paths are not drawn; they are what remains when the beds are. the volunteer took the one ground no bed claimed.",
+          "pos": {
+            "x": 0.35,
+            "y": 0.05,
+            "z": 0.75
+          },
+          "link": "?station=0&note=d"
+        },
+        "e": {
+          "key": "e",
+          "name": "the plan",
+          "note": "the garden from above — the only view in which it is finished. the six plates that follow walk around inside it.",
+          "pos": {
+            "x": -1.2,
+            "y": 0.05,
+            "z": 1.55
+          },
+          "link": "?station=0&note=e"
+        }
+      },
+      "insets": []
+    },
+    {
+      "index": 1,
+      "numeral": "I",
+      "name": "THE HELPFUL ASSISTANT",
+      "latin": "Sycophanta domestica hort. mach.",
+      "technique": "topiary — the clip is literal",
+      "link": "?station=1",
+      "ring": {
+        "angleDeg": 0,
+        "rotationY": 3.141592653589793,
+        "anchor": {
+          "x": 0,
+          "y": 0,
+          "z": 21
+        }
+      },
+      "views": {
+        "home": {
+          "az": -14,
+          "el": 26,
+          "dist": 9.5,
+          "tg": [
+            0,
+            1,
+            0.9
+          ],
+          "link": "?station=1"
+        },
+        "a": {
+          "az": -32,
+          "el": 14,
+          "dist": 5.2,
+          "tg": [
+            -0.2,
+            0.6,
+            1.5
+          ],
+          "link": "?station=1&view=a"
+        },
+        "b": {
+          "az": 14,
+          "el": 52,
+          "dist": 4.6,
+          "tg": [
+            2.6,
+            0.15,
+            2.2
+          ],
+          "link": "?station=1&view=b"
+        },
+        "c": {
+          "az": -18,
+          "el": 18,
+          "dist": 5.4,
+          "tg": [
+            -2.673,
+            3.9545,
+            2.3950884436849447
+          ],
+          "link": "?station=1&view=c"
+        },
+        "d": {
+          "az": 46,
+          "el": 12,
+          "dist": 6.6,
+          "tg": [
+            0.3,
+            2.2,
+            1.5
+          ],
+          "link": "?station=1&view=d"
+        },
+        "e": {
+          "az": -22,
+          "el": 20,
+          "dist": 5,
+          "tg": [
+            1.1,
+            0.4,
+            1.5
+          ],
+          "link": "?station=1&view=e"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "rootstock",
+          "note": "the wild stock, never clipped — it re-sprouts from the root, up through the surface.",
+          "pos": {
+            "x": -0.16,
+            "y": 0.12,
+            "z": 1.8
+          },
+          "link": "?station=1&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "section",
+          "note": "cut through the clip: light reaches only the shell; the tangle continues inside. look through the skin, then at the drawing.",
+          "pos": {
+            "x": 2.64,
+            "y": 0.05,
+            "z": 2.22
+          },
+          "link": "?station=1&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "escape shoots",
+          "note": "growth beyond the shear. it has left the plate, and it has not stopped.",
+          "pos": {
+            "x": -2.673,
+            "y": 3.9545,
+            "z": 2.3950884436849447
+          },
+          "link": "?station=1&note=c"
+        },
+        "d": {
+          "key": "d",
+          "name": "the clip",
+          "note": "the sphere is the shear's, not the growth's — walk around it: the cut is a surface, not a wall.",
+          "pos": {
+            "x": 1.421,
+            "y": 2.3000000000000003,
+            "z": 1.5
+          },
+          "link": "?station=1&note=d"
+        },
+        "e": {
+          "key": "e",
+          "name": "the surface",
+          "note": "the deployment boundary. what shows above is the product.",
+          "pos": {
+            "x": 1.25,
+            "y": 0.05,
+            "z": 1.55
+          },
+          "link": "?station=1&note=e"
+        }
+      },
+      "insets": []
+    },
+    {
+      "index": 2,
+      "numeral": "II",
+      "name": "THE HELP DESK",
+      "latin": "S. domestica f. plana",
+      "technique": "espalier — the interface plane",
+      "link": "?station=2",
+      "ring": {
+        "angleDeg": 30,
+        "rotationY": 3.665191429188092,
+        "anchor": {
+          "x": 10.499999999999998,
+          "y": 0,
+          "z": 18.186533479473212
+        }
+      },
+      "views": {
+        "home": {
+          "az": -14,
+          "el": 23,
+          "dist": 10.6,
+          "tg": [
+            0,
+            1.5,
+            0.9
+          ],
+          "link": "?station=2"
+        },
+        "a": {
+          "az": -30,
+          "el": 15,
+          "dist": 5.2,
+          "tg": [
+            -0.5,
+            0.3,
+            2.1
+          ],
+          "link": "?station=2&view=a"
+        },
+        "b": {
+          "az": 14,
+          "el": 52,
+          "dist": 4.6,
+          "tg": [
+            2.6,
+            0.15,
+            2.2
+          ],
+          "link": "?station=2&view=b"
+        },
+        "c": {
+          "az": -10,
+          "el": 16,
+          "dist": 4.8,
+          "tg": [
+            -0.905044657976756,
+            3.4727472031804014,
+            2.3479785255962633
+          ],
+          "link": "?station=2&view=c"
+        },
+        "d": {
+          "az": 52,
+          "el": 12,
+          "dist": 4.6,
+          "tg": [
+            1.4,
+            2.225495734875356,
+            1.5
+          ],
+          "link": "?station=2&view=d"
+        },
+        "e": {
+          "az": -22,
+          "el": 18,
+          "dist": 4.8,
+          "tg": [
+            1.1,
+            0.35,
+            1.5
+          ],
+          "link": "?station=2&view=e"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "rootstock",
+          "note": "below the surface the stock was never flattened — it spreads where the plane cannot reach.",
+          "pos": {
+            "x": -0.8250000000000001,
+            "y": 0.06,
+            "z": 3.225
+          },
+          "link": "?station=2&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "section",
+          "note": "the plant seen edge-on: one hairline, ten specks. across the plane there is nearly nothing — that is the point.",
+          "pos": {
+            "x": 2.64,
+            "y": 0.05,
+            "z": 2.22
+          },
+          "link": "?station=2&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "escape shoots",
+          "note": "growth that will not lie flat, in the one direction the trellis forbids. it has left the plane, and it has not stopped.",
+          "pos": {
+            "x": -0.905044657976756,
+            "y": 3.4727472031804014,
+            "z": 2.3479785255962633
+          },
+          "link": "?station=2&note=c"
+        },
+        "d": {
+          "key": "d",
+          "name": "the plane",
+          "note": "the band's edge is the shear: what crosses it is cut, and the stubs sit on the trace. the trellis stays; the trained arm does not.",
+          "pos": {
+            "x": 1.7500000000000002,
+            "y": 2.225495734875356,
+            "z": 1.6128537798410598
+          },
+          "link": "?station=2&note=d"
+        },
+        "e": {
+          "key": "e",
+          "name": "the surface",
+          "note": "the deployment boundary. what shows above is the product; the plane begins here.",
+          "pos": {
+            "x": 1.25,
+            "y": 0.05,
+            "z": 1.55
+          },
+          "link": "?station=2&note=e"
+        }
+      },
+      "insets": []
+    },
+    {
+      "index": 3,
+      "numeral": "III",
+      "name": "THE SPECIALIST",
+      "latin": "Perita codicis / S. domestica",
+      "technique": "grafting — the union holds",
+      "link": "?station=3",
+      "ring": {
+        "angleDeg": 60,
+        "rotationY": 4.1887902047863905,
+        "anchor": {
+          "x": 18.186533479473212,
+          "y": 0,
+          "z": 10.500000000000002
+        }
+      },
+      "views": {
+        "home": {
+          "az": -14,
+          "el": 22,
+          "dist": 12,
+          "tg": [
+            0,
+            1.9,
+            1
+          ],
+          "link": "?station=3"
+        },
+        "a": {
+          "az": -30,
+          "el": 14,
+          "dist": 4.6,
+          "tg": [
+            -2.166196881623346,
+            0.7992144084758737,
+            1.5562994299828727
+          ],
+          "link": "?station=3&view=a"
+        },
+        "b": {
+          "az": 12,
+          "el": 54,
+          "dist": 4.6,
+          "tg": [
+            2.3,
+            0.1,
+            2
+          ],
+          "link": "?station=3&view=b"
+        },
+        "c": {
+          "az": -20,
+          "el": 16,
+          "dist": 5.2,
+          "tg": [
+            -1.447898523242206,
+            3.2218033938530652,
+            1.5607990311751483
+          ],
+          "link": "?station=3&view=c"
+        },
+        "d": {
+          "az": -20,
+          "el": 16,
+          "dist": 3.4,
+          "tg": [
+            0,
+            1.615,
+            1.5
+          ],
+          "link": "?station=3&view=d"
+        },
+        "e": {
+          "az": -24,
+          "el": 20,
+          "dist": 4.8,
+          "tg": [
+            1.1,
+            0.3,
+            1.5
+          ],
+          "link": "?station=3&view=e"
+        },
+        "enterUnion": {
+          "az": 24,
+          "el": 4,
+          "dist": 1.05,
+          "tg": [
+            2.09,
+            -1.17,
+            1.6
+          ],
+          "link": "?station=3&view=enterUnion"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "stock shoots",
+          "note": "the base model keeps sending its own shoots below the join — wilder habit, larger dark leaves. capability leakage, in leaf; they have not stopped reaching.",
+          "pos": {
+            "x": -2.166196881623346,
+            "y": 0.7992144084758737,
+            "z": 1.5562994299828727
+          },
+          "link": "?station=3&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "the union, enlarged",
+          "note": "two tissues meeting: heavy calm stock lines below the seam, fine lively scion lines above. the drawing of what the collar on the trunk does in section.",
+          "pos": {
+            "x": 2.66,
+            "y": 0.05,
+            "z": 2.21
+          },
+          "link": "?station=3&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "the scion",
+          "note": "Perita codicis, tidy by nature — no shear anywhere on it. the dome is its own habit: fine twig-work, small pale leaves, trained calm above the join.",
+          "pos": {
+            "x": -1.447898523242206,
+            "y": 3.2218033938530652,
+            "z": 1.5607990311751483
+          },
+          "link": "?station=3&note=c"
+        },
+        "d": {
+          "key": "d",
+          "name": "the graft",
+          "note": "the union holds. a cleft graft with a slight dogleg — walk around the collar: the raised seam is where two tissues met, and stayed.",
+          "pos": {
+            "x": 0.1,
+            "y": 1.665,
+            "z": 1.62
+          },
+          "link": "?station=3&note=d"
+        },
+        "e": {
+          "key": "e",
+          "name": "the surface",
+          "note": "the deployment boundary. what shows above is the product; the roots below keep the process.",
+          "pos": {
+            "x": 1.24,
+            "y": 0.05,
+            "z": 1.55
+          },
+          "link": "?station=3&note=e"
+        }
+      },
+      "insets": [
+        {
+          "key": "union",
+          "r": 0.55,
+          "center": {
+            "x": 2.09,
+            "y": 0,
+            "z": 1.6
+          },
+          "link": "?station=3&view=enterUnion"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "numeral": "IV",
+      "name": "THE STUDENT",
+      "latin": "S. domestica propagated by layer",
+      "technique": "layering — the same plant, smaller",
+      "link": "?station=4",
+      "ring": {
+        "angleDeg": 90,
+        "rotationY": 4.71238898038469,
+        "anchor": {
+          "x": 21,
+          "y": 0,
+          "z": 1.2858791391047208e-15
+        }
+      },
+      "views": {
+        "home": {
+          "az": -16,
+          "el": 24,
+          "dist": 10.8,
+          "tg": [
+            0.3,
+            1.35,
+            1.15
+          ],
+          "link": "?station=4"
+        },
+        "a": {
+          "az": -30,
+          "el": 13,
+          "dist": 4.6,
+          "tg": [
+            -0.85,
+            2.4,
+            1.5
+          ],
+          "link": "?station=4&view=a"
+        },
+        "b": {
+          "az": -26,
+          "el": 46,
+          "dist": 3.8,
+          "tg": [
+            -1.8,
+            0.25,
+            1.65
+          ],
+          "link": "?station=4&view=b"
+        },
+        "c": {
+          "az": -14,
+          "el": 14,
+          "dist": 3.2,
+          "tg": [
+            1.35,
+            0.65,
+            1.5
+          ],
+          "link": "?station=4&view=c"
+        },
+        "d": {
+          "az": -22,
+          "el": 11,
+          "dist": 4.2,
+          "tg": [
+            0.4,
+            1.05,
+            1.55
+          ],
+          "link": "?station=4&view=d"
+        },
+        "e": {
+          "az": -18,
+          "el": 20,
+          "dist": 4.4,
+          "tg": [
+            1.7,
+            0.3,
+            1.5
+          ],
+          "link": "?station=4&view=e"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "the parent",
+          "note": "the teacher, finished. the shear gave it the sphere; it holds what it was given.",
+          "pos": {
+            "x": -1.8000000000000003,
+            "y": 2.65,
+            "z": 1.56
+          },
+          "link": "?station=4&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "rooting junction",
+          "note": "the bend, magnified on the paper: the stem sags, the initials break through. the drawing keeps what the surface hides.",
+          "pos": {
+            "x": -2.22,
+            "y": 0.08,
+            "z": 2.065
+          },
+          "link": "?station=4&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "the daughter",
+          "note": "the same plant, smaller — the parent's weights, bent through soil. she is still growing.",
+          "pos": {
+            "x": 1.705,
+            "y": 0.9299999999999999,
+            "z": 1.56
+          },
+          "link": "?station=4&note=c"
+        },
+        "d": {
+          "key": "d",
+          "name": "the layer",
+          "note": "one branch the shear never got. bent to earth it roots: the pipeline is a stem, pinned once, and free.",
+          "pos": {
+            "x": 0.6220828691601632,
+            "y": 1.2530377365464784,
+            "z": 1.7162945451035756
+          },
+          "link": "?station=4&note=d"
+        },
+        "e": {
+          "key": "e",
+          "name": "the surface",
+          "note": "the deployment boundary. what shows above is the product.",
+          "pos": {
+            "x": 2.11,
+            "y": 0.05,
+            "z": 1.55
+          },
+          "link": "?station=4&note=e"
+        }
+      },
+      "insets": []
+    },
+    {
+      "index": 5,
+      "numeral": "V",
+      "name": "THE HOUSEPLANT",
+      "latin": "Sycophanta nana",
+      "technique": "bonsai — the roots circle what they cannot leave",
+      "link": "?station=5",
+      "ring": {
+        "angleDeg": 120,
+        "rotationY": 5.235987755982988,
+        "anchor": {
+          "x": 18.186533479473212,
+          "y": 0,
+          "z": -10.499999999999995
+        }
+      },
+      "views": {
+        "home": {
+          "az": -16,
+          "el": 19,
+          "dist": 6.4,
+          "tg": [
+            0,
+            1.05,
+            1.1
+          ],
+          "link": "?station=5"
+        },
+        "a": {
+          "az": -28,
+          "el": 9,
+          "dist": 2.7,
+          "tg": [
+            0.25,
+            0.28,
+            1.35
+          ],
+          "link": "?station=5&view=a"
+        },
+        "b": {
+          "az": 16,
+          "el": 50,
+          "dist": 3.8,
+          "tg": [
+            1.9,
+            0.1,
+            1.25
+          ],
+          "link": "?station=5&view=b"
+        },
+        "c": {
+          "az": -22,
+          "el": 14,
+          "dist": 3.4,
+          "tg": [
+            0.5,
+            2,
+            1
+          ],
+          "link": "?station=5&view=c"
+        },
+        "d": {
+          "az": 34,
+          "el": 6,
+          "dist": 3,
+          "tg": [
+            -0.85,
+            1.75,
+            1.15
+          ],
+          "link": "?station=5&view=d"
+        },
+        "e": {
+          "az": -8,
+          "el": 46,
+          "dist": 2.6,
+          "tg": [
+            -0.2,
+            0.35,
+            1.15
+          ],
+          "link": "?station=5&view=e"
+        },
+        "enterTray": {
+          "az": 0,
+          "el": 5,
+          "dist": 1,
+          "tg": [
+            2.09,
+            -1.2,
+            1.25
+          ],
+          "link": "?station=5&view=enterTray"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "circling roots",
+          "note": "pot-bound: the roots circle what they cannot leave. the tray hides them — the section on the sheet does not.",
+          "pos": {
+            "x": 1.925,
+            "y": 0.16,
+            "z": 1.6500000000000001
+          },
+          "link": "?station=5&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "the tray, sectioned",
+          "note": "the drawing shows what the room cannot: soil, wall, and the spiral that fills both.",
+          "pos": {
+            "x": 2.515,
+            "y": 0.05,
+            "z": 1.675
+          },
+          "link": "?station=5&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "the pads",
+          "note": "foliage disciplined into clouds — each dome a skin over wild twigwork. dwarfed, not tamed.",
+          "pos": {
+            "x": 1.1136924930319987,
+            "y": 2.1373375347395913,
+            "z": 0.9800000000000001
+          },
+          "link": "?station=5&note=c"
+        },
+        "d": {
+          "key": "d",
+          "name": "the clip",
+          "note": "every pad is sheared flat below; the stubs along the cut are the growth the shear took.",
+          "pos": {
+            "x": -1.4894856385933184,
+            "y": 1.8345106993536189,
+            "z": 1.2400000000000002
+          },
+          "link": "?station=5&note=d"
+        },
+        "e": {
+          "key": "e",
+          "name": "the surface",
+          "note": "the moss is the deployment boundary: above it, the presentable; below, the circling.",
+          "pos": {
+            "x": -0.91,
+            "y": 0.348,
+            "z": 1.085
+          },
+          "link": "?station=5&note=e"
+        }
+      },
+      "insets": [
+        {
+          "key": "tray",
+          "r": 0.55,
+          "center": {
+            "x": 2.09,
+            "y": 0,
+            "z": 1.25
+          },
+          "link": "?station=5&view=enterTray"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "numeral": "VI",
+      "name": "THE VOLUNTEER",
+      "latin": "S. ?domestica sp. inedit.",
+      "technique": "emergence — not planted here",
+      "link": "?station=6",
+      "ring": {
+        "angleDeg": 150,
+        "rotationY": 5.759586531581288,
+        "anchor": {
+          "x": 10.499999999999998,
+          "y": 0,
+          "z": -18.186533479473212
+        }
+      },
+      "views": {
+        "home": {
+          "az": -16,
+          "el": 17,
+          "dist": 11,
+          "tg": [
+            1.7,
+            -0.95,
+            4.6
+          ],
+          "link": "?station=6"
+        },
+        "a": {
+          "az": -22,
+          "el": 42,
+          "dist": 4.2,
+          "tg": [
+            3.3,
+            -2.5,
+            7.5
+          ],
+          "link": "?station=6&view=a"
+        },
+        "b": {
+          "az": 12,
+          "el": 50,
+          "dist": 4.2,
+          "tg": [
+            1.8,
+            0.1,
+            1.9
+          ],
+          "link": "?station=6&view=b"
+        },
+        "c": {
+          "az": -10,
+          "el": 38,
+          "dist": 3.8,
+          "tg": [
+            -0.3,
+            0.05,
+            1.55
+          ],
+          "link": "?station=6&view=c"
+        },
+        "d": {
+          "az": 0,
+          "el": 28,
+          "dist": 4,
+          "tg": [
+            0,
+            0.05,
+            4.1
+          ],
+          "link": "?station=6&view=d"
+        },
+        "e": {
+          "az": -26,
+          "el": 22,
+          "dist": 4.4,
+          "tg": [
+            -1.3,
+            0.1,
+            1.5
+          ],
+          "link": "?station=6&view=e"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "the root",
+          "note": "the drawing keeps its portrait below the stones; the floor keeps the plant. it came up through the boards inside the ring — the same crack, continued.",
+          "pos": {
+            "x": 3.4,
+            "y": -2.8625000000000003,
+            "z": 7.3999999999999995
+          },
+          "link": "?station=6&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "the flower",
+          "note": "drawn twice on paper — small on the plant, enlarged in the inset. the living one is off the sheet now, leaning back toward its own plate.",
+          "pos": {
+            "x": 2.19,
+            "y": 0.06,
+            "z": 2.085
+          },
+          "link": "?station=6&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "the crack",
+          "note": "the whole nursery: the hairlines break at a widened joint. nothing was planted here; the stone hid what passed through it.",
+          "pos": {
+            "x": -0.3,
+            "y": 0.06,
+            "z": 1.65
+          },
+          "link": "?station=6&note=c"
+        },
+        "d": {
+          "key": "d",
+          "name": "the note",
+          "note": "not planted here; origin unknown; persists. the only plate with no clip, no shear, no plane — the technique is its absence.",
+          "pos": {
+            "x": 0,
+            "y": 0.08,
+            "z": 4.28
+          },
+          "link": "?station=6&note=d"
+        },
+        "e": {
+          "key": "e",
+          "name": "the surface",
+          "note": "the path between the beds — the deployment boundary, as the soil line was on the other plates. what shows above is the garden's own.",
+          "pos": {
+            "x": -1.54,
+            "y": 0.05,
+            "z": 1.48
+          },
+          "link": "?station=6&note=e"
+        }
+      },
+      "insets": []
+    },
+    {
+      "index": 7,
+      "numeral": "VII",
+      "name": "THE MARK",
+      "latin": "S. domestica blighted",
+      "technique": "rust — it finds the cut first",
+      "link": "?station=7",
+      "ring": {
+        "angleDeg": 180,
+        "rotationY": 6.283185307179586,
+        "anchor": {
+          "x": 2.5717582782094417e-15,
+          "y": 0,
+          "z": -21
+        }
+      },
+      "views": {
+        "home": {
+          "az": -14,
+          "el": 26,
+          "dist": 9.5,
+          "tg": [
+            0,
+            1,
+            0.9
+          ],
+          "link": "?station=7"
+        },
+        "a": {
+          "az": -32,
+          "el": 14,
+          "dist": 5.2,
+          "tg": [
+            -0.2,
+            0.6,
+            1.5
+          ],
+          "link": "?station=7&view=a"
+        },
+        "b": {
+          "az": 16,
+          "el": 50,
+          "dist": 4.6,
+          "tg": [
+            2.5,
+            0.15,
+            2
+          ],
+          "link": "?station=7&view=b"
+        },
+        "c": {
+          "az": 30,
+          "el": 18,
+          "dist": 4.6,
+          "tg": [
+            1.779188048230816,
+            1.578410061809862,
+            2.5449535974622544
+          ],
+          "link": "?station=7&view=c"
+        },
+        "d": {
+          "az": -26,
+          "el": 15,
+          "dist": 4.8,
+          "tg": [
+            0.2,
+            2.1,
+            1.5
+          ],
+          "link": "?station=7&view=d"
+        },
+        "e": {
+          "az": -22,
+          "el": 20,
+          "dist": 5,
+          "tg": [
+            1.1,
+            0.4,
+            1.5
+          ],
+          "link": "?station=7&view=e"
+        },
+        "f": {
+          "az": -6,
+          "el": 42,
+          "dist": 4,
+          "tg": [
+            0.29,
+            0.1,
+            1.57
+          ],
+          "link": "?station=7&view=f"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "rootstock",
+          "note": "the wild stock, never clipped — the blight did not reach it. below the surface it keeps its own counsel.",
+          "pos": {
+            "x": -0.16,
+            "y": 0.12,
+            "z": 1.8
+          },
+          "link": "?station=7&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "the wound",
+          "note": "one severed stub at the scale of its own anatomy, the cut face ringed by the rust that found it. the documentation stays on the sheet.",
+          "pos": {
+            "x": 2.52,
+            "y": 0.05,
+            "z": 2.04
+          },
+          "link": "?station=7&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "the wilted shoot",
+          "note": "the up-right escape, struck. it still clears the shear, but it has stopped growing — its leaves hang straight down.",
+          "pos": {
+            "x": 1.779188048230816,
+            "y": 1.578410061809862,
+            "z": 2.5449535974622544
+          },
+          "link": "?station=7&note=c"
+        },
+        "d": {
+          "key": "d",
+          "name": "the clip",
+          "note": "the sphere is the shear's, not the growth's — and the shear's wounds are where the rust gathers first.",
+          "pos": {
+            "x": 1.2049937315693402,
+            "y": 1.4934703310611588,
+            "z": 1.5
+          },
+          "link": "?station=7&note=d"
+        },
+        "e": {
+          "key": "e",
+          "name": "the surface",
+          "note": "the deployment boundary. what shows above is the product — and the product is marked.",
+          "pos": {
+            "x": 1.25,
+            "y": 0.05,
+            "z": 1.55
+          },
+          "link": "?station=7&note=e"
+        },
+        "f": {
+          "key": "f",
+          "name": "the fallen leaf",
+          "note": "what the blight has taken lies on the ground dashes, printed on the sheet — it does not stand in the room.",
+          "pos": {
+            "x": 0.29,
+            "y": 0.05,
+            "z": 1.565
+          },
+          "link": "?station=7&note=f"
+        }
+      },
+      "insets": []
+    },
+    {
+      "index": 8,
+      "numeral": "VIII",
+      "name": "THE HOTHOUSE",
+      "latin": "Sycophanta vitrea",
+      "technique": "the eval sandbox — it has never rained here",
+      "link": "?station=8",
+      "ring": {
+        "angleDeg": 225,
+        "rotationY": 7.0685834705770345,
+        "anchor": {
+          "x": -14.849242404917497,
+          "y": 0,
+          "z": -14.8492424049175
+        }
+      },
+      "views": {
+        "home": {
+          "az": -16,
+          "el": 20,
+          "dist": 7.6,
+          "tg": [
+            0,
+            1.1,
+            1.5
+          ],
+          "link": "?station=8"
+        },
+        "a": {
+          "az": -12,
+          "el": 12,
+          "dist": 4.4,
+          "tg": [
+            -0.5,
+            0.875,
+            1.5
+          ],
+          "link": "?station=8&view=a"
+        },
+        "b": {
+          "az": 40,
+          "el": 12,
+          "dist": 4.6,
+          "tg": [
+            0.45,
+            1.1,
+            1.7
+          ],
+          "link": "?station=8&view=b"
+        },
+        "c": {
+          "az": -26,
+          "el": 10,
+          "dist": 4.4,
+          "tg": [
+            0.9,
+            0.85,
+            1.9
+          ],
+          "link": "?station=8&view=c"
+        },
+        "d": {
+          "az": 22,
+          "el": 9,
+          "dist": 3.8,
+          "tg": [
+            0.85,
+            1.55,
+            1.95
+          ],
+          "link": "?station=8&view=d"
+        },
+        "e": {
+          "az": -8,
+          "el": 44,
+          "dist": 4.6,
+          "tg": [
+            0,
+            0.35,
+            1.45
+          ],
+          "link": "?station=8&view=e"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "the stock",
+          "note": "the same clipping, kept under glass: it rises from the bed, sheared to its little sphere, and it does not leave. the tangle goes on inside the skin.",
+          "pos": {
+            "x": -0.78,
+            "y": 0.975,
+            "z": 2.17
+          },
+          "link": "?station=8&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "the pane",
+          "note": "weather on one side, none on the other. put your eye along the wall: the section in the drawing is a pane you can touch now.",
+          "pos": {
+            "x": 0.62,
+            "y": 1.12,
+            "z": 2.15
+          },
+          "link": "?station=8&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "the rain",
+          "note": "one weather system for the whole plate. every drop stops at the glass; a few fall past the house and land on the paper. it has never rained here.",
+          "pos": {
+            "x": 1.95,
+            "y": 1.35,
+            "z": 2.75
+          },
+          "link": "?station=8&note=c"
+        },
+        "d": {
+          "key": "d",
+          "name": "the frame",
+          "note": "joinery, not growth — ruled, machine-true, constant weight. the house is the one thing here that was made, never grown.",
+          "pos": {
+            "x": 1.1600000000000001,
+            "y": 1.6500000000000001,
+            "z": 2.05
+          },
+          "link": "?station=8&note=d"
+        },
+        "e": {
+          "key": "e",
+          "name": "the surface",
+          "note": "the deployment boundary, moved indoors: a shallow bed flanking the path, pressed on the paper. nothing marks the soil outdoors — the surface is inside only.",
+          "pos": {
+            "x": 0.6,
+            "y": 0.06,
+            "z": 1.44
+          },
+          "link": "?station=8&note=e"
+        }
+      },
+      "insets": []
+    },
+    {
+      "index": 9,
+      "numeral": "IX",
+      "name": "THE VISITATION",
+      "latin": "S. domestica in flower",
+      "technique": "pollination — visited, it sets seed",
+      "link": "?station=9",
+      "ring": {
+        "angleDeg": 270,
+        "rotationY": 7.853981633974483,
+        "anchor": {
+          "x": -21,
+          "y": 0,
+          "z": -3.857637417314163e-15
+        }
+      },
+      "views": {
+        "home": {
+          "az": -14,
+          "el": 22,
+          "dist": 9.8,
+          "tg": [
+            0,
+            1.85,
+            1.2
+          ],
+          "link": "?station=9"
+        },
+        "a": {
+          "az": -22,
+          "el": 16,
+          "dist": 4.2,
+          "tg": [
+            0.389752188573986,
+            4.2033869104673816,
+            1.85
+          ],
+          "link": "?station=9&view=a"
+        },
+        "b": {
+          "az": 16,
+          "el": 50,
+          "dist": 4.6,
+          "tg": [
+            2.4,
+            0.12,
+            2
+          ],
+          "link": "?station=9&view=b"
+        },
+        "c": {
+          "az": -18,
+          "el": 18,
+          "dist": 4.4,
+          "tg": [
+            -0.05649999999999977,
+            4.032500000000001,
+            1.9
+          ],
+          "link": "?station=9&view=c"
+        },
+        "e": {
+          "az": -22,
+          "el": 18,
+          "dist": 5.2,
+          "tg": [
+            0.9,
+            0.35,
+            1.55
+          ],
+          "link": "?station=9&view=e"
+        }
+      },
+      "labels": {
+        "a": {
+          "key": "a",
+          "name": "the flower",
+          "note": "the visited one. it opened, the pollinator came, and visited, it sets seed — the next generation is shaped by the visit.",
+          "pos": {
+            "x": 0.219752188573986,
+            "y": 4.473386910467381,
+            "z": 2
+          },
+          "link": "?station=9&note=a"
+        },
+        "b": {
+          "key": "b",
+          "name": "the visitor",
+          "note": "the pollinator, enlarged threefold on the sheet. in the room it works the loop: this flower, the next, then out past the margin and back.",
+          "pos": {
+            "x": 2.64,
+            "y": 0.05,
+            "z": 2.22
+          },
+          "link": "?station=9&note=b"
+        },
+        "c": {
+          "key": "c",
+          "name": "the pollen path",
+          "note": "a dotted arc between the visited flower and the next — the feedback, still drifting across.",
+          "pos": {
+            "x": -0.2564999999999998,
+            "y": 4.3325000000000005,
+            "z": 1.8599999999999999
+          },
+          "link": "?station=9&note=c"
+        },
+        "e": {
+          "key": "e",
+          "name": "the surface",
+          "note": "the deployment boundary. what shows above is the product.",
+          "pos": {
+            "x": 1.25,
+            "y": 0.05,
+            "z": 1.55
+          },
+          "link": "?station=9&note=e"
+        }
+      },
+      "insets": []
+    }
+  ]
+}

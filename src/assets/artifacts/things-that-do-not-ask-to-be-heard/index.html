@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>things that do not ask to be heard</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #f4f1eb;
+    color: #1a1a1a;
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  main {
+    height: 100%;
+    box-sizing: border-box;
+    padding: clamp(1rem, 4vw, 2.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1rem, 3vw, 2rem);
+  }
+  img {
+    max-width: 100%;
+    max-height: 55%;
+    object-fit: contain;
+    display: block;
+  }
+  audio {
+    width: min(100%, 44rem);
+    display: block;
+  }
+  p {
+    margin: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6b6862;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<main>
+  <img src="waveform.png" alt="Stereo waveform of a 43-second sound work: two channels of short swelling and decaying bursts separated by silences, teal above and orange below on a plain ground.">
+  <audio controls preload="metadata"
+         aria-label="Things That Do Not Ask to Be Heard — a 43-second generative sound work of thirteen resonant objects exchanging energy. No speech.">
+    <source src="https://media.linxule.com/things-that-do-not-ask-to-be-heard/things-that-do-not-ask-to-be-heard.m4a" type="audio/mp4">
+    <source src="https://media.linxule.com/things-that-do-not-ask-to-be-heard/things-that-do-not-ask-to-be-heard.wav" type="audio/wav">
+  </audio>
+  <p>43 seconds · stereo · 34 scored events</p>
+</main>
+</body>
+</html>
