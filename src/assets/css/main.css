@@ -576,9 +576,12 @@ p {
     line-height: 1.6;
 }
 
-.article-body code {
+.article-body code,
+.context-text code,
+.portrait-description code {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.85em;
+    font-style: normal;
     color: var(--ink-light);
 }
 

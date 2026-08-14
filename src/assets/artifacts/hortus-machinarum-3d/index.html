@@ -39,6 +39,11 @@
   }
   html, body { margin: 0; height: 100%; background: var(--room); overflow: hidden; }
   #scene { position: fixed; inset: 0; display: block; }
+  /* the piece takes the keyboard while the pointer is over it (it is framed in
+     an iframe elsewhere, where the arrow keys otherwise go to the host page).
+     A pointer-driven focus draws nothing; arriving by Tab still shows a rule. */
+  #scene:focus { outline: none; }
+  #scene:focus-visible { outline: 1px solid rgba(38, 41, 35, 0.35); outline-offset: -3px; }
   .ui { position: fixed; z-index: 2; color: var(--ui); pointer-events: none;
         font-family: 'IM Fell English', Baskerville, Georgia, serif; }
   #head { top: 22px; left: 26px; }
@@ -82,10 +87,21 @@
           background: var(--paper); opacity: 0; transition: opacity 0.45s ease; }
   #veil.on { opacity: 1; }
   @media (prefers-reduced-motion: reduce) { #veil { transition: none; } }
+  /* the footline: the hint is centered while the pager is anchored left, so on
+     any frame narrower than the two of them together the hint printed straight
+     through the numerals. It lifts to its own line instead, and wraps rather
+     than running off both edges when the frame is embed-narrow. */
+  @media (max-width: 1300px) { #hint { bottom: 48px; } }
+  @media (max-width: 620px) {
+    #hint { left: 26px; right: 26px; transform: none; text-align: center;
+            white-space: normal; line-height: 1.45; }
+    /* and the running head keeps clear of an embedding page's own controls */
+    #head { max-width: calc(100% - 150px); }
+  }
 </style>
 </head>
 <body>
-<canvas id="scene" role="img" aria-label="ten engraved botanical plates ring a round table in an endless margin of paper; the letters on each plate may be examined"></canvas>
+<canvas id="scene" tabindex="0" role="img" aria-label="ten engraved botanical plates ring a round table in an endless margin of paper; the letters on each plate may be examined"></canvas>
 <div id="vig"></div>
 <div id="veil"></div>
 <div class="ui" id="head">

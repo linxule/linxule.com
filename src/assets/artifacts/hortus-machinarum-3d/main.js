@@ -26,8 +26,12 @@ window.__MOTION_INTENT__ = {
 
 const Q = new URLSearchParams(location.search);
 const T_PARAM = Q.has("t") ? parseFloat(Q.get("t")) : null;
-// a naked first load (no params at all) opens at the title page, Tab. 0
-const NAKED = ![...Q.keys()].length;
+// a naked first load (no frame-contract params) opens at the title page, Tab. 0.
+// only the contract's own keys count as "dressed" — an embedding page may append
+// its own query (linxule.com appends a ?v=<sha> cache-bust to the iframe src),
+// and an unrelated key must not silently take the arrival away.
+const FRAME_KEYS = ["station", "view", "az", "el", "dist", "t", "note"];
+const NAKED = !FRAME_KEYS.some((k) => Q.has(k));
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const E = window.HM3D;
 const INK = 0x2b2e26, PAPER = 0xf6f4ec, FLOORC = 0xe7e2d4;
@@ -615,8 +619,18 @@ const AZL = 3.5, ELL = 0.09, ELH = 1.45, DMIN = 2.2, DMAX = 30;
 const dMin = () => (insetState ? 0.4 : DMIN);
 const dMax = () => (insetState ? 1.05 : DMAX);
 const ptrs = new Map();
+// the keyboard follows the pointer. Everything the pointer can do the keyboard
+// can do — but keydown only reaches this document while it holds focus, and
+// framed in someone else's page (an iframe) it never does until something here
+// asks. So the piece takes focus while the pointer is over it and gives it
+// straight back on the way out, leaving the host page's own keys alone.
+canvas.addEventListener("pointerenter", () => canvas.focus({ preventScroll: true }));
+canvas.addEventListener("pointerleave", () => {
+  if (document.activeElement === canvas) canvas.blur();
+});
 let downXY = null, pinchD = 0, dragging = false, wasGliding = false;
 canvas.addEventListener("pointerdown", (e) => {
+  canvas.focus({ preventScroll: true });
   ptrs.set(e.pointerId, [e.clientX, e.clientY]);
   downXY = [e.clientX, e.clientY]; dragging = false;
   wasGliding = !!tween; tween = null;

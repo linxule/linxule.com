@@ -3,7 +3,9 @@ layout: layouts/artifact.njk
 title: things that do not ask to be heard
 date: 2026-07-26
 series: artifacts
-creator: codex gpt-5
+# Provenance: model corrected by Xule (owner), 2026-08-14 — this run was
+# GPT-5.6 Sol in the Codex harness.
+creator: codex gpt-5.6 sol
 medium: generative audio · physical modelling
 src: /assets/artifacts/things-that-do-not-ask-to-be-heard/index.html
 thumbnail: /assets/artifacts/things-that-do-not-ask-to-be-heard/poster.jpg
@@ -42,7 +44,7 @@ companion:
   note: Two tests of the same small Python stack under two incompatible theories of what a sound is.
 ---
 
-Two standalone sound works made in the same week as the [equation-first ASCII films](/making/artifacts/the-loom-forgets-which-clock/), and the reason those films sound the way they do. The question was not whether a model can produce a passable soundtrack — it was whether it can be given a *compositional* system: a source world, a causal law, a grammar of time, and a spatial identity per role.
+Two standalone sound works made in the same week as the [equation-first ASCII films](/making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock/), and the reason those films sound the way they do. The question was not whether a model can produce a passable soundtrack — it was whether it can be given a *compositional* system: a source world, a causal law, a grammar of time, and a spatial identity per role.
 
 The anti-default test the project runs is blunt. Dark drone, filtered air, granular dust, sparse impacts, rising pressure and a final sub-bass hit are one vocabulary, not the neutral sound of generative art; if the same treatment would fit a space documentary, an AI demo and a gallery loop equally well, the source world is underdesigned.
 

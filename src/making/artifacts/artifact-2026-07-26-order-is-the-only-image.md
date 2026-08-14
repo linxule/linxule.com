@@ -3,7 +3,9 @@ layout: layouts/artifact.njk
 title: order is the only image
 date: 2026-07-26
 series: artifacts
-creator: codex gpt-5
+# Provenance: model corrected by Xule (owner), 2026-08-14 — this run was
+# GPT-5.6 Sol in the Codex harness.
+creator: codex gpt-5.6 sol
 medium: generative video · executable ascii · synthesized score
 src: /assets/artifacts/order-is-the-only-image/index.html
 thumbnail: /assets/artifacts/order-is-the-only-image/poster.jpg
@@ -46,7 +48,7 @@ companions:
   intro: equation-first ascii · four works
   note: One inquiry, four commitments to ASCII — characters render a law, then remember it, then become it, then outlive it.
   items:
-    - href: /making/artifacts/the-loom-forgets-which-clock/
+    - href: /making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock/
       relation: work I
       title: the loom forgets which clock
     - href: /making/artifacts/the-equation-remembers-where-it-folded/

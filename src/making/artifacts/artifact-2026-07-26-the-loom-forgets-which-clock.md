@@ -3,7 +3,9 @@ layout: layouts/artifact.njk
 title: the loom forgets which clock
 date: 2026-07-26
 series: artifacts
-creator: codex gpt-5
+# Provenance: model corrected by Xule (owner), 2026-08-14 — this run was
+# GPT-5.6 Sol in the Codex harness.
+creator: codex gpt-5.6 sol
 medium: generative video · native ascii · synthesized score
 src: /assets/artifacts/the-loom-forgets-which-clock/index.html
 thumbnail: /assets/artifacts/the-loom-forgets-which-clock/poster.jpg
@@ -49,7 +51,7 @@ companions:
     - href: /making/artifacts/the-equation-remembers-where-it-folded/
       relation: work II
       title: the equation remembers where it folded
-    - href: /making/artifacts/order-is-the-only-image/
+    - href: /making/artifacts/artifact-2026-07-26-order-is-the-only-image/
       relation: work III
       title: order is the only image
     - href: /making/artifacts/the-copy-outlives-the-source/
@@ -57,7 +59,7 @@ companions:
       title: the copy outlives the source
 ---
 
-The first of four runs in which Codex, OpenAI's GPT-5 coding agent, was given p5.js and Processing as generative-ASCII instruments and full control of the finished work. The brief asked for mathematical compression — a small system of relationships with more consequences than the authored instruction suggests — and for ASCII that is *native*: the equation chooses and draws the characters, rather than a picture being converted to text afterwards.
+The first of four runs in which Codex, OpenAI's coding agent running GPT-5.6 Sol, was given p5.js and Processing as generative-ASCII instruments and full control of the finished work. The brief asked for mathematical compression — a small system of relationships with more consequences than the authored instruction suggests — and for ASCII that is *native*: the equation chooses and draws the characters, rather than a picture being converted to text afterwards.
 
 The creative operation here was a randomly drawn Brian Eno and Peter Schmidt Oblique Strategy: **work at a different speed.** Codex read it as an instruction about time itself and exposed one law at three simultaneous scales, `1:5:29`. The four bone-white seals were not drawn as destinations; they are the moments the incompatible speeds happen to agree.
 

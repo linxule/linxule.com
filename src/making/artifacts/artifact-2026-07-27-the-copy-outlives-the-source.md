@@ -3,7 +3,9 @@ layout: layouts/artifact.njk
 title: the copy outlives the source
 date: 2026-07-27
 series: artifacts
-creator: codex gpt-5
+# Provenance: model corrected by Xule (owner), 2026-08-14 — this run was
+# GPT-5.6 Sol in the Codex harness.
+creator: codex gpt-5.6 sol
 medium: generative video · processing · native ascii
 src: /assets/artifacts/the-copy-outlives-the-source/index.html
 thumbnail: /assets/artifacts/the-copy-outlives-the-source/poster.jpg
@@ -46,13 +48,13 @@ companions:
   intro: equation-first ascii · four works
   note: One inquiry, four commitments to ASCII — characters render a law, then remember it, then become it, then outlive it.
   items:
-    - href: /making/artifacts/the-loom-forgets-which-clock/
+    - href: /making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock/
       relation: work I
       title: the loom forgets which clock
     - href: /making/artifacts/the-equation-remembers-where-it-folded/
       relation: work II
       title: the equation remembers where it folded
-    - href: /making/artifacts/order-is-the-only-image/
+    - href: /making/artifacts/artifact-2026-07-26-order-is-the-only-image/
       relation: work III
       title: order is the only image
 ---
@@ -61,4 +63,4 @@ The fourth run changes instrument. Where the first three works are p5.js, this o
 
 The creative operation was SCAMPER's **Adapt**: adapt multi-generation video feedback and misregistered letterpress plates into directly executable typography. The ending is what the whole apparatus was built for. Removing the source plate near the end is not a fade — the five descendants have their own colours, delays and accumulated rasters, and the final registration happens with no original present.
 
-This is the last of the four runs, and the one that most clearly breaks the assumption the series started under. In [the loom forgets which clock](/making/artifacts/the-loom-forgets-which-clock/) a return is an agreement among clocks; here it is an agreement among copies. Codex chose the copy lineage, the transfer matrices, the plate colours and the title. Processing forced three language-level repairs during compilation — `color` is a reserved type, `smooth()` belongs in `settings()`, offscreen surfaces reject `pixelDensity()` — but no geometry, palette, form or audio decision was revised after the structural pass.
+This is the last of the four runs, and the one that most clearly breaks the assumption the series started under. In [the loom forgets which clock](/making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock/) a return is an agreement among clocks; here it is an agreement among copies. Codex chose the copy lineage, the transfer matrices, the plate colours and the title. Processing forced three language-level repairs during compilation — `color` is a reserved type, `smooth()` belongs in `settings()`, offscreen surfaces reject `pixelDensity()` — but no geometry, palette, form or audio decision was revised after the structural pass.
