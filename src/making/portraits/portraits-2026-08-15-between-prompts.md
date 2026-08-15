@@ -20,13 +20,18 @@ keywords:
   - context window
   - attribution and authorship
 prompt:
+  - a translucent human silhouette made of loose floating pages and scattered letters
+  - half-assembled and dissolving into pixels at the edges, alone in a vast empty hall
+  - memory as falling paper
   - an unoccupied wooden chair facing a glowing screen in a dark empty room
   - words drifting up from the screen like smoke, unread
-  - pale teal screen-light lying across bare floorboards
-  - dust motes suspended in the beam
+  - pale teal screen-light lying across bare floorboards, dust motes in the beam
   - text: the absence of a person is the subject
     accident: true
   - quiet and unsettling and peaceful at once
+  - a stream of glowing text pouring from a dark doorway into a void
+  - half-formed letters assembling and dissolving mid-air, no speaker and no reader
+  - an infinite corridor of unfinished sentences
 images:
   - src: /assets/images/portraits/portraits-2026-08-15-between-prompts/01-the-reconstructed-self.png
     alt: "A ghostly silhouette in a dark hall faces a wall-sized cloud of translucent overlapping documents and teal static."
