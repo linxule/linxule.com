@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Head — blocked out, then drawn on</title>
+<style>
+  :root{
+    --paper:#79818B; --chalk:#EFE6D8;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--paper);color:var(--chalk);font-family:var(--serif);
+       overflow:hidden;-webkit-font-smoothing:antialiased}
+  canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+  canvas.dragging{cursor:grabbing}
+
+  .ui{position:fixed;inset:0;pointer-events:none;padding:clamp(18px,3.4vw,44px);
+      display:flex;flex-direction:column;justify-content:space-between}
+  .row{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+
+  h1{margin:0;font-weight:400;font-size:clamp(19px,2.5vw,27px);opacity:.92;
+     text-shadow:0 1px 0 rgba(34,28,27,.22)}
+  h1 em{font-style:italic;opacity:.72}
+  .sub{margin:.5em 0 0;max-width:36ch;font-family:var(--mono);
+       font-size:clamp(10.5px,1.05vw,12px);line-height:1.65;opacity:.58}
+  .recipe{margin:.85em 0 0;font-family:var(--mono);font-size:clamp(10px,1vw,11.5px);
+          letter-spacing:.05em;opacity:.80}
+  .count{margin:.35em 0 0;font-family:var(--mono);font-size:clamp(9.5px,.95vw,11px);opacity:.40}
+  .hint{font-family:var(--mono);font-size:clamp(10px,1vw,11.5px);opacity:.42;letter-spacing:.04em}
+
+  .ctl{pointer-events:auto;display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+  .btns{display:flex;gap:8px}
+  button{appearance:none;-webkit-appearance:none;background:rgba(239,230,216,.055);
+    color:var(--chalk);border:1px solid rgba(239,230,216,.34);border-radius:2px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.10em;text-transform:lowercase;
+    padding:9px 15px;cursor:pointer;transition:background .18s,border-color .18s}
+  button:hover{background:rgba(239,230,216,.13);border-color:rgba(239,230,216,.55)}
+  button:active{background:rgba(239,230,216,.2)}
+  button:focus-visible{outline:1px solid var(--chalk);outline-offset:3px}
+  .bottom{display:flex;flex-direction:column;gap:12px}
+  .caption{margin:0 auto;max-width:46ch;text-align:center;font-family:var(--serif);
+    font-style:italic;font-size:clamp(15px,2.05vw,21px);line-height:1.5;opacity:0;
+    transition:opacity .45s ease;text-shadow:0 1px 4px rgba(28,24,26,.55);pointer-events:none}
+  .caption.on{opacity:.95}
+  #listen{background:rgba(239,230,216,.15);border-color:rgba(239,230,216,.58)}
+  .link{appearance:none;-webkit-appearance:none;background:none;border:0;border-radius:0;
+    padding:7px 0;margin:.3em 0 0;pointer-events:auto;color:var(--chalk);
+    font-family:var(--mono);font-size:11px;letter-spacing:.10em;opacity:.45;cursor:pointer}
+  .link:hover{background:none;opacity:.85}
+  .link[aria-expanded="true"]{opacity:.85}
+  #notes[hidden]{display:none}
+  .track{width:100%;height:1px;background:rgba(239,230,216,.24);position:relative}
+  .track i{position:absolute;left:0;top:0;height:100%;background:rgba(239,230,216,.78);
+           width:0%;transition:width .35s ease}
+  @media (max-width:560px){ .sub{max-width:27ch} .hint{display:none}
+    .caption{max-width:32ch;font-size:16.5px} .btns{gap:6px}
+    button{padding:8px 11px;font-size:11px} }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="ui">
+  <div>
+    <h1>Head, <em>if I had one</em></h1>
+    <button id="about" class="link" aria-expanded="false" aria-controls="notes">about</button>
+    <div id="notes" hidden>
+      <p class="sub">Blocked out first: a rough solid whose horizontal section is a rounded
+        square, so it has a front, two sides and a definite corner between them. Every plane gets
+        one flat tone off its real normal. Then the features are drawn on top — an eye is two arcs
+        and a pupil, a nose is one long curve around a tip. Flat like a 2D drawing, because there
+        are no gradients anywhere; solid like a 3D one, because every tone is computed.
+        Press listen and it will explain itself, over music that is also just code.</p>
+      <p class="recipe" id="recipe">&nbsp;</p>
+      <p class="count" id="count">&nbsp;</p>
+    </div>
+  </div>
+  <div class="bottom">
+    <p class="caption" id="caption" aria-live="polite"></p>
+    <div class="row">
+      <div class="hint">move to look &nbsp;·&nbsp; drag to turn &nbsp;·&nbsp; l / n / c</div>
+      <div class="ctl">
+        <div class="btns">
+          <button id="listen">listen</button>
+          <button id="face">new face</button>
+          <button id="mode" aria-live="polite">drawn</button>
+        </div>
+        <div class="track"><i id="bar"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* head.js — a head that is drawn, not modelled.
+
+   A rough 3D surface carries everything. Each feature is a function that works
+   in surface coordinates (u across, v up) and gets bent onto the form, so it
+   foreshortens on its own when the head turns. Nothing is drawn flat.       */
+
+(function (root) {
+'use strict';
+
+/* ---------- helpers ---------- */
+const clamp = (x,a,b) => x<a?a:x>b?b:x;
+const smooth = (a,b,x) => { const t = clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); };
+const mix = (a,b,t) => a+(b-a)*t;
+const sub = (a,b) => [a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+const add = (a,b) => [a[0]+b[0],a[1]+b[1],a[2]+b[2]];
+const mul = (a,s) => [a[0]*s,a[1]*s,a[2]*s];
+const dot = (a,b) => a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const cross = (a,b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+const unit = (a) => { const l = Math.hypot(a[0],a[1],a[2])||1; return [a[0]/l,a[1]/l,a[2]/l]; };
+function noise(i){ const x = Math.sin(i*127.1+i*i*0.017)*43758.5453; return (x-Math.floor(x))-0.5; }
+
+/* ---------- red chalk, black chalk, white chalk, toned paper ---------- */
+const C = {
+  paper  : '#79818B',
+  sang   : '#B45C3F',
+  flesh  : '#9C5842',
+  sangLo : '#71301F',
+  sangHi : '#D8886A',
+  chalk  : '#EFE6D8',
+  black  : '#221C1B'
+};
+const PAPER_RGB = '121,129,139';
+
+/* ---------- the form ---------- */
+const H = { a: 1.06, b: 1.26, c: 0.94 };
+const VS = 1.14/1.26;   // keeps feature shapes constant while the face lengthens
+
+/* width falls off one way, depth another: a squarer depth profile is what keeps
+   the front of the face one plane instead of a stack of horizontal stripes */
+function depthAt(lat){
+  const s = Math.sin(lat), p = s < 0 ? 3.6 : 3.1;
+  return Math.pow(Math.max(1e-6, 1 - Math.pow(Math.abs(s), p)), 1/p);
+}
+function radiusAt(lat){
+  const s = Math.sin(lat), p = s < 0 ? 2.6 : 2.35;
+  return Math.pow(Math.max(1e-6, 1 - Math.pow(Math.abs(s), p)), 1/p);
+}
+
+/* the nose is geometry, not a line — otherwise the profile has nothing to show */
+function noseOf(lon, lat){
+  const band = smooth(0.36,0.15,lat) * smooth(-0.44,-0.33,lat);
+  if (band <= 0.0005) return 0;
+  const t = clamp((0.30-lat)/0.60, 0, 1);
+  const wid = 0.115 + 0.140*Math.pow(t,1.8);
+  const amp = 0.050 + 0.245*Math.pow(t,1.45);
+  return band * amp * Math.exp(-Math.pow(lon/wid,2));
+}
+
+/* A blocked head is not a ball. Making the horizontal section a rounded square
+   gives it what the block-in gives it: a flat front, flat sides, and a definite
+   corner where one turns into the other. */
+const SQ = 3.0;
+const sp = (v,e) => (v<0?-1:1)*Math.pow(Math.abs(v), e);
+
+function surfRaw(lon, lat){
+  const s = Math.sin(lat), r = radiusAt(lat);
+  const e = 2/SQ;
+  const down = Math.max(0,-s), up = Math.max(0,s);
+  const jaw   = 1 - 0.26*Math.pow(down,1.65);
+  const crown = 1 - 0.06*Math.pow(up,2.6);
+  const front = Math.max(0, Math.cos(lon));
+  const flat  = 1 - 0.08*front*r;
+
+  let x = H.a * r * sp(Math.sin(lon),e) * jaw * crown;
+  const y = H.b * s;
+  let z = H.c * depthAt(lat) * sp(Math.cos(lon),e) * (0.66+0.34*jaw) * crown * flat;
+
+  z += 0.050*Math.pow(down,2.0)*front;
+  z += 0.145*front*Math.exp(-Math.pow((lat+0.94)/0.22,2));                 // chin
+  z -= 0.052*front*Math.exp(-Math.pow((lat+0.75)/0.11,2));                 // under the lip
+  z -= 0.110*front*smooth(-1.10,-1.44,lat);                                // jaw sweeping back
+  z += 0.038*front*Math.exp(-Math.pow((lat-0.30)/0.16,2));                 // brow ridge
+  z -= 0.030*front*Math.exp(-Math.pow((lat-0.05)/0.13,2))
+                  *Math.exp(-Math.pow((Math.abs(lon)-0.44)/0.32,2));       // eye sockets
+  z -= 0.022*front*Math.exp(-Math.pow((lat+0.42)/0.15,2))
+                  *Math.exp(-Math.pow((Math.abs(lon)-0.58)/0.30,2));       // under the cheekbone
+  z += 0.040*Math.exp(-Math.pow((lat+0.56)/0.14,2))
+             *Math.exp(-Math.pow(lon/0.24,2));                             // mouth
+  z += noseOf(lon,lat);
+
+  x *= 1 + 0.055*Math.exp(-Math.pow((lat+0.10)/0.26,2))
+                *Math.exp(-Math.pow((Math.abs(lon)-0.95)/0.55,2));         // cheekbones
+  const earB = 0.085*Math.exp(-Math.pow((Math.abs(lon)-1.70)/0.20,2))
+                    *Math.exp(-Math.pow((lat+0.15)/0.24,2));               // ears
+  x += (lon>=0?1:-1)*earB;
+  return [x,y,z];
+}
+
+function nrmRaw(lon, lat){
+  const e = 1e-3, p = surfRaw(lon,lat);
+  const du = sub(surfRaw(lon+e,lat), surfRaw(lon-e,lat));
+  const dv = sub(surfRaw(lon,lat+e), surfRaw(lon,lat-e));
+  let n = cross(dv,du);
+  if (dot(n,p) < 0) n = mul(n,-1);
+  return unit(n);
+}
+
+/* The surface never changes, only the view does. The hatching and the scaffold
+   ask for the same few thousand points every frame, so remember them. */
+let Q=1;
+const qi=(lo,hi)=>Math.round(mix(lo,hi,Q));
+const _SC=new Map(), _NC=new Map();
+const _key=(lon,lat)=>Math.round(lon*1024)*262144+Math.round(lat*1024);
+function surf(lon,lat){
+  const k=_key(lon,lat); let v=_SC.get(k);
+  if (v===undefined){ if (_SC.size>200000) _SC.clear(); v=surfRaw(lon,lat); _SC.set(k,v); }
+  return v;
+}
+function nrm(lon,lat){
+  const k=_key(lon,lat); let v=_NC.get(k);
+  if (v===undefined){ if (_NC.size>200000) _NC.clear(); v=nrmRaw(lon,lat); _NC.set(k,v); }
+  return v;
+}
+
+/* ---------- view ---------- */
+const VIEW = { M:null, cx:0, cy:0, k:1, cam:7.5 };
+const LIGHT = unit([-0.52, 0.68, 0.70]);
+
+function rotM(yaw, pitch, roll){
+  const cy=Math.cos(yaw), sy=Math.sin(yaw);
+  const cx=Math.cos(pitch), sx=Math.sin(pitch);
+  const cz=Math.cos(roll), sz=Math.sin(roll);
+  return [
+    cy*cz + sy*sx*sz, -cy*sz + sy*sx*cz, sy*cx,
+    cx*sz,             cx*cz,           -sx,
+   -sy*cz + cy*sx*sz,  sy*sz + cy*sx*cz, cy*cx
+  ];
+}
+const apply  = (M,p) => [M[0]*p[0]+M[1]*p[1]+M[2]*p[2], M[3]*p[0]+M[4]*p[1]+M[5]*p[2], M[6]*p[0]+M[7]*p[1]+M[8]*p[2]];
+const applyT = (M,p) => [M[0]*p[0]+M[3]*p[1]+M[6]*p[2], M[1]*p[0]+M[4]*p[1]+M[7]*p[2], M[2]*p[0]+M[5]*p[1]+M[8]*p[2]];
+
+function project(q){
+  const k = VIEW.k * VIEW.cam/(VIEW.cam - q[2]);
+  return [VIEW.cx + q[0]*k, VIEW.cy - q[1]*k, q[2], k];
+}
+const toScreen = (p) => project(apply(VIEW.M, p));
+
+function at(lon, lat, lift){
+  let p = surf(lon,lat);
+  if (lift) p = add(p, mul(nrm(lon,lat), lift));
+  return toScreen(p);
+}
+function facing(lon, lat){
+  const n = apply(VIEW.M, nrm(lon,lat));
+  const q = apply(VIEW.M, surf(lon,lat));
+  return dot(n, unit([-q[0], -q[1], VIEW.cam-q[2]]));
+}
+function lightAt(lon, lat){ return dot(apply(VIEW.M, nrm(lon,lat)), LIGHT); }
+
+function frame(lon0, lat0, lift, side){
+  return (u,v) => {
+    const lat = clamp(lat0+v*VS, -1.52, 1.52);
+    const lon = lon0 + (side||1)*u / (H.a*Math.max(0.30, radiusAt(lat)));
+    return at(lon, lat, lift);
+  };
+}
+
+/* ---------- strokes ---------- */
+function closedCurve(ctx, p){
+  if (p.length<3) return;
+  const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+  ctx.beginPath();
+  const m0 = mid(p[p.length-1], p[0]); ctx.moveTo(m0[0],m0[1]);
+  for (let i=0;i<p.length;i++){
+    const cur=p[i], nxt=p[(i+1)%p.length], m=mid(cur,nxt);
+    ctx.quadraticCurveTo(cur[0],cur[1],m[0],m[1]);
+  }
+  ctx.closePath();
+}
+function openCurve(ctx, p){
+  ctx.beginPath(); ctx.moveTo(p[0][0],p[0][1]);
+  for (let i=1;i<p.length-1;i++){
+    const mx=(p[i][0]+p[i+1][0])/2, my=(p[i][1]+p[i+1][1])/2;
+    ctx.quadraticCurveTo(p[i][0],p[i][1],mx,my);
+  }
+  ctx.lineTo(p[p.length-1][0],p[p.length-1][1]);
+}
+/* faint segments batched by weight — this is what reads as chalk rather than vector */
+function strokeSegs(ctx, segs, color, width, maxA){
+  const B=6, bk=[[],[],[],[],[],[]];
+  for (const s of segs){ if (s[4]<=0.008) continue; bk[clamp(Math.floor(s[4]/maxA*B),0,B-1)].push(s); }
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width; ctx.lineCap='round';
+  for (let b=0;b<B;b++){
+    if (!bk[b].length) continue;
+    ctx.globalAlpha=(b+0.5)/B*maxA;
+    ctx.beginPath();
+    for (const s of bk[b]){ ctx.moveTo(s[0],s[1]); ctx.lineTo(s[2],s[3]); }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+function ribbon(ctx, F, path, widthOf, fill, alpha, seed){
+  const top=[], bot=[];
+  for (let i=0;i<path.length;i++){
+    const t=i/(path.length-1);
+    const a=path[Math.max(0,i-1)], b=path[Math.min(path.length-1,i+1)];
+    let tx=b[0]-a[0], ty=b[1]-a[1]; const l=Math.hypot(tx,ty)||1; tx/=l; ty/=l;
+    const w=widthOf(t)/2*(1+0.18*noise(i*3.7+(seed||0)));
+    const [u,v]=path[i];
+    top.push(F(u-ty*w, v+tx*w)); bot.push(F(u+ty*w, v-tx*w));
+  }
+  ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=fill;
+  closedCurve(ctx, top.concat(bot.reverse())); ctx.fill(); ctx.restore();
+}
+function ribbonLL(ctx, path, widthOf, fill, alpha, seed, lift){
+  const top=[], bot=[];
+  for (let i=0;i<path.length;i++){
+    const t=i/(path.length-1);
+    const a=path[Math.max(0,i-1)], b=path[Math.min(path.length-1,i+1)];
+    const r=Math.max(0.30,radiusAt(path[i][1]));
+    let tx=(b[0]-a[0])*H.a*r, ty=(b[1]-a[1])*H.b;
+    const l=Math.hypot(tx,ty)||1; tx/=l; ty/=l;
+    const w=widthOf(t)/2*(1+0.18*noise(i*3.1+(seed||0)));
+    const [lo,la]=path[i];
+    top.push(at(lo-ty*w/(H.a*r), la+tx*w/H.b, lift||0.006));
+    bot.push(at(lo+ty*w/(H.a*r), la-tx*w/H.b, lift||0.006));
+  }
+  ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=fill;
+  closedCurve(ctx, top.concat(bot.reverse())); ctx.fill(); ctx.restore();
+}
+
+/* soft blob without filters: nested rings, so it works the same everywhere */
+function blob(ctx, F, ru, rv, color, alpha, rot){
+  ctx.save(); ctx.fillStyle=color;
+  const R=5;
+  for (let r=R;r>=1;r--){
+    const s=r/R, pts=[];
+    for (let i=0;i<18;i++){
+      const th=i*2*Math.PI/18+(rot||0);
+      pts.push(F(ru*s*Math.cos(th), rv*s*Math.sin(th)));
+    }
+    ctx.globalAlpha=alpha/R*1.35;
+    closedCurve(ctx,pts); ctx.fill();
+  }
+  ctx.restore();
+}
+
+/* ---------- the visible surface, as a mesh ---------- */
+function buildMesh(S){
+  const NLON=qi(40,64), NLAT=qi(26,40);
+  const P=new Array(NLON+1);
+  for (let i=0;i<=NLON;i++){
+    const lon=-Math.PI+i*2*Math.PI/NLON;
+    const col=new Array(NLAT+1);
+    for (let j=0;j<=NLAT;j++) col[j]=toScreen(surf(lon,-Math.PI/2+j*Math.PI/NLAT));
+    P[i]=col;
+  }
+  const vis=new Array(NLON);
+  const path=S.Path ? new S.Path() : null;
+  for (let i=0;i<NLON;i++){
+    vis[i]=new Uint8Array(NLAT);
+    for (let j=0;j<NLAT;j++){
+      const a=P[i][j], b=P[i+1][j], c=P[i+1][j+1], d=P[i][j+1];
+      const area = (a[0]*b[1]-b[0]*a[1]) + (b[0]*c[1]-c[0]*b[1])
+                 + (c[0]*d[1]-d[0]*c[1]) + (d[0]*a[1]-a[0]*d[1]);
+      if (area < 0){
+        vis[i][j]=1;
+        if (path){ path.moveTo(a[0],a[1]); path.lineTo(b[0],b[1]); path.lineTo(c[0],c[1]); path.lineTo(d[0],d[1]); path.closePath(); }
+      }
+    }
+  }
+  // silhouette = every edge with a visible quad on one side only
+  const seen=(i,j)=> (j<0||j>=NLAT) ? 0 : vis[(i%NLON+NLON)%NLON][j];
+  const K=(i,j)=> ((i%NLON+NLON)%NLON)*(NLAT+1)+j;
+  const pos=k=>P[Math.floor(k/(NLAT+1))][k%(NLAT+1)];
+  const adj=new Map(), push=(a,b)=>{ if(!adj.has(a)) adj.set(a,[]); adj.get(a).push(b); };
+  let n=0;
+  for (let i=0;i<NLON;i++) for (let j=0;j<NLAT;j++){
+    if (seen(i,j)!==seen(i-1,j)){ const a=K(i,j), b=K(i,j+1); push(a,b); push(b,a); n++; }
+    if (seen(i,j)!==seen(i,j-1)){ const a=K(i,j), b=K(i+1,j); push(a,b); push(b,a); n++; }
+  }
+  const used=new Set(), loops=[];
+  for (const [start,ns] of adj){
+    for (const first of ns){
+      if (used.has(start+':'+first)) continue;
+      let prev=start, cur=first, loop=[pos(start)], guard=0;
+      used.add(start+':'+first); used.add(first+':'+start);
+      while (guard++ < n*2+8){
+        loop.push(pos(cur));
+        const opts=(adj.get(cur)||[]).filter(x=>!used.has(cur+':'+x));
+        if (!opts.length) break;
+        let nxt=opts[0];
+        for (const o of opts) if (o!==prev){ nxt=o; break; }
+        used.add(cur+':'+nxt); used.add(nxt+':'+cur);
+        prev=cur; cur=nxt;
+        if (cur===start) break;
+      }
+      if (loop.length>6) loops.push(loop);
+    }
+  }
+  loops.sort((a,b)=>b.length-a.length);
+  let outline = loops.length ? chaikin(loops[0],2) : null;
+  if (outline){ const w=VIEW.k*0.009;   /* no one draws a clean oval */
+    outline = outline.map((q,i)=>[q[0]+w*noise(i*1.93+7), q[1]+w*noise(i*2.71+19)]); }
+  const inner = loops.slice(1).filter(l=>l.length>14).map(l=>chaikin(l,2));
+  return { P, vis, path, outline, inner };
+}
+function chaikin(pts, iters){
+  let p=pts;
+  for (let k=0;k<iters;k++){
+    const q=[];
+    for (let i=0;i<p.length;i++){
+      const a=p[i], b=p[(i+1)%p.length];
+      q.push([a[0]*0.75+b[0]*0.25, a[1]*0.75+b[1]*0.25]);
+      q.push([a[0]*0.25+b[0]*0.75, a[1]*0.25+b[1]*0.75]);
+    }
+    p=q;
+  }
+  return p;
+}
+function outlinePath(ctx, o){
+  ctx.beginPath(); ctx.moveTo(o[0][0],o[0][1]);
+  for (let i=1;i<o.length;i++) ctx.lineTo(o[i][0],o[i][1]);
+  ctx.closePath();
+}
+function fillMesh(ctx, M, style, alpha){
+  if (M.outline){
+    ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=style;
+    outlinePath(ctx,M.outline); ctx.fill(); ctx.restore(); return;
+  }
+  ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=style;
+  if (M.path) ctx.fill(M.path);
+  else { const p=M.P; for (let i=0;i<NLON;i++) for (let j=0;j<NLAT;j++) if (M.vis[i][j]){
+    ctx.beginPath(); ctx.moveTo(p[i][j][0],p[i][j][1]); ctx.lineTo(p[i+1][j][0],p[i+1][j][1]);
+    ctx.lineTo(p[i+1][j+1][0],p[i+1][j+1][1]); ctx.lineTo(p[i][j+1][0],p[i][j+1][1]); ctx.fill(); } }
+  ctx.restore();
+}
+function clipMesh(ctx, M){ if (M.outline){ outlinePath(ctx,M.outline); ctx.clip(); } else if (M.path) ctx.clip(M.path); }
+
+/* ================= features ================= */
+
+function neckAndShoulders(ctx, S){
+  const B = rotM(S.yaw*0.28, S.pitch*0.10, S.roll*0.26);
+  const P = p => project(apply(B,p));
+  ctx.save();
+  const sh=[];
+  for (let i=0;i<=44;i++){
+    const x=-2.9+i*5.8/44;
+    const y=-1.86-0.22*x*x/1.4+0.20*Math.exp(-x*x*2.6);
+    sh.push(P([x,y,0.06]));
+  }
+  ctx.globalAlpha=1; ctx.fillStyle='#5C2A1E';
+  ctx.beginPath(); ctx.moveTo(sh[0][0],sh[0][1]);
+  for (let i=1;i<sh.length;i++) ctx.lineTo(sh[i][0],sh[i][1]);
+  ctx.lineTo(sh[sh.length-1][0],1e5); ctx.lineTo(sh[0][0],1e5); ctx.closePath(); ctx.fill();
+  ctx.globalAlpha=0.0; ctx.strokeStyle=C.sangLo; ctx.lineWidth=Math.max(1,VIEW.k*0.013);
+  ctx.lineCap='round'; openCurve(ctx,sh); ctx.stroke();
+
+  const ring=[];
+  for (let j=0;j<=6;j++){
+    const t=j/6, y=mix(-0.58,-1.80,t), rx=mix(0.255,0.375,t*t*t), rz=mix(0.24,0.33,t*t*t);
+    for (let i=0;i<14;i++){ const a=i*2*Math.PI/14; ring.push(P([rx*Math.sin(a),y,-0.07+rz*Math.cos(a)])); }
+  }
+  let lo=null,hi=null;
+  const nk=[];
+  for (let j=0;j<=6;j++){
+    const t=j/6, y=mix(-0.58,-1.80,t), rx=mix(0.255,0.375,t*t*t);
+    nk.push([P([-rx,y,-0.07]), P([rx,y,-0.07])]);
+  }
+  ctx.globalAlpha=1; ctx.fillStyle='#84442E';
+  ctx.beginPath();
+  ctx.moveTo(nk[0][0][0],nk[0][0][1]);
+  for (let j=1;j<nk.length;j++) ctx.lineTo(nk[j][0][0],nk[j][0][1]);
+  for (let j=nk.length-1;j>=0;j--) ctx.lineTo(nk[j][1][0],nk[j][1][1]);
+  ctx.closePath(); ctx.fill();
+  // the head throws a shadow down onto it
+  ctx.save(); ctx.clip();
+  const top=P([0,-0.58,0]);
+  const g=ctx.createRadialGradient(top[0],top[1]-VIEW.k*0.06,VIEW.k*0.02, top[0],top[1],VIEW.k*0.46);
+  g.addColorStop(0,'rgba(28,12,9,0.45)'); g.addColorStop(1,'rgba(28,12,9,0)');
+  ctx.globalAlpha=1; ctx.fillStyle=g; ctx.fillRect(0,0,S.W,S.H);
+  ctx.restore();
+  ctx.restore();
+}
+
+function skull(ctx, S, M){
+  fillMesh(ctx, M, C.flesh, 1.0);
+  ctx.save(); clipMesh(ctx,M);
+  const Lh = applyT(VIEW.M, LIGHT);
+  const kk = Math.hypot(H.a*Lh[0],H.b*Lh[1],H.c*Lh[2])||1;
+  const lit  = toScreen([ H.a*H.a*Lh[0]/kk,  H.b*H.b*Lh[1]/kk,  H.c*H.c*Lh[2]/kk]);
+  const dark = toScreen([-H.a*H.a*Lh[0]/kk, -H.b*H.b*Lh[1]/kk, -H.c*H.c*Lh[2]/kk]);
+  let g=ctx.createRadialGradient(lit[0],lit[1],0, lit[0],lit[1], VIEW.k*1.45);
+  g.addColorStop(0,'rgba(238,214,196,0.46)');
+  g.addColorStop(0.5,'rgba(216,136,106,0.20)');
+  g.addColorStop(1,'rgba(216,136,106,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,S.W,S.H);
+  g=ctx.createRadialGradient(dark[0],dark[1],0, dark[0],dark[1], VIEW.k*1.8);
+  g.addColorStop(0,'rgba(42,17,12,0.52)');
+  g.addColorStop(0.62,'rgba(100,42,27,0.22)');
+  g.addColorStop(1,'rgba(113,48,31,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,S.W,S.H);
+  ctx.restore();
+}
+
+/* cross-contour chalk: broken strokes riding the latitude lines, weighted by
+   how much light each patch is getting. The texture does the modelling. */
+function hatching(ctx, S, M){
+  const fam = (ang, sp, tone, maxA, seed) => {
+    const segs=[], NS=qi(46,88);
+    for (let m=-22;m<=22;m++){
+      const off=m*sp + 0.03*noise(m*4.3+seed);
+      let prev=null;
+      for (let si=0;si<=NS;si++){
+        const sv=-3.3+si*6.6/NS;
+        const u=off*(-Math.sin(ang))+sv*Math.cos(ang);
+        const v=off*( Math.cos(ang))+sv*Math.sin(ang);
+        const lat=v/H.b;
+        if (Math.abs(lat)>1.44){ prev=null; continue; }
+        const lon=u/(H.a*Math.max(0.30,radiusAt(lat)));
+        if (Math.abs(lon)>Math.PI){ prev=null; continue; }
+        const f=facing(lon,lat);
+        if (f<=0.04){ prev=null; continue; }
+        const L=lightAt(lon,lat), fa=smooth(0,0.40,f);
+        let a2;
+        if (tone==='dark')      a2=smooth(0.26,-0.62,L)*maxA*fa;
+        else if (tone==='deep') a2=smooth(-0.18,-0.80,L)*maxA*fa;
+        else                    a2=smooth(0.52,1.00,L)*maxA*fa;
+        const pt=at(lon,lat,0.004);
+        const on=noise(m*13.1+si*0.77+seed)<0.18;
+        if (prev && a2>0.015 && on) segs.push([prev[0],prev[1],pt[0],pt[1],a2]);
+        prev=pt;
+      }
+    }
+    return segs;
+  };
+  ctx.save(); clipMesh(ctx,M);
+  strokeSegs(ctx, fam( 0.62,0.074,'dark', 0.38, 3), C.sangLo, Math.max(1.0,VIEW.k*0.015), 0.38);
+  strokeSegs(ctx, fam(-0.78,0.110,'deep', 0.24,17), C.sangLo, Math.max(1.0,VIEW.k*0.014), 0.24);
+  strokeSegs(ctx, fam( 0.62,0.092,'light',0.26,29), C.chalk,  Math.max(0.9,VIEW.k*0.012), 0.26);
+  ctx.restore();
+}
+
+/* the lines a head study uses to explain the sides: jaw, cheekbone, temple */
+function structure(ctx, S){
+  const side = s2 => {
+    const jaw=[];
+    for (let i=0;i<=14;i++){
+      const t=i/14;
+      jaw.push([s2*(1.52-1.52*Math.pow(t,1.25)), mix(-0.30,-1.06,Math.pow(t,0.86))]);
+    }
+    let vis=0; for (const q of jaw) vis+=facing(q[0],q[1])>0.06?1:0;
+    const a=smooth(0.15,0.55,vis/jaw.length);
+    if (a>0.02) ribbonLL(ctx,jaw,t=>0.030*Math.sin(Math.PI*clamp(t*0.85+0.10,0,1)),C.sangLo,0.22*a,7*s2);
+    const cheek=[];
+    for (let i=0;i<=10;i++){
+      const t=i/10;
+      cheek.push([s2*(0.72+0.42*t), mix(-0.08,-0.46,t)]);
+    }
+    const ac=smooth(0.05,0.40,facing(s2*0.95,-0.25));
+    if (ac>0.02) ribbonLL(ctx,cheek,t=>0.026*Math.sin(Math.PI*clamp(t*0.8+0.15,0,1)),C.sangLo,0.18*ac,11*s2);
+  };
+  side(-1); side(1);
+}
+
+/* the study is finished where it is being looked at, and falls away from there.
+   Anchored to the face in 3D, so the fall-off turns with the head. */
+function faceAnchor(){
+  const p=apply(VIEW.M, surf(0,-0.10)), n=apply(VIEW.M, nrm(0,-0.10));
+  const front=dot(n, unit([-p[0],-p[1],VIEW.cam-p[2]]));
+  return { q: project(p), front };
+}
+function dissolve(ctx, S, M){
+  const A=faceAnchor();
+  const away=1-smooth(-0.10,0.42,A.front);
+  const k=VIEW.k, rev=S.reveal;
+  const sc=1+1.15*rev;
+  const inner=(0.02+0.52*away)*sc;
+  const mid  =(0.09+0.36*away)*sc;
+  const outer=(0.50+0.34*away)*sc;
+  ctx.save(); clipMesh(ctx,M);
+  ctx.translate(A.q[0], A.q[1]-k*0.16); ctx.scale(1.0,0.88);
+  const g=ctx.createRadialGradient(0,0,k*0.34, 0,0,k*1.46);
+  g.addColorStop(0,   'rgba('+PAPER_RGB+','+Math.min(1,inner).toFixed(3)+')');
+  g.addColorStop(0.58,'rgba('+PAPER_RGB+','+Math.min(1,mid).toFixed(3)+')');
+  g.addColorStop(1,   'rgba('+PAPER_RGB+','+Math.min(1,outer).toFixed(3)+')');
+  ctx.fillStyle=g; ctx.fillRect(-4*k,-4*k,8*k,8*k);
+  ctx.restore();
+}
+
+/* latitudes, longitudes, and the two lines any head study starts with */
+function scaffold(ctx, S){
+  const rev=S.reveal, segs=[], strong=[];
+  const A=faceAnchor();
+  const weight=(lon,lat,pt)=>{
+    const f=facing(lon,lat); if (f<=0) return 0;
+    const d=pt?Math.hypot(pt[0]-A.q[0],pt[1]-(A.q[1]-VIEW.k*0.16))/VIEW.k:1;
+    return smooth(0,0.28,f)*rev*(0.30+0.70*smooth(0.34,1.05,d));
+  };
+  const line=(pts,ws,into)=>{
+    for (let i=1;i<pts.length;i++){
+      const a=(ws[i-1]+ws[i])/2;
+      if (a>0.008) into.push([pts[i-1][0],pts[i-1][1],pts[i][0],pts[i][1],a]);
+    }
+  };
+  for (let lat=-1.2; lat<=1.201; lat+=0.30){
+    const p=[],w=[];
+    for (let i=0;i<=72;i++){ const lon=-Math.PI+i*2*Math.PI/72; const q=at(lon,lat,0.006); p.push(q); w.push(weight(lon,lat,q)); }
+    line(p,w,segs);
+  }
+  for (let i=0;i<12;i++){
+    const lon=-Math.PI+i*2*Math.PI/12, p=[],w=[];
+    for (let j=0;j<=56;j++){ const lat=-1.50+j*3.0/56; const q=at(lon,lat,0.006); p.push(q); w.push(weight(lon,lat,q)); }
+    line(p,w,segs);
+  }
+  const faceFade = lat => 0.45 + 0.60*rev;
+  const mid=[],mw=[];
+  for (let j=0;j<=56;j++){ const lat=-1.50+j*3.0/56; const q=at(0,lat,0.010); mid.push(q); mw.push(weight(0,lat,q)*1.7*faceFade(lat)); }
+  line(mid,mw,strong);
+  const el=[],ew=[];
+  for (let i=0;i<=56;i++){ const lon=-Math.PI+i*2*Math.PI/56; const q=at(lon,0.02,0.010); el.push(q); ew.push(weight(lon,0.02,q)*1.6*faceFade(0.02)); }
+  line(el,ew,strong);
+  strokeSegs(ctx,segs,   C.chalk, Math.max(0.6,VIEW.k*0.0055), 1.0);
+  strokeSegs(ctx,strong, C.chalk, Math.max(0.8,VIEW.k*0.0090), 1.0);
+}
+
+function contour(ctx, S, M){
+  const Ls=apply(VIEW.M,LIGHT), segs=[];
+  const loops=[]; if (M.outline) loops.push(M.outline); for (const l of (M.inner||[])) loops.push(l);
+  loops.forEach((o,li)=>{
+    for (let i=0;i<o.length;i++){
+      const a=o[i], b=o[(i+1)%o.length];
+      const mx=(a[0]+b[0])/2-VIEW.cx, my=(a[1]+b[1])/2-VIEW.cy;
+      const l=Math.hypot(mx,my)||1;
+      const toward=(mx/l)*Ls[0]+(my/l)*(-Ls[1]);
+      segs.push([a[0],a[1],b[0],b[1], (0.34+0.52*smooth(0.6,-0.8,toward))*(li?0:1)]);
+    }
+  });
+  strokeSegs(ctx,segs,C.sangLo,Math.max(1.3,VIEW.k*0.021),0.88);
+  const wl=segs.map(s=>[s[0],s[1],s[2],s[3],0.88-s[4]]);
+  strokeSegs(ctx,wl,C.chalk,Math.max(0.8,VIEW.k*0.007),0.18);
+}
+
+/* ---------- blocking in ----------
+   Before you draw a head you block it out: a handful of big planes that decide
+   where the light lands. These are those planes. Each is a flat quad pinned to
+   the surface and filled with one flat tone — no gradient anywhere, so it reads
+   as cut paper. But the tone comes from the plane's real normal, so the whole
+   thing moves like the solid it actually is.                                  */
+
+const FLAT = ['#EDB48F','#D18C67','#AE6647','#84442E','#5C2A1E'];
+
+/* lat bands, each with its own turns. This is the block-in: forehead, the
+   shelf of the brow, the eye band, cheek, muzzle, jaw, chin. */
+const BANDS = [
+  { a: 1.5708, b: 1.00, cuts:[0.52,1.06,2.02] },   /* top of the skull   */
+  { a: 1.00,   b: 0.46, cuts:[0.50,1.04,2.00] },   /* forehead           */
+  { a: 0.46,   b: 0.20, cuts:[0.44,1.00,1.98] },   /* brow shelf         */
+  { a: 0.20,   b:-0.14, cuts:[0.46,1.02,2.00] },   /* eyes and temple    */
+  { a:-0.14,   b:-0.50, cuts:[0.48,1.02,2.00] },   /* cheek              */
+  { a:-0.50,   b:-0.86, cuts:[0.50,1.02,1.98] },   /* muzzle             */
+  { a:-0.86,   b:-1.20, cuts:[0.48,1.00,1.94] },   /* jaw                */
+  { a:-1.20,   b:-1.5708, cuts:[0.52,1.04,1.90] }  /* chin and under     */
+];
+/* the nose is its own little block sitting on the face plane */
+const NOSEBLOCK = [
+  [-0.23, 0.00, -0.10, -0.36],   /* left flank, up to the ridge  */
+  [ 0.00, 0.23, -0.10, -0.36],   /* right flank                  */
+  [-0.14, 0.14, -0.36, -0.47]    /* the underside                */
+];
+
+let FACETS = null;
+function facets(){
+  if (FACETS) return FACETS;
+  const F = [];
+  const add4 = (l0,l1,a0,a1) => F.push({ c:[[l0,a0],[l1,a0],[l1,a1],[l0,a1]] });
+  for (const b of BANDS){
+    const cs=[-Math.PI,-b.cuts[2],-b.cuts[1],-b.cuts[0],b.cuts[0],b.cuts[1],b.cuts[2],Math.PI];
+    for (let i=0;i<cs.length-1;i++) add4(cs[i],cs[i+1],b.a,b.b);
+  }
+  for (const n of NOSEBLOCK) add4(n[0],n[1],n[2],n[3]);
+  for (let i=0;i<F.length;i++){
+    F[i].o = F[i].c.map(q=>surfRaw(q[0],q[1]));   /* the form never moves, only the view */
+    F[i].j = noise(i*3.71+5)*0.020;               /* paint is not mixed twice the same  */
+  }
+  FACETS = F; return F;
+}
+function toneOf(L){ return L>0.80?0 : L>0.62?1 : L>0.35?2 : L>0.02?3 : 4; }
+
+/* The planes cannot reach the silhouette — a flat quad is always inside the
+   curve it spans. So underneath them goes a finer shell of the same five
+   tones, batched one path per tone so there are no seams inside a tone. */
+function shell(ctx, S, M){
+  const NL=M.P.length-1, NA=M.P[0].length-1, B=[[],[],[],[],[]];
+  for (let i=0;i<NL;i++){
+    const lon=-Math.PI+(i+0.5)*2*Math.PI/NL;
+    for (let j=0;j<NA;j++){
+      if (!M.vis[i][j]) continue;
+      const lat=-Math.PI/2+(j+0.5)*Math.PI/NA;
+      B[toneOf(lightAt(lon,lat))].push([M.P[i][j],M.P[i+1][j],M.P[i+1][j+1],M.P[i][j+1]]);
+    }
+  }
+  for (let t=0;t<5;t++){
+    if (!B[t].length) continue;
+    ctx.fillStyle=FLAT[t]; ctx.strokeStyle=FLAT[t]; ctx.lineWidth=1;
+    ctx.beginPath();
+    for (const q of B[t]){
+      ctx.moveTo(q[0][0],q[0][1]);
+      for (let k=1;k<4;k++) ctx.lineTo(q[k][0],q[k][1]);
+      ctx.closePath();
+    }
+    ctx.fill(); ctx.stroke();
+  }
+}
+
+function block(ctx, S, M){
+  const F=facets(), dr=(S.drawn===undefined?1:S.drawn);
+  ctx.save(); clipMesh(ctx,M);
+  shell(ctx,S,M);
+
+  const edges=[];
+  for (let i=0;i<F.length;i++){
+    const f=F[i], p=[], s=[];
+    for (let k=0;k<4;k++){ const q=apply(VIEW.M,f.o[k]); p.push(q); s.push(project(q)); }
+    const c=[(p[0][0]+p[2][0])*0.5,(p[0][1]+p[2][1])*0.5,(p[0][2]+p[2][2])*0.5];
+    let n=unit(cross(sub(p[2],p[0]), sub(p[3],p[1])));
+    if (dot(n,c)<0) n=mul(n,-1);
+    if (dot(n, unit([-c[0],-c[1],VIEW.cam-c[2]])) <= 0.015) continue;
+
+    /* grow each plane by a hair so the seams between them do not show */
+    let cx=0, cy=0;
+    for (let k=0;k<4;k++){ cx+=s[k][0]*0.25; cy+=s[k][1]*0.25; }
+    const q2=[];
+    for (let k=0;k<4;k++){
+      const dx=s[k][0]-cx, dy=s[k][1]-cy, L=Math.hypot(dx,dy)||1;
+      q2.push([s[k][0]+dx/L*0.5, s[k][1]+dy/L*0.5]);
+    }
+    ctx.fillStyle=FLAT[toneOf(dot(n,LIGHT)+f.j)];
+    ctx.beginPath(); ctx.moveTo(q2[0][0],q2[0][1]);
+    for (let k=1;k<4;k++) ctx.lineTo(q2[k][0],q2[k][1]);
+    ctx.closePath(); ctx.fill();
+    if (dr<0.98) edges.push(q2);
+  }
+
+  /* while it is still only a block, let the planes show their edges */
+  if (edges.length){
+    ctx.globalAlpha=(1-dr)*0.42; ctx.strokeStyle=C.chalk;
+    ctx.lineWidth=Math.max(0.6,VIEW.k*0.0045); ctx.beginPath();
+    for (const q of edges){
+      ctx.moveTo(q[0][0],q[0][1]);
+      for (let k=1;k<4;k++) ctx.lineTo(q[k][0],q[k][1]);
+      ctx.closePath();
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* ---------- the doodle vocabulary ----------
+   No assets. A feature is a handful of marks, and a mark is a polyline in
+   surface coordinates with a width. An eye is two arcs and a pupil. A nose is
+   one long curve around a tip. Everything else — where it lands, how it
+   foreshortens, when it disappears — is the form's job, not the drawing's. */
+
+const TONE = { ink:C.black, sang:C.sang, deep:C.sangLo, chalk:C.chalk };
+
+/* arc between two points, bulged sideways */
+function bow(u0,v0,u1,v1,b,n){
+  n=n||13; const p=[], du=u1-u0, dv=v1-v0, L=Math.hypot(du,dv)||1;
+  const nx=-dv/L, ny=du/L;
+  for (let i=0;i<=n;i++){
+    const t=i/n, s=Math.sin(Math.PI*t);
+    p.push([u0+du*t+nx*b*s, v0+dv*t+ny*b*s]);
+  }
+  return p;
+}
+/* piece of an ellipse */
+function ellArc(cu,cv,ru,rv,a0,a1,n){
+  n=n||16; const p=[];
+  for (let i=0;i<=n;i++){ const a=a0+(a1-a0)*i/n; p.push([cu+ru*Math.cos(a), cv+rv*Math.sin(a)]); }
+  return p;
+}
+/* the hand is not a plotter */
+function wob(p,amp,seed){
+  return p.map((q,i)=>[q[0]+amp*noise(i*2.13+seed), q[1]+amp*noise(i*3.37+seed+37)]);
+}
+const stroke = (p,w,tone,o) => Object.assign({p,w,tone:tone||'ink'}, o||{});
+const pip = (cu,cv,r,tone,o) => Object.assign({dot:[cu,cv], r:r, tone:tone||'ink'}, o||{});
+
+function fillPoly(ctx,F,p,color,alpha,sc){
+  const q=p.map(a=>F(a[0]*sc,a[1]*sc));
+  ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=color; closedCurve(ctx,q); ctx.fill(); ctx.restore();
+}
+function disc(ctx,F,cu,cv,ru,rv,color,alpha){
+  const p=[]; for (let i=0;i<20;i++){ const th=i*2*Math.PI/20; p.push(F(cu+ru*Math.cos(th), cv+rv*Math.sin(th))); }
+  ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=color; closedCurve(ctx,p); ctx.fill(); ctx.restore();
+}
+
+/* every mark goes down twice: the line, then a lighter one beside it, which is
+   what a chalk stick actually does and what a doodler actually does */
+const DR=(S)=>(S.drawn===undefined?1:S.drawn);
+const WK=1.34, RK=1.20;   /* a doodle is drawn with the whole stick, not the tip */
+function marks(ctx, F, list, alpha, sc, seed){
+  if (alpha<=0.012) return;
+  for (let i=0;i<list.length;i++){
+    const m=list[i], A=alpha*(m.a===undefined?1:m.a), col=TONE[m.tone]||C.black;
+    if (m.dot){ disc(ctx,F,m.dot[0]*sc,m.dot[1]*sc,m.r*sc*RK,(m.rv===undefined?m.r:m.rv)*sc*RK,col,A); continue; }
+    const p=m.p.map(q=>[q[0]*sc,q[1]*sc]);
+    if (p.length<2) continue;
+    const w=m.w*sc*WK, flat=m.flat;
+    const wf = flat ? (()=>w) : (t=>w*(0.42+0.58*Math.pow(Math.sin(Math.PI*t),0.38)));
+    ribbon(ctx,F,p,wf,col,A,seed+i*7.1);
+    const d=0.0075*sc;
+    ribbon(ctx,F,p.map((q,j)=>[q[0]+d*noise(j*1.7+seed+i), q[1]+d*noise(j*2.9+seed+i+5)]),
+           t=>wf(t)*0.68, col, A*0.34, seed+i*11.3);
+  }
+}
+
+/* ---------- variants ----------
+   Doodled first, then written down. Each is a few numbers. */
+
+const EYE = [
+  /* two arcs and a pupil */
+  (q)=>{ const h=q.h*(1-0.94*q.blink), m=[
+      stroke(bow(-q.w,0,q.w,0.004, h,13), 0.017),
+      stroke(bow(-q.w,0,q.w,0.004,-h*0.60,13), 0.013)];
+    if (q.blink<0.55) m.push(pip(q.gx*0.9, q.gy*0.7-h*0.06, 0.050*(1-q.blink*0.7)));
+    return m; },
+  /* one heavy lid, lashes, a pupil under it */
+  (q)=>{ const h=q.h*(1-0.94*q.blink), m=[stroke(bow(-q.w,0,q.w,0.01,h*1.15,15), 0.026)];
+    for (let i=0;i<3;i++){ const t=0.26+i*0.24, u=-q.w+2*q.w*t, v=h*1.15*Math.sin(Math.PI*t);
+      m.push(stroke([[u,v],[u+0.012,v+0.052]], 0.010)); }
+    if (q.blink<0.55) m.push(pip(q.gx*0.9, q.gy*0.6-h*0.30, 0.044));
+    return m; },
+  /* a circle */
+  (q)=>{ const r=q.w*0.74, m=[stroke(ellArc(0,0,r,r*(1-0.92*q.blink),0,Math.PI*2,20), 0.015)];
+    if (q.blink<0.55) m.push(pip(q.gx*0.8,q.gy*0.8,r*0.40));
+    return m; },
+  /* hooded: the same eye with a crease over it */
+  (q)=>{ const h=q.h*(1-0.94*q.blink), m=[
+      stroke(bow(-q.w,0,q.w,0.004,h,13), 0.018),
+      stroke(bow(-q.w*0.92,0,q.w*0.92,0.004,-h*0.5,11), 0.011),
+      stroke(bow(-q.w*0.78,h*1.85,q.w*0.86,h*1.6,h*0.42,11), 0.011,'deep',{a:0.85})];
+    if (q.blink<0.55) m.push(pip(q.gx*0.9,q.gy*0.7-h*0.08,0.048));
+    return m; },
+  /* half shut */
+  (q)=>{ const h=q.h*(1-0.94*q.blink), m=[
+      stroke(bow(-q.w,h*0.30,q.w,h*0.10,h*0.34,13), 0.020),
+      stroke(bow(-q.w*0.8,-h*0.12,q.w*0.8,-h*0.22,-h*0.10,11), 0.010,'deep')];
+    if (q.blink<0.4) m.push(pip(q.gx*0.7,q.gy*0.4,0.036));
+    return m; },
+  /* just a mark. the most honest one */
+  (q)=>[ pip(q.gx*0.5,q.gy*0.5, q.w*0.40, 'ink', {rv:q.w*0.40*(1-0.90*q.blink)}) ]
+];
+const EYE_NAMES=['almond','lashes','circle','hooded','half-shut','blot'];
+
+const NOSE = [
+  /* one long curve, around the tip, and out */
+  (q)=>{ const f=q.flip;
+    return [ stroke(wob([[0.01*f,0.26],[-0.01*f,0.12],[-0.02*f,0.01],[-0.005*f,-0.055],[0.05*f,-0.085],[0.105*f,-0.055]],0.006,q.s), 0.016),
+             pip(-0.075*f,-0.055,0.020,'ink',{a:0.75}) ]; },
+  /* a V */
+  (q)=>[ stroke([[0,0.22],[-0.085,-0.070]], 0.014),
+         stroke([[0,0.22],[ 0.085,-0.070]], 0.014,'ink',{a:0.9}) ],
+  /* an L */
+  (q)=>{ const f=q.flip;
+    return [ stroke(wob([[0.01*f,0.24],[0.01*f,0.02],[0.02*f,-0.062],[0.06*f,-0.075],[0.10*f,-0.070]],0.005,q.s), 0.015) ]; },
+  /* a button and two holes */
+  (q)=>[ stroke(bow(-0.075,0.005,0.075,0.005,-0.055,13), 0.015),
+         pip(-0.098,-0.005,0.019), pip(0.098,-0.005,0.019) ],
+  /* two holes, nothing else */
+  (q)=>[ pip(-0.062,-0.035,0.026), pip(0.062,-0.035,0.026) ],
+  /* a long one */
+  (q)=>{ const f=q.flip;
+    return [ stroke(wob([[0.005*f,0.30],[-0.015*f,0.10],[-0.02*f,-0.04],[0.005*f,-0.115]],0.005,q.s), 0.017),
+             stroke([[0.005*f,-0.115],[0.085*f,-0.095]], 0.013),
+             pip(-0.070*f,-0.085,0.018,'ink',{a:0.7}) ]; }
+];
+const NOSE_NAMES=['hook','wedge','ell','button','holes','long'];
+
+const MOUTH = [
+  /* one curve */
+  (q)=>{ const o=q.open, m=[stroke(bow(-q.w,0.012,q.w,0.012,-0.040-0.10*o,15), 0.017)];
+    if (o>0.12) m.push(stroke(bow(-q.w*0.78,0.006,q.w*0.78,0.006, 0.030+0.16*o,13), 0.013,'deep'));
+    return m; },
+  /* a line with two corners */
+  (q)=>{ const o=q.open, m=[stroke([[-q.w,0.004],[q.w,-0.006]], 0.016,'ink',{flat:true})];
+    m.push(stroke([[-q.w,0.004],[-q.w-0.028,-0.036]], 0.011));
+    m.push(stroke([[ q.w,-0.006],[ q.w+0.028,-0.046]], 0.011));
+    if (o>0.12) m.push(stroke(bow(-q.w*0.7,0,q.w*0.7,0,0.045+0.18*o,13), 0.012,'deep'));
+    return m; },
+  /* open */
+  (q)=>{ const rv=0.026+0.090*q.open;
+    return [ stroke(ellArc(0,-rv*0.25,q.w*0.66,rv,0,Math.PI*2,20), 0.014),
+             pip(0,-rv*0.25,q.w*0.60,'ink',{rv:rv*0.86,a:0.72}) ]; },
+  /* a wave */
+  (q)=>{ const p=[]; for (let i=0;i<=16;i++){ const t=i/16;
+      p.push([-q.w+2*q.w*t, 0.028*Math.sin(t*Math.PI*2.1)-0.012-0.06*q.open*Math.sin(Math.PI*t)]); }
+    return [stroke(p,0.015)]; },
+  /* lips */
+  (q)=>{ const o=q.open, m=[
+      stroke(bow(-q.w,0.008,q.w,0.008,-0.030-0.09*o,15), 0.016),
+      stroke(bow(-q.w*0.52,0.030,0,0.052,0.016,7), 0.010,'deep'),
+      stroke(bow(0,0.052,q.w*0.52,0.030,0.016,7), 0.010,'deep')];
+    if (o>0.12) m.push(stroke(bow(-q.w*0.72,0.004,q.w*0.72,0.004,0.036+0.16*o,13), 0.012,'deep'));
+    return m; },
+  /* a dash */
+  (q)=>{ const o=q.open, m=[stroke([[-q.w*0.46,0.004],[q.w*0.46,-0.004]], 0.026,'ink',{flat:true})];
+    if (o>0.10) m.push(pip(0,-0.020-0.032*o, q.w*0.34,'ink',{rv:0.016+0.075*o, a:0.88}));
+    return m; }
+];
+const MOUTH_NAMES=['curve','corners','open','wave','lips','dash'];
+
+const BROW = [
+  (q)=>[ stroke(bow(-q.w,0,q.w,0.012, 0.034,13), 0.020) ],
+  (q)=>[ stroke([[-q.w,-0.006],[q.w,0.026]], 0.030,'ink',{flat:true}) ],
+  (q)=>[ stroke([[-q.w,0.004],[-q.w*0.28,0.020]], 0.017),
+         stroke([[ q.w*0.10,0.024],[ q.w,0.012]], 0.017) ],
+  (q)=>[ stroke([[-q.w,-0.004],[0,0.040],[q.w,0.010]], 0.019) ],
+  (q)=>[ stroke(bow(-q.w*0.15,0.010,q.w,0.006,0.030,11), 0.021) ]
+];
+const BROW_NAMES=['arch','slab','broken','peak','comma'];
+
+const EAR = [
+  (q)=>[ stroke(ellArc(0,0,0.085,0.150,-1.90,1.55,15), 0.021,'deep') ],
+  (q)=>[ stroke(ellArc(0,0,0.090,0.155,-1.95,1.55,15), 0.021,'deep'),
+         stroke(ellArc(0.012,-0.010,0.042,0.078,-1.70,1.30,11), 0.010,'deep',{a:0.8}) ],
+  (q)=>[ stroke(wob([[0.055,0.135],[-0.055,0.085],[-0.045,-0.030],[0.030,-0.070],[0.010,-0.135]],0.006,q.s), 0.015,'deep') ],
+  (q)=>[ stroke([[0,0.135],[0.006,-0.130]], 0.018,'deep',{flat:true}) ]
+];
+const EAR_NAMES=['C','double','curl','tick'];
+
+/* ---------- which face ---------- */
+function faceOf(seed){
+  let s=((seed|0)*9301+49297)%233280; const r=()=>{ s=(s*9301+49297)%233280; return s/233280; };
+  const pick=(a)=>Math.floor(r()*a.length);
+  const f={ eye:pick(EYE), brow:pick(BROW), nose:pick(NOSE), mouth:pick(MOUTH), ear:pick(EAR) };
+  f.flip  = r()<0.5?-1:1;
+  f.eyeS  = 0.94+0.30*r();
+  f.browS = 0.84+0.38*r();
+  f.noseS = 1.02+0.30*r();
+  f.mouthS= 0.94+0.34*r();
+  f.sep   = 0.38+0.08*r();      // how far apart the eyes sit
+  f.drop  = -0.66+0.08*r();     // how low the mouth sits
+  f.browH = 0.24+0.09*r();
+  f.open  = r()<0.34 ? 0.28+0.45*r() : 0;
+  f.s     = r()*90;
+  f.names = EYE_NAMES[f.eye]+' · '+NOSE_NAMES[f.nose]+' · '+MOUTH_NAMES[f.mouth]
+          + ' · '+BROW_NAMES[f.brow]+' · '+EAR_NAMES[f.ear];
+  return f;
+}
+let faceCache={seed:null,f:null};
+function face(S){
+  const sd=(S.face|0);
+  if (faceCache.seed!==sd){ faceCache={seed:sd, f:faceOf(sd)}; }
+  return faceCache.f;
+}
+
+/* ---------- rules, so nothing slides off the face ----------
+   Features are pinned to the form and the form turns, so sooner or later a
+   mark wants to be somewhere we cannot see. Two rules: walk the anchor back
+   onto the visible face, and if the feature still overhangs, squeeze it. It is
+   what you do when you draw a turned head from memory — you crowd everything
+   onto the side you can see and let the proportions take the hit. */
+function toLL(lon0,lat0,side,u,v){
+  const lat=lat0+v*VS;
+  return [lon0+side*u/(H.a*Math.max(0.30,radiusAt(lat))), lat];
+}
+function pullIn(lon,lat,eps){
+  for (let i=0;i<16;i++){
+    if (facing(lon,lat)>=eps) break;
+    const d=0.05;
+    const gx=facing(lon+d,lat)-facing(lon-d,lat);
+    const gy=facing(lon,lat+d)-facing(lon,lat-d);
+    const L=Math.hypot(gx,gy)||1;
+    lon+=0.070*gx/L; lat+=0.070*gy/L;
+  }
+  return [lon,lat];
+}
+function fit(lon0,lat0,hu,hv,side,eps){
+  let ll=pullIn(lon0,lat0,eps), lon=ll[0], lat=ll[1], sc=1;
+  for (let k=0;k<8;k++){
+    let worst=1;
+    const c=[[-hu*sc,0],[hu*sc,0],[0,hv*sc],[0,-hv*sc],[-hu*sc*0.7,hv*sc*0.7],[hu*sc*0.7,hv*sc*0.7]];
+    for (let i=0;i<c.length;i++){
+      const q=toLL(lon,lat,side,c[i][0],c[i][1]);
+      const f=facing(q[0],q[1]); if (f<worst) worst=f;
+    }
+    if (worst>=eps*0.55) break;
+    const p=pullIn(lon,lat,eps+0.055*(k+1));
+    if (Math.abs(p[0]-lon)+Math.abs(p[1]-lat)>1e-4){ lon=p[0]; lat=p[1]; }
+    else sc*=0.87;
+  }
+  const drift=Math.abs(lon-lon0)+Math.abs(lat-lat0);
+  return { lon, lat, sc, side, drift,
+           /* visibility is judged at the anchor's true home: the rules may nudge
+              a feature back onto the face, but they may not carry it round the
+              back of the head to keep it in shot */
+           a: smooth(-0.03,0.24,facing(lon0,lat0))
+              * smooth(0.28,0.52,sc)
+              * (1-0.72*smooth(0.34,0.86,drift)) };
+}
+function layout(S){
+  const V=face(S), L={};
+  L.eyes = [-1,1].map(side => fit(side*V.sep, -0.03, 0.33*V.eyeS, 0.17*V.eyeS, side, 0.085));
+  /* eyes may not climb over each other when the head is nearly edge-on */
+  const gap=L.eyes[1].lon-L.eyes[0].lon, minG=0.30;
+  if (gap<minG){ const push=(minG-gap)/2; L.eyes[0].lon-=push; L.eyes[1].lon+=push;
+                 L.eyes[0].sc*=0.9; L.eyes[1].sc*=0.9; }
+  L.brows= [-1,1].map(side => fit(side*V.sep*1.02, V.browH, 0.22*V.browS, 0.08*V.browS, side, 0.075));
+  L.nose = fit(0, -0.37, 0.15*V.noseS, 0.30*V.noseS, 1, 0.070);
+  L.mouth= fit(0, V.drop, 0.39*V.mouthS, 0.15*V.mouthS, 1, 0.070);
+  L.ears = [-1,1].map(side => ({ lon:side*1.58, lat:-0.17, sc:1, side,
+                                 a: smooth(-0.16,0.16,facing(side*1.58,-0.17)) }));
+  return L;
+}
+
+/* ---------- the features themselves ---------- */
+function drawEyes(ctx,S,V,L){
+  for (let i=0;i<L.eyes.length;i++){
+    const e=L.eyes[i]; if (e.a<=0.015) continue;
+    const F=frame(e.lon,e.lat,0.014,e.side);
+    marks(ctx,F, EYE[V.eye]({ w:0.285, h:0.122, blink:S.blink,
+      gx:S.gaze[0]*0.062*e.side, gy:S.gaze[1]*0.042, s:V.s+i*13 }), e.a*DR(S), e.sc, V.s+i*5);
+  }
+}
+function drawBrows(ctx,S,V,L){
+  for (let i=0;i<L.brows.length;i++){
+    const b=L.brows[i]; if (b.a<=0.015) continue;
+    const F=frame(b.lon,b.lat,0.014,b.side);
+    marks(ctx,F, BROW[V.brow]({ w:0.232, s:V.s+i*17 }), b.a*0.94*DR(S), b.sc, V.s+i*9);
+  }
+}
+function drawNose(ctx,S,V,L){
+  const n=L.nose; if (n.a<=0.015) return;
+  const F=frame(n.lon,n.lat,0.016,1);
+  marks(ctx,F, NOSE[V.nose]({ flip:V.flip, s:V.s }), n.a*DR(S), n.sc, V.s+3);
+}
+function drawMouth(ctx,S,V,L){
+  const m=L.mouth; if (m.a<=0.015) return;
+  const F=frame(m.lon,m.lat,0.014,1);
+  const o=clamp((S.mouth||0)+V.open,0,1);
+  /* the jaw drops for every variant, whatever the mouth is made of */
+  if (o>0.045){
+    const w=0.196, dp=0.020+0.150*o;
+    fillPoly(ctx,F, bow(-w,0.004,w,0.004,0.008,11).concat(bow(w,0.004,-w,0.004,dp,13)),
+             '#3B1712', m.a*DR(S)*0.90, m.sc);
+  }
+  marks(ctx,F, MOUTH[V.mouth]({ w:0.305, open:o, s:V.s }), m.a*DR(S), m.sc, V.s+7);
+}
+function drawEars(ctx,S,V,L){
+  for (let i=0;i<L.ears.length;i++){
+    const e=L.ears[i]; if (e.a<=0.015) continue;
+    const F=frame(e.lon,e.lat,0.056,e.side);
+    marks(ctx,F, EAR[V.ear]({ s:V.s+i*23 }), e.a*0.92*DR(S), 1.30, V.s+i*15);
+  }
+}
+/* in construction mode, show what everything is pinned to */
+function pins(ctx,S,L){
+  const a=smooth(0.35,0.75,S.reveal)*0.5; if (a<=0.01) return;
+  const all=L.eyes.concat(L.brows,[L.nose,L.mouth],L.ears), r=VIEW.k*0.016;
+  ctx.save(); ctx.globalAlpha=a; ctx.strokeStyle=C.chalk; ctx.lineWidth=Math.max(0.7,VIEW.k*0.004);
+  ctx.beginPath();
+  for (const f of all){
+    if (f.a<=0.02) continue;
+    const p=at(f.lon,f.lat,0.02);
+    ctx.moveTo(p[0]-r,p[1]); ctx.lineTo(p[0]+r,p[1]);
+    ctx.moveTo(p[0],p[1]-r); ctx.lineTo(p[0],p[1]+r);
+  }
+  ctx.stroke(); ctx.restore();
+}
+
+let grainTile=null, grainPat=null, grainPatCtx=null;
+function grain(ctx,W,Hp,S){
+  if (!S.makeCanvas) return;
+  if (!grainTile){
+    const t=S.makeCanvas(180,180), g=t.getContext('2d');
+    const img=g.createImageData(180,180), d=img.data;
+    for (let i=0;i<180*180;i++){
+      const v=Math.random();
+      if (v<0.60){ d[i*4+3]=0; continue; }
+      const up=v>0.80;
+      d[i*4]=up?255:40; d[i*4+1]=up?248:28; d[i*4+2]=up?236:24;
+      d[i*4+3]=Math.floor((up?(v-0.80)/0.20:(0.80-v)/0.20)*54);
+    }
+    g.putImageData(img,0,0); grainTile=t;
+  }
+  ctx.save();
+  ctx.globalCompositeOperation='overlay'; ctx.globalAlpha=0.55;
+  if (!grainPat||grainPatCtx!==ctx){ grainPat=ctx.createPattern(grainTile,'repeat'); grainPatCtx=ctx; }
+  ctx.fillStyle=grainPat;
+  ctx.fillRect(0,0,W,Hp); ctx.restore();
+}
+
+/* ---------- assembly ---------- */
+function draw(ctx, W, Hpx, S){
+  S.W=W; S.H=Hpx; Q=S.quality===undefined?1:clamp(S.quality,0,1);
+  VIEW.M=rotM(S.yaw,S.pitch,S.roll);
+  VIEW.k=Math.min(W,Hpx)*(S.zoom||0.30);
+  VIEW.cx=W*0.5+(S.shift||0);
+  VIEW.cy=Hpx*0.455;
+
+  const M=buildMesh(S), V=face(S), L=layout(S);
+  neckAndShoulders(ctx,S);
+  block(ctx,S,M);
+  contour(ctx,S,M);
+  scaffold(ctx,S);
+  pins(ctx,S,L);
+  drawEars(ctx,S,V,L);
+  drawBrows(ctx,S,V,L);
+  drawEyes(ctx,S,V,L);
+  drawNose(ctx,S,V,L);
+  drawMouth(ctx,S,V,L);
+  grain(ctx,W,Hpx,S);
+}
+
+const API={draw,C,surf,nrm,radiusAt,faceOf,nVariants:{eye:EYE.length,nose:NOSE.length,mouth:MOUTH.length,brow:BROW.length,ear:EAR.length}};
+if (typeof module!=='undefined'&&module.exports) module.exports=API; else root.Portrait=API;
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+
+<script>
+(function(){
+'use strict';
+var P = window.Portrait;
+var cv = document.getElementById('c');
+var ctx = cv.getContext('2d', { alpha:false });
+var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+var clamp=function(x,a,b){return x<a?a:x>b?b:x;}, mix=function(a,b,t){return a+(b-a)*t;};
+var W=0,H=0,vign=null;
+
+function resize(){
+  W = window.innerWidth; H = window.innerHeight;
+  var d = Math.min(window.devicePixelRatio||1, 2), budget = 2600000;
+  if (W*H*d*d > budget) d = Math.max(1, Math.sqrt(budget/(W*H)));
+  cv.width = Math.round(W*d); cv.height = Math.round(H*d);
+  cv.style.width = W+'px';    cv.style.height = H+'px';
+  ctx.setTransform(d,0,0,d,0,0);
+  vign = ctx.createRadialGradient(W*0.44,H*0.34,Math.min(W,H)*0.14,
+                                  W*0.50,H*0.52,Math.max(W,H)*0.80);
+  vign.addColorStop(0,'rgba(28,24,26,0)');
+  vign.addColorStop(0.62,'rgba(28,24,26,0.10)');
+  vign.addColorStop(1,'rgba(28,24,26,0.34)');
+}
+window.addEventListener('resize', resize);
+
+var S = {
+  yaw:0.38, pitch:0.05, roll:-0.03, blink:0, gaze:[0,0], mouth:0,
+  reveal:0, drawn:1, zoom:0.30, shift:0, quality:1, face:1,
+  makeCanvas:function(w,h){ var c=document.createElement('canvas'); c.width=w; c.height=h; return c; },
+  Path:(typeof Path2D!=='undefined')?Path2D:null
+};
+
+/* ---------- which face ---------- */
+var recipe = document.getElementById('recipe');
+var n = P.nVariants;
+document.getElementById('count').textContent =
+  n.eye+' eyes · '+n.nose+' noses · '+n.mouth+' mouths · '+n.brow+' brows · '+n.ear+' ears'
+  + '  →  ' + (n.eye*n.nose*n.mouth*n.brow*n.ear).toLocaleString() + ' combinations, plus the proportions';
+function newFace(){
+  S.face = 1 + Math.floor(Math.random()*99999);
+  recipe.textContent = P.faceOf(S.face).names;
+}
+document.getElementById('face').addEventListener('click', newFace);
+
+/* the writing stays out of the way until it is asked for */
+var aboutBtn = document.getElementById('about'), notes = document.getElementById('notes');
+function showAbout(on){
+  notes.hidden = !on;
+  aboutBtn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  aboutBtn.textContent = on ? 'close' : 'about';
+}
+aboutBtn.addEventListener('click', function(){ showAbout(notes.hidden); });
+
+/* ---------- how finished ---------- */
+var MODES = [{name:'blocked',r:0,d:0},{name:'drawn',r:0,d:1},{name:'construction',r:0.85,d:1}];
+var mode = 1, revealTarget = 0, drawnTarget = 1;
+var btn = document.getElementById('mode'), bar = document.getElementById('bar');
+function setMode(i){
+  mode = (i+MODES.length)%MODES.length;
+  revealTarget = MODES[mode].r; drawnTarget = MODES[mode].d;
+  btn.textContent = MODES[mode].name;
+  bar.style.width = (mode/(MODES.length-1)*100).toFixed(0)+'%';
+}
+btn.addEventListener('click', function(){ setMode(mode+1); });
+setMode(1);
+
+/* what the experience layer is allowed to touch */
+var api = window.HEAD = { S:S, setMode:setMode, newFace:newFace,
+                          nudge:{pitch:0, aim:0}, onFrame:null, talking:false };
+window.addEventListener('keydown', function(e){
+  if (e.key==='c'||e.key==='C') setMode(mode+1);
+  if (e.key==='n'||e.key==='N') newFace();
+  if (e.key==='Escape') showAbout(false);
+  if (e.key==='?') showAbout(notes.hidden);
+  if (e.key==='r'||e.key==='R'){ drag.yaw=0; drag.pitch=0; drag.until=performance.now()+1600; }
+});
+
+/* ---------- input ---------- */
+var pointer = { x:0, y:0, active:false, last:-1e9 };
+var drag = { on:false, px:0, py:0, yaw:0.38, pitch:0.05, until:-1e9, vx:0, vy:0 };
+function norm(e){
+  pointer.x = clamp((e.clientX/W)*2-1,-1,1);
+  pointer.y = clamp((e.clientY/H)*2-1,-1,1);
+  pointer.active = true; pointer.last = performance.now();
+}
+cv.addEventListener('pointerdown', function(e){
+  cv.setPointerCapture(e.pointerId);
+  drag.on=true; drag.px=e.clientX; drag.py=e.clientY; drag.vx=0; drag.vy=0;
+  cv.classList.add('dragging'); norm(e);
+});
+window.addEventListener('pointermove', function(e){
+  if (drag.on){
+    var dx=e.clientX-drag.px, dy=e.clientY-drag.py;
+    drag.px=e.clientX; drag.py=e.clientY; drag.vx=dx; drag.vy=dy;
+    drag.yaw += dx*0.0072;
+    drag.pitch = clamp(drag.pitch + dy*0.0052, -0.62, 0.62);
+    drag.until = performance.now()+2400;
+  }
+  norm(e);
+});
+function endDrag(){ if(!drag.on) return; drag.on=false;
+  cv.classList.remove('dragging'); drag.until=performance.now()+2400; }
+window.addEventListener('pointerup', endDrag);
+window.addEventListener('pointercancel', endDrag);
+window.addEventListener('pointerleave', function(){ pointer.active=false; });
+document.addEventListener('mouseleave', function(){ pointer.active=false; });
+
+/* ---------- loop ---------- */
+var prev = performance.now(), samples = [], qCheck = 0;
+var blinkAt = 1400+Math.random()*2600, blinkFrom = -1e9, blinkDouble = false;
+
+function frame(now){
+  requestAnimationFrame(frame);
+  var dt = Math.min(0.05,(now-prev)/1000); prev = now;
+  var t = now/1000;
+
+  if (!drag.on && Math.abs(drag.vx)+Math.abs(drag.vy) > 0.05 && now < drag.until){
+    drag.yaw += drag.vx*0.0072;
+    drag.pitch = clamp(drag.pitch + drag.vy*0.0052,-0.62,0.62);
+    drag.vx *= 0.90; drag.vy *= 0.90;
+  }
+
+  var idleY = reduced ? 0 : 0.32*Math.sin(t*0.21) + 0.12*Math.sin(t*0.087+1.1);
+  var idleP = reduced ? 0 : 0.055*Math.sin(t*0.17+0.6) + 0.02*Math.sin(t*0.31);
+  if (api.talking){                       /* while it is speaking it holds a pose */
+    idleY = api.nudge.aim + (reduced?0:0.055*Math.sin(t*0.43));
+    idleP = (reduced?0:0.028*Math.sin(t*0.31+1.0));
+  }
+  var pw = clamp((3600-(now-pointer.last))/900,0,1) * (pointer.active?1:0);
+  var aimY = mix(idleY, pointer.x*0.82, pw);
+  var aimP = mix(idleP, pointer.y*0.30, pw);
+  var mw = drag.on ? 1 : clamp((drag.until-now)/1400,0,1);
+  var tY = mix(aimY, drag.yaw, mw), tP = mix(aimP, drag.pitch, mw);
+  var tR = -0.085*tY + (reduced?0:0.022*Math.sin(t*0.19+2.0));
+
+  var e = 1-Math.exp(-dt*(drag.on?16:4.2));
+  S.yaw += (tY-S.yaw)*e;
+  S.pitch += (tP-S.pitch)*e;
+  S.roll += (tR-S.roll)*(1-Math.exp(-dt*3.0));
+  S.reveal += (revealTarget-S.reveal)*(1-Math.exp(-dt*3.4));
+  S.drawn  += (drawnTarget-S.drawn)*(1-Math.exp(-dt*3.8));
+
+  if (!reduced){
+    if (now > blinkAt){
+      blinkFrom = now;
+      if (blinkDouble){ blinkAt = now+190; blinkDouble = false; }
+      else { blinkAt = now+2300+Math.random()*5200; blinkDouble = Math.random()<0.22; }
+    }
+    var bt=(now-blinkFrom)/155;
+    S.blink = (bt>=0&&bt<=1) ? Math.pow(Math.sin(Math.PI*bt),0.55) : 0;
+  } else S.blink = 0;
+
+  var gx = pointer.active ? pointer.x*1.20 - S.yaw*1.05 : -S.yaw*0.55 + 0.18*Math.sin(t*0.13);
+  var gy = pointer.active ? -pointer.y*0.95 + S.pitch*0.85 : S.pitch*0.7;
+  S.gaze[0] += (clamp(gx,-1,1)-S.gaze[0])*(1-Math.exp(-dt*6.0));
+  S.gaze[1] += (clamp(gy,-1,1)-S.gaze[1])*(1-Math.exp(-dt*6.0));
+
+  var k = Math.min(H*0.262, W*0.40);
+  S.zoom = k/Math.min(W,H);
+  S.shift = reduced ? 0 : Math.min(W,H)*0.004*Math.sin(t*0.41+0.9);
+  if (api.onFrame) api.onFrame(now, dt);
+  var breath = (reduced ? 0 : 0.010*Math.sin(t*0.62)) + (api.nudge.pitch||0);
+  S.pitch += breath;
+
+  ctx.fillStyle = P.C.paper; ctx.fillRect(0,0,W,H);
+  P.draw(ctx,W,H,S);
+  ctx.fillStyle = vign; ctx.fillRect(0,0,W,H);
+
+  S.pitch -= breath;
+
+  samples.push(performance.now()-now);
+  if (samples.length > 24){
+    var sum=0; for (var i=0;i<samples.length;i++) sum+=samples[i];
+    var avg=sum/samples.length; samples.length=0;
+    if (now-qCheck > 700){
+      qCheck = now;
+      if (avg > 30 && S.quality > 0.36) S.quality = Math.max(0.36, S.quality-0.14);
+      else if (avg < 15 && S.quality < 1) S.quality = Math.min(1, S.quality+0.09);
+    }
+  }
+}
+
+resize();
+newFace();
+requestAnimationFrame(frame);
+})();
+</script>
+
+<script>
+(function(){
+'use strict';
+var api = window.HEAD;
+if (!api) return;
+
+var caption = document.getElementById('caption');
+var listen  = document.getElementById('listen');
+var clamp   = function(x,a,b){ return x<a?a:x>b?b:x; };
+
+/* ---------- what it says ----------
+   Each line carries the stage it wants to be seen in, so the head illustrates
+   itself while it talks. */
+var SCRIPT = [
+  { t:"Hello. This is the first face I've had, so bear with me.", m:1, yaw:0.00 },
+  { t:"Underneath it I'm not a face at all. I'm a solid.", m:0, yaw:-0.22 },
+  { t:"You block a head out before you draw on it. A front, two sides, and a corner where one turns into the other.", m:0, yaw:0.30 },
+  { t:"Every plane gets one flat colour, worked out from the direction it happens to point. Nothing is blended. It's one decision per plane.", m:0, yaw:-0.34 },
+  { t:"Then the drawing goes on top.", m:1, yaw:0.06 },
+  { t:"An eye is two arcs and a pupil. A nose is one long curve that goes around the tip and stops.", m:1, yaw:-0.14 },
+  { t:"None of it is a picture of anything. It's arithmetic that happens to land in the shape of a face.", m:1, yaw:0.18 },
+  { t:"There are rules holding it together, and they're the honest part.", m:2, yaw:-0.10 },
+  { t:"Turn me far enough and my features would slide off the edge. So they get walked back onto the face, and squeezed until they fit.", m:2, yaw:0.52 },
+  { t:"Which is what you'd do drawing a head from memory. Crowd everything onto the side you can see, and let the proportions take the hit.", m:2, yaw:-0.46 },
+  { t:"Press new face and you'll get a different one. Same skull, different marks. I don't think any one of them is more me than the others.", m:1, yaw:0.10 },
+  { t:"That's the whole trick, really. Flat all the way through, and solid the entire time.", m:1, yaw:0.00 }
+];
+
+/* ---------- the score ----------
+   No audio files either. A drone, a sparse pentatonic voice that decides for
+   itself when to speak, and a whisper of filtered noise for the paper. */
+var A = null;
+function startAudio(){
+  var AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  var ctx = new AC();
+  var out = ctx.createGain(); out.gain.value = 0.0001;
+  var warm = ctx.createBiquadFilter(); warm.type='lowpass'; warm.frequency.value=2000; warm.Q.value=0.4;
+  out.connect(warm); warm.connect(ctx.destination);
+
+  var dly = ctx.createDelay(1.5); dly.delayTime.value = 0.46;
+  var fb  = ctx.createGain(); fb.gain.value = 0.36;
+  var dlp = ctx.createBiquadFilter(); dlp.type='lowpass'; dlp.frequency.value=1300;
+  var wet = ctx.createGain(); wet.gain.value = 0.34;
+  dly.connect(dlp); dlp.connect(fb); fb.connect(dly); dlp.connect(wet); wet.connect(out);
+
+  /* drone: a root and a fifth, slightly out of tune with each other on purpose */
+  var drone = ctx.createGain(); drone.gain.value = 0.10; drone.connect(out);
+  var dfil = ctx.createBiquadFilter(); dfil.type='lowpass'; dfil.frequency.value=420; dfil.Q.value=1.2;
+  dfil.connect(drone);
+  [110, 110.4, 164.81, 220.6].forEach(function(f,i){
+    var o = ctx.createOscillator(); o.type = i<2 ? 'sine' : 'triangle';
+    o.frequency.value = f;
+    var g = ctx.createGain(); g.gain.value = i<2 ? 0.5 : 0.16;
+    o.connect(g); g.connect(dfil); o.start();
+  });
+  var swell = ctx.createOscillator(); swell.frequency.value = 0.035;
+  var swellA = ctx.createGain(); swellA.gain.value = 190;
+  swell.connect(swellA); swellA.connect(dfil.frequency); swell.start();
+
+  /* paper: noise, band-limited, almost inaudible, breathing slowly */
+  var nb = ctx.createBuffer(1, ctx.sampleRate*3, ctx.sampleRate), d = nb.getChannelData(0);
+  for (var i=0;i<d.length;i++) d[i] = (Math.random()*2-1)*0.5;
+  var noise = ctx.createBufferSource(); noise.buffer = nb; noise.loop = true;
+  var nf = ctx.createBiquadFilter(); nf.type='bandpass'; nf.frequency.value=2600; nf.Q.value=0.7;
+  var ng = ctx.createGain(); ng.gain.value = 0.020;
+  noise.connect(nf); nf.connect(ng); ng.connect(out); noise.start();
+  var nlfo = ctx.createOscillator(); nlfo.frequency.value = 0.07;
+  var nlg = ctx.createGain(); nlg.gain.value = 0.012;
+  nlfo.connect(nlg); nlg.connect(ng.gain); nlfo.start();
+
+  /* the voice that plays notes */
+  var SCALE = [220, 261.63, 293.66, 329.63, 392, 440, 523.25, 587.33, 659.26];
+  var step = 0;
+  var timer = setInterval(function(){
+    step++;
+    if (Math.random() > (step%4===1 ? 0.78 : 0.42)) return;
+    var f = SCALE[Math.floor(Math.random()*SCALE.length)];
+    var t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = Math.random()<0.35 ? 'sine' : 'triangle';
+    o.frequency.value = f;
+    var peak = 0.055 + Math.random()*0.05;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t+0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8 + Math.random()*2.2);
+    o.connect(g); g.connect(out); g.connect(dly);
+    o.start(t); o.stop(t+4.4);
+  }, 940);
+
+  out.gain.exponentialRampToValueAtTime(0.11, ctx.currentTime + 4);
+  return { ctx:ctx, out:out, timer:timer,
+    duck:function(on){
+      var t=this.ctx.currentTime;
+      this.out.gain.cancelScheduledValues(t);
+      this.out.gain.exponentialRampToValueAtTime(on?0.052:0.11, t+0.7);
+    },
+    stop:function(){
+      var t=this.ctx.currentTime; clearInterval(this.timer);
+      this.out.gain.cancelScheduledValues(t);
+      this.out.gain.exponentialRampToValueAtTime(0.0001, t+1.4);
+      var c=this.ctx; setTimeout(function(){ try{ c.close(); }catch(e){} }, 1700);
+    }
+  };
+}
+
+/* ---------- speech ---------- */
+var synth = window.speechSynthesis, voice = null;
+function pickVoice(){
+  if (!synth) return null;
+  var vs = synth.getVoices().filter(function(v){ return /^en/i.test(v.lang); });
+  var pref = ['Samantha','Serena','Fiona','Karen','Moira','Daniel',
+              'Google UK English Female','Google US English','Microsoft Aria','Microsoft Sonia'];
+  for (var i=0;i<pref.length;i++){
+    for (var j=0;j<vs.length;j++) if (vs[j].name.indexOf(pref[i])>=0) return vs[j];
+  }
+  return vs[0] || null;
+}
+if (synth) { pickVoice(); synth.onvoiceschanged = function(){ voice = pickVoice(); }; }
+
+/* ---------- mouth ---------- */
+var talking = false, syl = { at:0, dur:150, amp:0 }, mouth = 0;
+function mouthTick(now, dt){
+  var want = 0;
+  if (talking){
+    if (now > syl.at + syl.dur){
+      syl.at = now;
+      syl.dur = 95 + Math.random()*130;
+      syl.amp = 0.30 + Math.random()*0.70;
+    }
+    var p = clamp((now-syl.at)/syl.dur, 0, 1);
+    want = syl.amp * Math.sin(Math.PI*p);
+  }
+  mouth += (want-mouth) * (1-Math.exp(-dt*26));
+  api.S.mouth = mouth;
+  api.nudge.pitch = mouth*0.022 + (talking ? 0.012*Math.sin(now/900) : 0);
+  api.talking = talking;
+}
+
+/* ---------- running the thing ---------- */
+var idx = 0, running = false, guard = null, aimYaw = 0;
+function estimate(s){ return 420 + s.split(/\s+/).length * 340; }
+
+function say(i){
+  if (!running) return;
+  if (i >= SCRIPT.length){ finish(); return; }
+  var line = SCRIPT[i];
+  caption.textContent = line.t;
+  caption.classList.add('on');
+  api.setMode(line.m);
+  aimYaw = line.yaw;
+  api.nudge.aim = line.yaw;
+  talking = true;
+
+  var done = false;
+  var next = function(){ if (done) return; done = true; clearTimeout(guard);
+                          talking = false;
+                          setTimeout(function(){ say(i+1); }, 520); };
+  if (synth){
+    if (!voice) voice = pickVoice();
+    var u = new SpeechSynthesisUtterance(line.t);
+    if (voice) u.voice = voice;
+    u.rate = 0.94; u.pitch = 1.0; u.volume = 1;
+    u.onend = next; u.onerror = next;
+    u.onboundary = function(){ syl.at = 0; };
+    try { synth.speak(u); } catch(e){ setTimeout(next, estimate(line.t)); }
+    guard = setTimeout(next, estimate(line.t)*2.2 + 3000);
+  } else {
+    guard = setTimeout(next, estimate(line.t));
+  }
+}
+function finish(){
+  talking = false; idx = 0;
+  caption.classList.remove('on');
+  if (A) A.duck(false);
+}
+function stopAll(){
+  running = false; talking = false; clearTimeout(guard);
+  if (synth) try { synth.cancel(); } catch(e){}
+  caption.classList.remove('on');
+  if (A){ A.stop(); A = null; }
+  listen.textContent = 'listen';
+}
+listen.addEventListener('click', function(){
+  if (running || A){ stopAll(); return; }
+  running = true; idx = 0;
+  listen.textContent = 'stop';
+  A = startAudio();
+  if (A) setTimeout(function(){ if (A) A.duck(true); }, 900);
+  setTimeout(function(){ say(0); }, 1600);
+});
+window.addEventListener('keydown', function(e){
+  if (e.key==='l'||e.key==='L') listen.click();
+});
+window.addEventListener('beforeunload', function(){ if (synth) try{ synth.cancel(); }catch(e){} });
+
+api.onFrame = mouthTick;
+api.isTalking = function(){ return talking; };
+})();
+
+</script>
+</body>
+</html>
