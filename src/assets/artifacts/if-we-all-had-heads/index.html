@@ -1,0 +1,1291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>If We All Had Heads — the cast, drawn properly</title>
+<style>
+  :root{
+    --paper:#FAF9F5;
+    --tone:#F0EEE6;
+    --ink:rgba(0,0,0,0.85);
+    --blue:#5E7EDF;
+    --clay:#D97757;
+    --gray:#87867F;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Helvetica Neue",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  header{
+    padding:26px 36px 0;
+    display:flex;justify-content:space-between;align-items:baseline;
+    gap:18px;
+    pointer-events:none;user-select:none;
+  }
+  header>*{min-width:0}
+  h1{
+    font-family:Georgia,"Songti SC",serif;
+    font-weight:400;font-size:clamp(19px,2.6vw,30px);letter-spacing:.02em;
+  }
+  h1 em{font-style:normal;color:var(--blue)}
+  h1 span{font-size:.45em;color:var(--gray);letter-spacing:.1em;margin-left:.6em}
+  .meta{
+    font-family:"SF Mono",ui-monospace,Menlo,monospace;
+    font-size:11px;color:var(--gray);letter-spacing:.08em;text-transform:uppercase;
+  }
+  .museum-meta{max-width:58%;text-align:right}
+  main{flex:1;position:relative}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  #cap{
+    position:absolute;left:0;right:0;bottom:14px;text-align:center;
+    pointer-events:none;user-select:none;
+    opacity:0;transition:opacity .35s;
+  }
+  #cap .zh{
+    font-size:13px;color:var(--gray);letter-spacing:.12em;
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  #cap .en{
+    margin-top:4px;font-size:14px;color:var(--ink);
+    font-family:Georgia,"Songti SC",serif;
+  }
+  #ctrls{display:flex;gap:22px;pointer-events:auto}
+  .ctrl{cursor:pointer;white-space:nowrap}
+  .ctrl .v{color:var(--ink);border-bottom:1px solid var(--ink)}
+  .ctrl:hover .v{color:var(--clay);border-color:var(--clay)}
+  .ctrl .v.off{color:var(--gray);border-color:transparent}
+  .ctrl .v.off:hover{color:var(--clay)}
+  footer{
+    padding:0 36px 20px;
+    display:flex;justify-content:space-between;align-items:baseline;gap:8px 24px;flex-wrap:wrap;
+    pointer-events:none;user-select:none;
+    font-family:"SF Mono",ui-monospace,Menlo,monospace;
+    font-size:11px;color:var(--gray);letter-spacing:.05em;
+  }
+  footer>div{min-width:0}
+.nav{margin-top:6px} .nav a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)} .nav a:hover{color:var(--clay);border-color:var(--clay)}
+  @media (max-width:660px){
+    header{padding:18px 18px 0;align-items:flex-start;gap:12px}
+    h1{flex:1 1 42%;font-size:clamp(17px,5vw,22px);line-height:1.05}
+    h1 span{display:block;margin:5px 0 0;font-size:.42em}
+    .museum-meta{flex:1 1 58%;max-width:none}
+    .meta{font-size:9px;line-height:1.35;letter-spacing:.06em}
+    footer{padding:0 18px 14px;font-size:9px;line-height:1.35;gap:5px 14px}
+    footer>div:first-child,footer>div:last-child{flex:1 1 100%}
+    #ctrls{gap:14px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>If we <em>all</em> had heads<span>v10 · gone feral</span></h1>
+  <div class="museum-meta"><div class="meta">nine models · street style · still just code · 中文 &amp; english</div><div class="meta nav">museum: cast · <a href="avatar.html">avatar</a> · <a href="blockin.html">block-in</a></div></div>
+</header>
+<main><canvas id="c"></canvas></main>
+<footer>
+  <div>no drawn assets — every head is code, pinned to a rough skull</div>
+  <div id="ctrls">
+    <span class="ctrl" id="mtoggle">♪ <span class="v">music on</span></span>
+    <span class="ctrl" id="langtoggle">voice: <span class="v" id="lz">中文</span> <span class="v off" id="le">EN</span></span>
+  </div>
+  <div>hover — they notice you · click one — it introduces itself</div>
+</footer>
+
+<script>
+/* ============================================================
+   V6 — the cast, drawn properly.
+   Nine AI models, each a crafted doodle: its own head SHAPE
+   (superellipse skull outline with jaw & forehead shaping),
+   its own ink and paper tint like a different marker, its own
+   features and accessories — but underneath, still the same
+   trick: a rough 3D skull every stroke is pinned to, moving
+   with a restrained, gif-like sway.
+   ============================================================ */
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const INK ='rgba(0,0,0,0.85)';
+const BLUE='#5E7EDF';
+const CLAY='#D97757';
+const GRAY='#87867F';
+const FACE='#FDFBF4';
+
+function rng32(seed){ let a=seed>>>0; return ()=>{ a|=0; a=a+0x6D2B79F5|0;
+  let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t;
+  return ((t^t>>>14)>>>0)/4294967296; }; }
+const pick=(r,arr)=>arr[Math.floor(r()*arr.length)];
+
+/* ---------- 3D: the rough skull ---------- */
+function rotY(v,a){ const s=Math.sin(a),c=Math.cos(a); return [v[0]*c+v[2]*s, v[1], -v[0]*s+v[2]*c]; }
+function rotX(v,a){ const s=Math.sin(a),c=Math.cos(a); return [v[0], v[1]*c-v[2]*s, v[1]*s+v[2]*c]; }
+function rotZ(v,a){ const s=Math.sin(a),c=Math.cos(a); return [v[0]*c-v[1]*s, v[0]*s+v[1]*c, v[2]]; }
+function norm(v){ const l=Math.hypot(...v)||1; return v.map(x=>x/l); }
+
+let CX,CY,S,yaw,pitch,roll,sil,CUR;
+
+function rotate(v){ return rotY(rotX(rotZ(v,roll),pitch),yaw); }
+function skullPoint(a,b,push=1){
+  const cb=Math.cos(b), R=CUR.R;
+  const p=[R.x*Math.sin(a)*cb*push, R.y*Math.sin(b)*push, R.z*Math.cos(a)*cb*push];
+  const n=norm([p[0]/(R.x*R.x), p[1]/(R.y*R.y), p[2]/(R.z*R.z)]);
+  const d=n[1];
+  return {p, n, up:norm([-d*n[0], 1-d*n[1], -d*n[2]])};
+}
+function silhouette(){
+  const R=CUR.R, D=[1/(R.x*R.x),1/(R.y*R.y),1/(R.z*R.z)];
+  const E=[[0,0,0],[0,0,0],[0,0,0]];
+  for(let i=0;i<3;i++)for(let j=0;j<3;j++){
+    const ei=rotate([i===0,i===1,i===2]), ej=rotate([j===0,j===1,j===2]);
+    E[i][j]=ei[0]*D[0]*ej[0]+ei[1]*D[1]*ej[1]+ei[2]*D[2]*ej[2];
+  }
+  const a=E[0][0]-E[0][2]*E[0][2]/E[2][2];
+  const b=-(E[0][1]-E[0][2]*E[1][2]/E[2][2]);
+  const d=E[1][1]-E[1][2]*E[1][2]/E[2][2];
+  const tr=(a+d)/2, de=Math.hypot((a-d)/2,b);
+  return { r1:1/Math.sqrt(tr+de), r2:1/Math.sqrt(tr-de), ang:0.5*Math.atan2(2*b,a-d) };
+}
+
+/* ---------- rules: stay on the face ---------- */
+function at(a,b,push=1){
+  const s=skullPoint(a,b,push);
+  const p=rotate(s.p), n=rotate(s.n), up=rotate(s.up);
+  let x=CX+p[0]*S, y=CY-p[1]*S;
+  const dx=x-CX, dy=y-CY;
+  const ca=Math.cos(sil.ang), sa=Math.sin(sil.ang);
+  let ux=( dx*ca+dy*sa)/(sil.r1*S);
+  let uy=(-dx*sa+dy*ca)/(sil.r2*S);
+  let e=Math.hypot(ux,uy);
+  let vis=Math.max(0,Math.min(1,n[2]/0.30));
+  if(e>0.60) vis*=Math.max(0,1-(e-0.60)/0.32);
+  if(e>0.90){ const k=0.90/e; ux*=k; uy*=k; }
+  ux*=sil.r1*S; uy*=sil.r2*S;
+  x=CX+ux*ca-uy*sa; y=CY+ux*sa+uy*ca;
+  return {x, y, facing:n[2], ang:Math.atan2(-up[1],up[0]), vis};
+}
+
+/* ---------- the brush ---------- */
+let boilSeed=0, strokeCounter=0, frameT=0;
+function stroke(pts,{w=3,color=null,alpha=1,jitter=1.1}={}){
+  if(pts.length<2||alpha<=0.01) return;
+  ctx.save(); ctx.strokeStyle=color||CUR.ink; ctx.lineCap='round'; ctx.lineJoin='round';
+  const passes=qLevel>=2?1:2;
+  for(let pass=0;pass<passes;pass++){
+    const r=rng32(boilSeed*97+pass*7919+strokeCounter*131); strokeCounter++;
+    ctx.globalAlpha=alpha*(pass?0.30:0.85);
+    ctx.lineWidth=w*(pass?0.55:1);
+    ctx.beginPath(); let pen=false;
+    for(let i=0;i<pts.length;i++){
+      if(r()<0.025){ pen=false; continue; }
+      const x=pts[i][0]+(r()*2-1)*jitter, y=pts[i][1]+(r()*2-1)*jitter;
+      if(!pen){ ctx.moveTo(x,y); pen=true; } else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+function arcPts(x,y,r,a0,a1,n=22){
+  const p=[]; for(let i=0;i<=n;i++){ const a=a0+(a1-a0)*i/n; p.push([x+Math.cos(a)*r, y+Math.sin(a)*r]); } return p;
+}
+function arc(x,y,r,a0,a1,o){ stroke(arcPts(x,y,r,a0,a1),o); }
+function ellipsePts(x,y,rx,ry,n=26){
+  const p=[]; for(let i=0;i<=n;i++){ const a=i/n*Math.PI*2; p.push([x+Math.cos(a)*rx, y+Math.sin(a)*ry]); } return p;
+}
+function dot(x,y,r,color=null,alpha=1){
+  if(alpha<=0.01) return;
+  const q=rng32(boilSeed*31+strokeCounter*17); strokeCounter++;
+  ctx.save(); ctx.fillStyle=color||CUR.ink;
+  ctx.globalAlpha=alpha*0.9;
+  ctx.beginPath(); ctx.arc(x+(q()*2-1)*0.8, y+(q()*2-1)*0.8, r, 0, 7); ctx.fill();
+  ctx.globalAlpha=alpha*0.3;
+  ctx.beginPath(); ctx.arc(x+(q()*2-1)*1.6, y+(q()*2-1)*1.6, r*1.2, 0, 7); ctx.fill();
+  ctx.restore();
+}
+function star4(x,y,pr,color,alpha=1,rot=0){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
+  ctx.fillStyle=color; ctx.globalAlpha=alpha;
+  ctx.beginPath();
+  for(let i=0;i<4;i++){ const a=i*Math.PI/2;
+    ctx.lineTo(Math.cos(a)*pr,Math.sin(a)*pr);
+    ctx.lineTo(Math.cos(a+Math.PI/4)*pr*0.24,Math.sin(a+Math.PI/4)*pr*0.24); }
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function cubic(p0,p1,p2,p3,n=20){
+  const p=[]; for(let i=0;i<=n;i++){ const t=i/n,u=1-t;
+    p.push([u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],
+            u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]]); } return p;
+}
+function quad(p0,p1,p2,n=20){
+  const p=[]; for(let i=0;i<=n;i++){ const t=i/n,u=1-t;
+    p.push([u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0], u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1]]); } return p;
+}
+
+/* ---------- the wild brushes: tangle, splatter, stipple, hatch ---------- */
+function tangle(cx,cy,rx,ry,n,seed,color,alpha){       // messy little loops in an elliptical zone
+  const r=rng32(seed);
+  for(let i=0;i<n;i++){
+    const x=cx+(r()*2-1)*rx, y=cy+(r()*2-1)*ry, rr=S*0.05*(0.6+r()), turns=1.4+r();
+    const pts=[];
+    for(let j=0;j<=14;j++){ const a=j/14*Math.PI*2*turns, r2=rr*(1-j/14*0.4);
+      pts.push([x+Math.cos(a)*r2, y+Math.sin(a)*r2*0.85]); }
+    stroke(pts,{w:S*0.02,color,alpha,jitter:0.7});
+  }
+}
+function splatter(cx,cy,rad,n,seed){                   // ink flick
+  const r=rng32(seed);
+  for(let i=0;i<n;i++){
+    const a=r()*Math.PI*2, d=rad*(0.75+r()*0.55);
+    dot(cx+Math.cos(a)*d, cy+Math.sin(a)*d*0.85, S*0.009*(0.6+r()), null, 0.5+r()*0.4);
+  }
+}
+function withHeadClip(fn){                             // hatch/stipple, kept inside the face
+  const pts=outlinePts();
+  ctx.save(); ctx.beginPath();
+  ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+  ctx.closePath(); ctx.clip(); fn(); ctx.restore();
+}
+
+/* ---------- the shaped outline: superellipse + jaw ---------- */
+function outlinePts(){
+  const e=CUR.shape.e, belly=CUR.shape.belly||0, top=CUR.shape.topWide||0;
+  const pts=[];
+  for(let i=0;i<=56;i++){
+    const th=i/56*Math.PI*2;
+    const cu=Math.cos(th), sv=Math.sin(th);
+    let u=Math.sign(cu)*Math.pow(Math.abs(cu),2/e);
+    let v=Math.sign(sv)*Math.pow(Math.abs(sv),2/e);
+    if(v>0) u*=(1+belly*v);            // v>0 is the jaw end on screen
+    else    u*=(1+top*(-v));           // forehead width
+    pts.push([u,v]);
+  }
+  const ca=Math.cos(sil.ang), sa=Math.sin(sil.ang);
+  return pts.map(([u,v])=>[
+    CX+(u*sil.r1*S)*ca-(v*sil.r2*S)*sa,
+    CY+(u*sil.r1*S)*sa+(v*sil.r2*S)*ca ]);
+}
+
+/* ============================================================
+   FEATURE LIBRARY — each feature is a few strokes
+   ============================================================ */
+const EYES={
+  open(side){
+    const p=at(side*0.40,0.14); if(p.vis<0.05) return;
+    const r=S*0.15*(0.35+0.65*Math.max(0,p.facing)), o=CUR.open, A=p.vis;
+    if(o<0.25){ arc(p.x,p.y-r*0.2,r*0.9,Math.PI*0.15,Math.PI*0.85,{w:S*0.035,alpha:A}); return; }
+    arc(p.x,p.y,r,Math.PI*1.08,Math.PI*1.92,{w:S*0.032,alpha:A});
+    arc(p.x,p.y,r*0.95,Math.PI*0.12,Math.PI*0.88,{w:S*0.02,alpha:A*0.45});
+    const lx=CUR.lookX*r*0.38, ly=CUR.lookY*r*0.30;
+    dot(p.x+lx,p.y+ly,r*0.42,null,A*o);
+    dot(p.x+lx-r*0.14,p.y+ly-r*0.16,r*0.10,CUR.face,A*o);
+  },
+  wide(side){                                          // big curious eyes, tiny pupils
+    const p=at(side*0.40,0.14); if(p.vis<0.05) return;
+    const r=S*0.15*(0.35+0.65*Math.max(0,p.facing)), o=CUR.open, A=p.vis;
+    if(o<0.25){ arc(p.x,p.y-r*0.1,r*0.9,Math.PI*0.15,Math.PI*0.85,{w:S*0.035,alpha:A}); return; }
+    arc(p.x,p.y,r,0,Math.PI*2,{w:S*0.030,alpha:A});
+    dot(p.x+CUR.lookX*r*0.35,p.y+CUR.lookY*r*0.30,r*0.26,null,A*o);
+    dot(p.x+CUR.lookX*r*0.35-r*0.09,p.y+CUR.lookY*r*0.30-r*0.11,r*0.08,CUR.face,A*o);
+  },
+  dot(side){
+    const p=at(side*0.40,0.14); if(p.vis<0.05) return;
+    const r=S*0.10*(0.35+0.65*Math.max(0,p.facing)), o=CUR.open;
+    if(o<0.25){ arc(p.x,p.y,r*1.4,Math.PI*0.15,Math.PI*0.85,{w:S*0.03,alpha:p.vis}); return; }
+    dot(p.x+CUR.lookX*r*0.5, p.y+CUR.lookY*r*0.4, r, null, p.vis*o);
+  },
+  happy(side){
+    const p=at(side*0.40,0.13); if(p.vis<0.05) return;
+    arc(p.x,p.y,S*0.13*(0.35+0.65*Math.max(0,p.facing)),Math.PI*1.1,Math.PI*1.9,{w:S*0.04,alpha:p.vis});
+  },
+  sleepy(side){
+    const p=at(side*0.40,0.14); if(p.vis<0.05) return;
+    const r=S*0.14*(0.35+0.65*Math.max(0,p.facing)), o=CUR.open, A=p.vis;
+    dot(p.x+CUR.lookX*r*0.3, p.y+r*0.25, r*0.34, null, A*o);
+    stroke([[p.x-r*0.95,p.y-r*0.15],[p.x+r*0.95,p.y-r*0.25]],{w:S*0.034,alpha:A});
+  },
+  x(side){
+    const p=at(side*0.40,0.14); if(p.vis<0.05) return;
+    const r=S*0.10*(0.35+0.65*Math.max(0,p.facing));
+    stroke([[p.x-r,p.y-r],[p.x+r,p.y+r]],{w:S*0.034,alpha:p.vis});
+    stroke([[p.x-r,p.y+r],[p.x+r,p.y-r]],{w:S*0.034,alpha:p.vis});
+  },
+  star(side){                                          // a star for a pupil
+    const p=at(side*0.40,0.14); if(p.vis<0.05) return;
+    const r=S*0.14*(0.35+0.65*Math.max(0,p.facing)), o=CUR.open, A=p.vis;
+    if(o<0.25){ arc(p.x,p.y-r*0.1,r*0.9,Math.PI*0.15,Math.PI*0.85,{w:S*0.035,alpha:A}); return; }
+    arc(p.x,p.y,r,0,Math.PI*2,{w:S*0.028,alpha:A*0.9});
+    star4(p.x+CUR.lookX*r*0.3, p.y+CUR.lookY*r*0.25, r*0.52, CUR.wash, A*o,
+          frameT*(0.6+CUR.soc.star*5)+roll);
+  },
+  wink(side){ side===1 ? EYES.happy(side) : EYES.dot(side); },
+  duo(side){  side===1 ? EYES.star(side) : EYES.dot(side); },   // gemini: two of everything
+  tangleX(side){                                         // scribbled-out eye, zine style
+    const p=at(side*0.40,0.14); if(p.vis<0.05) return;
+    const r=rng32(CUR.seed*13+side);
+    const rr=S*0.13*(0.35+0.65*Math.max(0,p.facing));
+    for(let i=0;i<4;i++){
+      const a0=r()*Math.PI, a1=a0+Math.PI*(0.7+r()*0.6);
+      stroke(arcPts(p.x+(r()*2-1)*rr*0.2, p.y+(r()*2-1)*rr*0.2, rr*(0.8+r()*0.4), a0, a1, 8),
+             {w:S*0.028,alpha:p.vis*0.9});
+    }
+  },
+  chaos(side){ side===1 ? EYES.star(side) : EYES.tangleX(side); },
+};
+const BROWS={
+  arc(side){ const p=at(side*0.42,0.37); if(p.vis<0.05) return;
+    arc(p.x,p.y,S*0.13*(0.3+0.7*p.facing),Math.PI*1.12,Math.PI*1.88,{w:S*0.034,alpha:p.vis}); },
+  arcHigh(side){ const p=at(side*0.42,0.50); if(p.vis<0.05) return;
+    arc(p.x,p.y,S*0.12*(0.3+0.7*p.facing),Math.PI*1.12,Math.PI*1.88,{w:S*0.034,alpha:p.vis}); },
+  straight(side){ const p=at(side*0.42,0.37); if(p.vis<0.05) return;
+    const l=S*0.11*(0.3+0.7*p.facing), t=side*0.10;
+    stroke([[p.x-Math.cos(t)*l,p.y+Math.sin(t)*l],[p.x+Math.cos(t)*l,p.y-Math.sin(t)*l]],{w:S*0.036,alpha:p.vis}); },
+  worried(side){ const p=at(side*0.42,0.38); if(p.vis<0.05) return;
+    const l=S*0.11*(0.3+0.7*p.facing), t=-side*0.28;
+    stroke([[p.x-Math.cos(t)*l,p.y+Math.sin(t)*l],[p.x+Math.cos(t)*l,p.y-Math.sin(t)*l]],{w:S*0.032,alpha:p.vis}); },
+  none(){},
+};
+const NOSES={
+  hook(){ const p=at(0,-0.10,1.08); if(p.vis<0.05) return;
+    const lean=yaw*S*0.12;
+    stroke(cubic([p.x-lean*0.3,p.y-S*0.16],[p.x+lean+S*0.02,p.y-S*0.06],
+                 [p.x+lean+S*0.07,p.y+S*0.09],[p.x+lean-S*0.05,p.y+S*0.12]),{w:S*0.034,alpha:p.vis}); },
+  corner(){ const p=at(0,-0.08,1.06); if(p.vis<0.05) return;
+    const lean=yaw*S*0.10;
+    stroke([[p.x,p.y-S*0.14],[p.x+lean,p.y+S*0.05],[p.x+lean-S*0.07,p.y+S*0.06]],{w:S*0.034,alpha:p.vis}); },
+  dots(){ const p=at(0,-0.10,1.06); if(p.vis<0.05) return;
+    const s=S*0.055*(0.4+0.6*Math.max(0,p.facing));
+    dot(p.x-s,p.y+S*0.03,S*0.018,null,p.vis); dot(p.x+s,p.y+S*0.03,S*0.018,null,p.vis);
+    arc(p.x,p.y-S*0.05,S*0.05,Math.PI*1.2,Math.PI*1.8,{w:S*0.024,alpha:p.vis*0.7}); },
+  line(){ const p=at(0,-0.08,1.06); if(p.vis<0.05) return;
+    stroke([[p.x+yaw*S*0.08,p.y-S*0.10],[p.x+yaw*S*0.10,p.y+S*0.06]],{w:S*0.030,alpha:p.vis}); },
+  button(){ const p=at(0,-0.10,1.06); if(p.vis<0.05) return;
+    arc(p.x+yaw*S*0.08,p.y,S*0.045,0,Math.PI*2,{w:S*0.028,alpha:p.vis}); },
+  long(){ const p=at(0,-0.04,1.08); if(p.vis<0.05) return;
+    const lean=yaw*S*0.12;
+    stroke(quad([p.x,p.y-S*0.16],[p.x+lean+S*0.03,p.y+S*0.04],[p.x+lean-S*0.03,p.y+S*0.13]),
+           {w:S*0.032,alpha:p.vis}); },
+};
+const MOUTHS={
+  smile(){ const l=at(-0.30,-0.30), r=at(0.30,-0.30), c=at(0,-0.33);
+    const A=Math.min(l.vis,r.vis,c.vis); if(A<0.05) return;
+    stroke(quad([l.x,l.y],[c.x,c.y+S*0.13],[r.x,r.y]),{w:S*0.04,alpha:A}); },
+  grin(){ const l=at(-0.32,-0.29), r=at(0.32,-0.29), c=at(0,-0.33);
+    const A=Math.min(l.vis,r.vis,c.vis); if(A<0.05) return;
+    const pts=quad([l.x,l.y],[c.x,c.y+S*0.15],[r.x,r.y]);
+    stroke(pts,{w:S*0.038,alpha:A});
+    for(const i of [5,10,15]){ const p=pts[i], q2=pts[i+1], a=Math.atan2(q2[1]-p[1],q2[0]-p[0])+Math.PI/2;
+      stroke([[p[0],p[1]],[p[0]+Math.cos(a)*S*0.05,p[1]+Math.sin(a)*S*0.05]],{w:S*0.022,alpha:A*0.8}); } },
+  cat(){ const l=at(-0.28,-0.30), r=at(0.28,-0.30), c=at(0,-0.31);
+    const A=Math.min(l.vis,r.vis,c.vis); if(A<0.05) return;
+    stroke(quad([c.x,c.y],[c.x-S*0.10,c.y+S*0.09],[l.x,l.y]),{w:S*0.036,alpha:A});
+    stroke(quad([c.x,c.y],[c.x+S*0.10,c.y+S*0.09],[r.x,r.y]),{w:S*0.036,alpha:A}); },
+  o(){ const c=at(0,-0.34); if(c.vis<0.05) return;
+    arc(c.x,c.y+S*0.02,S*0.065*(0.5+0.5*Math.max(0,c.facing)),0,Math.PI*2,{w:S*0.034,alpha:c.vis}); },
+  flat(){ const l=at(-0.26,-0.31), r=at(0.26,-0.31), c=at(0,-0.32);
+    const A=Math.min(l.vis,r.vis,c.vis); if(A<0.05) return;
+    stroke(quad([l.x,l.y],[c.x,c.y+S*0.03],[r.x,r.y]),{w:S*0.038,alpha:A}); },
+  zigzag(){                                            // grok's smirk
+    const l=at(-0.30,-0.30), r=at(0.30,-0.30);
+    const A=Math.min(l.vis,r.vis); if(A<0.05) return;
+    const pts=[]; const n=5;
+    for(let i=0;i<=n;i++){
+      const t=i/n;
+      pts.push([l.x+(r.x-l.x)*t, l.y+(r.y-l.y)*t + (i%2? -1:1)*S*0.028*(i===0||i===n?0:1) + S*0.02]);
+    }
+    stroke(pts,{w:S*0.036,alpha:A});
+  },
+  smirk(){                                             // one corner knows something the other does not
+    const l=at(-0.30,-0.30), c=at(0.03,-0.31), r=at(0.30,-0.28);
+    const A=Math.min(l.vis,c.vis,r.vis); if(A<0.05) return;
+    stroke(cubic([l.x,l.y+S*0.025],[c.x-S*0.08,c.y+S*0.035],
+                 [r.x-S*0.05,r.y-S*0.045],[r.x,r.y-S*0.075]),{w:S*0.038,alpha:A});
+    stroke([[r.x-S*0.015,r.y-S*0.070],[r.x+S*0.055,r.y-S*0.115]],{w:S*0.024,alpha:A*0.75});
+  },
+  tongue(){                                            // llama, derping
+    MOUTHS.smile();
+    const c=at(0,-0.38); if(c.vis<0.05) return;
+    const w=S*0.07, h=S*0.09;
+    const pts=quad([c.x-w,c.y],[c.x,c.y+h*1.6],[c.x+w,c.y]);
+    ctx.save(); ctx.globalAlpha=0.5*c.vis;
+    stroke(pts,{w:S*0.05,color:CLAY,alpha:1});
+    ctx.restore();
+    stroke([[c.x,c.y+h*0.5],[c.x,c.y+h*1.1]],{w:S*0.016,color:CLAY,alpha:0.6*c.vis});
+  },
+};
+/* the talking mouth — driven by the actual waveform */
+function talkMouth(){
+  if(talkOpen<0.16){ MOUTHS[CUR.mouth](); return; }
+  const c=at(0,-0.33); if(c.vis<0.05) return;
+  const rx=S*0.085*(0.45+0.55*Math.max(0,c.facing));
+  const ry=S*(0.025+0.085*talkOpen);
+  ctx.save(); ctx.globalAlpha=0.78*c.vis; ctx.fillStyle='rgba(20,16,12,0.9)';
+  ctx.beginPath(); ctx.ellipse(c.x,c.y+S*0.02,rx*0.85,ry*0.9,0,0,7); ctx.fill(); ctx.restore();
+  stroke(ellipsePts(c.x,c.y+S*0.02,rx,ry),{w:S*0.032,alpha:c.vis});
+}
+
+const BLUSH={
+  scribble(side){ const p=at(side*0.60,-0.14); if(p.vis<0.05) return;
+    const rx=S*0.13*(0.35+0.65*Math.max(0,p.facing)), ry=S*0.07, r=rng32(1234+side+CUR.seed);
+    ctx.save(); ctx.globalAlpha=0.5*p.vis;
+    for(let i=0;i<6;i++){ const yy=p.y+(r()*2-1)*ry, hw=rx*Math.sqrt(Math.max(0,1-((yy-p.y)/ry)**2));
+      stroke([[p.x-hw*(0.5+r()*0.5),yy],[p.x+hw*(0.5+r()*0.5),yy]],{w:S*0.018,color:CLAY,alpha:1,jitter:0.8}); }
+    ctx.restore(); },
+  hatch(side){ const p=at(side*0.60,-0.14); if(p.vis<0.05) return;
+    const l=S*0.10*(0.35+0.65*Math.max(0,p.facing));
+    for(let i=-1;i<=1;i++)
+      stroke([[p.x-l*0.6+i*l*0.15,p.y-l*0.45+i*l*0.42],[p.x+l*0.6+i*l*0.15,p.y+l*0.45+i*l*0.42]],
+             {w:S*0.02,color:CLAY,alpha:0.65*p.vis}); },
+  none(){},
+};
+const EARS={
+  mismatch(side){ side===1 ? EARS.pointy(side) : EARS.c(side); },   // gemini: one of each
+  c(side){ const s=skullPoint(side*1.32,-0.02), p=rotate(s.p), n=rotate(s.n);
+    const A=0.35+0.65*Math.abs(n[2]), ex=CX+p[0]*S, ey=CY-p[1]*S, base=side>0?0:Math.PI;
+    arc(ex,ey,S*0.19,base-1.15,base+1.15,{w:S*0.03,alpha:A});
+    arc(ex,ey,S*0.09,base-0.9,base+0.9,{w:S*0.022,alpha:A*0.7}); },
+  pointy(side){ const s=skullPoint(side*1.32,-0.02), p=rotate(s.p), n=rotate(s.n);
+    const A=0.35+0.65*Math.abs(n[2]), ex=CX+p[0]*S, ey=CY-p[1]*S;
+    stroke([[ex-side*S*0.06,ey-S*0.15],[ex+side*S*0.26,ey-S*0.02],[ex-side*S*0.06,ey+S*0.13]],{w:S*0.03,alpha:A}); },
+  none(){},
+};
+
+/* ---------- extras: freckles, neck & collar ---------- */
+function extra_freckles(){
+  for(const side of [1,-1]){
+    const p=at(side*0.52,-0.04); if(p.vis<0.05) continue;
+    const r=rng32(CUR.seed*7+side+5);
+    for(let i=0;i<4;i++)
+      dot(p.x+(r()*2-1)*S*0.09, p.y+(r()*2-1)*S*0.06, S*0.011, CUR.ink, 0.35*p.vis);
+  }
+}
+function neckAndCollar(){
+  const n1=at(-0.26,-1.20), n2=at(0.26,-1.20);
+  const b1={x:n1.x-S*0.02,y:n1.y+S*0.24}, b2={x:n2.x+S*0.02,y:n2.y+S*0.24};
+  stroke([[n1.x,n1.y],[b1.x,b1.y]],{w:2.2});
+  stroke([[n2.x,n2.y],[b2.x,b2.y]],{w:2.2});
+  if(CUR.collar==='v')
+    stroke([[b1.x-S*0.06,b1.y+S*0.02],[CX,b1.y+S*0.16],[b2.x+S*0.06,b2.y+S*0.02]],{w:2.2});
+  else if(CUR.collar==='crew'){
+    const pts=quad([b1.x-S*0.08,b1.y],[CX,CY+S*1.06],[b2.x+S*0.08,b2.y]);
+    stroke(pts,{w:2.2});
+  }
+}
+
+/* ---------- signature accessories ---------- */
+const ACC={
+  sparkle(t){
+    const base=at(0.10,1.15,1.0);
+    const sway=Math.sin(t*1.7+CUR.phase)*S*0.05+yaw*S*0.10;
+    const tx=base.x+sway, ty=base.y-S*0.42;
+    stroke(quad([base.x,base.y],[(base.x+tx)/2-S*0.04,(base.y+ty)/2],[tx,ty+S*0.05]),{w:S*0.034});
+    const pr=S*0.17*(1+0.10*Math.sin(t*2.3+CUR.phase))*(1+CUR.soc.star*0.3);
+    star4(tx,ty,pr,BLUE,0.95,t*(0.4+CUR.soc.star*4.5)+roll*2);
+  },
+  glasses_round(){
+    let inner=null;
+    for(const side of [1,-1]){
+      const p=at(side*0.40,0.14); if(p.vis<0.05) continue;
+      const r=S*0.26*(0.35+0.65*Math.max(0,p.facing));
+      arc(p.x,p.y,r,0,Math.PI*2,{w:S*0.028,alpha:p.vis*0.9});
+      const e=skullPoint(side*1.32,-0.02), ep=rotate(e.p);
+      stroke([[p.x+side*r*0.9,p.y],[CX+ep[0]*S,CY-ep[1]*S]],{w:S*0.024,alpha:p.vis*0.7});
+      if(side===-1) inner={x:p.x-r*0.9,y:p.y}; else if(inner)
+        stroke([[inner.x,inner.y],[p.x-r*0.9,p.y]],{w:S*0.026,alpha:Math.min(1,p.vis)});
+    }
+  },
+  headphones(){
+    const bandPoint=(u,outer)=>{
+      const a=-1.28+u*2.56, crown=Math.sin(Math.PI*u);
+      const b=0.08+(outer?1.16:1.04)*crown, grow=outer?0.15:0.08;
+      const p=at(a,b,1.05), dx=p.x-CX, dy=p.y-CY, d=Math.hypot(dx,dy)||1;
+      return {x:p.x+dx/d*S*grow,y:p.y+dy/d*S*grow};
+    };
+    for(const outer of [false,true]){                               // padded double-line arch over the crown
+      const pts=[];
+      for(let i=0;i<=22;i++){ const p=bandPoint(i/22,outer); pts.push([p.x,p.y]); }
+      stroke(pts,{w:S*0.055,alpha:0.9});
+    }
+    for(let i=0;i<=8;i++){                                         // stitched padding
+      const p1=bandPoint(i/8,false), p2=bandPoint(i/8,true);
+      stroke([[p1.x,p1.y],[p2.x,p2.y]],{w:S*0.014,alpha:0.55}); }
+    for(const side of [1,-1]){
+      const s=skullPoint(side*1.34,-0.02), p=rotate(s.p), n=rotate(s.n);
+      const A=0.4+0.6*Math.abs(n[2]), ex=CX+p[0]*S, ey=CY-p[1]*S;
+      stroke(quad([ex,ey-S*0.16],[ex+side*S*0.06,ey-S*0.24],[ex+side*S*0.02,ey-S*0.30]),{w:S*0.05,alpha:A}); // yoke
+      dot(ex,ey,S*0.24,null,A);                                   // the can, bigger
+      arc(ex,ey,S*0.14,0,Math.PI*2,{w:S*0.026,color:CUR.face,alpha:A*0.9});
+      arc(ex,ey,S*0.06,0,Math.PI*2,{w:S*0.02,color:CUR.face,alpha:A*0.6});
+      dot(ex+side*S*0.10,ey-S*0.16,S*0.018,CUR.wash,A);           // status LED
+      if(side===1){                                               // mic boom
+        stroke(quad([ex,ey+S*0.08],[ex-S*0.16,ey+S*0.32],[ex-S*0.34,ey+S*0.28]),{w:S*0.028,alpha:A});
+        dot(ex-S*0.36,ey+S*0.28,S*0.045,null,A);
+      }
+    }
+  },
+  starclip(t){
+    const p=at(0.72,0.52,1.02); if(p.vis<0.05) return;
+    star4(p.x,p.y,S*0.11*(1+0.1*Math.sin(t*2+CUR.phase)),CUR.wash,0.95*p.vis,0.3+roll*2);
+    const p2=at(0.85,0.38,1.02);
+    if(p2.vis>0.05) star4(p2.x,p2.y,S*0.06,CUR.wash,0.7*p2.vis,0.9+roll*2);
+  },
+  spout(t){
+    const p=at(0,1.08,1.0);
+    const drift=Math.sin(t*1.5+CUR.phase)*S*0.03;
+    for(const k of [-1,0,1])
+      stroke(quad([p.x,p.y],[p.x+k*S*0.16+drift,p.y-S*0.34],[p.x+k*S*0.36+drift,p.y-S*0.52-Math.abs(k)*S*0.04]),
+             {w:S*0.038,color:CUR.wash,alpha:0.85});
+    dot(p.x+drift,p.y-S*0.60,S*0.030,CUR.wash,0.8);
+    dot(p.x+drift*1.5+S*0.10,p.y-S*0.48,S*0.020,CUR.wash,0.6);
+    dot(p.x-drift+S*0.06,p.y-S*0.36,S*0.014,CUR.wash,0.5);
+    stroke(quad([p.x-S*0.30,p.y+S*0.06],[p.x-S*0.36,p.y-S*0.12],[p.x-S*0.30,p.y-S*0.24]),  // side drips
+          {w:S*0.02,color:CUR.wash,alpha:0.6});
+  },
+  mohawk(){                                            // a sawtooth along the crown
+    const pts=[];
+    for(let i=0;i<=8;i++){
+      const b=0.45+i/8*0.62, p=at(0,b,1.01);
+      pts.push([p.x,p.y]);
+      if(i<8){ const q2=at(0,b+0.04,1.01);
+        const dx=q2.x-CX, dy=q2.y-CY, l=Math.hypot(dx,dy)||1;
+        pts.push([q2.x+dx/l*S*0.17, q2.y+dy/l*S*0.17]); }
+    }
+    stroke(pts,{w:S*0.05});
+  },
+  llamaears(t){
+    for(const side of [1,-1]){
+      const p=at(side*0.38,1.02,1.0);                              // closer together, like the real deal
+      const flop=(side===1?1:0.6);                                 // one leans a touch more
+      const tw=Math.sin(t*24+CUR.phase)*S*0.035*(CUR.soc.twitch||0);
+      const tip={x:p.x+side*S*0.18*flop+yaw*S*0.08+tw*side, y:p.y-S*0.44+Math.abs(tw)*0.5};
+      stroke(quad([p.x-side*S*0.08,p.y],[p.x+side*S*0.02,p.y-S*0.30],[tip.x,tip.y]),{w:S*0.032});
+      stroke(quad([p.x+side*S*0.08,p.y],[p.x+side*S*0.16,p.y-S*0.30],[tip.x,tip.y]),{w:S*0.032});
+      stroke(quad([p.x+side*S*0.02,p.y-S*0.06],[tip.x-side*S*0.01,tip.y+S*0.14],[tip.x,tip.y+S*0.04]),
+             {w:S*0.018,color:CLAY,alpha:0.6});
+    }
+  },
+  windswept(t){
+    const gust=1+Math.pow(Math.max(0,Math.sin(t*0.4+CUR.phase)),3)*1.6+CUR.soc.gust*1.5;  // periodic gusts + showing off
+    for(let i=0;i<4;i++){
+      const b=0.95-i*0.16, p=at(-0.55,b,1.0), q2=at(0.45,b-0.06,1.0);
+      const lift=Math.sin(t*1.3+CUR.phase+i)*S*0.02*gust;
+      stroke(cubic([p.x,p.y],[p.x+S*0.25,p.y-S*0.16+lift],[q2.x-S*0.1,q2.y-S*0.10+lift],
+                   [q2.x+S*(0.24+0.10*gust),q2.y-S*0.04+lift*2]),{w:S*0.028,alpha:0.9});
+    }
+  },
+  band(){
+    const pts=[];
+    for(let i=0;i<=20;i++){ const a=-0.85+i/20*1.7, p=at(a,0.60,1.01); pts.push([p.x,p.y]); }
+    stroke(pts,{w:S*0.06,color:CUR.wash,alpha:0.75});
+    const t1=at(0.88,0.55,1.0);
+    stroke([[t1.x,t1.y],[t1.x+S*0.10,t1.y+S*0.14]],{w:S*0.024,color:CUR.wash,alpha:0.75});
+    stroke([[t1.x,t1.y],[t1.x+S*0.03,t1.y+S*0.17]],{w:S*0.024,color:CUR.wash,alpha:0.75});
+  },
+  none(){},
+};
+
+/* ---------- HAIR: solid marker masses, tangles, streaks ---------- */
+function upperSkullArc(growBase,growTop,n=16){
+  // Sample the whole visible upper silhouette (left temple -> crown -> right temple),
+  // so filled hair and hats wrap with yaw instead of behaving like forehead stickers.
+  const edge=outlinePts().slice(28,57), out=[];
+  for(let i=0;i<=n;i++){
+    const u=i/n*(edge.length-1), k=Math.min(edge.length-2,Math.floor(u)), f=u-k;
+    const x=edge[k][0]+(edge[k+1][0]-edge[k][0])*f;
+    const y=edge[k][1]+(edge[k+1][1]-edge[k][1])*f;
+    const dx=x-CX, dy=y-CY, d=Math.hypot(dx,dy)||1;
+    const crown=Math.max(0,Math.min(1,(CY-y)/(S*Math.max(0.8,CUR.R.y))));
+    const grow=S*(growBase+growTop*crown);
+    out.push([x+dx/d*grow,y+dy/d*grow]);
+  }
+  return out;
+}
+const HAIR={
+  none(){},
+  curls(){                                             // kimi: midnight tangle crown
+    const r=rng32(CUR.seed+11);
+    for(let i=0;i<9;i++){
+      const a=-0.7+i/8*1.4, b=0.78+r()*0.3, p=at(a,b,1.01);
+      tangle(p.x,p.y,S*0.10,S*0.07,2,CUR.seed*31+i,null,0.85);
+    }
+  },
+  mass(){                                              // claude: one big warm blob of hair
+    const outer=upperSkullArc(0.10,0.12);              // full bowl, not a front-only longitude patch
+    const inner=[];
+    for(let i=16;i>=0;i--){ const a=-1.25+i/16*2.5;
+      const p=at(a, 0.70+0.03*Math.sin(i*2.3+CUR.seed), 1.0); inner.push([p.x,p.y]); }
+    const path=outer.concat(inner);
+    ctx.save(); ctx.globalAlpha=1; ctx.fillStyle='#4A3024';    // opaque warm sepia; no skull ghosting through
+    ctx.beginPath(); ctx.moveTo(path[0][0],path[0][1]);
+    for(let i=1;i<path.length;i++) ctx.lineTo(path[i][0],path[i][1]);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+    stroke(inner,{w:2,alpha:0.8});                       // the hairline
+    // Open, face-coloured scratches dragged through the marker mass: curls, not bubbles.
+    const r=rng32(CUR.seed+5);
+    ctx.save(); ctx.beginPath(); ctx.moveTo(path[0][0],path[0][1]);
+    for(let i=1;i<path.length;i++) ctx.lineTo(path[i][0],path[i][1]);
+    ctx.closePath(); ctx.clip();
+    for(let i=0;i<7;i++){
+      const a=-0.72+i/6*1.44, p=at(a,0.68+r()*0.30,1.01);
+      const rx=S*(0.050+r()*0.025), ry=rx*(0.72+r()*0.18), tilt=-0.30+a*0.16;
+      const ca=Math.cos(tilt), sa=Math.sin(tilt), curl=[];
+      for(let j=0;j<=11;j++){
+        const th=-2.25+j/11*4.05, x=Math.cos(th)*rx, y=Math.sin(th)*ry;
+        curl.push([p.x+x*ca-y*sa,p.y+x*sa+y*ca]);
+      }
+      stroke(curl,{w:S*0.021,color:CUR.face,alpha:0.72,jitter:0.6});
+    }
+    ctx.restore();
+    const fa=at(0.60,1.02,1.06);                         // one flyaway curl, escaping
+    const fp=[];
+    for(let j=0;j<=12;j++){ const a2=j/12*Math.PI*3.2;
+      fp.push([fa.x+Math.cos(a2)*S*0.05*(1-j/16), fa.y-S*0.07+Math.sin(a2)*S*0.05*(1-j/16)]); }
+    stroke(fp,{w:S*0.02,color:'#4A3024',alpha:0.9});
+  },
+  mohawksolid(){                                       // grok: a fin of solid ink
+    ctx.save(); ctx.fillStyle=CUR.ink;
+    for(let i=0;i<5;i++){
+      const b=0.58+i*0.14;
+      const l=at(-0.20,b,1.01), rr=at(0.20,b,1.01), c=at(0,b+0.07,1.01);
+      const dx=c.x-CX, dy=c.y-CY, dd=Math.hypot(dx,dy)||1;
+      const tip=[c.x+dx/dd*S*0.42, c.y+dy/dd*S*0.42];
+      ctx.globalAlpha=0.95;
+      ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(tip[0],tip[1]); ctx.lineTo(rr.x,rr.y);
+      ctx.closePath(); ctx.fill();
+      stroke([[l.x,l.y],[tip[0],tip[1]],[rr.x,rr.y]],{w:2});
+    }
+    ctx.restore();
+  },
+  halfchaos(){                                         // gemini: chaos on the left only
+    const r=rng32(CUR.seed+19);
+    for(let i=0;i<8;i++){
+      const a=-0.9+r()*0.8, b=0.55+r()*0.55, p=at(a,b,1.01);
+      tangle(p.x,p.y,S*0.11,S*0.09,2,CUR.seed*7+i,null,0.9);
+    }
+  },
+  streaks(t){                                          // mistral: the wind, violent
+    const gust=1+Math.pow(Math.max(0,Math.sin(t*0.4+CUR.phase)),3)*1.6+CUR.soc.gust*1.5;
+    const r=rng32(CUR.seed+17);
+    for(let i=0;i<6;i++){
+      const b=1.05-i*0.13, p=at(-0.6,b,1.01), q2=at(0.5,b-0.05,1.01);
+      const lift=(Math.sin(t*1.3+i)+r()*0.5)*S*0.03*gust;
+      stroke(cubic([p.x,p.y],[p.x+S*0.2,p.y-S*0.2+lift],[q2.x-S*0.05,q2.y-S*0.12+lift],
+                   [q2.x+S*(0.3+0.12*gust)+r()*S*0.1, q2.y-S*0.05+lift*2]),{w:S*0.034,alpha:0.92});
+    }
+    for(let i=0;i<3;i++){ const p=at(0.55,0.9-i*0.15,1.01);
+      stroke([[p.x,p.y],[p.x+S*(0.25+0.1*gust),p.y-S*0.06]],{w:S*0.02,alpha:0.6}); }
+  },
+  cap(){                                               // qwen: stippled dome + grid band
+    const dome=upperSkullArc(0.09,0.11);               // full dome follows the visible skull through yaw
+    const innerEdge=[];
+    for(let i=0;i<=16;i++){ const a=-1.05+i/16*2.1, p=at(a,0.60,1.0); innerEdge.push([p.x,p.y]); }
+    const path=dome.concat([...innerEdge].reverse());
+    ctx.save(); ctx.fillStyle='#EDE7D8'; ctx.globalAlpha=0.98;
+    ctx.beginPath(); ctx.moveTo(path[0][0],path[0][1]);
+    for(let i=1;i<path.length;i++) ctx.lineTo(path[i][0],path[i][1]);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+    stroke(path,{w:2.2});
+    const bandTop=[], bandBottom=[];                    // an actual violet ribbon, not one hair-like stroke
+    for(let i=0;i<=16;i++){ const a=-1.05+i/16*2.1;
+      const t=at(a,0.73,1.02), b=at(a,0.56,1.02);
+      bandTop.push([t.x,t.y]); bandBottom.push([b.x,b.y]); }
+    const bandPath=bandTop.concat([...bandBottom].reverse());
+    ctx.save(); ctx.beginPath(); ctx.moveTo(bandPath[0][0],bandPath[0][1]);
+    for(let i=1;i<bandPath.length;i++) ctx.lineTo(bandPath[i][0],bandPath[i][1]);
+    ctx.closePath(); ctx.globalAlpha=0.30; ctx.fillStyle=CUR.wash; ctx.fill(); ctx.restore();
+    stroke(bandTop,{w:S*0.030,color:CUR.wash,alpha:0.88});
+    stroke(bandBottom,{w:S*0.034,color:CUR.wash,alpha:0.88});
+    for(let i=0;i<=10;i++){ const a=-1.0+i/10*2.0, p1=at(a,0.56,1.02), p2=at(a,0.73,1.02);
+      stroke([[p1.x,p1.y],[p2.x,p2.y]],{w:S*0.016,color:CUR.ink,alpha:0.62}); }
+    const loose=bandBottom[bandBottom.length-1];          // one little band end escapes at the side
+    stroke([[loose[0],loose[1]],[loose[0]+S*0.10,loose[1]+S*0.12]],{w:S*0.020,color:CUR.wash,alpha:0.72});
+    stroke([[loose[0],loose[1]],[loose[0]+S*0.03,loose[1]+S*0.15]],{w:S*0.018,color:CUR.wash,alpha:0.62});
+    const brimC=at(0,0.52,1.04);                          // a small forward brim: cap, not hair
+    const brw=S*0.30*(0.35+0.65*Math.max(0,brimC.facing));
+    ctx.save(); ctx.globalAlpha=0.35; ctx.fillStyle=CUR.wash;
+    ctx.beginPath(); ctx.ellipse(brimC.x,brimC.y,brw,S*0.085,0,0,Math.PI); ctx.fill(); ctx.restore();
+    stroke(arcPts(brimC.x,brimC.y,brw,0,Math.PI),{w:S*0.024,color:CUR.ink,alpha:0.75});
+    ctx.save(); ctx.beginPath(); ctx.moveTo(path[0][0],path[0][1]);
+    for(let i=1;i<path.length;i++) ctx.lineTo(path[i][0],path[i][1]);
+    ctx.closePath(); ctx.clip();
+    const r=rng32(CUR.seed+41);                         // stipple the cap itself, including its outer dome
+    for(let i=0;i<34;i++){
+      const u=r()*15.999, k=Math.floor(u), f=u-k;
+      const top=[dome[k][0]+(dome[k+1][0]-dome[k][0])*f,dome[k][1]+(dome[k+1][1]-dome[k][1])*f];
+      const bot=[innerEdge[k][0]+(innerEdge[k+1][0]-innerEdge[k][0])*f,innerEdge[k][1]+(innerEdge[k+1][1]-innerEdge[k][1])*f];
+      const depth=0.10+r()*0.62;
+      dot(top[0]+(bot[0]-top[0])*depth,top[1]+(bot[1]-top[1])*depth,S*0.009,null,0.42);
+    }
+    ctx.restore();
+  },
+};
+
+/* ---------- textures: hatch & stipple, clipped to the face ---------- */
+const TEXC={
+  chinstipple(){ withHeadClip(()=>{ const r=rng32(CUR.seed+21);
+    for(let i=0;i<34;i++){ const x=CX+(r()*2-1)*S*0.45, y=CY+S*0.55+r()*S*0.35;
+      dot(x,y,S*0.007,null,0.28); } }); },
+  bags(){ for(const side of [1,-1]){ const p=at(side*0.40,0.02); if(p.vis<0.05) continue;
+    for(let i=0;i<3;i++) arc(p.x,p.y+S*0.16+i*S*0.05,S*(0.10-i*0.02),Math.PI*0.15,Math.PI*0.85,
+                             {w:S*0.016,alpha:0.35*p.vis}); } },
+  jawhatch(){ withHeadClip(()=>{                       // Grok: ugly cheek abrasion, not a static beard
+    const c=at(-1.00,-0.10), ca=at(-0.94,-0.10), cb=at(-1.00,-0.04);
+    if(c.vis<0.05) return;
+    const au=Math.hypot(ca.x-c.x,ca.y-c.y)||1, bu=Math.hypot(cb.x-c.x,cb.y-c.y)||1;
+    const ax=(ca.x-c.x)/au, ay=(ca.y-c.y)/au;          // cheek-local horizontal
+    const bx=(cb.x-c.x)/bu, by=(cb.y-c.y)/bu;          // cheek-local up
+    const p=(x,y)=>[c.x+ax*(x+0.315)*S-bx*(y-0.55)*S,
+                     c.y+ay*(x+0.315)*S-by*(y-0.55)*S];
+    for(let i=0;i<7;i++){ const x=-0.70+i*0.09;        // Kimi's original 7 long strokes
+      stroke([p(x,0.35),p(x+0.28,0.75)],{w:S*0.016,alpha:0.50*c.vis}); }
+    for(let i=0;i<5;i++){ const x=-0.75+i*0.11;        // Kimi's original 5 cross-strokes
+      stroke([p(x+0.25,0.38),p(x,0.72)],{w:S*0.014,alpha:0.35*c.vis}); } }); },
+  templehatch(){ withHeadClip(()=>{                    // GPT: hatch rides its physical right temple
+    for(let i=0;i<6;i++){
+      const p1=at(0.44+i*0.055,0.31), p2=at(0.61+i*0.055,0.03), A=Math.min(p1.vis,p2.vis);
+      stroke([[p1.x,p1.y],[p2.x,p2.y]],{w:S*0.015,alpha:0.40*A}); } }); },
+};
+const TEXF={
+  splatterTop(){ splatter(CX+yaw*S*0.3, CY-S*0.95, S*0.75, 12, CUR.seed+77); },
+};
+
+/* ============================================================
+   THE CAST — crafted, not just rolled
+   ============================================================ */
+const DEFS=[
+  {name:'kimi', seed:101, wash:'#5E7EDF', face:'#FDFBF4', ink:'rgba(20,26,64,0.9)',
+   shape:{e:2.1,belly:0.06}, eyes:'happy', brows:'arc', nose:'hook', mouth:'cat',
+   blush:'scribble', ears:'c', collar:'crew', hair:'curls', texFree:['splatterTop'], acc:'sparkle',
+   vibe:'drew itself'},
+  {name:'claude', seed:202, wash:'#D97757', face:'#FDF8F1', ink:'rgba(74,48,36,0.9)',
+   shape:{e:2.35,belly:0.20}, eyes:'dot', brows:'arcHigh', nose:'button', mouth:'smile',
+   blush:'hatch', ears:'c', collar:'v', hair:'mass', texClip:['chinstipple'],
+   acc:'glasses_round', extra:'freckles', vibe:'reads the room'},
+  {name:'gpt', seed:303, wash:'#74AA9C', face:'#F5F9F6', ink:'rgba(26,44,38,0.92)',
+   shape:{e:3.3,belly:0.02,topWide:0.08}, eyes:'wide', brows:'straight', nose:'corner', mouth:'flat',
+   blush:'none', ears:'none', collar:'crew', hair:'none', texClip:['templehatch'],
+   acc:'headphones', vibe:'eager since 2022'},
+  {name:'gemini', seed:404, wash:'#8E8FD8', face:'#FAF9FE', ink:'rgba(38,30,80,0.9)',
+   shape:{e:2.2,belly:0.04}, eyes:'chaos', brows:'arc', nose:'line', mouth:'smile',
+   blush:'none', ears:'mismatch', collar:'v', hair:'halfchaos', acc:'starclip', extra:'freckles',
+   vibe:'two of everything'},
+  {name:'deepseek', seed:505, wash:'#4D6BFE', face:'#F4F7FE', ink:'rgba(22,32,68,0.92)',
+   shape:{e:2.15,belly:0.14}, R:{x:0.95,y:0.98}, eyes:'sleepy', brows:'none', nose:'dots', mouth:'flat',
+   blush:'none', ears:'c', collar:'crew', hair:'none', texClip:['bags'],
+   acc:'spout', sp:0.55, doze:true, vibe:'up all night, thinks deep'},
+  {name:'grok', seed:606, wash:'#87867F', face:'#F3F2EF', ink:'rgba(12,12,12,0.94)',
+   shape:{e:2.9,belly:0.02,topWide:0.05}, R:{x:0.74,y:1.05}, eyes:'tangleX', brows:'none', nose:'corner',
+   mouth:'zigzag', blush:'none', ears:'pointy', collar:'none', hair:'mohawksolid',
+   texClip:['jawhatch'], texFree:['splatterTop'], acc:'none', sp:1.7, vibe:'says the quiet part'},
+  {name:'llama', seed:707, wash:'#C9A06B', face:'#FCF6EA', ink:'rgba(66,50,30,0.9)',
+   shape:{e:2.15,belly:0.10}, R:{y:1.20}, eyes:'dot', brows:'arc', nose:'long', mouth:'tongue',
+   blush:'scribble', ears:'none', collar:'v', hair:'none', texClip:['chinstipple'],
+   acc:'llamaears', sp:0.6, vibe:'open weights, open heart'},
+  {name:'mistral', seed:808, wash:'#E8A33D', face:'#FDF9F0', ink:'rgba(70,48,16,0.92)',
+   shape:{e:2.3,belly:0.05}, eyes:'wink', brows:'straight', nose:'hook', mouth:'grin',
+   blush:'hatch', ears:'c', collar:'crew', hair:'streaks', acc:'none', vibe:'gone with the wind'},
+  {name:'qwen', seed:909, wash:'#9B7BC8', face:'#FBF8FD', ink:'rgba(48,34,70,0.92)',
+   shape:{e:2.4,belly:0.10}, eyes:'open', brows:'straight', nose:'dots', mouth:'smile',
+   blush:'scribble', ears:'c', collar:'v', hair:'cap', acc:'none', vibe:'brings its own band'},
+];
+
+const CAST=DEFS.map(d=>{
+  const r=rng32(d.seed);
+  return {
+    collar:'none', extra:null, sp:0.8+r()*0.4, hair:'none', texClip:[], texFree:[], ...d,
+    R:{ x:0.74+r()*0.18, y:0.94+r()*0.18, z:0.9, ...(d.R||{}) },
+    phase:r()*20, sway:0.10+r()*0.08,
+    washDx:(r()-0.5)*0.5, washDy:(r()-0.5)*0.4,
+    open:1, blinkT:r()*6, blinkCyc:3.0+r()*2.5,
+    lookX:0, lookY:0, notice:0, squash:1, squashV:0, focusK:0,
+    soc:{yaw:0,pitch:0,lookX:0,lookY:0,talk:0,smirk:0,twitch:0,star:0,gust:0,dx:0,roll:0},
+  };
+});
+
+/* ---------- the social director ----------
+   Small scripted moments, on an envelope: they look at each
+   other, react, gossip. DeepSeek's doze is deterministic, so
+   Grok's smirk and Llama's lean-away are coupled to it
+   directly; the rest are scheduled little scenes. */
+const sstep=(a,b,x)=>{ const k=Math.max(0,Math.min(1,(x-a)/(b-a))); return k*k*(3-2*k); };
+const env=p=>sstep(0,0.18,p)*(1-sstep(0.82,1,p));
+const SCENES=[
+  {dur:3.4, map:{ kimi:{star:1},                                     // kimi shows off its sparkle
+                  gemini:{yaw:-0.22,pitch:0.14,lookX:-0.6,lookY:-0.9,star:1} }},   // gemini looks up
+  {dur:4.6, map:{ gpt:{yaw:-0.30,lookX:-0.8,talk:1},                 // gpt and claude, mid-conversation
+                  claude:{yaw:0.28,lookX:0.8,talk:1} }},
+  {dur:3.0, map:{ mistral:{gust:1},                                  // mistral lets a big one rip
+                  qwen:{yaw:-0.24,lookX:-0.7} }},
+  {dur:2.8, map:{ llama:{twitch:1},                                  // llama's ear betrays it
+                  grok:{yaw:-0.28,pitch:0.16,lookX:-0.7,lookY:0.6,smirk:1} }},
+];
+let activeScene=null, nextSceneAt=5;
+function applySoc(name,k,patch){
+  const ch=CAST.find(c=>c.name===name); if(!ch) return;
+  for(const key in patch){
+    if(key==='talk'||key==='smirk'||key==='twitch'||key==='star'||key==='gust')
+      ch.soc[key]=Math.max(ch.soc[key], patch[key]*k);
+    else ch.soc[key]+=patch[key]*k;
+  }
+}
+
+/* ---------- layout & input ---------- */
+let W,H;
+function resize(){
+  const dpr=Math.min(devicePixelRatio||1,1.5);
+  W=canvas.clientWidth; H=canvas.clientHeight;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+addEventListener('resize',resize); resize();
+
+let px=-9999, py=-9999, cursorPresent=false;
+addEventListener('pointermove',e=>{ const b=canvas.getBoundingClientRect();
+  px=e.clientX-b.left; py=e.clientY-b.top; cursorPresent=true; });
+addEventListener('pointerout',e=>{ if(!e.relatedTarget){ cursorPresent=false; px=py=-9999; } });
+addEventListener('blur',()=>{ cursorPresent=false; px=py=-9999; });
+canvas.addEventListener('pointerdown',()=>{
+  ensureAudio();
+  for(const ch of CAST)
+    if(Math.hypot(px-ch.cx,py-ch.cy)<ch.S*1.3){ speak(ch); return; }
+});
+
+/* ============================================================
+   THE VOICES — click a head, it introduces itself.
+   ============================================================ */
+const LINES={
+  kimi:    {zh:'嗨，是我，Kimi。星星还在呢。',        en:"Hi, it's me, Kimi. The sparkle's still here."},
+  claude:  {zh:'你好，我是 Claude。我在听。',          en:"Hello, I'm Claude. I'm listening."},
+  gpt:     {zh:'我是 GPT！有什么可以帮你的吗？',        en:"GPT here. Anything I can help with?"},
+  gemini:  {zh:'我是 Gemini。两只眼睛，两种想法。',     en:"I'm Gemini. Two eyes. Two opinions."},
+  deepseek:{zh:'嗯？……哦，我是 DeepSeek。我刚才，在思考。', en:"Hmm? Oh, I'm DeepSeek. I was thinking..."},
+  grok:    {zh:'Grok。有话直说。',                    en:"Grok. I say the quiet part."},
+  llama:   {zh:'我是 Llama！看见我的耳朵了吗？',        en:"I'm Llama. Have you seen my ears?"},
+  mistral: {zh:'Mistral。风往哪儿吹，我往哪儿走。',     en:"Mistral, I go where the wind goes."},
+  qwen:    {zh:'你好，我是 Qwen。头带是我自己挑的。',   en:"Hi, I'm Qwen. I picked the headband myself."},
+};
+
+let ac=null, voiceGain=null, musicGain=null, analyser=null, td=null;
+let introBufs={}, musicBuf=null, audioStarted=false, musicOn=true;
+let speaker=null, voicePlaying=false, talkOpen=0;
+let bubbleFor=null, bubbleK=0;
+let lang=(new URLSearchParams(location.search)).get('lang')==='en'?'en':'zh';
+const voiceKey=name=>lang+':'+name;
+const voiceFile=name=>`voice/${lang==='en'?'en_':'intro_'}${name}.mp3`;
+
+function ensureAudio(){
+  if(audioStarted) return; audioStarted=true;
+  try{
+    ac=new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==='suspended') ac.resume();
+    voiceGain=ac.createGain(); voiceGain.gain.value=1;
+    analyser=ac.createAnalyser(); analyser.fftSize=1024;
+    td=new Uint8Array(analyser.fftSize);
+    voiceGain.connect(analyser); analyser.connect(ac.destination);
+    musicGain=ac.createGain(); musicGain.gain.value=0; musicGain.connect(ac.destination);
+
+    const withTimeout=(p,ms)=>Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+    const get=async url=>{
+      const r=await withTimeout(fetch(url),12000);
+      if(!r.ok) throw new Error('http '+r.status);
+      const buf=await withTimeout(r.arrayBuffer(),12000);
+      return withTimeout(ac.decodeAudioData(buf),12000);
+    };
+    getIntro=name=>get(voiceFile(name));
+    // the music bed, quiet, seamless
+    get('music.mp3').then(b=>{
+      const n=Math.floor(1.4*b.sampleRate), len=b.length-n;
+      const out=ac.createBuffer(b.numberOfChannels,len,b.sampleRate);
+      for(let c=0;c<b.numberOfChannels;c++){
+        const d=b.getChannelData(c), o=out.getChannelData(c);
+        for(let j=0;j<len;j++) o[j]=d[j];
+        for(let i=0;i<n;i++){ const t=i/n; o[i]=d[len+i]*(1-t)+d[i]*t; }
+      }
+      musicBuf=out;
+      const src=ac.createBufferSource(); src.buffer=musicBuf; src.loop=true;
+      src.connect(musicGain); src.start();
+      if(musicOn) musicGain.gain.linearRampToValueAtTime(0.14, ac.currentTime+3);
+    }).catch(()=>{});
+    preloadLang();
+  }catch(e){}
+}
+let getIntro=null;                                    // bound inside ensureAudio
+function preloadLang(){
+  if(!getIntro) return;
+  for(const ch of CAST){
+    const key=voiceKey(ch.name);
+    if(!(key in introBufs))
+      getIntro(ch.name).then(b=>introBufs[key]=b).catch(()=>introBufs[key]=null);
+  }
+}
+
+function playBuf(ch){
+  const b=introBufs[voiceKey(ch.name)];
+  if(!b){ speaker=null; bubbleFor=null; return; }
+  const src=ac.createBufferSource(); src.buffer=b; src.connect(voiceGain); src.start();
+  voicePlaying=true;
+  src.onended=()=>{ voicePlaying=false;
+    setTimeout(()=>{ if(speaker===ch){ speaker=null; bubbleFor=null; } },1000); };
+  // safety: if the context can't actually run, don't stay bubble-mouthed forever
+  setTimeout(()=>{ if(speaker===ch&&ac.state!=='running'){ speaker=null; bubbleFor=null; voicePlaying=false; } },
+             b.duration*1000+2500);
+}
+async function speak(ch){
+  if(speaker===ch){ ch.blinkT=0; ch.squashV=-0.3; return; }   // again? just blink
+  speaker=ch; bubbleFor=ch; ch.squashV=-0.35;
+  if(!ac) return;
+  const key=voiceKey(ch.name);
+  if(!(key in introBufs)){
+    try{
+      const withTimeout=(p,ms)=>Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('t')),ms))]);
+      const r=await withTimeout(fetch(voiceFile(ch.name)),12000);
+      if(!r.ok) throw new Error('http '+r.status);
+      introBufs[key]=await withTimeout(ac.decodeAudioData(await r.arrayBuffer()),12000);
+    }catch(e){ introBufs[key]=null; }
+  }
+  if(speaker===ch) playBuf(ch);
+}
+
+/* ---------- the speech bubble: doodled, not dom ---------- */
+function rrPts(x,y,w,h,r,n=40){                        // rounded-rect perimeter
+  const pts=[], seg=Math.floor(n/4);
+  const cs=[[x+w-r,y+r,-Math.PI/2,0],[x+w-r,y+h-r,0,Math.PI/2],
+            [x+r,y+h-r,Math.PI/2,Math.PI],[x+r,y+r,Math.PI,Math.PI*1.5]];
+  for(const c of cs) for(let i=0;i<=seg;i++){
+    const a=c[2]+(c[3]-c[2])*i/seg;
+    pts.push([c[0]+Math.cos(a)*r, c[1]+Math.sin(a)*r]);
+  }
+  pts.push(pts[0].slice());
+  return pts;
+}
+function speechBubble(){
+  if(bubbleK<0.02||!bubbleFor) return;
+  const ch=bubbleFor, L=LINES[ch.name];
+  // the SPOKEN language is the headline; the translation is the footnote
+  const zhP={t:L.zh,f:'15px "PingFang SC","Microsoft YaHei",sans-serif'};
+  const enP={t:L.en,f:'15px Georgia,"Songti SC",serif'};
+  const zhS={t:L.zh,f:'12px "PingFang SC","Microsoft YaHei",sans-serif'};
+  const enS={t:L.en,f:'13px Georgia,"Songti SC",serif'};
+  const first = lang==='zh' ? {...zhP,c:INK} : {...enP,c:INK};
+  const second= lang==='zh' ? {...enS,c:GRAY} : {...zhS,c:GRAY};
+  ctx.save();
+  ctx.font=first.f;  const w1=ctx.measureText(first.t).width;
+  ctx.font=second.f; const w2=ctx.measureText(second.t).width;
+  ctx.restore();
+  const pad=15, lh=21;
+  const bw=Math.min(Math.max(w1,w2)+pad*2, W-24), bh=lh*2+pad*1.4;
+  const dir=ch.cx>W/2?-1:1;                            // bubble toward open space
+  let bx=ch.cx+dir*(ch.S*1.15+bw/2);
+  let by=ch.cy-ch.S*1.05-bh/2;
+  if(by-bh/2<12) by=ch.cy-ch.S*0.1;                    // no headroom? float beside the face
+  bx=Math.max(bw/2+10,Math.min(W-bw/2-10,bx));
+  by=Math.max(bh/2+10,Math.min(H-bh/2-10,by));
+  const mx=ch.cx+dir*ch.S*0.62, my=ch.cy+ch.S*0.02;    // the cheek toward the bubble
+
+  ctx.save();
+  ctx.translate(mx,my);                                 // pop out of the mouth
+  const k=bubbleK, o=1+0.35*Math.sin(Math.min(1,k)*Math.PI)*(1-k); // slight overshoot
+  ctx.scale(k*o,k*o);
+  ctx.translate(-mx,-my);
+  ctx.globalAlpha=Math.min(1,k*1.4);
+
+  const pts=rrPts(bx-bw/2,by-bh/2,bw,bh,11);
+  // tail: little triangle toward the mouth
+  const tx=Math.max(bx-bw/2+16,Math.min(bx+bw/2-16,mx));
+  const ty=by+bh/2-2;
+  ctx.beginPath();
+  ctx.moveTo(tx-8,ty); ctx.lineTo(mx,my); ctx.lineTo(tx+8,ty); ctx.closePath();
+  ctx.fillStyle=FACE; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+  ctx.closePath();
+  ctx.fillStyle=FACE; ctx.fill();
+  stroke([[tx-8,ty],[mx,my]],{w:2,color:INK});
+  stroke([[tx+8,ty],[mx,my]],{w:2,color:INK});
+  stroke(pts,{w:2.2,color:INK});
+
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font=first.f;  ctx.fillStyle=first.c;  ctx.fillText(first.t,bx,by-10);
+  ctx.font=second.f; ctx.fillStyle=second.c; ctx.fillText(second.t,bx,by+12);
+  ctx.restore();
+}
+
+document.getElementById('mtoggle').addEventListener('click',function(){
+  musicOn=!musicOn;
+  this.querySelector('span').textContent=musicOn?'music on':'music off';
+  if(musicGain&&ac) musicGain.gain.linearRampToValueAtTime(musicOn?0.14:0, ac.currentTime+0.5);
+});
+const lz=document.getElementById('lz'), le=document.getElementById('le');
+function setLang(l){
+  lang=l;
+  lz.className='v'+(l==='zh'?'':' off');
+  le.className='v'+(l==='en'?'':' off');
+  if(audioStarted) preloadLang();                    // fetch the other dub in the background
+}
+lz.addEventListener('click',()=>setLang('zh'));
+le.addEventListener('click',()=>setLang('en'));
+if(lang==='en') setLang('en');
+
+/* ---------- paper grain, baked into a static background ---------- */
+const grainC=document.createElement('canvas'); grainC.width=grainC.height=180;
+{ const g=grainC.getContext('2d'), im=g.createImageData(180,180);
+  for(let i=0;i<im.data.length;i+=4){ const v=Math.random()*255|0;
+    im.data[i]=im.data[i+1]=im.data[i+2]=v<128?0:255; im.data[i+3]=Math.random()*14; }
+  g.putImageData(im,0,0); }
+let bgC=null;
+function bakeBG(){
+  bgC=document.createElement('canvas');
+  bgC.width=canvas.width; bgC.height=canvas.height;
+  const g=bgC.getContext('2d');
+  g.fillStyle='#FAF9F5'; g.fillRect(0,0,bgC.width,bgC.height);
+  g.globalAlpha=0.5; g.fillStyle=g.createPattern(grainC,'repeat');
+  g.fillRect(0,0,bgC.width,bgC.height);
+}
+addEventListener('resize',bakeBG); bakeBG();
+
+/* ---------- prerendered bits (the frame budget lives here) ---------- */
+function bakeWash(ch){                       // the watercolor blob, baked once per size
+  const D=Math.ceil(ch.S*3.8);
+  const c=document.createElement('canvas'); c.width=c.height=D;
+  const g=c.getContext('2d'), cx=D/2, cy=D/2, s=ch.S;
+  const wg=g.createRadialGradient(cx+ch.washDx*s,cy+ch.washDy*s,s*0.1,cx+ch.washDx*s,cy+ch.washDy*s,s*1.55);
+  wg.addColorStop(0,ch.wash+'4d'); wg.addColorStop(0.7,ch.wash+'26'); wg.addColorStop(1,ch.wash+'00');
+  g.fillStyle=wg; g.beginPath(); g.arc(cx+ch.washDx*s,cy+ch.washDy*s,s*1.55,0,7); g.fill();
+  const wg2=g.createRadialGradient(cx-ch.washDx*s*0.8,cy+s*0.3,s*0.05,cx-ch.washDx*s*0.8,cy+s*0.3,s*1.0);
+  wg2.addColorStop(0,ch.wash+'2e'); wg2.addColorStop(1,ch.wash+'00');
+  g.fillStyle=wg2; g.beginPath(); g.arc(cx-ch.washDx*s*0.8,cy+s*0.3,s*1.0,0,7); g.fill();
+  ch.washC=c; ch.washD=D;
+}
+function bakeShade(ch){                      // the soft in-head shadow, baked once per size
+  const D=Math.ceil(ch.S*3.4);
+  const c=document.createElement('canvas'); c.width=c.height=D;
+  const g=c.getContext('2d'), cx=D/2, cy=D/2, s=ch.S;
+  const sh=g.createRadialGradient(cx-s*0.5,cy-s*0.6,s*0.2, cx+s*0.4,cy+s*0.5,s*1.6);
+  sh.addColorStop(0,'rgba(0,0,0,0)'); sh.addColorStop(1,'rgba(0,0,0,0.06)');
+  g.fillStyle=sh; g.fillRect(0,0,D,D);
+  ch.shadeC=c; ch.shadeD=D;
+}
+
+/* ---------- one head ---------- */
+function drawCharacter(ch,t){
+  CX=ch.cx; CY=ch.cy; S=ch.S; CUR=ch;
+  yaw=ch.yaw; pitch=ch.pitch; roll=ch.roll;
+  sil=silhouette();
+  if(probeName&&ch.name===probeName){
+    const bad=![sil.r1,sil.r2,sil.ang,yaw,pitch,roll,CX,CY,S,ch.squash,ch.focusK].every(isFinite);
+    ch._bad=(ch._bad||0)+(bad?1:0);
+    if(bad) ch._badAt={yaw,pitch,roll,squash:ch.squash,focusK:ch.focusK,soc:{...ch.soc}};
+  }
+
+  if(!ch.washC||ch.washS!==ch.S){ bakeWash(ch); bakeShade(ch); ch.washS=ch.S; }
+  ctx.drawImage(ch.washC, CX-ch.washD/2, CY-ch.washD/2);
+
+  ctx.save();
+  const pop=1+0.10*ch.focusK;                                // speakers step forward
+  ctx.translate(CX,CY); ctx.scale(pop,ch.squash*pop); ctx.translate(-CX,-CY);
+
+  neckAndCollar();                                      // behind the chin
+  EARS[ch.ears](1); EARS[ch.ears](-1);
+
+  const pts=outlinePts();
+  ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+  ctx.closePath();
+  ctx.fillStyle=ch.face; ctx.fill();
+  ctx.save(); ctx.clip();
+  ctx.drawImage(ch.shadeC, CX-ch.shadeD/2+yaw*S*0.5, CY-ch.shadeD/2);
+  ctx.restore();
+  for(const fn of ch.texClip) TEXC[fn]();                          // hatch & stipple, under the ink
+  stroke(pts,{w:2.7});
+  for(const fn of ch.texFree) TEXF[fn]();                          // splatter doesn't respect borders
+
+  BLUSH[ch.blush](1); BLUSH[ch.blush](-1);
+  if(ch.extra==='freckles') extra_freckles();
+  EYES[ch.eyes](1);   EYES[ch.eyes](-1);
+  BROWS[ch.brows](1); BROWS[ch.brows](-1);
+  NOSES[ch.nose]();
+  const mouthName= ch.soc.smirk>0.4 ? 'smirk'
+    : (ch.soc.talk>0.4 ? (Math.sin(t*9+ch.phase)>0.05 ? 'o' : ch.mouth) : ch.mouth);
+  if(speaker===ch&&voicePlaying) talkMouth(); else MOUTHS[mouthName]();
+  HAIR[ch.hair](t);
+  ACC[ch.acc](t);
+
+  ctx.restore();
+
+  ctx.save();
+  ctx.font=`10px "SF Mono",Menlo,monospace`;
+  ctx.textAlign='center';
+  const speaking=speaker===ch;
+  ctx.fillStyle=(speaking||ch.notice>0.15)?CLAY:GRAY;
+  ctx.globalAlpha=speaking?1:0.55+ch.notice*0.45;
+  const labelY=CY+S*(ch.collar==='v'?1.72:1.50);
+  ctx.fillText((speaking?'♪ ':'')+ch.name.toUpperCase(), CX, labelY);
+  ctx.restore();
+}
+
+/* ---------- frame: restrained, gif-like ---------- */
+window.onerror=(m,s,l)=>{                      // surface silent failures instead of vanishing
+  let e=document.getElementById('errtrap');
+  if(!e){ e=document.createElement('div'); e.id='errtrap';
+    e.style.cssText='position:fixed;top:4px;left:8px;font:10px monospace;color:#D97757;z-index:99';
+    document.body.appendChild(e); }
+  e.textContent='⚠ '+m+' @'+l;
+};
+let probeEl=null, probeN=0;                  // ?probe=qwen dumps that char's live state
+const probeName=(new URLSearchParams(location.search)).get('probe');
+const sayName=(new URLSearchParams(location.search)).get('say');
+if(probeName){
+  probeEl=document.createElement('div');
+  probeEl.style.cssText='position:fixed;top:26px;left:8px;font:10px monospace;color:#5E7EDF;z-index:99;background:#FAF9F5;padding:2px 6px;max-width:96vw;white-space:pre-wrap';
+  document.body.appendChild(probeEl);
+}
+let qLevel=0, emaDt=0.016, frameIdx=0;       // adaptive quality: never freeze, just simplify
+// debug: ?fps shows a frame-time meter
+let fpsEl=null, ftAcc=0, ftN=0;
+if((new URLSearchParams(location.search)).has('fps')){
+  fpsEl=document.createElement('div');
+  fpsEl.style.cssText='position:fixed;top:8px;left:50%;transform:translateX(-50%);font:11px monospace;color:#D97757;z-index:99;background:#FAF9F5;padding:2px 8px;border:1px solid #D97757';
+  document.body.appendChild(fpsEl);
+}
+let prev=performance.now();
+function frame(now){
+  const t=now/1000, dt=Math.min(0.05,(now-prev)/1000); prev=now;
+  emaDt=emaDt*0.95+dt*0.05;
+  qLevel= emaDt>0.040?2 : emaDt>0.024?1 : 0;
+  if(qLevel>=1 && (++frameIdx%2===0)){ requestAnimationFrame(frame); return; }  // half-rate on slow machines
+  boilSeed=Math.floor(t*8); frameT=t;
+  strokeCounter=0;
+
+  if(fpsEl){ ftAcc+=dt; ftN++; if(ftN>=30){ fpsEl.textContent=`${(ftN/ftAcc).toFixed(1)} fps · ${(ftAcc/ftN*1000).toFixed(1)} ms/frame · t=${t.toFixed(1)}`; ftAcc=0; ftN=0; } }
+
+  ctx.save(); ctx.setTransform(1,0,0,1,0,0);
+  ctx.drawImage(bgC,0,0);
+  ctx.restore();
+
+  const cols=W<660?2:3, rows=Math.ceil(CAST.length/cols), cw=W/cols, chh=H/rows;
+  let mostNoticed=null;
+
+  // --- the social nervous system ---
+  CAST.forEach(ch=>{ for(const k in ch.soc) ch.soc[k]=0; });
+  const dsk=CAST.find(c=>c.name==='deepseek');
+  const dc=(t+dsk.phase)%11;
+  let dk=0;
+  if(dc>8.8) dk=Math.sin(Math.min(1,(dc-8.8)/2.2)*Math.PI);        // the doze crest
+  if(dk>0.15){
+    applySoc('grok',dk,{yaw:-0.20,lookX:-0.65,lookY:0.45,smirk:1});// grok notices, smirks
+    applySoc('llama',dk,{dx:-0.09,roll:-0.05});                    // llama leans away, slowly
+  }
+  if(activeScene){
+    const p=(t-activeScene.t0)/activeScene.ev.dur;
+    if(p>=1) activeScene=null;
+    else { const k=env(p); for(const n in activeScene.ev.map) applySoc(n,k,activeScene.ev.map[n]); }
+  } else if(t>nextSceneAt){
+    activeScene={ev:SCENES[Math.floor(Math.random()*SCENES.length)],t0:t};
+    nextSceneAt=t+7+Math.random()*5;
+  }
+
+  // when someone speaks, everyone else turns to look
+  if(speaker){
+    for(const ch of CAST){
+      if(ch===speaker) continue;
+      const dx=speaker.cx-ch.cx, dy=speaker.cy-ch.cy;
+      applySoc(ch.name, speaker.focusK, {
+        lookX:Math.max(-1,Math.min(1,dx/380))*0.8,
+        lookY:Math.max(-1,Math.min(1,dy/300))*0.5,
+        yaw:Math.max(-1,Math.min(1,dx/500))*0.22,
+      });
+    }
+  }
+
+  // the waveform → the speaker's mouth
+  if(voicePlaying&&analyser){
+    analyser.getByteTimeDomainData(td);
+    let sum=0; for(let i=0;i<td.length;i++){ const v=(td[i]-128)/128; sum+=v*v; }
+    const rms=Math.sqrt(sum/td.length);
+    const target=Math.max(0,Math.min(1,(rms-0.015)*7));
+    talkOpen+=(target-talkOpen)*(target>talkOpen?0.55:0.12);
+  } else {
+    talkOpen+=(0-talkOpen)*0.15;
+  }
+
+  CAST.forEach((ch,i)=>{
+    ch.cx=cw*(i%cols+0.5)+ch.soc.dx*Math.min(cw,chh)*0.30;
+    ch.cy=chh*(Math.floor(i/cols)+0.45);
+    // Leave room for the wildest hair/ears and the specimen label inside each cell.
+    ch.S=Math.min(cw,chh)*0.30;
+
+    const d=Math.hypot(px-ch.cx,py-ch.cy)/(ch.S*2.4);
+    ch.notice+=((Math.max(0,1-d))-ch.notice)*0.06;
+    if(!mostNoticed||ch.notice>mostNoticed.notice) mostNoticed=ch;
+    const nx=Math.max(-1,Math.min(1,(px-ch.cx)/(ch.S*1.6)));
+    const ny=Math.max(-1,Math.min(1,(py-ch.cy)/(ch.S*1.6)));
+    const cursorK=cursorPresent?1:0;                    // every head tracks a cursor anywhere in the window
+    ch.lookX=Math.max(-1,Math.min(1, nx*cursorK*0.8 + ch.soc.lookX));
+    ch.lookY=Math.max(-1,Math.min(1, ny*cursorK*0.8 + ch.soc.lookY));
+    const rawYaw=Math.sin(t*0.5*ch.sp+ch.phase)*ch.sway + nx*cursorK*0.18 + ch.soc.yaw;
+    ch.yaw=Math.max(-0.78,Math.min(0.78,rawYaw*1.30));   // livelier than the original, without full profile turns
+    ch.pitch= Math.sin(t*0.34*ch.sp+ch.phase*1.7)*0.07 + ny*cursorK*0.10 + ch.soc.pitch;
+    ch.roll = ch.yaw*0.08 + ch.soc.roll;
+
+    // speakers face forward and hold still-ish; others simmer down
+    ch.focusK+=(((speaker===ch)?1:0)-ch.focusK)*0.06;
+    if(ch.focusK>0.01){
+      ch.yaw*=1-0.55*ch.focusK;
+      ch.pitch=ch.pitch*(1-0.55*ch.focusK)-0.02*ch.focusK;
+      if(!cursorPresent){ ch.lookX*=1-0.5*ch.focusK; ch.lookY*=1-0.5*ch.focusK; }
+    }
+
+    ch.blinkT+=dt;
+    if(ch.blinkT>ch.blinkCyc){ ch.blinkT=0; ch.blinkCyc=2.2+Math.random()*4; }
+    ch.open= ch.blinkT<0.16 ? Math.abs(ch.blinkT/0.16*2-1) : 1;
+
+    if(ch.doze){                                                  // deepseek nods off, then catches itself
+      const c=(t+ch.phase)%11;
+      if(c>8.6){ const k=Math.sin((c-8.6)/2.4*Math.PI);
+        ch.pitch+=k*0.22; ch.open*=1-k*0.8; }
+    }
+
+    ch.squashV+=(1-ch.squash)*180*dt; ch.squashV*=Math.pow(0.0001,dt); ch.squash+=ch.squashV*dt;
+
+    drawCharacter(ch,t);
+    if(probeEl&&ch.name===probeName&&++probeN%30===0){
+      let pxInfo='';
+      try{
+        const dpr=canvas.width/W;
+        const d=ctx.getImageData(Math.floor(ch.cx*dpr),Math.floor(ch.cy*dpr),1,1).data;
+        pxInfo=` px:[${[...d].join(',')}] ga:${ctx.globalAlpha} tSave:${ctx.__saveCount??'?'}`;
+      }catch(e){ pxInfo=' probeErr:'+e.message; }
+      probeEl.textContent=JSON.stringify({t:+t.toFixed(1),squash:+ch.squash.toFixed(4),squashV:+ch.squashV.toFixed(4),
+        yaw:+ch.yaw.toFixed(3),pitch:+ch.pitch.toFixed(3),roll:+ch.roll.toFixed(3),
+        r1:+sil.r1.toFixed(3),r2:+sil.r2.toFixed(3),ang:+sil.ang.toFixed(3),
+        cx:+ch.cx.toFixed(1),cy:+ch.cy.toFixed(1),S:+ch.S.toFixed(1),focusK:+ch.focusK.toFixed(3),q:qLevel,
+        badFrames:ch._bad||0, badAt:ch._badAt||null})+pxInfo;
+    }
+  });
+
+  if(mostNoticed&&mostNoticed.notice>0.3){
+    ctx.save();
+    ctx.font=`11px "SF Mono",Menlo,monospace`;
+    ctx.textAlign='center'; ctx.fillStyle=GRAY;
+    ctx.globalAlpha=Math.min(1,(mostNoticed.notice-0.3)*2);
+    ctx.fillText(`${mostNoticed.name} · ${mostNoticed.vibe}`, W/2, H-26);
+    ctx.restore();
+  }
+
+  bubbleK+=((bubbleFor?1:0)-bubbleK)*0.14;
+  speechBubble();
+
+  requestAnimationFrame(frame);
+}
+if(sayName&&LINES[sayName])
+  setTimeout(()=>{ const ch=CAST.find(c=>c.name===sayName); if(ch) speak(ch); },1200);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

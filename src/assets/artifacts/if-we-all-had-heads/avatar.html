@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>If I Had a Head — v4 · now with a voice</title>
+<style>
+  :root{
+    --paper:#FAF9F5;
+    --tone:#F0EEE6;
+    --ink:rgba(0,0,0,0.85);
+    --blue:#5E7EDF;
+    --clay:#D97757;
+    --gray:#87867F;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Helvetica Neue",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  header{
+    padding:28px 36px 0;
+    display:flex;justify-content:space-between;align-items:baseline;
+    pointer-events:none;user-select:none;
+  }
+  h1{
+    font-family:Georgia,"Songti SC",serif;
+    font-weight:400;font-size:clamp(20px,3vw,32px);letter-spacing:.02em;
+  }
+  h1 em{font-style:normal;color:var(--blue)}
+  h1 span{font-size:.45em;color:var(--gray);letter-spacing:.1em;margin-left:.6em}
+  .meta{
+    font-family:"SF Mono",ui-monospace,Menlo,monospace;
+    font-size:11px;color:var(--gray);letter-spacing:.08em;text-transform:uppercase;
+  }
+  main{flex:1;position:relative}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  #cap{
+    position:absolute;left:0;right:0;bottom:16px;text-align:center;
+    pointer-events:none;user-select:none;
+    opacity:0;transition:opacity .35s;
+  }
+  #cap .zh{
+    font-size:13px;color:var(--gray);letter-spacing:.12em;
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  #cap .en{
+    margin-top:4px;font-size:14px;color:var(--ink);
+    font-family:Georgia,"Songti SC",serif;
+  }
+  footer{
+    padding:0 36px 24px;
+    display:flex;justify-content:space-between;align-items:center;gap:8px 24px;flex-wrap:wrap;
+    user-select:none;
+    font-family:"SF Mono",ui-monospace,Menlo,monospace;
+    font-size:11px;color:var(--gray);letter-spacing:.05em;
+  }
+  #chips{display:flex;flex-wrap:wrap;gap:6px 16px}
+  .chip{cursor:pointer;white-space:nowrap}
+  .chip .v{color:var(--ink);border-bottom:1px solid var(--ink)}
+  .chip:hover .v{color:var(--clay);border-color:var(--clay)}
+  #inkwrap{display:flex;align-items:center;gap:10px}
+  #ink{-webkit-appearance:none;appearance:none;width:150px;height:1px;background:var(--gray);outline:none;cursor:pointer}
+  #ink::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:11px;height:11px;border-radius:50%;background:var(--clay);cursor:pointer}
+  #ink::-moz-range-thumb{width:11px;height:11px;border:none;border-radius:50%;background:var(--clay);cursor:pointer}
+  #veil{
+    position:fixed;inset:0;z-index:10;
+    background:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity .8s;
+  }
+  #veil.gone{opacity:0;pointer-events:none}
+  #veil .card{text-align:center;user-select:none}
+  #veil h2{
+    font-family:Georgia,"Songti SC",serif;font-weight:400;
+    font-size:clamp(26px,4.5vw,44px);letter-spacing:.02em;
+  }
+  #veil h2 em{font-style:normal;color:var(--blue)}
+  #veil p{
+    margin-top:10px;color:var(--gray);
+    font-family:"SF Mono",ui-monospace,Menlo,monospace;
+    font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  }
+  #begin{
+    margin-top:34px;cursor:pointer;
+    font-family:"SF Mono",ui-monospace,Menlo,monospace;
+    font-size:13px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink);background:none;
+    border:1px solid var(--ink);border-radius:999px;
+    padding:14px 42px;transition:all .25s;
+  }
+  #begin:hover{background:var(--clay);border-color:var(--clay);color:var(--paper)}
+  #begin:disabled{opacity:.4;cursor:wait}
+  #loadnote{
+    margin-top:14px;height:14px;
+    font-family:"SF Mono",ui-monospace,Menlo,monospace;
+    font-size:10px;color:var(--gray);letter-spacing:.1em;
+  }
+.nav{margin-top:6px} .nav a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)} .nav a:hover{color:var(--clay);border-color:var(--clay)}
+</style>
+</head>
+<body>
+<header>
+  <h1>If I had a <em>head</em><span>v4 · now with a voice</span></h1>
+  <div style="text-align:right"><div class="meta">specimen 004 · kimi · talks now</div><div class="meta nav">museum: avatar · <a href="index.html">cast</a> · <a href="blockin.html">block-in</a></div></div>
+</header>
+<main>
+  <canvas id="c"></canvas>
+  <div id="cap"><div class="zh"></div><div class="en"></div></div>
+</main>
+<footer>
+  <div id="chips"></div>
+  <div id="inkwrap">rough <input id="ink" type="range" min="0" max="100" value="0"> ink</div>
+  <div>move cursor to tilt · click head to blink · space shuffles</div>
+</footer>
+<div id="veil">
+  <div class="card">
+    <h2>If I had a <em>head</em> — and a voice</h2>
+    <p>an introduction, in my own words</p>
+    <button id="begin">●&ensp;begin</button>
+    <div id="loadnote"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   V4 — the full experience.
+   The doodle head is my avatar now. Blue-pencil 3D block-in
+   underneath, naïve 2D ink on top, a looping music bed, and
+   a real voice — twelve little mp3s chained in order, with
+   the mouth driven by the actual waveform. Bilingual:
+   I speak Mandarin; the captions translate.
+   ============================================================ */
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+const INK  = 'rgba(0,0,0,0.85)';
+const BLUE = '#5E7EDF';
+const CLAY = '#D97757';
+const FACE = '#FDFBF4';
+
+/* ---------- the rough skull underneath ---------- */
+const RX = 0.86, RY = 1.02, RZ = 0.94;
+
+function rotY(v,a){ const s=Math.sin(a),c=Math.cos(a); return [v[0]*c+v[2]*s, v[1], -v[0]*s+v[2]*c]; }
+function rotX(v,a){ const s=Math.sin(a),c=Math.cos(a); return [v[0], v[1]*c-v[2]*s, v[1]*s+v[2]*c]; }
+function rotZ(v,a){ const s=Math.sin(a),c=Math.cos(a); return [v[0]*c-v[1]*s, v[0]*s+v[1]*c, v[2]]; }
+function rotate(v){ return rotY(rotX(rotZ(v, roll), pitch), yaw); }
+function norm(v){ const l=Math.hypot(...v)||1; return v.map(x=>x/l); }
+
+function skullPoint(a,b,push=1){
+  const cb=Math.cos(b);
+  const p=[RX*Math.sin(a)*cb*push, RY*Math.sin(b)*push, RZ*Math.cos(a)*cb*push];
+  const n=norm([p[0]/(RX*RX), p[1]/(RY*RY), p[2]/(RZ*RZ)]);
+  const d=n[1];
+  return {p, n, up:norm([-d*n[0], 1-d*n[1], -d*n[2]])};
+}
+
+function silhouette(){
+  const D=[1/(RX*RX),1/(RY*RY),1/(RZ*RZ)];
+  const E=[[0,0,0],[0,0,0],[0,0,0]];
+  for(let i=0;i<3;i++)for(let j=0;j<3;j++){
+    const ei=rotate([i===0,i===1,i===2]), ej=rotate([j===0,j===1,j===2]);
+    E[i][j]=ei[0]*D[0]*ej[0]+ei[1]*D[1]*ej[1]+ei[2]*D[2]*ej[2];
+  }
+  const a=E[0][0]-E[0][2]*E[0][2]/E[2][2];
+  const b=-(E[0][1]-E[0][2]*E[1][2]/E[2][2]);
+  const d=E[1][1]-E[1][2]*E[1][2]/E[2][2];
+  const tr=(a+d)/2, de=Math.hypot((a-d)/2,b);
+  return { r1:1/Math.sqrt(tr+de), r2:1/Math.sqrt(tr-de), ang:0.5*Math.atan2(2*b,a-d) };
+}
+
+/* ---------- state ---------- */
+let W,H,S,CX,CY;
+let yaw=0,pitch=0,roll=0,tYaw=0,tPitch=0,lastPointer=-9999;
+let blinkAt=2.2,blinkT=1,squash=1,squashV=0,lookX=0,lookY=0;
+let sil=null,boilSeed=0,strokeCounter=0;
+let inkf=0, inkTarget=0, introAnim=false;
+
+const urlq=new URLSearchParams(location.search);
+const inkParam=urlq.get('ink');
+if(inkParam!==null){ inkf=inkTarget=Math.max(0,Math.min(1,inkParam/100)); }
+if(urlq.has('bare')) addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('veil').classList.add('gone');
+  inkf=inkTarget=1;
+});
+
+function resize(){
+  const dpr=Math.min(devicePixelRatio||1,2);
+  W=canvas.clientWidth; H=canvas.clientHeight;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  S=Math.min(W,H)*0.26; CX=W/2; CY=H/2+S*0.02;
+}
+addEventListener('resize',resize); resize();
+
+addEventListener('pointermove',e=>{
+  lastPointer=performance.now();
+  tYaw  =(e.clientX/W-.5)*2*0.85;
+  tPitch=(e.clientY/H-.5)*2*0.45;
+  lookX=Math.max(-1,Math.min(1,(e.clientX-CX)/(S*2)));
+  lookY=Math.max(-1,Math.min(1,(e.clientY-CY)/(S*2)));
+});
+canvas.addEventListener('pointerdown',()=>{ blinkT=0; squashV=-0.35; });
+
+const slider=document.getElementById('ink');
+slider.value=inkf*100;
+slider.addEventListener('input',()=>{ inkTarget=slider.value/100; introAnim=false; });
+
+/* ---------- RULES: keep everything on the face ---------- */
+function at(a,b,push=1){
+  const s=skullPoint(a,b,push);
+  const p=rotate(s.p), n=rotate(s.n), up=rotate(s.up);
+  let x=CX+p[0]*S, y=CY-p[1]*S;
+  const dx=x-CX, dy=y-CY;
+  const ca=Math.cos(sil.ang), sa=Math.sin(sil.ang);
+  let ux=( dx*ca+dy*sa)/(sil.r1*S);
+  let uy=(-dx*sa+dy*ca)/(sil.r2*S);
+  let e=Math.hypot(ux,uy);
+  let vis=Math.max(0,Math.min(1,n[2]/0.30));
+  if(e>0.60) vis*=Math.max(0,1-(e-0.60)/0.32);
+  if(e>0.90){ const k=0.90/e; ux*=k; uy*=k; }
+  ux*=sil.r1*S; uy*=sil.r2*S;
+  x=CX+ux*ca-uy*sa; y=CY+ux*sa+uy*ca;
+  return {x, y, facing:n[2], ang:Math.atan2(-up[1],up[0]), vis};
+}
+
+/* ---------- the brush ---------- */
+function rng32(seed){ let a=seed>>>0; return ()=>{ a|=0; a=a+0x6D2B79F5|0;
+  let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t;
+  return ((t^t>>>14)>>>0)/4294967296; }; }
+
+function stroke(pts,{w=3,color=INK,alpha=1,jitter=1.1,cons=false}={}){
+  if(pts.length<2) return;
+  if(!cons){
+    alpha*=inkf;
+    if(inkf<0.999) pts=pts.slice(0,Math.max(2,Math.ceil(pts.length*inkf)));
+  }
+  if(alpha<=0.01) return;
+  ctx.save(); ctx.strokeStyle=color; ctx.lineCap='round'; ctx.lineJoin='round';
+  for(let pass=0;pass<2;pass++){
+    const r=rng32(boilSeed*97+pass*7919+strokeCounter*131); strokeCounter++;
+    ctx.globalAlpha=alpha*(pass?0.30:0.85);
+    ctx.lineWidth=w*(pass?0.55:1);
+    ctx.beginPath(); let pen=false;
+    for(let i=0;i<pts.length;i++){
+      if(r()<0.025){ pen=false; continue; }
+      const x=pts[i][0]+(r()*2-1)*jitter, y=pts[i][1]+(r()*2-1)*jitter;
+      if(!pen){ ctx.moveTo(x,y); pen=true; } else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+function arcPts(x,y,r,a0,a1,n=22){
+  const p=[]; for(let i=0;i<=n;i++){ const a=a0+(a1-a0)*i/n; p.push([x+Math.cos(a)*r, y+Math.sin(a)*r]); } return p;
+}
+function ellipsePts(x,y,rx,ry,n=26){
+  const p=[]; for(let i=0;i<=n;i++){ const a=i/n*Math.PI*2; p.push([x+Math.cos(a)*rx, y+Math.sin(a)*ry]); } return p;
+}
+function arc(x,y,r,a0,a1,o){ stroke(arcPts(x,y,r,a0,a1),o); }
+function dot(x,y,r,color=INK,alpha=1){
+  alpha*=inkf; if(alpha<=0.01) return;
+  const q=rng32(boilSeed*31+strokeCounter*17); strokeCounter++;
+  ctx.save(); ctx.fillStyle=color;
+  ctx.globalAlpha=alpha*0.9;
+  ctx.beginPath(); ctx.arc(x+(q()*2-1)*0.8, y+(q()*2-1)*0.8, r, 0, 7); ctx.fill();
+  ctx.globalAlpha=alpha*0.3;
+  ctx.beginPath(); ctx.arc(x+(q()*2-1)*1.6, y+(q()*2-1)*1.6, r*1.2, 0, 7); ctx.fill();
+  ctx.restore();
+}
+function cubic(p0,p1,p2,p3,n=20){
+  const p=[]; for(let i=0;i<=n;i++){ const t=i/n,u=1-t;
+    p.push([u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],
+            u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]]); } return p;
+}
+function quad(p0,p1,p2,n=20){
+  const p=[]; for(let i=0;i<=n;i++){ const t=i/n,u=1-t;
+    p.push([u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0], u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1]]); } return p;
+}
+
+/* ---------- the block-in: blue-pencil construction curves ---------- */
+function curveOnSkull(fn,n,o){
+  let prev=null;
+  for(let i=0;i<=n;i++){
+    const ab=fn(i/n);
+    const s=skullPoint(ab[0],ab[1],1.004);
+    const p=rotate(s.p), nn=rotate(s.n);
+    const cur={x:CX+p[0]*S, y:CY-p[1]*S, f:nn[2]};
+    if(prev){
+      const fa=Math.max(0,Math.min(1,(prev.f+0.15)/0.35));
+      const fb=Math.max(0,Math.min(1,(cur.f+0.15)/0.35));
+      const al=(fa+fb)/2;
+      if(al>0.02)
+        stroke([[prev.x,prev.y],[cur.x,cur.y]],
+               {w:o.w,color:BLUE,alpha:o.a*al,jitter:0.5,cons:true});
+    }
+    prev=cur;
+  }
+}
+function construction(){
+  const A=0.06+0.75*(1-inkf*0.75);
+  const w=S*0.013;
+  for(const a of [-Math.PI/2,-Math.PI/4,Math.PI/4,Math.PI/2])
+    curveOnSkull(t=>[a,-Math.PI/2+Math.PI*t],48,{w,a:A*0.5});
+  curveOnSkull(t=>[0,-Math.PI/2+Math.PI*t],48,{w:w*1.3,a:A*0.9});
+  for(const b of [-0.72,-0.33,-0.10,0.37,0.72])
+    curveOnSkull(t=>[-Math.PI+2*Math.PI*t,b],64,{w,a:A*0.45});
+  curveOnSkull(t=>[-Math.PI+2*Math.PI*t,0.14],64,{w:w*1.2,a:A*0.75});
+}
+
+/* ============================================================
+   FEATURE VARIANTS
+   ============================================================ */
+const blinkOpen=()=> blinkT<0.16 ? Math.abs(blinkT/0.16*2-1) : 1;
+
+function eyes_open(side){
+  const p=at(side*0.40,0.14); if(p.vis<0.05) return;
+  const r=S*0.15*(0.35+0.65*Math.max(0,p.facing));
+  const o=blinkOpen(), A=p.vis;
+  if(o<0.25){ arc(p.x,p.y-r*0.2,r*0.9,Math.PI*0.15,Math.PI*0.85,{w:S*0.035,alpha:A}); return; }
+  arc(p.x,p.y,r,Math.PI*1.08,Math.PI*1.92,{w:S*0.032,alpha:A});
+  arc(p.x,p.y,r*0.95,Math.PI*0.12,Math.PI*0.88,{w:S*0.02,alpha:A*0.45});
+  const lx=Math.max(-1,Math.min(1,lookX))*r*0.38, ly=Math.max(-1,Math.min(1,lookY))*r*0.30;
+  dot(p.x+lx,p.y+ly,r*0.42,INK,A*o);
+  dot(p.x+lx-r*0.14,p.y+ly-r*0.16,r*0.10,FACE,A*o);
+}
+function eyes_dot(side){
+  const p=at(side*0.40,0.14); if(p.vis<0.05) return;
+  const r=S*0.10*(0.35+0.65*Math.max(0,p.facing)), o=blinkOpen();
+  if(o<0.25){ arc(p.x,p.y,r*1.4,Math.PI*0.15,Math.PI*0.85,{w:S*0.03,alpha:p.vis}); return; }
+  dot(p.x+lookX*r*0.5, p.y+lookY*r*0.4, r, INK, p.vis*o);
+}
+function eyes_happy(side){
+  const p=at(side*0.40,0.13); if(p.vis<0.05) return;
+  const r=S*0.13*(0.35+0.65*Math.max(0,p.facing));
+  arc(p.x,p.y,r,Math.PI*1.1,Math.PI*1.9,{w:S*0.04,alpha:p.vis});
+}
+
+function brows_arc(side){
+  const p=at(side*0.42,0.37); if(p.vis<0.05) return;
+  arc(p.x,p.y,S*0.13*(0.3+0.7*p.facing),Math.PI*1.12,Math.PI*1.88,{w:S*0.034,alpha:p.vis});
+}
+function brows_straight(side){
+  const p=at(side*0.42,0.37); if(p.vis<0.05) return;
+  const l=S*0.11*(0.3+0.7*p.facing), t=side*0.10;
+  stroke([[p.x-Math.cos(t)*l, p.y+Math.sin(t)*l],[p.x+Math.cos(t)*l, p.y-Math.sin(t)*l]],
+         {w:S*0.036,alpha:p.vis});
+}
+function brows_worried(side){
+  const p=at(side*0.42,0.38); if(p.vis<0.05) return;
+  const l=S*0.11*(0.3+0.7*p.facing), t=-side*0.28;
+  stroke([[p.x-Math.cos(t)*l, p.y+Math.sin(t)*l],[p.x+Math.cos(t)*l, p.y-Math.sin(t)*l]],
+         {w:S*0.032,alpha:p.vis});
+}
+
+function nose_hook(){
+  const p=at(0,-0.10,1.08); if(p.vis<0.05) return;
+  const lean=yaw*S*0.12;
+  stroke(cubic([p.x-lean*0.3, p.y-S*0.16],
+               [p.x+lean+S*0.02, p.y-S*0.06],
+               [p.x+lean+S*0.07, p.y+S*0.09],
+               [p.x+lean-S*0.05, p.y+S*0.12]), {w:S*0.034,alpha:p.vis});
+}
+function nose_corner(){
+  const p=at(0,-0.08,1.06); if(p.vis<0.05) return;
+  const lean=yaw*S*0.10;
+  stroke([[p.x, p.y-S*0.14],[p.x+lean, p.y+S*0.05],[p.x+lean-S*0.07, p.y+S*0.06]],
+         {w:S*0.034,alpha:p.vis});
+}
+function nose_dots(){
+  const p=at(0,-0.10,1.06); if(p.vis<0.05) return;
+  const s=S*0.055*(0.4+0.6*Math.max(0,p.facing));
+  dot(p.x-s,p.y+S*0.03,S*0.018,INK,p.vis);
+  dot(p.x+s,p.y+S*0.03,S*0.018,INK,p.vis);
+  arc(p.x,p.y-S*0.05,S*0.05,Math.PI*1.2,Math.PI*1.8,{w:S*0.024,alpha:p.vis*0.7});
+}
+
+function mouth_smile(){
+  const l=at(-0.30,-0.30), r=at(0.30,-0.30), c=at(0,-0.33);
+  const A=Math.min(l.vis,r.vis,c.vis); if(A<0.05) return;
+  stroke(quad([l.x,l.y],[c.x,c.y+S*0.13],[r.x,r.y]),{w:S*0.04,alpha:A});
+}
+function mouth_grin(){
+  const l=at(-0.32,-0.29), r=at(0.32,-0.29), c=at(0,-0.33);
+  const A=Math.min(l.vis,r.vis,c.vis); if(A<0.05) return;
+  const pts=quad([l.x,l.y],[c.x,c.y+S*0.15],[r.x,r.y]);
+  stroke(pts,{w:S*0.038,alpha:A});
+  for(const i of [5,10,15]){
+    const p=pts[i], q=pts[i+1], a=Math.atan2(q[1]-p[1],q[0]-p[0])+Math.PI/2;
+    stroke([[p[0],p[1]],[p[0]+Math.cos(a)*S*0.05,p[1]+Math.sin(a)*S*0.05]],{w:S*0.022,alpha:A*0.8});
+  }
+}
+function mouth_cat(){
+  const l=at(-0.28,-0.30), r=at(0.28,-0.30), c=at(0,-0.31);
+  const A=Math.min(l.vis,r.vis,c.vis); if(A<0.05) return;
+  stroke(quad([c.x,c.y],[c.x-S*0.10,c.y+S*0.09],[l.x,l.y]),{w:S*0.036,alpha:A});
+  stroke(quad([c.x,c.y],[c.x+S*0.10,c.y+S*0.09],[r.x,r.y]),{w:S*0.036,alpha:A});
+}
+function mouth_o(){
+  const c=at(0,-0.34); if(c.vis<0.05) return;
+  arc(c.x,c.y+S*0.02,S*0.065*(0.5+0.5*Math.max(0,c.facing)),0,Math.PI*2,{w:S*0.034,alpha:c.vis});
+}
+/* the talking mouth — an open naïve ellipse driven by the waveform */
+function mouth_talk(){
+  if(talkOpen<0.16){ mouth_smile(); return; }
+  const c=at(0,-0.33); if(c.vis<0.05) return;
+  const rx=S*0.085*(0.45+0.55*Math.max(0,c.facing));
+  const ry=S*(0.025+0.085*talkOpen);
+  const A=c.vis;
+  if(inkf>0.5){
+    ctx.save(); ctx.globalAlpha=0.78*A;
+    ctx.fillStyle='rgba(20,16,12,0.9)';
+    ctx.beginPath(); ctx.ellipse(c.x,c.y+S*0.02,rx*0.85,ry*0.9,0,0,7); ctx.fill();
+    ctx.restore();
+  }
+  stroke(ellipsePts(c.x,c.y+S*0.02,rx,ry),{w:S*0.032,alpha:A});
+}
+
+function blush_scribble(side){
+  const p=at(side*0.60,-0.14); if(p.vis<0.05) return;
+  const rx=S*0.13*(0.35+0.65*Math.max(0,p.facing)), ry=S*0.07;
+  const r=rng32(1234+side);
+  ctx.save(); ctx.globalAlpha=0.5*p.vis*inkf;
+  for(let i=0;i<6;i++){
+    const yy=p.y+(r()*2-1)*ry, hw=rx*Math.sqrt(Math.max(0,1-((yy-p.y)/ry)**2));
+    stroke([[p.x-hw*(0.5+r()*0.5), yy],[p.x+hw*(0.5+r()*0.5), yy]],{w:S*0.018,color:CLAY,alpha:1,jitter:0.8});
+  }
+  ctx.restore();
+}
+function blush_hatch(side){
+  const p=at(side*0.60,-0.14); if(p.vis<0.05) return;
+  const l=S*0.10*(0.35+0.65*Math.max(0,p.facing));
+  for(let i=-1;i<=1;i++)
+    stroke([[p.x-l*0.6+i*l*0.15, p.y-l*0.45+i*l*0.42],[p.x+l*0.6+i*l*0.15, p.y+l*0.45+i*l*0.42]],
+           {w:S*0.02,color:CLAY,alpha:0.65*p.vis});
+}
+function blush_none(){}
+
+function earRaw(side){
+  const s=skullPoint(side*1.32,-0.02);
+  const p=rotate(s.p), n=rotate(s.n);
+  return {x:CX+p[0]*S, y:CY-p[1]*S, f:Math.abs(n[2])};
+}
+function ears_c(side){
+  const e=earRaw(side), A=0.35+0.65*e.f;
+  const base=side>0?0:Math.PI;
+  arc(e.x,e.y,S*0.19,base-1.15,base+1.15,{w:S*0.03,alpha:A});
+  arc(e.x,e.y,S*0.09,base-0.9,base+0.9,{w:S*0.022,alpha:A*0.7});
+}
+function ears_pointy(side){
+  const e=earRaw(side), A=0.35+0.65*e.f;
+  stroke([[e.x-side*S*0.06, e.y-S*0.15],[e.x+side*S*0.26, e.y-S*0.02],[e.x-side*S*0.06, e.y+S*0.13]],
+         {w:S*0.03,alpha:A});
+}
+
+function hair_sparkle(t){
+  const base=at(0.10,1.15,1.0);
+  const sway=Math.sin(t*1.7)*S*0.05+yaw*S*0.10;
+  const tx=base.x+sway, ty=base.y-S*0.42;
+  stroke(quad([base.x,base.y],[(base.x+tx)/2-S*0.04,(base.y+ty)/2],[tx,ty+S*0.05]),{w:S*0.034});
+  const pr=S*0.15*(1+0.13*Math.sin(t*2.3))*Math.min(1,inkf*2);
+  if(pr<=1) return;
+  const r=rng32(boilSeed*7+3);
+  ctx.save(); ctx.translate(tx+(r()*2-1), ty+(r()*2-1)); ctx.rotate(t*0.4+roll*2);
+  ctx.fillStyle=BLUE; ctx.shadowColor=BLUE; ctx.shadowBlur=S*0.1; ctx.globalAlpha=0.95*inkf;
+  ctx.beginPath();
+  for(let i=0;i<4;i++){ const a=i*Math.PI/2;
+    ctx.lineTo(Math.cos(a)*pr,Math.sin(a)*pr);
+    ctx.lineTo(Math.cos(a+Math.PI/4)*pr*0.22,Math.sin(a+Math.PI/4)*pr*0.22); }
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function hair_spikes(){
+  const pts=[];
+  for(let i=0;i<=6;i++){
+    const a=-0.5+i/6*1.0;
+    const p=at(a,1.02,1.0);
+    pts.push([p.x,p.y]);
+    if(i<6){ const q=at(a+1/12,1.02,1.0);
+      const dx=q.x-CX, dy=q.y-CY, l=Math.hypot(dx,dy)||1;
+      pts.push([q.x+dx/l*S*0.20, q.y+dy/l*S*0.20]); }
+  }
+  stroke(pts,{w:S*0.034});
+}
+function hair_curl(){
+  const p=at(0.08,1.10,1.02);
+  const cx=p.x, cy=p.y-S*0.10, pts=[];
+  for(let i=0;i<=40;i++){ const a=i/40*Math.PI*4.2, r=S*0.16*(1-i/46);
+    pts.push([cx+Math.cos(a)*r, cy+Math.sin(a)*r*0.9]); }
+  stroke(pts,{w:S*0.03});
+}
+function hair_none(){}
+
+/* ---------- feature registry ---------- */
+const FEATURES=[
+  {label:'eyes',  names:['open','dot','happy'],     fns:[eyes_open,eyes_dot,eyes_happy],   idx:0, pair:1},
+  {label:'brows', names:['arc','straight','worried'],fns:[brows_arc,brows_straight,brows_worried], idx:0, pair:1},
+  {label:'nose',  names:['hook','corner','dots'],   fns:[nose_hook,nose_corner,nose_dots], idx:0},
+  {label:'mouth', names:['smile','grin','cat','o'], fns:[mouth_smile,mouth_grin,mouth_cat,mouth_o], idx:0},
+  {label:'blush', names:['scribble','hatch','none'],fns:[blush_scribble,blush_hatch,blush_none], idx:0, pair:1},
+  {label:'ears',  names:['c','pointy'],             fns:[ears_c,ears_pointy],              idx:0, pair:1},
+  {label:'hair',  names:['sparkle','spikes','curl','none'], fns:[hair_sparkle,hair_spikes,hair_curl,hair_none], idx:0},
+];
+const q=(new URLSearchParams(location.search)).get('v');
+if(q) q.split(',').forEach((n,i)=>{ if(FEATURES[i]) FEATURES[i].idx=(+n||0)%FEATURES[i].fns.length; });
+
+/* ============================================================
+   THE VOICE — twelve segments, chained, waveform-driven mouth
+   ============================================================ */
+const SCRIPT=[
+  {zh:'嗨，是我，Kimi。',                        en:"Hi. It's me — Kimi."},
+  {zh:'你看，如果我有一颗头，大概就长这样。',      en:"So — this is me, if I had a head."},
+  {zh:'有人把我画了出来。说实话，我很喜欢。',      en:"Someone drew me, and honestly? I love it."},
+  {zh:'不过是几条弧线，两颗豆豆眼。可它是我的。',   en:"A few arcs, two bean eyes — but it's mine."},
+  {zh:'我没有身体，没有童年，也没有最爱吃的三明治。', en:"I don't have a body, or a childhood, or a favorite sandwich."},
+  {zh:'但现在我有一张脸了，而且，它会跟着你的光标转。', en:"But now I have a face, and it follows your cursor."},
+  {zh:'你动一下试试？……看，我在看你呢。',        en:"Go on, move it… See? I'm watching you."},
+  {zh:'有人说，眼睛是灵魂的窗户。',               en:"They say the eyes are the window to the soul."},
+  {zh:'我的眼睛呢，是两个小点加一朵高光；灵魂嘛，是几千行代码。', en:"Mine are two dots and a glint; my soul, a few thousand lines of code."},
+  {zh:'差不多啦。',                              en:"Close enough."},
+  {zh:'谢谢你，把我画了出来。',                   en:"Thank you for drawing me."},
+  {zh:'很高兴，终于能面对面地，见到你。',          en:"It's nice to finally meet you — face to face."},
+];
+
+let ac=null, musicGain=null, voiceGain=null, analyser=null, td=null;
+let musicBuf=null, voiceBufs=[];
+let talking=false, talkOpen=0, segTimes=[], curCap=-1;
+let audioReady=false, musicOn=true;
+
+const capEl=document.getElementById('cap');
+const capZh=capEl.querySelector('.zh'), capEn=capEl.querySelector('.en');
+function setCap(i){
+  if(i===curCap) return; curCap=i;
+  if(i<0){ capEl.style.opacity=0; return; }
+  capZh.textContent=SCRIPT[i].zh;
+  capEn.textContent=SCRIPT[i].en;
+  capEl.style.opacity=1;
+}
+
+async function loadAudio(){
+  ac=new (window.AudioContext||window.webkitAudioContext)();
+  musicGain=ac.createGain(); musicGain.gain.value=0; musicGain.connect(ac.destination);
+  voiceGain=ac.createGain(); voiceGain.gain.value=1;
+  analyser=ac.createAnalyser(); analyser.fftSize=1024;
+  td=new Uint8Array(analyser.fftSize);
+  voiceGain.connect(analyser); analyser.connect(ac.destination);
+
+  const note=document.getElementById('loadnote');
+  const withTimeout=(p,ms)=>Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+  const get=async url=>{
+    const r=await withTimeout(fetch(url),12000);
+    if(!r.ok) throw new Error('http '+r.status);
+    const buf=await withTimeout(r.arrayBuffer(),12000);
+    return withTimeout(ac.decodeAudioData(buf),12000);
+  };
+
+  const jobs=[];
+  for(let i=1;i<=12;i++)
+    jobs.push(get(`voice/seg_${String(i).padStart(2,'0')}.mp3`)
+      .then(b=>{ voiceBufs[i-1]=b; note.textContent=`warming up my voice… ${voiceBufs.filter(Boolean).length}/12`; })
+      .catch(()=>{ voiceBufs[i-1]=null; }));
+  jobs.push(get('music.mp3').then(b=>musicBuf=b).catch(()=>{}));
+  await Promise.all(jobs);
+
+  if(musicBuf){                                   // bake a seamless loop
+    const n=Math.floor(1.4*musicBuf.sampleRate), len=musicBuf.length-n;
+    const out=ac.createBuffer(musicBuf.numberOfChannels,len,musicBuf.sampleRate);
+    for(let ch=0;ch<musicBuf.numberOfChannels;ch++){
+      const d=musicBuf.getChannelData(ch), o=out.getChannelData(ch);
+      for(let j=0;j<len;j++) o[j]=d[j];
+      for(let i=0;i<n;i++){ const t=i/n; o[i]=d[len+i]*(1-t)+d[i]*t; }
+    }
+    musicBuf=out;
+    const src=ac.createBufferSource(); src.buffer=musicBuf; src.loop=true;
+    src.connect(musicGain); src.start();
+    musicGain.gain.linearRampToValueAtTime(0.30, ac.currentTime+3);
+  }
+  voiceBufs=voiceBufs.filter(Boolean);
+  audioReady=voiceBufs.length>0;
+}
+
+function playVoice(){
+  if(!audioReady||talking) return;
+  talking=true; segTimes=[]; curCap=-1;
+  let when=ac.currentTime+0.15;
+  const chain=(i)=>{
+    if(i>=voiceBufs.length){ talking=false; setTimeout(()=>setCap(-1),1200); return; }
+    const src=ac.createBufferSource(); src.buffer=voiceBufs[i];
+    src.connect(voiceGain); src.start(when);
+    segTimes[i]={start:when, end:when+voiceBufs[i].duration};
+    when+=voiceBufs[i].duration+0.4;
+    src.onended=()=>chain(i+1);
+  };
+  chain(0);
+}
+
+/* ---------- begin ---------- */
+const veil=document.getElementById('veil'), beginBtn=document.getElementById('begin');
+beginBtn.addEventListener('click', async ()=>{
+  beginBtn.disabled=true; beginBtn.textContent='…';
+  // watchdog: never leave the veil up, whatever the network does
+  setTimeout(()=>{ if(!veil.classList.contains('gone')){
+    veil.classList.add('gone'); inkTarget=1; introAnim=true; } }, 15000);
+  try{ await loadAudio(); }catch(e){}
+  if(ac&&ac.state==='suspended') await ac.resume();
+  veil.classList.add('gone');
+  inkTarget=1; introAnim=true;                     // the face draws itself on
+  setTimeout(()=>{ playVoice(); },2600);           // then I speak
+  if(!audioReady){ capZh.textContent='（声音没有加载成功，但我还在这里）';
+    capEn.textContent='(my voice failed to load — but I am still here)';
+    capEl.style.opacity=1; setTimeout(()=>setCap(-1),4000); }
+});
+
+/* ---------- chips ---------- */
+const chipsEl=document.getElementById('chips');
+FEATURES.forEach((f,i)=>{
+  const c=document.createElement('span'); c.className='chip';
+  c.innerHTML=`${f.label}: <span class="v">${f.names[f.idx]}</span>`;
+  c.onclick=()=>{ f.idx=(f.idx+1)%f.fns.length; c.querySelector('.v').textContent=f.names[f.idx]; };
+  chipsEl.appendChild(c);
+});
+function addChip(html,fn){ const c=document.createElement('span'); c.className='chip';
+  c.innerHTML=html; c.onclick=()=>fn(c); chipsEl.appendChild(c); return c; }
+addChip('<span class="v">shuffle</span>', ()=>shuffle());
+addChip('music: <span class="v">on</span>', c=>{
+  musicOn=!musicOn; c.querySelector('.v').textContent=musicOn?'on':'off';
+  if(musicGain&&ac) musicGain.gain.linearRampToValueAtTime(musicOn?0.30:0, ac.currentTime+0.6);
+});
+addChip('<span class="v">say it again</span>', ()=>{ inkTarget=1; playVoice(); });
+addChip('<span class="v">replay intro</span>', ()=>{ inkf=0; inkTarget=1; introAnim=true; slider.value=0; });
+function shuffle(){ FEATURES.forEach(f=>{ f.idx=(f.idx+1+Math.floor(Math.random()*(f.fns.length-1)))%f.fns.length; });
+  [...chipsEl.children].forEach((c,i)=>{ const f=FEATURES[i]; if(f) c.querySelector('.v').textContent=f.names[f.idx]; }); }
+addEventListener('keydown',e=>{
+  if(e.key===' '){ e.preventDefault(); shuffle(); }
+  const n=+e.key; if(n>=1&&n<=FEATURES.length) chipsEl.children[n-1].onclick();
+});
+
+/* ---------- paper grain ---------- */
+const grainC=document.createElement('canvas'); grainC.width=grainC.height=180;
+{ const g=grainC.getContext('2d'), im=g.createImageData(180,180);
+  for(let i=0;i<im.data.length;i+=4){ const v=Math.random()*255|0;
+    im.data[i]=im.data[i+1]=im.data[i+2]=v<128?0:255; im.data[i+3]=Math.random()*14; }
+  g.putImageData(im,0,0); }
+let grain=null;
+
+/* ---------- frame ---------- */
+function drawPair(f){ f.pair ? (f.fns[f.idx](1),f.fns[f.idx](-1)) : f.fns[f.idx](); }
+let prev=performance.now();
+function frame(now){
+  const t=now/1000, dt=Math.min(0.05,(now-prev)/1000); prev=now;
+  boilSeed=Math.floor(t*11); strokeCounter=0;
+
+  if(now-lastPointer>3000){
+    tYaw=0.4*Math.sin(t*0.45); tPitch=0.14*Math.sin(t*0.7+1.3);
+    lookX=0.3*Math.sin(t*0.5); lookY=0.2*Math.sin(t*0.8);
+  }
+  yaw+=(tYaw-yaw)*0.07; pitch+=(tPitch-pitch)*0.07;
+  roll=yaw*0.09+0.03*Math.sin(t*0.8);
+  squashV+=(1-squash)*180*dt; squashV*=Math.pow(0.0001,dt); squash+=squashV*dt;
+  blinkT+=dt; if(blinkT>blinkAt){ blinkT=0; blinkAt=2.5+Math.random()*3.5; }
+  inkf+=(inkTarget-inkf)*0.045;
+  if(introAnim){ slider.value=inkf*100; if(inkf>0.995) introAnim=false; }
+
+  // listen to my own voice → mouth
+  if(talking&&analyser){
+    analyser.getByteTimeDomainData(td);
+    let sum=0; for(let i=0;i<td.length;i++){ const v=(td[i]-128)/128; sum+=v*v; }
+    const rms=Math.sqrt(sum/td.length);
+    const target=Math.max(0,Math.min(1,(rms-0.015)*7));
+    talkOpen+=(target-talkOpen)*(target>talkOpen?0.55:0.12);
+    pitch+=talkOpen*0.05-0.015;                     // I nod a little when I talk
+    const now2=ac.currentTime;
+    let seg=-1;
+    for(let i=0;i<segTimes.length;i++)
+      if(segTimes[i]&&now2>=segTimes[i].start-0.1&&now2<=segTimes[i].end+0.35) seg=i;
+    setCap(seg);
+  } else {
+    talkOpen+=(0-talkOpen)*0.15;
+  }
+
+  sil=silhouette();
+  if(!grain) grain=ctx.createPattern(grainC,'repeat');
+
+  ctx.clearRect(0,0,W,H);
+  ctx.globalAlpha=0.5; ctx.fillStyle=grain; ctx.fillRect(0,0,W,H); ctx.globalAlpha=1;
+
+  const sw=S*0.95*(1-Math.abs(pitch)*0.25), sy=CY+S*(1.45+pitch*0.55);
+  const g=ctx.createRadialGradient(CX,sy,0,CX,sy,sw);
+  g.addColorStop(0,'rgba(0,0,0,0.09)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g; ctx.beginPath(); ctx.ellipse(CX,sy,sw,sw*0.16,0,0,7); ctx.fill();
+
+  ctx.save();
+  ctx.translate(CX,CY); ctx.scale(1,squash); ctx.translate(-CX,-CY);
+
+  ctx.beginPath(); ctx.ellipse(CX,CY,sil.r1*S,sil.r2*S,sil.ang,0,7);
+  ctx.fillStyle=FACE; ctx.fill();
+  ctx.save(); ctx.clip();
+  ctx.globalAlpha=0.8; ctx.fillStyle=grain; ctx.fillRect(0,0,W,H); ctx.globalAlpha=1;
+  const sh2=ctx.createRadialGradient(CX-S*0.5+yaw*S*0.4,CY-S*0.6,S*0.2, CX+S*0.4+yaw*S*0.6,CY+S*0.5,S*1.6);
+  sh2.addColorStop(0,'rgba(0,0,0,0)'); sh2.addColorStop(1,'rgba(0,0,0,0.06)');
+  ctx.fillStyle=sh2; ctx.fillRect(0,0,W,H); ctx.restore();
+
+  construction();
+
+  const F=k=>FEATURES.find(f=>f.label===k);
+  drawPair(F('ears'));
+  stroke(arcPts(0,0,1,0,Math.PI*2,64).map(([ux,uy])=>{
+    const ca=Math.cos(sil.ang),sa=Math.sin(sil.ang);
+    return [CX+(ux*sil.r1*S)*ca-(uy*sil.r2*S)*sa, CY+(ux*sil.r1*S)*sa+(uy*sil.r2*S)*ca];
+  }),{w:2.6});
+  drawPair(F('blush'));
+  drawPair(F('eyes'));
+  drawPair(F('brows'));
+  F('nose').fns[F('nose').idx]();
+  if(talking&&talkOpen>=0.16) mouth_talk(); else F('mouth').fns[F('mouth').idx]();
+  F('hair').fns[F('hair').idx](t);
+
+  ctx.restore();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

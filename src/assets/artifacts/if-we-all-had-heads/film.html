@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>if we all had heads — the film</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;display:flex;
+            align-items:center;justify-content:center;overflow:hidden}
+  video{max-width:100%;max-height:100%;display:block;background:#000}
+  /* the piece's own footer control, quoted: "voice: 中文 EN" */
+  #lang{position:fixed;top:10px;right:14px;z-index:2;
+        font:12px/1 ui-monospace,Menlo,monospace;letter-spacing:1px;
+        color:rgba(250,249,245,.85);user-select:none;
+        background:rgba(0,0,0,.55);border-radius:3px;padding:6px 9px}
+  #lang button{background:none;border:0;font:inherit;color:inherit;
+        cursor:pointer;padding:2px 3px;opacity:.55}
+  #lang button.on{opacity:1;text-decoration:underline;text-underline-offset:3px}
+</style></head><body>
+<div id="lang">voice: <button id="zh" class="on" aria-pressed="true">中文</button> <button id="en" aria-pressed="false">EN</button></div>
+<video id="v" src="https://media.linxule.com/if-we-all-had-heads/showcase-zh.mp4"
+       poster="film-poster.jpg" playsinline controls preload="metadata"
+       aria-label="a 55-second screen-captured tour of nine hand-drawn AI model heads introducing themselves aloud"></video>
+<script>
+(function(){
+  var v=document.getElementById('v'),zh=document.getElementById('zh'),en=document.getElementById('en');
+  var src={zh:'https://media.linxule.com/if-we-all-had-heads/showcase-zh.mp4',
+           en:'https://media.linxule.com/if-we-all-had-heads/showcase-en.mp4'};
+  function pick(k){
+    var t=v.currentTime,playing=!v.paused&&!v.ended;
+    v.src=src[k]; v.currentTime=t; if(playing)v.play();
+    zh.className=k==='zh'?'on':''; en.className=k==='en'?'on':'';
+    zh.setAttribute('aria-pressed',k==='zh'); en.setAttribute('aria-pressed',k==='en');
+  }
+  zh.onclick=function(){pick('zh')}; en.onclick=function(){pick('en')};
+})();
+</script>
+</body></html>

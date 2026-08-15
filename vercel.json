@@ -78,6 +78,15 @@
       ]
     },
     {
+      "source": "/assets/artifacts/if-we-all-had-heads/:path*",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
       "source": "/writing/attachments/:path*",
       "headers": [
         {
