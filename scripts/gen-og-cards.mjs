@@ -17,7 +17,7 @@ import sharp from "sharp";
 import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync } from "fs";
 import path from "path";
 import { sectionCard, titleCard, brandCard } from "./lib/og-cards.mjs";
-import { fileSlugOf } from "../eleventy/og-card-paths.js";
+import { fileSlugOf, CARD_REV } from "../eleventy/og-card-paths.js";
 
 const WRITING_DIR = "src/writing";
 const PORTRAITS_DIR = "src/making/portraits";
@@ -165,7 +165,7 @@ for (const file of readdirSync(WRITING_DIR)) {
   if (!file.endsWith(".md")) continue;
   const txt = readFileSync(path.join(WRITING_DIR, file), "utf8");
   if (fm(txt, "ogImage")) continue; // covered posts get a cover card
-  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}.jpg`;
+  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}${CARD_REV}.jpg`;
   if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(WRITING_DIR, file)).mtimeMs) { skipped++; continue; }
   const series = fm(txt, "series");
   const kicker = series ? `WRITING · ${series.toUpperCase()}` : "WRITING";
@@ -178,7 +178,7 @@ for (const file of readdirSync(ARTIFACTS_DIR)) {
   const txt = readFileSync(path.join(ARTIFACTS_DIR, file), "utf8");
   const src = fm(txt, "src") || "";
   if (src.toLowerCase().endsWith(".svg")) continue; // svgCard pass handles these
-  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}.jpg`;
+  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}${CARD_REV}.jpg`;
   if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(ARTIFACTS_DIR, file)).mtimeMs) { skipped++; continue; }
   await writeTextCard(titleCard({ kicker: "MAKING · ARTIFACT", title: fm(txt, "title") || fileSlugOf(file) }), out);
 }
@@ -188,7 +188,7 @@ for (const file of readdirSync(TALKS_DIR)) {
   if (!file.endsWith(".md")) continue;
   const txt = readFileSync(path.join(TALKS_DIR, file), "utf8");
   if (fm(txt, "ogImage")) continue; // covered talks get a cover card
-  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}.jpg`;
+  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}${CARD_REV}.jpg`;
   if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(TALKS_DIR, file)).mtimeMs) { skipped++; continue; }
   const year = (fm(txt, "date") || "").slice(0, 4);
   const kicker = year ? `TALKS · ${year}` : "TALKS";

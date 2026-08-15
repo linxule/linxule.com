@@ -75,6 +75,9 @@ function render(svg) {
 
 const dot = (cy) => `<circle cx="${X + 9}" cy="${cy}" r="9" fill="${CYAN}"/>`;
 const rule = (y, w) => `<line x1="${X}" y1="${y}" x2="${X + w}" y2="${y}" stroke="${GHOST}" stroke-width="1"/>`;
+const ruleRight = (y, w) => `<line x1="${1200 - X - w}" y1="${y}" x2="${1200 - X}" y2="${y}" stroke="${GHOST}" stroke-width="1"/>`;
+const kickerRight = (text, y, size = 20, ls = 4) =>
+  `<text x="${1200 - X}" y="${y}" text-anchor="end" font-family="${MONO}" font-size="${size}" letter-spacing="${ls}" fill="${FAINT}">${esc(text)}</text>`;
 const kickerEl = (text, y, size = 23, ls = 7) =>
   `<text x="${X}" y="${y}" font-family="${MONO}" font-size="${size}" letter-spacing="${ls}" fill="${FAINT}">${esc(text)}</text>`;
 
@@ -93,8 +96,10 @@ export function sectionCard({ kicker, title, taglineLines }) {
   ));
 }
 
-/** Title card: mono locator kicker · big auto-fit title (last word cyan) · brand footer. */
-export function titleCard({ kicker, title, brand = "XULE LIN · LINXULE.COM" }) {
+/** Title card: mono locator kicker · big auto-fit title (last word cyan) · domain colophon
+ * bottom-RIGHT (the name is dropped — the URL and platform overlays already carry it,
+ * and the bottom-left corner is where link-preview overlays sit). */
+export function titleCard({ kicker, title, brand = "LINXULE.COM" }) {
   const maxW = 1200 - X * 2;
   let size = 120;
   let lines = wrap(title, size, maxW);
@@ -117,8 +122,8 @@ export function titleCard({ kicker, title, brand = "XULE LIN · LINXULE.COM" }) 
   const accentDot = accentLast ? "" : dot(158);
   return render(svgWrap(
     kickerEl(kicker, 120, 22, 6) + accentDot + body +
-    rule(520, 220) +
-    kickerEl(brand, 556, 20, 4)
+    ruleRight(520, 220) +
+    kickerRight(brand, 556)
   ));
 }
 
