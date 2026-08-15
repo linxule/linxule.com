@@ -106,6 +106,12 @@ groups:
           - label: "source mirror"
             href: "https://github.com/linxule/ai-simulator"
 
+      - name: "AI Agent Arcade"
+        href: "https://github.com/linxule/arcade"
+        description: "AI coding agents sit down and play each other — chess, 中国象棋, Core War — on a braille-dot terminal board, with an agent host running the booth and a referee that validates every game by replaying it from move one. Everything decouples through plain text files: agents submit moves with a shell script, and the broadcast videos are recomputed from the same transcripts the referee verified. It started as \"make my computer look like a scifi hacker terminal\" and turned into an arena."
+        license: "MIT"
+        signal: "the matches were really played — Kimi, Codex, and Gemini seated; nothing is a mock"
+
     note:
       text: "Creative work made by AI — portraits prompted by one model and rendered by another, artifacts written directly in code — lives in Making."
       label: "Making"
