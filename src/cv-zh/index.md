@@ -3,18 +3,18 @@ ogImage: /assets/og-cards/cv.jpg
 layout: layouts/cv.njk
 title: 简历 — 林徐乐
 lang: zh-CN
-description: "林徐乐 (Xule Lin) — 帝国理工学院管理学博士，将于2026年加入SKEMA商学院任助理教授。研究人机协作、后AGI组织、去中心化治理、AI治理与定性研究方法。"
+description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴黎)，帝国理工学院管理学博士。研究人机协作、后AGI组织、去中心化治理、AI治理与定性研究方法。"
 ---
 
 ## 林徐乐 Xule Lin
 
-### 英国伦敦帝国理工学院 (Imperial College London) 南肯辛顿校区，伦敦 SW7 2AZ
+### 法国SKEMA商学院 (SKEMA Business School) 巴黎校区
 
 ### [x@linxule.com](mailto:x@linxule.com) | [linxule.com](https://linxule.com/) | [github.com/linxule](https://github.com/linxule)
 
 # 学术任职
 
-- SKEMA商学院 (SKEMA Business School)，巴黎，2026年8月起
+- SKEMA商学院，巴黎，2026年8月起
 	- 助理教授，SKEMA人工智能中心
 - <br/>帝国理工商学院 (Imperial Business School)，英国伦敦，2025 – 2026
 	- 研究员 (Research Associate)，管理与创业系
@@ -207,8 +207,12 @@ description: "林徐乐 (Xule Lin) — 帝国理工学院管理学博士，将�
 		- 面向MCP客户端的多模型AI网关，支持8个提供商及本地模型，具备对话线程管理，无系统提示注入
 	- Lotus Wisdom MCP Server([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
 		- 通过多视角推理实现结构化沉思式问题解决的MCP服务器；提供跨MCP客户端可用的托管端点(约每月640次下载，npm，2026年年中数据)
+	- [durable-thinking](https://github.com/linxule/durable-thinking)
+		- 基于Cloudflare Workers与Durable Objects的持久化顺序思维 (Sequential Thinking) MCP服务器——思维序列跨会话保存于服务端
 	- [MCP Music Studio](https://github.com/linxule/mcp-music-studio)
 		- 面向AI的双模式创意音乐工作室：ABC记谱作曲(自动生成乐谱)与Strudel实时编码演奏；已被第三方维护者独立移植至心流 (iFlow) MCP平台
+	- [arcade](https://github.com/linxule/arcade)
+		- AI编程智能体通过共享文件总线 (file bus) 相互对战的游戏竞技场，支持国际象棋、中国象棋与Core War
 	- [kimi-plugin-cc](https://github.com/linxule/kimi-plugin-cc)
 		- 为智能体编程环境(Claude Code、Codex)引入独立的第二模型，用于差异审查 (diff review)、对抗性质询与委托任务，配备钩子 (hook) 强制执行的安全边界
 	- [deepthonk](https://github.com/linxule/deepthonk)

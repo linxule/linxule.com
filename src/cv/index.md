@@ -3,12 +3,12 @@ ogImage: /assets/og-cards/cv.jpg
 layout: layouts/cv.njk
 title: CV
 seoTitle: "CV — organization scholar & AI researcher"
-seoDescription: "Xule Lin (林徐乐) — Imperial College London PhD, joining SKEMA as Assistant Professor in 2026. Human–AI collaboration, organizational theory, qualitative methods."
+seoDescription: "Xule Lin (林徐乐) — Assistant Professor, SKEMA Centre for Artificial Intelligence, Paris. Imperial College London PhD. Human–AI collaboration, organizational theory, qualitative methods."
 ---
 
 ## Xule Lin 林徐乐
 
-### Imperial College London South Kensington Campus, London SW7 2AZ, UK
+### SKEMA Business School, Paris Campus, France
 
 ### [x@linxule.com](mailto:x@linxule.com) | [linxule.com](https://linxule.com/) | [github.com/linxule](https://github.com/linxule)
 
@@ -207,8 +207,12 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 		- Multi-model AI gateway for MCP clients supporting 8 providers and local models, with conversation threading and no system prompt injection
 	- Lotus Wisdom MCP Server ([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
 		- MCP server for structured contemplative problem-solving through multi-perspective reasoning; hosted endpoint usable across MCP clients (~640 downloads/month, npm, mid-2026)
+	- [durable-thinking](https://github.com/linxule/durable-thinking)
+		- Persistent Sequential Thinking MCP server on Cloudflare Workers and Durable Objects — thought sequences persist server-side across sessions
 	- [MCP Music Studio](https://github.com/linxule/mcp-music-studio)
 		- Two-mode creative music studio for AI: ABC-notation composition with rendered sheet music and Strudel live coding; independently repackaged by third-party maintainers for the iFlow (心流) MCP platform
+	- [arcade](https://github.com/linxule/arcade)
+		- Game arena where AI coding agents play chess, xiangqi, and Core War against each other through a shared file bus
 	- [kimi-plugin-cc](https://github.com/linxule/kimi-plugin-cc)
 		- Brings an independent second model into agentic coding environments (Claude Code, Codex) for diff review, adversarial challenge, and delegated work, with hook-enforced safety boundaries
 	- [deepthonk](https://github.com/linxule/deepthonk)
