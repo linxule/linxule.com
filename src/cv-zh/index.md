@@ -16,7 +16,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 
 - SKEMA商学院，巴黎，2026年8月起
 	- 助理教授，SKEMA人工智能中心
-- <br/>帝国理工商学院 (Imperial Business School)，英国伦敦，2025 – 2026
+- <br/>帝国理工商学院 (Imperial Business School)，英国伦敦，2025至今
 	- 研究员 (Research Associate)，管理与创业系
 
 # 教育背景
@@ -244,7 +244,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 		- 建设网站并设计标志
 	- [组织中的去中心化 (Decentralization in Organizations, DiO) 社区](https://dio-community.org/)，2023至今
 		- 建设网站并设计标志
-	- 研究方法与分析进步联盟 (CARMA)，2021至今
+	- 研究方法与分析进步联盟 (CARMA)，博士生代表，2021 – 2022
 - <br/>志愿者
 	- SMS第42届年会，伦敦，2022
 	- 企业、数字与复杂加速国际研讨会 (International Symposium on Corporate, Digital and Wicked Acceleration)，2022

@@ -16,7 +16,7 @@ seoDescription: "Xule Lin (林徐乐) — Assistant Professor, SKEMA Centre for 
 
 - SKEMA Business School, Paris, August 2026 –
 	- Assistant Professor, SKEMA Centre for Artificial Intelligence
-- <br/>Imperial Business School, Imperial College London, 2025 – 2026
+- <br/>Imperial Business School, Imperial College London, 2025 – Present
 	- Research Associate, Department of Management and Entrepreneurship
 
 # Education
@@ -244,7 +244,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 		- Built website and designed logo
 	- [Decentralization in Organization (DiO) Community](https://dio-community.org/), 2023 – Present
 		- Built website and designed logo
-	- Consortium for the Advancement of Research Methods and Analysis (CARMA), 2021 – Present
+	- Consortium for the Advancement of Research Methods and Analysis (CARMA), Ph.D. Representative, 2021 – 2022
 - <br/>Volunteer
 	- SMS 42nd Annual Conference, London, 2022
 	- International Symposium on Corporate, Digital and Wicked Acceleration, 2022
