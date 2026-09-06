@@ -2,6 +2,8 @@ import { defineConfig } from "@playwright/test";
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:4173";
 const viewports = [
+  ["phone", 390, 844],
+  ["phone-narrow", 320, 740],
   ["mobile-boundary", 768, 900],
   ["book-boundary", 769, 900],
   ["book-narrow", 800, 900],
@@ -32,6 +34,9 @@ export default defineConfig({
   },
   projects: viewports.map(([name, width, height]) => ({
     name,
+    // Making has its own established boundary matrix; phone regressions live
+    // in the reading/discovery suites.
+    ...(name === "phone" || name === "phone-narrow" ? { testIgnore: "**/making/**" } : {}),
     use: { viewport: { width, height } },
   })),
   webServer: process.env.PLAYWRIGHT_NO_WEBSERVER

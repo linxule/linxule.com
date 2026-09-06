@@ -14,16 +14,33 @@ eleventyExcludeFromCollections: true
 {% endif %}
 {% if artifact.data.plottable %}**Plottable**: Yes
 {% endif %}{% if artifact.data.mediaType == "video" %}
-**Video player**: [Open the embedded player](https://linxule.com{{ artifact.data.src }})
+**Video player**: [Open the embedded player]({{ artifact.data.src | absoluteContentUrl(site.url) | safe }})
 {% if artifact.data.video and artifact.data.video.contentUrl %}**Video file**: [Open the MP4]({{ artifact.data.video.contentUrl }})
 {% endif %}{% elif artifact.data.src | isHTMLFile %}
-**Interactive work**: [Open the artifact](https://linxule.com{{ artifact.data.src }})
+**Interactive work**: [Open the artifact]({{ artifact.data.src | absoluteContentUrl(site.url) | safe }})
 {% elif artifact.data.src %}
-**Image**: [Open the image](https://linxule.com{{ artifact.data.src }})
+**Image**: [Open the image]({{ artifact.data.src | absoluteContentUrl(site.url) | safe }})
 {% endif %}{% if artifact.data.thumbnail %}
-**Poster**: [Open the poster](https://linxule.com{{ artifact.data.thumbnail }})
+**Poster**: [Open the poster]({{ artifact.data.thumbnail | absoluteContentUrl(site.url) | safe }})
 {% endif %}
 {% if artifact.data.keywords %}**Keywords**: {{ artifact.data.keywords | join(", ") | safe }}
+{% endif %}
+
+{% if artifact.data.images %}
+## Exhibited Works
+
+This text catalogs the collection. Each linked image or interactive variation remains on its own surface.
+
+{% for image in artifact.data.images %}
+### {% if image.src | isHTMLFile %}Interactive variation{% else %}Image{% endif %} {{ loop.index }}
+
+**{% if image.src | isHTMLFile %}Interactive work{% else %}Image{% endif %}**: [Open {% if image.src | isHTMLFile %}the variation{% else %}the image{% endif %}]({{ image.src | absoluteContentUrl(site.url) | safe }})
+{% if image.alt %}
+**Description**: {{ image.alt | safe }}
+{% endif %}{% if image.interpretation %}
+**Interpretation**: {{ image.interpretation | safe }}
+{% endif %}
+{% endfor %}
 {% endif %}
 
 {% if artifact.data.contextExcerpt %}

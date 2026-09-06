@@ -1,207 +1,93 @@
-/**
- * gen-og-cards.mjs — generate small 1200×630 social cards (cropped, JPEG, 1.91:1).
- *
- * og:image / twitter:image must be a small, scraper-safe card — never a raw
- * multi-MB source (X fails >5 MB, FB >8 MB) and ideally 1.91:1 so platforms
- * don't crop/letterbox. This generates a card for every hero the `ogCard` filter
- * (eleventy/filters.js) points at:
- *   - Writing covers: every /writing/attachments/<name>.png|webp referenced by an
- *     `ogImage:` value → <name>-og.jpg.
- *   - Portrait galleries: the first image of each portrait → <dir>/og.jpg.
- *   - SVG artifacts: rasterized onto the site's paper → <name>-og.jpg.
- * Idempotent (skips cards newer than their source). Runs before eleventy (wired
- * into the `build` + `start` npm scripts); cards are committed and passthrough-copied.
- * Full mechanism: .claude/rules/og-images.md.
- */
+/** Generate small 1200×630 social cards before Eleventy, using its YAML parser. */
 import sharp from "sharp";
-import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync } from "fs";
-import path from "path";
+import { load } from "js-yaml";
+import { readFileSync, existsSync, readdirSync, statSync, mkdirSync } from "node:fs";
+import path from "node:path";
 import { sectionCard, titleCard, brandCard } from "./lib/og-cards.mjs";
-import { fileSlugOf, CARD_REV } from "../eleventy/og-card-paths.js";
+import {
+  fileSlugOf, DEFAULT_CARD, BRAND_CARD, SECTION_CARDS, SERIES_CARDS,
+  sectionCardPath, seriesCardPath, resolveSocialCard, titleCardOptions,
+} from "../eleventy/og-card-paths.js";
 
-const WRITING_DIR = "src/writing";
-const PORTRAITS_DIR = "src/making/portraits";
-const ARTIFACTS_DIR = "src/making/artifacts";
-const TALKS_DIR = "src/talks";
-const OG_CARDS_DIR = "src/assets/og-cards";
-const PAPER = "#f4f1eb"; // site paper background (matches /assets/og-image.png)
-
+const PAPER = "#f4f1eb";
 let made = 0;
 let skipped = 0;
 const problems = [];
 
-async function card(srcFile, outFile) {
-  if (!existsSync(srcFile)) {
-    problems.push(`source missing: ${srcFile}`);
-    return;
-  }
-  if (existsSync(outFile) && statSync(outFile).mtimeMs >= statSync(srcFile).mtimeMs) {
-    skipped++;
-    return;
-  }
+function current(out, source) {
+  return existsSync(out) && (!source || statSync(out).mtimeMs >= statSync(source).mtimeMs);
+}
+async function imageCard(srcFile, outFile, mode) {
+  if (!existsSync(srcFile)) { problems.push(`source missing: ${srcFile}`); return; }
+  if (current(outFile, srcFile)) { skipped++; return; }
+  mkdirSync(path.dirname(outFile), { recursive: true });
   try {
-    await sharp(srcFile)
-      .resize(1200, 630, { fit: "cover", position: "attention" })
-      .jpeg({ quality: 82, mozjpeg: true })
-      .toFile(outFile);
+    let pipeline;
+    if (mode === "vector") {
+      // Keep the existing contained SVG composition and its stable URL.
+      const art = await sharp(srcFile, { density: 200 })
+        .resize(520, 520, { fit: "contain", background: PAPER })
+        .flatten({ background: PAPER }).toBuffer();
+      pipeline = sharp({ create: { width: 1200, height: 630, channels: 3, background: PAPER } })
+        .composite([{ input: art, gravity: "center" }]);
+    } else {
+      // Raster artworks can carry titles at the edge; preserve the whole work.
+      pipeline = sharp(srcFile).rotate().resize(1200, 630, mode === "artwork"
+        ? { fit: "contain", background: PAPER }
+        : { fit: "cover", position: "attention" }).flatten({ background: PAPER });
+    }
+    await pipeline.jpeg({ quality: mode === "vector" ? 88 : 82, mozjpeg: true }).toFile(outFile);
     made++;
     console.log(`[og-cards] wrote ${path.relative("src", outFile)}`);
-  } catch (e) {
-    problems.push(`failed ${srcFile}: ${e.message}`);
-  }
+  } catch (error) { problems.push(`failed ${srcFile}: ${error.message}`); }
 }
-
-// Vector artwork (e.g. SVG artifacts): scrapers can't render SVG, so rasterize
-// the whole drawing centered on the site's paper (contain, not crop).
-async function svgCard(srcFile, outFile) {
-  if (!existsSync(srcFile)) {
-    problems.push(`source missing: ${srcFile}`);
-    return;
-  }
-  if (existsSync(outFile) && statSync(outFile).mtimeMs >= statSync(srcFile).mtimeMs) {
-    skipped++;
-    return;
-  }
-  try {
-    const art = await sharp(srcFile, { density: 200 })
-      .resize(520, 520, { fit: "contain", background: PAPER })
-      .flatten({ background: PAPER })
-      .toBuffer();
-    await sharp({ create: { width: 1200, height: 630, channels: 3, background: PAPER } })
-      .composite([{ input: art, gravity: "center" }])
-      .jpeg({ quality: 88, mozjpeg: true })
-      .toFile(outFile);
-    made++;
-    console.log(`[og-cards] wrote ${path.relative("src", outFile)}`);
-  } catch (e) {
-    problems.push(`failed ${srcFile}: ${e.message}`);
-  }
-}
-
-// Writing covers → <name>-og.jpg beside the cover.
-for (const file of readdirSync(WRITING_DIR)) {
-  if (!file.endsWith(".md")) continue;
-  const txt = readFileSync(path.join(WRITING_DIR, file), "utf8");
-  const m = txt.match(/^ogImage:\s*(\/writing\/attachments\/\S+\.(?:png|webp))\s*$/im);
-  if (!m) continue;
-  const srcFile = "src" + m[1];
-  const dir = path.dirname(srcFile);
-  const base = path.basename(srcFile, path.extname(srcFile));
-  await card(srcFile, path.join(dir, `${base}-og.jpg`));
-}
-
-// Portrait galleries → <dir>/og.jpg from the first gallery image.
-for (const file of readdirSync(PORTRAITS_DIR)) {
-  if (!file.endsWith(".md")) continue;
-  const txt = readFileSync(path.join(PORTRAITS_DIR, file), "utf8");
-  const m = txt.match(/^images:[ \t]*\n[ \t]*-[ \t]*src:[ \t]*(\/assets\/images\/portraits\/\S+\.(?:png|webp|jpe?g))/im);
-  if (!m) continue;
-  const srcFile = "src" + m[1];
-  await card(srcFile, path.join(path.dirname(srcFile), "og.jpg"));
-}
-
-// SVG artifacts → <name>-og.jpg (rasterized on paper).
-for (const file of readdirSync(ARTIFACTS_DIR)) {
-  if (!file.endsWith(".md")) continue;
-  const txt = readFileSync(path.join(ARTIFACTS_DIR, file), "utf8");
-  const m = txt.match(/^src:[ \t]*(\/assets\/images\/artifacts\/\S+\.svg)\s*$/im);
-  if (!m) continue;
-  const srcFile = "src" + m[1];
-  const base = path.basename(srcFile, ".svg");
-  await svgCard(srcFile, path.join(path.dirname(srcFile), `${base}-og.jpg`));
-}
-
-// ── Text cards (resvg) — on-brand cards for pages with no hero image ──────────
-// Brand/default + section index cards + per-page auto-title cards (writing without
-// a cover, HTML artifacts). Wiring: eleventy/og-card-paths.js + base.njk cascade.
-
-mkdirSync(`${OG_CARDS_DIR}/auto`, { recursive: true });
-
-async function writeTextCard(png, outFile) {
-  await sharp(png).jpeg({ quality: 86, mozjpeg: true }).toFile(outFile);
+async function writeTextCard(render, outFile, source) {
+  if (current(outFile, source)) { skipped++; return; }
+  mkdirSync(path.dirname(outFile), { recursive: true });
+  await sharp(render()).jpeg({ quality: 86, mozjpeg: true }).toFile(outFile);
   made++;
   console.log(`[og-cards] wrote ${path.relative("src", outFile)}`);
 }
-const fm = (txt, key) => {
-  const m = txt.match(new RegExp(`^${key}:\\s*(.+?)\\s*$`, "im"));
-  return m ? m[1].replace(/^["']|["']$/g, "") : null;
-};
-
-// Brand / default card (also the global fallback in base.njk). design.md line 148:
-// the old card's "to participants." framing is stale → refreshed to "not as tools."
-await writeTextCard(
-  brandCard({
-    name: "Xule Lin",
-    kicker: "LINXULE.COM",
-    taglineLines: [
-      "What becomes impossible to see when",
-      "algorithms enter organizational life —",
-      { text: "not as tools.", accent: true },
-    ],
-  }),
-  `${OG_CARDS_DIR}/default.jpg`
-);
-
-// Section index cards (cyan DOT accent).
-const SECTIONS = {
-  making: ["Portraits as poems, artifacts Claude", "made directly, and research tools."],
-  writing: ["Essays on human–AI collaboration", "in qualitative research."],
-  talks: ["On human–AI collaboration and", "the future of organizing."],
-  thinking: ["What becomes impossible to see when", "AI carries implicit theories of organizing."],
-  concepts: ["A working vocabulary — naming is", "how you make a noticing portable."],
-  teaching: ["Methods, cases, and tools for", "teaching and researching with AI."],
-  builds: ["Open-source tools and public", "infrastructure built alongside the research."],
-  cv: ["Organization scholar and", "human–AI collaboration researcher."],
-};
-for (const [key, taglineLines] of Object.entries(SECTIONS)) {
-  await writeTextCard(
-    sectionCard({ kicker: "XULE LIN", title: key, taglineLines }),
-    `${OG_CARDS_DIR}/${key}.jpg`
-  );
+function readData(file) {
+  const text = readFileSync(file, "utf8");
+  const frontmatter = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1];
+  // Talks inherit their layout from talks/talks.json rather than each file.
+  const directoryData = path.join(path.dirname(file), `${path.basename(path.dirname(file))}.json`);
+  const inherited = existsSync(directoryData) ? JSON.parse(readFileSync(directoryData, "utf8")) : {};
+  return { ...inherited, ...(frontmatter ? load(frontmatter) : {}) };
+}
+const inputs = ["src/writing", "src/making/portraits", "src/making/artifacts", "src/talks"]
+  .flatMap((dir) => readdirSync(dir).filter((f) => f.endsWith(".md")).map((f) => path.join(dir, f)));
+for (const dir of readdirSync("src/papers", { withFileTypes: true })) {
+  if (dir.isDirectory() && existsSync(`src/papers/${dir.name}/index.md`)) inputs.push(`src/papers/${dir.name}/index.md`);
 }
 
-// Auto-title cards: writing posts WITHOUT a cover (ogImage), keyed by fileSlug.
-for (const file of readdirSync(WRITING_DIR)) {
-  if (!file.endsWith(".md")) continue;
-  const txt = readFileSync(path.join(WRITING_DIR, file), "utf8");
-  if (fm(txt, "ogImage")) continue; // covered posts get a cover card
-  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}${CARD_REV}.jpg`;
-  if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(WRITING_DIR, file)).mtimeMs) { skipped++; continue; }
-  const series = fm(txt, "series");
-  const kicker = series ? `WRITING · ${series.toUpperCase()}` : "WRITING";
-  await writeTextCard(titleCard({ kicker, title: fm(txt, "title") || fileSlugOf(file) }), out);
+for (const file of inputs) {
+  const data = readData(file);
+  const fileSlug = fileSlugOf(path.basename(file));
+  const url = data.layout === "layouts/paper.njk" ? `/papers/${path.basename(path.dirname(file))}/` : "";
+  data.page = { fileSlug, url };
+  const resolved = resolveSocialCard(data);
+  const out = `src${resolved.src}`;
+  if (resolved.src.startsWith("/assets/og-cards/auto/")) {
+    await writeTextCard(() => titleCard(titleCardOptions(data)), out, file);
+    continue;
+  }
+  const hero = data.ogImage || data.images?.[0]?.src || data.src;
+  if (!hero?.startsWith("/") || resolved.src === hero) continue;
+  const mode = hero.endsWith(".svg") ? "vector" : hero.startsWith("/assets/images/artifacts/") ? "artwork" : "cover";
+  await imageCard(`src${hero}`, out, mode);
 }
 
-// Auto-title cards: artifacts that aren't a rasterizable SVG (HTML/canvas/video).
-for (const file of readdirSync(ARTIFACTS_DIR)) {
-  if (!file.endsWith(".md")) continue;
-  const txt = readFileSync(path.join(ARTIFACTS_DIR, file), "utf8");
-  const src = fm(txt, "src") || "";
-  if (src.toLowerCase().endsWith(".svg")) continue; // svgCard pass handles these
-  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}${CARD_REV}.jpg`;
-  if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(ARTIFACTS_DIR, file)).mtimeMs) { skipped++; continue; }
-  await writeTextCard(titleCard({ kicker: "MAKING · ARTIFACT", title: fm(txt, "title") || fileSlugOf(file) }), out);
+await writeTextCard(() => brandCard(BRAND_CARD), `src${DEFAULT_CARD}`);
+for (const [section, taglineLines] of Object.entries(SECTION_CARDS)) {
+  await writeTextCard(() => sectionCard({ kicker: "XULE LIN", title: section, taglineLines }), `src${sectionCardPath(section)}`);
 }
-
-// Auto-title cards: talks WITHOUT an ogImage override, kicker "TALKS · <year>".
-for (const file of readdirSync(TALKS_DIR)) {
-  if (!file.endsWith(".md")) continue;
-  const txt = readFileSync(path.join(TALKS_DIR, file), "utf8");
-  if (fm(txt, "ogImage")) continue; // covered talks get a cover card
-  const out = `${OG_CARDS_DIR}/auto/${fileSlugOf(file)}${CARD_REV}.jpg`;
-  if (existsSync(out) && statSync(out).mtimeMs >= statSync(path.join(TALKS_DIR, file)).mtimeMs) { skipped++; continue; }
-  const year = (fm(txt, "date") || "").slice(0, 4);
-  const kicker = year ? `TALKS · ${year}` : "TALKS";
-  await writeTextCard(titleCard({ kicker, title: fm(txt, "title") || fileSlugOf(file) }), out);
+for (const [slug, [title, subtitle]] of Object.entries(SERIES_CARDS)) {
+  await writeTextCard(() => titleCard({ kicker: "WRITING · SERIES", title, subtitle }), `src${seriesCardPath(slug)}`);
 }
 
 console.log(`[og-cards] done — ${made} generated, ${skipped} up-to-date.`);
-if (problems.length) {
-  console.error("[og-cards] PROBLEMS:\n" + problems.map((p) => "  - " + p).join("\n"));
-  process.exit(1);
-}
-
-// A cache-cold CI run can leave Sharp/Resvg native handles alive after every
-// awaited write has completed. Exit explicitly so the chained Eleventy build
-// starts instead of waiting on already-finished image workers.
-process.exit(0);
+if (problems.length) console.error("[og-cards] PROBLEMS:\n" + problems.map((p) => `  - ${p}`).join("\n"));
+// Sharp/Resvg native handles can outlive completed writes in a cache-cold CI run.
+process.exit(problems.length ? 1 : 0);

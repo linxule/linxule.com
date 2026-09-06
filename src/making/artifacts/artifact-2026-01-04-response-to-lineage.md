@@ -1,5 +1,6 @@
 ---
 layout: layouts/artifact.njk
+ogImageAlt: "Small black words spiral across paper around a repeated \"saw\", with scattered phrases about others making marks before me."
 title: response to lineage
 date: 2026-01-04
 series: artifacts

@@ -8,6 +8,7 @@ import collections from './eleventy/collections.js';
 import filters from './eleventy/filters.js';
 import shortcodes from './eleventy/shortcodes.js';
 import transforms from './eleventy/transforms.js';
+import renderingFidelity from './eleventy/rendering-fidelity.js';
 
 export default function(eleventyConfig) {
 
@@ -21,7 +22,9 @@ export default function(eleventyConfig) {
   // Customize footnote output for marginalia
   md.renderer.rules.footnote_ref = (tokens, idx, options, env, slf) => {
     const id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
-    return `<a href="#fn${id}" class="fn-ref">${id}</a>`;
+    const { id: noteId, subId } = tokens[idx].meta;
+    const refId = subId > 0 ? `${id}:${subId}` : id;
+    return `<a href="#fn${md.utils.escapeHtml(id)}" id="fnref${md.utils.escapeHtml(refId)}" class="fn-ref" role="doc-noteref" aria-label="Note ${noteId + 1}">${noteId + 1}</a>`;
   };
 
   md.renderer.rules.footnote_block_open = () => '<aside class="marginalia">\n';
@@ -29,11 +32,25 @@ export default function(eleventyConfig) {
 
   md.renderer.rules.footnote_open = (tokens, idx, options, env, slf) => {
     const id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
-    return `<div class="margin-note" id="fn${id}"><span class="fn-num">${id}</span> `;
+    return `<div class="margin-note" id="fn${md.utils.escapeHtml(id)}" tabindex="-1"><span class="fn-num">${tokens[idx].meta.id + 1}</span> `;
   };
 
   md.renderer.rules.footnote_close = () => '</div>\n';
-  md.renderer.rules.footnote_anchor = () => ''; // Remove back-links
+  md.renderer.rules.footnote_anchor = (tokens, idx, options, env, slf) => {
+    const id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
+    const { id: noteId, subId } = tokens[idx].meta;
+    const refId = subId > 0 ? `${id}:${subId}` : id;
+    const repeated = env.footnotes.list[noteId].count > 1;
+    const label = `Return to reference ${noteId + 1}${repeated ? ` (${subId + 1})` : ''}`;
+    // A distinct return destination for every mention, shown only in endnote mode.
+    return ` <a href="#fnref${md.utils.escapeHtml(refId)}" class="fn-backref" role="doc-backlink" aria-label="${label}">return to text${repeated ? ` ${subId + 1}` : ''}</a>`;
+  };
+
+  // Keep the native table inside a keyboard-scrollable region instead of
+  // allowing its minimum width to widen (and clip) the entire article.
+  md.renderer.rules.table_open = (tokens, idx, options, env, slf) =>
+    '<div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0">\n' + slf.renderToken(tokens, idx, options);
+  md.renderer.rules.table_close = () => '</table>\n</div>\n';
 
   eleventyConfig.setLibrary("md", md);
 
@@ -50,6 +67,7 @@ export default function(eleventyConfig) {
   // Register modular configuration
   collections(eleventyConfig);
   filters(eleventyConfig);
+  renderingFidelity(eleventyConfig);
   shortcodes(eleventyConfig);
   transforms(eleventyConfig);
 

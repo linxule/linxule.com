@@ -131,6 +131,18 @@ permalink: /search/
         line-height: 1.8 !important;
     }
 
+    #search mark {
+        color: var(--ink);
+        background: color-mix(in srgb, var(--bloom) 18%, var(--paper));
+        border-radius: 2px;
+    }
+
+    .search-fallback {
+        font-size: 0.9rem;
+        color: var(--ink-light);
+        line-height: 1.8;
+    }
+
     .pagefind-ui__message {
         font-family: 'Cormorant Garamond', Georgia, serif !important;
         color: var(--ink-light) !important;
@@ -164,32 +176,15 @@ permalink: /search/
 
 <header class="page-header">
     <h1 class="page-title">search</h1>
-    <p class="page-description">Find writing and portraits by keyword.</p>
+    <p class="page-description">Find writing, research, talks, and things made here.</p>
 </header>
 
 <div id="search"></div>
+<p class="search-fallback"><span id="search-fallback">Search needs JavaScript and its index to load. </span>You can also browse <a href="/writing/">writing</a>, <a href="/papers/">papers</a>, <a href="/talks/">talks</a>, and <a href="/making/">making</a>.</p>
 
 <footer class="page-footer">
     <a href="/" class="back-link" id="back-link">← return</a>
 </footer>
 
-<script src="/pagefind/pagefind-ui.js"></script>
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        new PagefindUI({
-            element: "#search",
-            showSubResults: true,
-            showImages: false,
-            excerptLength: 50
-        });
-
-        // Back button with history support
-        document.getElementById('back-link').addEventListener('click', function(e) {
-            if (window.history.length > 1) {
-                e.preventDefault();
-                history.back();
-            }
-            // If no history, follows href="/" as fallback
-        });
-    });
-</script>
+<script defer src="/pagefind/pagefind-ui.js"></script>
+<script defer src="/assets/js/search.js?v={{ site.version }}"></script>

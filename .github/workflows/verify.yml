@@ -28,3 +28,4 @@ jobs:
       - run: bun run build
       - run: bun run test:making
       - run: bun run test:runtime
+      - run: bun run test:ui

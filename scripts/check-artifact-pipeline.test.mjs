@@ -87,7 +87,7 @@ describe("artifact publishing contract", () => {
   test("artifact JSON-LD is escaped, credited, and video-aware", () => {
     expect(baseLayout).toContain('"creditText"');
     expect(baseLayout).toContain('"VideoObject"');
-    expect(baseLayout).toContain("title | dump | safe");
+    expect(baseLayout).toContain("title | jsonScript | safe");
     expect(baseLayout).toContain("thumbnailUrl");
     expect(baseLayout).toContain(
       '"creator": {"@type": "SoftwareApplication"',
@@ -113,16 +113,14 @@ describe("artifact publishing contract", () => {
     expect(markdownTwin).not.toContain("**Image**: {{ artifact.data.src }}");
   });
 
-  test("fullscreen controls expose state and restore focus", () => {
+  test("fullscreen controls expose state and use the shared host modal", () => {
     expect(artifactLayout).toContain('aria-expanded="false"');
     expect(artifactLayout).toContain(
       "fullscreenBtn.setAttribute('aria-expanded'",
     );
-    expect(artifactLayout).toContain("fullscreenBtn.focus()");
-    expect(artifactLayout).toContain("function inertOutside(element)");
-    expect(artifactLayout).toContain("function trapFocus(event, root)");
-    expect(artifactLayout).toContain("trapFocus(e, fullscreenOverlay)");
-    expect(artifactLayout).toContain("trapFocus(e, container)");
+    expect(artifactLayout).toContain("import { createHostModal } from '/assets/js/host-modal.js");
+    expect(artifactLayout).toContain("createHostModal(fullscreenOverlay");
+    expect(artifactLayout).toContain("createHostModal(container");
   });
 
   test("the global rendering marker stays out of the Making book", () => {

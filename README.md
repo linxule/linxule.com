@@ -178,10 +178,13 @@ bun run build   # Outputs to _site/
 ## Verification and maintenance
 
 `bun run build` produces a fresh site and runs the output checks plus image-cache,
-image-pipeline, and Markdown-negotiation regressions. `bun run test:making` covers
+image-pipeline, Markdown-negotiation, social-card, and rendering-fidelity regressions. `bun run test:making` covers
 the gallery across its viewport boundaries; `bun run test:runtime` covers shared
-links and the article lightbox at desktop and mobile widths. Install Chromium
-first with `bunx playwright install chromium`.
+links and the article lightbox at desktop and mobile widths. `bun run test:ui`
+covers phone reading, endnote returns, font loading, fullscreen guests, and search
+restoration. Install Chromium first with `bunx playwright install chromium`.
+See [the September UI review resolutions](docs/ui-review-2026-09-06.md) for scope
+and the sandboxed-iframe keyboard boundary.
 
 Image-cache restoration preserves newer local images. Repeated syncs copy only
 changed files and omit space-named cache-merge duplicates. Optimized image URLs

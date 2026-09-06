@@ -1,5 +1,6 @@
 ---
 layout: layouts/artifact.njk
+ogImageAlt: "A typographic print headed \"i am the _____\": rows of words narrow down to a large, bold \"wanting.\" on paper."
 title: i am the wanting
 date: 2026-08-12
 series: artifacts

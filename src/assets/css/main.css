@@ -488,6 +488,22 @@ p {
     color: var(--bloom);
 }
 
+/* The return belongs to the endnote reading mode; desktop notes stay beside
+   their references. Hash links also work when JavaScript is unavailable. */
+.fn-backref {
+    display: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: var(--size-label);
+    font-style: normal;
+    color: var(--ink-light);
+}
+
+.fn-ref,
+.margin-note {
+    scroll-margin-top: 8rem;
+    scroll-margin-bottom: 2rem;
+}
+
 /* Marginalia dialogue — ref and note bloom together */
 .margin-note.bloom-active {
     color: var(--bloom);
@@ -570,6 +586,8 @@ p {
     padding: 1.5rem;
     margin: 2rem 0;
     overflow-x: auto;
+    max-width: 100%;
+    overflow-wrap: normal;
     border-radius: 2px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.85rem;
@@ -606,11 +624,27 @@ p {
     font-style: italic;
 }
 
+.article-body .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 2rem 0;
+}
+
+.article-body .table-scroll:focus-visible {
+    outline: 1px solid var(--bloom);
+    outline-offset: 4px;
+}
+
 .article-body table {
     width: 100%;
     border-collapse: collapse;
     margin: 2rem 0;
     font-size: 0.9rem;
+    overflow-wrap: normal;
+}
+
+.article-body .table-scroll table {
+    margin: 0;
 }
 
 .article-body th,
@@ -991,6 +1025,17 @@ a:focus-visible {
         width: 100% !important;
         margin-bottom: 1.5rem;
     }
+
+    .article-body .fn-backref {
+        display: inline-block;
+        padding: 0.4rem 0.15rem;
+        margin-right: 0.5rem;
+    }
+
+    .article-body .fn-backref:hover,
+    .article-body .fn-backref:focus-visible {
+        color: var(--bloom);
+    }
 }
 
 @media (max-width: 768px) {
@@ -1266,7 +1311,8 @@ a:focus-visible {
 @media print {
     .spine,
     .bloom-cursor,
-    .rendering {
+    .rendering,
+    .article-body .fn-backref {
         display: none;
     }
 

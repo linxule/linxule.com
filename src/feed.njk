@@ -23,20 +23,20 @@ eleventyExcludeFromCollections: true
         <id>{{ site.url }}{{ item.url }}</id>
         <published>{{ item.date.toISOString() }}</published>
         <updated>{{ item.date.toISOString() }}</updated>
-        {%- if itemType == 'writing' and item.data.subtitle %}
-        <summary>{{ item.data.subtitle }}</summary>
-        {%- elif itemType == 'portrait' and item.data.prompt and item.data.prompt[0] %}
-        <summary>{{ item.data.prompt[0].text | default(item.data.prompt[0]) | truncate(200) }}</summary>
-        {%- elif itemType == 'artifact' and item.data.contextExcerpt and item.data.contextExcerpt[0] %}
-        <summary>{{ item.data.contextExcerpt[0].text | default(item.data.contextExcerpt[0]) | truncate(200) }}</summary>
-        {%- elif itemType == 'talk' and item.data.event %}
-        <summary>{{ item.data.event }}{% if item.data.speakers %} — {{ item.data.speakers | join(", ") }}{% endif %}</summary>
-        {%- elif itemType == 'paper' and item.data.abstract %}
-        <summary>{{ item.data.abstract | truncate(200) }}</summary>
+        {%- set summary = item.data | feedSummary(itemType) %}
+        {%- if summary %}
+        <summary type="text">{{ summary }}</summary>
         {%- endif %}
+        {%- for author in item.data | feedAuthors(itemType, site.author) %}
         <author>
-            <name>{{ site.author }}</name>
+            <name>{{ author }}</name>
         </author>
+        {%- endfor %}
+        {%- for contributor in item.data | feedContributors(itemType) %}
+        <contributor>
+            <name>{{ contributor }}</name>
+        </contributor>
+        {%- endfor %}
         <category term="{{ itemType }}"/>
     </entry>
     {%- endfor %}

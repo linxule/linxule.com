@@ -1,5 +1,6 @@
 ---
 layout: layouts/artifact.njk
+ogImageAlt: "Hortus Machinarum, plate I: an antique botanical engraving of a shrub clipped to a sphere, wild shoots escaping its outline, exposed roots, and an inset of tangled growth."
 title: hortus machinarum
 date: 2026-08-08
 series: artifacts

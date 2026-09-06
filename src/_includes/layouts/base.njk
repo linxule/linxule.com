@@ -49,33 +49,25 @@
     <link rel="canonical" href="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
 
     {# Open Graph #}
-    {# Smart OG image: explicit ogImage > first image from images[] > src field > default #}
-    {%- set ogImg = ogImage -%}
-    {%- if not ogImg and images and images[0] and images[0].src and not (images[0].src | isHTMLFile) -%}
-      {%- set ogImg = images[0].src -%}
-    {%- endif -%}
-    {%- if not ogImg and src and not (src | isHTMLFile) -%}
-      {%- set ogImg = src -%}
-    {%- endif -%}
-    {# Downscale the resolved hero to a small social card — never serve a raw multi-MB source as og:image. See .claude/rules/og-images.md #}
-    {%- set ogImg = ogImg | ogCard -%}
-    {# No hero image: image-less content pages (writing w/o cover, HTML artifacts) get a generated title card; everything else gets the brand/default card. #}
-    {%- if not ogImg -%}
-      {%- set auto = page.fileSlug | autoCardPath(layout) -%}
-      {%- if auto -%}{%- set ogImg = auto -%}{%- endif -%}
-    {%- endif -%}
-    {%- if not ogImg -%}{%- set ogImg = '/assets/og-cards/default.jpg' -%}{%- endif -%}
+    {# Resolve the card and its alternative together; copy follows the selected image. #}
+    {%- set og = {
+      ogImage: ogImage, ogImageAlt: ogImageAlt, images: images, src: src, alt: alt,
+      thumbnail: thumbnail, thumbnailAlt: thumbnailAlt, page: page, layout: layout,
+      title: title, paperTitle: paperTitle, series: series, year: year, venue: venue, date: date
+    } | socialCard(content) -%}
+    {%- set ogImg = og.src -%}
+    {%- set ogUrl = ogImg if ogImg.startsWith('https://') or ogImg.startsWith('http://') else site.url ~ ogImg -%}
     <meta property="og:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta property="og:description" content="{{ metaDescription | default(site.description) | truncate(147) }}">
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
     <meta property="og:url" content="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
-    <meta property="og:image" content="{{ site.url }}{{ ogImg }}">
+    <meta property="og:image" content="{{ ogUrl }}">
     {%- if not ogImg.endsWith('.svg') %}
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/{% if ogImg.endsWith('.png') %}png{% else %}jpeg{% endif %}">
     {%- endif %}
-    <meta property="og:image:alt" content="{{ (metaDescription or title or site.description) | truncate(200) }}">
+    <meta property="og:image:alt" content="{{ og.alt }}">
     <meta property="og:site_name" content="{{ site.title }}">
 
     {# Twitter Card #}
@@ -84,8 +76,8 @@
     <meta name="twitter:creator" content="@linxule">
     <meta name="twitter:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta name="twitter:description" content="{{ metaDescription | default(site.description) | truncate(147) }}">
-    <meta name="twitter:image" content="{{ site.url }}{{ ogImg }}">
-    <meta name="twitter:image:alt" content="{{ (metaDescription or title or site.description) | truncate(200) }}">
+    <meta name="twitter:image" content="{{ ogUrl }}">
+    <meta name="twitter:image:alt" content="{{ og.alt }}">
 
     {# Favicon #}
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -101,11 +93,15 @@
     (function(){
         var h=document.documentElement;
         h.classList.add('fonts-loading');
-        function reveal(){h.classList.remove('fonts-loading');}
+        function reveal(){clearTimeout(fb);h.classList.remove('fonts-loading');}
         var fb=setTimeout(reveal,1500);
-        if(document.fonts&&document.fonts.ready){
-            document.fonts.ready.then(function(){clearTimeout(fb);reveal();});
-        }
+        // Font faces below have not registered yet. Wait for the stylesheets
+        // and body, then lay out the used text before observing font readiness.
+        document.addEventListener('DOMContentLoaded',function(){
+            void document.body.offsetWidth;
+            if(document.fonts){document.fonts.ready.then(reveal,reveal);}
+            else{reveal();}
+        },{once:true});
     })();
     </script>
 
@@ -165,11 +161,11 @@
       "@type": "ProfilePage",
       "mainEntity": {
         "@type": "Person",
-        "@id": "{{ site.url }}/#person",
-        "name": "{{ site.author }}",
-        "alternateName": "{{ site.authorZh }}",
-        "url": "{{ site.url }}",
-        "description": "{{ site.description }}",
+        "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }},
+        "name": {{ site.author | jsonScript | safe }},
+        "alternateName": {{ site.authorZh | jsonScript | safe }},
+        "url": {{ site.url | jsonScript | safe }},
+        "description": {{ site.description | jsonScript | safe }},
         "jobTitle": "Researcher",
         "email": "x@linxule.com",
         "affiliation": [
@@ -218,21 +214,21 @@
         ],
         "image": {
           "@type": "ImageObject",
-          "url": "{{ site.url }}/assets/headshot.jpg",
+          "url": {{ ((site.url) ~ "/assets/headshot.jpg") | jsonScript | safe }},
           "width": 886,
           "height": 886,
-          "caption": "{{ site.author }} {{ site.authorZh }}"
+          "caption": {{ ((site.author) ~ " " ~ (site.authorZh)) | jsonScript | safe }}
         }
       },
       "relatedLink": {
         "@type": "WebPage",
-        "url": "{{ site.url }}/llms.txt",
+        "url": {{ ((site.url) ~ "/llms.txt") | jsonScript | safe }},
         "name": "AI Interaction Guidelines",
         "description": "Machine-readable site context for AI assistants and language models"
       },
       "license": "https://creativecommons.org/licenses/by/4.0/",
-      "usageInfo": "{{ site.url }}/llms.txt",
-      "copyrightHolder": {"@id": "{{ site.url }}/#person"}
+      "usageInfo": {{ ((site.url) ~ "/llms.txt") | jsonScript | safe }},
+      "copyrightHolder": {"@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}}
     }
     </script>
     {% endif %}
@@ -241,23 +237,23 @@
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "{{ title }}",
-      "description": "{{ description | default(subtitle) | default(site.description) }}",
-      "datePublished": "{{ date.toISOString().split('T')[0] }}",
-      "author": [{% for author in authors %}{"@type": "Person", {% if author == site.author %}"@id": "{{ site.url }}/#person", {% endif %}"name": "{{ author }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
+      "headline": {{ title | jsonScript | safe }},
+      "description": {{ description | default(subtitle) | default(site.description) | jsonScript | safe }},
+      "datePublished": {{ date.toISOString().split('T')[0] | jsonScript | safe }},
+      "author": [{% for author in authors %}{"@type": "Person", {% if author == site.author %}"@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, {% endif %}"name": {{ author | jsonScript | safe }}}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "publisher": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
       "license": "https://creativecommons.org/licenses/by/4.0/",
-      "usageInfo": "{{ site.url }}/llms.txt",
-      "copyrightHolder": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
-      "copyrightYear": "{{ date.getFullYear() }}",
-      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if defines %},
+      "usageInfo": {{ ((site.url) ~ "/llms.txt") | jsonScript | safe }},
+      "copyrightHolder": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "copyrightYear": {{ date.getFullYear() | jsonScript | safe }},
+      "mainEntityOfPage": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if defines %},
       "hasPart": [{% for def in defines %}{
         "@type": "DefinedTerm",
-        "name": "{{ def.term }}",
-        "description": {{ def.definition | dump | safe }},
-        "url": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}#dfn-{{ def.term | slugify }}",
-        "inDefinedTermSet": "{{ site.url }}/concepts/",
-        "creator": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"}
+        "name": {{ def.term | jsonScript | safe }},
+        "description": {{ def.definition | jsonScript | safe }},
+        "url": {{ ((site.url) ~ (page.url | replace(r/\/$/, '')) ~ "#dfn-" ~ (def.term | slugify)) | jsonScript | safe }},
+        "inDefinedTermSet": {{ ((site.url) ~ "/concepts/") | jsonScript | safe }},
+        "creator": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}
       }{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
     }
     </script>
@@ -267,19 +263,19 @@
     {
       "@context": "https://schema.org",
       "@type": "DefinedTermSet",
-      "@id": "{{ site.url }}/concepts/",
-      "name": "Signature Concepts — {{ site.author }}",
-      "url": "{{ site.url }}/concepts/",
+      "@id": {{ ((site.url) ~ "/concepts/") | jsonScript | safe }},
+      "name": {{ ("Signature Concepts — " ~ (site.author)) | jsonScript | safe }},
+      "url": {{ ((site.url) ~ "/concepts/") | jsonScript | safe }},
       "inLanguage": "en",
       "license": "https://creativecommons.org/licenses/by/4.0/",
-      "usageInfo": "{{ site.url }}/llms.txt",
+      "usageInfo": {{ ((site.url) ~ "/llms.txt") | jsonScript | safe }},
       "hasDefinedTerm": [{% for concept in collections.concepts %}{
         "@type": "DefinedTerm",
-        "name": {{ concept.term | dump | safe }},
-        "description": {{ concept.definition | dump | safe }},
-        "url": "{{ site.url }}{{ concept.url | replace(r/\/$/, '') }}#{{ concept.anchor }}",
-        "inDefinedTermSet": "{{ site.url }}/concepts/",
-        "creator": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"}
+        "name": {{ concept.term | jsonScript | safe }},
+        "description": {{ concept.definition | jsonScript | safe }},
+        "url": {{ ((site.url) ~ (concept.url | replace(r/\/$/, '')) ~ "#" ~ (concept.anchor)) | jsonScript | safe }},
+        "inDefinedTermSet": {{ ((site.url) ~ "/concepts/") | jsonScript | safe }},
+        "creator": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}
       }{% if not loop.last %}, {% endif %}{% endfor %}]
     }
     </script>
@@ -289,22 +285,22 @@
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      "@id": "{{ site.url }}/builds/",
-      "name": {{ ("Builds — " + site.author) | dump | safe }},
-      "url": "{{ site.url }}/builds/",
+      "@id": {{ ((site.url) ~ "/builds/") | jsonScript | safe }},
+      "name": {{ ("Builds — " + site.author) | jsonScript | safe }},
+      "url": {{ ((site.url) ~ "/builds/") | jsonScript | safe }},
       "inLanguage": "en",
-      "author": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
+      "author": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
       "license": "https://creativecommons.org/licenses/by/4.0/",
-      "usageInfo": "{{ site.url }}/llms.txt",
-      "copyrightHolder": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
+      "usageInfo": {{ ((site.url) ~ "/llms.txt") | jsonScript | safe }},
+      "copyrightHolder": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
       "hasPart": [{% set comma = joiner(",") %}{% for group in groups %}{% for project in group.projects | selectattr("href") %}{{ comma() }}{
         "@type": {% if project.href.startsWith("https://github.com/") %}"SoftwareSourceCode"{% else %}"WebSite"{% endif %},
-        "name": {{ project.name | dump | safe }},
-        "description": {{ project.description | dump | safe }},
-        "url": {{ (project.href if project.href.startsWith("http") else site.url + project.href) | dump | safe }},{% if project.href.startsWith("https://github.com/") %}
-        "codeRepository": {{ project.href | dump | safe }},{% endif %}{% if project.license %}
-        "license": "https://spdx.org/licenses/{{ project.license }}.html",{% endif %}
-        "author": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"}
+        "name": {{ project.name | jsonScript | safe }},
+        "description": {{ project.description | jsonScript | safe }},
+        "url": {{ (project.href if project.href.startsWith("http") else site.url + project.href) | jsonScript | safe }},{% if project.href.startsWith("https://github.com/") %}
+        "codeRepository": {{ project.href | jsonScript | safe }},{% endif %}{% if project.license %}
+        "license": {{ ("https://spdx.org/licenses/" ~ (project.license) ~ ".html") | jsonScript | safe }},{% endif %}
+        "author": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}
       }{% endfor %}{% endfor %}]
     }
     </script>
@@ -314,13 +310,13 @@
     {
       "@context": "https://schema.org",
       "@type": "ImageGallery",
-      "name": "{{ title }}",
-      "description": "{{ metaDescription | default(site.description) }}",
-      "datePublished": "{{ date.toISOString().split('T')[0] }}",
-      "creator": {"@type": "Person", "name": "{{ prompter | default(site.author) }}"},
-      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"},
-      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if images %},
-      "image": [{% for image in images %}"{{ site.url }}{{ image.src }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
+      "name": {{ title | jsonScript | safe }},
+      "description": {{ metaDescription | default(site.description) | jsonScript | safe }},
+      "datePublished": {{ date.toISOString().split('T')[0] | jsonScript | safe }},
+      "creator": {"@type": "Person", "name": {{ prompter | default(site.author) | jsonScript | safe }}},
+      "publisher": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "mainEntityOfPage": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if images %},
+      "image": [{% for image in images %}{{ ((site.url) ~ (image.src)) | jsonScript | safe }}{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
     }
     </script>
     {% endif %}
@@ -329,22 +325,22 @@
     {
       "@context": "https://schema.org",
       "@type": {% if mediaType == "video" and video %}"VideoObject"{% else %}"CreativeWork"{% endif %},
-      "name": {{ title | dump | safe }},
-      "description": {{ metaDescription | default(site.description) | dump | safe }},
-      "datePublished": "{{ date.toISOString().split('T')[0] }}",
-      "creator": {"@type": "SoftwareApplication", "name": {{ schemaCreator | default(creator | default("AI")) | dump | safe }}},
-      "creditText": {{ creditText | default("Made by " ~ (creator | default("AI"))) | dump | safe }},
-      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": {{ site.author | dump | safe }}},
-      "mainEntityOfPage": {{ (site.url ~ (page.url | replace(r/\/$/, ''))) | dump | safe }}{% if thumbnail %},
-      "image": {{ (site.url ~ thumbnail) | dump | safe }}{% elif src and not (src | isHTMLFile) %},
-      "image": {{ (site.url ~ src) | dump | safe }}{% endif %}{% if medium %},
-      "artMedium": {{ medium | dump | safe }}{% endif %}{% if mediaType == "video" and video %},
-      "contentUrl": {{ video.contentUrl | dump | safe }},
-      "embedUrl": {{ (site.url ~ src) | dump | safe }},
-      "thumbnailUrl": {{ (site.url ~ thumbnail) | dump | safe }},
-      "uploadDate": "{{ date.toISOString().split('T')[0] }}"{% if video.duration %},
-      "duration": {{ video.duration | dump | safe }}{% endif %}{% if video.encodingFormat %},
-      "encodingFormat": {{ video.encodingFormat | dump | safe }}{% endif %}{% if video.width %},
+      "name": {{ title | jsonScript | safe }},
+      "description": {{ metaDescription | default(site.description) | jsonScript | safe }},
+      "datePublished": {{ date.toISOString().split('T')[0] | jsonScript | safe }},
+      "creator": {"@type": "SoftwareApplication", "name": {{ schemaCreator | default(creator | default("AI")) | jsonScript | safe }}},
+      "creditText": {{ creditText | default("Made by " ~ (creator | default("AI"))) | jsonScript | safe }},
+      "publisher": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "mainEntityOfPage": {{ (site.url ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if thumbnail %},
+      "image": {{ (site.url ~ thumbnail) | jsonScript | safe }}{% elif src and not (src | isHTMLFile) %},
+      "image": {{ (site.url ~ src) | jsonScript | safe }}{% endif %}{% if medium %},
+      "artMedium": {{ medium | jsonScript | safe }}{% endif %}{% if mediaType == "video" and video %},
+      "contentUrl": {{ video.contentUrl | jsonScript | safe }},
+      "embedUrl": {{ (site.url ~ src) | jsonScript | safe }},
+      "thumbnailUrl": {{ (site.url ~ thumbnail) | jsonScript | safe }},
+      "uploadDate": {{ date.toISOString().split('T')[0] | jsonScript | safe }}{% if video.duration %},
+      "duration": {{ video.duration | jsonScript | safe }}{% endif %}{% if video.encodingFormat %},
+      "encodingFormat": {{ video.encodingFormat | jsonScript | safe }}{% endif %}{% if video.width %},
       "width": {{ video.width }}{% endif %}{% if video.height %},
       "height": {{ video.height }}{% endif %}{% endif %}
     }
@@ -356,14 +352,14 @@
     {
       "@context": "https://schema.org",
       "@type": "PresentationDigitalDocument",
-      "name": {{ title | dump | safe }},
-      "description": {{ metaDescription | default(site.description) | dump | safe }},
-      "datePublished": "{{ date.toISOString().split('T')[0] }}",
-      "author": [{% if speakers %}{% for speaker in speakers %}{"@type": "Person", {% if speaker == site.author %}"@id": "{{ site.url }}/#person", {% endif %}"name": {{ speaker | dump | safe }}}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}{"@type": "Person", "@id": "{{ site.url }}/#person", "name": {{ site.author | dump | safe }}}{% endif %}],
-      "publisher": {"@type": "Person", "@id": "{{ site.url }}/#person", "name": {{ site.author | dump | safe }}},
-      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if youtube %},
-      "video": {"@type": "VideoObject", "name": {{ title | dump | safe }}, "embedUrl": "https://www.youtube.com/embed/{{ youtube }}", "uploadDate": "{{ date.toISOString().split('T')[0] }}", "thumbnailUrl": "https://i.ytimg.com/vi/{{ youtube }}/hqdefault.jpg"}{% elif video %},
-      "video": {"@type": "VideoObject", "name": {{ title | dump | safe }}, "embedUrl": {{ video | dump | safe }}, "uploadDate": "{{ date.toISOString().split('T')[0] }}"}{% endif %}
+      "name": {{ title | jsonScript | safe }},
+      "description": {{ metaDescription | default(site.description) | jsonScript | safe }},
+      "datePublished": {{ date.toISOString().split('T')[0] | jsonScript | safe }},
+      "author": [{% if speakers %}{% for speaker in speakers %}{"@type": "Person", {% if speaker == site.author %}"@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, {% endif %}"name": {{ speaker | jsonScript | safe }}}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}{"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}{% endif %}],
+      "publisher": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "mainEntityOfPage": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if youtube %},
+      "video": {"@type": "VideoObject", "name": {{ title | jsonScript | safe }}, "embedUrl": {{ ("https://www.youtube.com/embed/" ~ (youtube)) | jsonScript | safe }}, "uploadDate": {{ date.toISOString().split('T')[0] | jsonScript | safe }}, "thumbnailUrl": {{ ("https://i.ytimg.com/vi/" ~ (youtube) ~ "/hqdefault.jpg") | jsonScript | safe }}}{% elif video %},
+      "video": {"@type": "VideoObject", "name": {{ title | jsonScript | safe }}, "embedUrl": {{ video | jsonScript | safe }}, "uploadDate": {{ date.toISOString().split('T')[0] | jsonScript | safe }}}{% endif %}
     }
     </script>
     {% endif %}
@@ -397,19 +393,19 @@
     {
       "@context": "https://schema.org",
       "@type": "ScholarlyArticle",
-      "headline": {{ (paperTitle | default(title)) | dump | safe }},
-      "name": {{ (paperTitle | default(title)) | dump | safe }},
-      "author": [{% for a in authors %}{"@type": "Person", {% if a.self %}"@id": "{{ site.url }}/#person", {% endif %}"name": {{ a.name | dump | safe }}{% if a.orcid %}, "identifier": "https://orcid.org/{{ a.orcid }}", "sameAs": "https://orcid.org/{{ a.orcid }}"{% endif %}}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "datePublished": "{{ date.toISOString().split('T')[0] }}",
-      "publisher": {% if publisher %}{"@type": "Organization", "name": {{ publisher | dump | safe }}}{% else %}{"@type": "Person", "@id": "{{ site.url }}/#person", "name": "{{ site.author }}"}{% endif %},
-      "mainEntityOfPage": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}",
-      "url": "{{ site.url }}{{ page.url | replace(r/\/$/, '') }}"{% if venueType == 'journal' and venue %},
-      "isPartOf": {"@type": "Periodical", "name": {{ venue | dump | safe }}}{% endif %}{% if doi %},
-      "identifier": {"@type": "PropertyValue", "propertyID": "DOI", "value": "{{ doi }}"},
-      "sameAs": "https://doi.org/{{ doi }}"{% endif %}{% if license %},
-      "license": "{{ license }}"{% endif %}{% if abstract %},
-      "abstract": {{ abstract | striptags | dump | safe }}{% endif %},
-      "creativeWorkStatus": "{{ creativeWorkStatus | default('Published') }}",
+      "headline": {{ (paperTitle | default(title)) | jsonScript | safe }},
+      "name": {{ (paperTitle | default(title)) | jsonScript | safe }},
+      "author": [{% for a in authors %}{"@type": "Person", {% if a.self %}"@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, {% endif %}"name": {{ a.name | jsonScript | safe }}{% if a.orcid %}, "identifier": {{ ("https://orcid.org/" ~ (a.orcid)) | jsonScript | safe }}, "sameAs": {{ ("https://orcid.org/" ~ (a.orcid)) | jsonScript | safe }}{% endif %}}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "datePublished": {{ date.toISOString().split('T')[0] | jsonScript | safe }},
+      "publisher": {% if publisher %}{"@type": "Organization", "name": {{ publisher | jsonScript | safe }}}{% else %}{"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}{% endif %},
+      "mainEntityOfPage": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }},
+      "url": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if venueType == 'journal' and venue %},
+      "isPartOf": {"@type": "Periodical", "name": {{ venue | jsonScript | safe }}}{% endif %}{% if doi %},
+      "identifier": {"@type": "PropertyValue", "propertyID": "DOI", "value": {{ doi | jsonScript | safe }}},
+      "sameAs": {{ ("https://doi.org/" ~ (doi)) | jsonScript | safe }}{% endif %}{% if license %},
+      "license": {{ license | jsonScript | safe }}{% endif %}{% if abstract %},
+      "abstract": {{ abstract | striptags | jsonScript | safe }}{% endif %},
+      "creativeWorkStatus": {{ creativeWorkStatus | default('Published') | jsonScript | safe }},
       "inLanguage": "en"
     }
     </script>

@@ -7,7 +7,7 @@
     "start": "bun scripts/gen-og-cards.mjs && eleventy --serve",
     "build": "bun run build:site && bun run verify",
     "build:site": "bun scripts/gen-og-cards.mjs && bun scripts/sync-image-cache.mjs restore && rm -rf _site && eleventy && bun scripts/sync-image-cache.mjs save && bunx pagefind --site _site && bun scripts/build-freshness.mjs --write",
-    "verify": "bun run freshness:check && bun run og:lint && bun run renderings:lint && bun run built-json:lint && bun run artifact:test && bun run play:test && bun run sitemap:test && bun run sitemap:lint && bun run pipeline:test",
+    "verify": "bun run freshness:check && bun run og:lint && bun run renderings:lint && bun run built-json:lint && bun run artifact:test && bun run play:test && bun run sitemap:test && bun run sitemap:lint && bun run pipeline:test && bun run surface:test",
     "freshness:check": "bun scripts/build-freshness.mjs --check",
     "built-json:lint": "bun scripts/check-built-json.mjs",
     "test:making": "bun run freshness:check && playwright test tests/making",
@@ -21,7 +21,9 @@
     "artifact:test": "bun test scripts/check-artifact-pipeline.test.mjs",
     "play:test": "bun test scripts/check-play-integration.test.mjs",
     "pipeline:test": "bun test scripts/image-cache.test.mjs scripts/image-pipeline*.test.mjs scripts/middleware.test.mjs",
-    "test:runtime": "bun run freshness:check && playwright test tests/runtime --project=desktop --project=mobile-boundary"
+    "test:runtime": "bun run freshness:check && playwright test tests/runtime --project=desktop --project=mobile-boundary",
+    "surface:test": "bun test scripts/social-cards.test.mjs scripts/rendering-fidelity.test.mjs",
+    "test:ui": "bun run freshness:check && playwright test tests/reading tests/fonts --project=desktop && playwright test tests/modals --project=desktop --project=phone --project=phone-narrow && playwright test tests/discovery --project=phone --project=desktop"
   },
   "dependencies": {
     "@11ty/eleventy": "^3.1.6",
@@ -34,6 +36,7 @@
     "@playwright/test": "^1.63.0",
     "@resvg/resvg-js": "^2.6.2",
     "@vercel/functions": "^3.9.5",
+    "js-yaml": "^4.1.1",
     "pagefind": "^1.5.2",
     "path-to-regexp": "^6.3.0",
     "sharp": "^0.35.4"

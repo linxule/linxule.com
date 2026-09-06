@@ -12,6 +12,7 @@ import path from "node:path";
 const SITE = "_site";
 const problems = [];
 let jsonLdBlocks = 0;
+const structuredPages = new Map();
 
 function walk(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -27,7 +28,11 @@ for (const file of walk(SITE).filter((candidate) => candidate.endsWith(".html"))
   )) {
     jsonLdBlocks++;
     try {
-      JSON.parse(match[1]);
+      const value = JSON.parse(match[1]);
+      if (value.mainEntityOfPage && typeof value.mainEntityOfPage === "string") {
+        const url = new URL(value.mainEntityOfPage).pathname.replace(/\/$/, "");
+        structuredPages.set(url, { value, file: path.relative(SITE, file) });
+      }
     } catch (error) {
       problems.push(
         `${path.relative(SITE, file)} has invalid JSON-LD: ${error.message}`,
@@ -50,6 +55,18 @@ if (!existsSync(indexPath)) {
 
 if (siteIndex) {
   if (!Array.isArray(siteIndex.pages)) problems.push("site-index.pages is not an array");
+  else {
+    // Both values must decode to the same source title. Valid JSON alone misses
+    // HTML-autoescaped quotes and ampersands left inside JSON-LD raw text.
+    for (const page of siteIndex.pages) {
+      const structured = structuredPages.get(page.url.replace(/\/$/, ""));
+      if (!structured) {
+        problems.push(`${page.url} has no JSON-LD matching its page URL`);
+      } else if ((structured.value.headline ?? structured.value.name) !== page.title) {
+        problems.push(`${structured.file} JSON-LD title differs from site-index source title`);
+      }
+    }
+  }
   if (!Array.isArray(siteIndex.projects)) {
     problems.push("site-index.projects is not an array");
   } else {

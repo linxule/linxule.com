@@ -125,6 +125,7 @@ marker: "talks"
     .slides-lightbox.active {
         opacity: 1;
         visibility: visible;
+        transition: opacity 0.3s ease;
     }
 
     .slides-lightbox-frame {
@@ -149,6 +150,16 @@ marker: "talks"
         border: none;
         cursor: pointer;
         transition: color 0.2s ease;
+    }
+
+    .slides-keyboard-hint {
+        position: absolute;
+        top: 0.75rem;
+        left: 1.5rem;
+        right: 6rem;
+        margin: 0;
+        font: 0.65rem 'IBM Plex Mono', monospace;
+        color: var(--paper);
     }
 
     .slides-lightbox-close:hover,
@@ -385,12 +396,14 @@ marker: "talks"
 </div>
 
 {% if slides %}
-<div class="slides-lightbox" id="slides-lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Slide deck — full size">
+<div class="slides-lightbox" id="slides-lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Slide deck — full size" aria-describedby="slides-keyboard-hint">
     <button type="button" class="slides-lightbox-close" data-slides-lightbox-close aria-label="Close slides">close</button>
+    <p class="slides-keyboard-hint" id="slides-keyboard-hint">Tab through the slides to return to close.</p>
     <iframe class="slides-lightbox-frame" src="" title="{{ title }} — slides full size" allowfullscreen></iframe>
 </div>
 
-<script>
+<script type="module">
+import { createHostModal } from '/assets/js/host-modal.js?v={{ site.version }}';
 (function () {
     const figure = document.querySelector('[data-slides-figure]');
     if (!figure) return;
@@ -403,29 +416,26 @@ marker: "talks"
     const sourceFrame = figure.querySelector('[data-slides-frame]');
     const slidesUrl = sourceFrame && (sourceFrame.dataset.slidesSrc || sourceFrame.src);
 
-    let triggerEl = null;
+    const modal = createHostModal(lightbox, {
+        closeControl: lightboxClose,
+        requestClose: closeLightbox,
+    });
 
     function openLightbox() {
         if (!lightbox || !lightboxFrame) return;
         if (lightboxFrame.src !== slidesUrl) {
             lightboxFrame.src = slidesUrl;
         }
-        triggerEl = document.activeElement;
         lightbox.classList.add('active');
         lightbox.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-        if (lightboxClose) lightboxClose.focus();
+        modal.open(fullscreenBtn);
     }
 
     function closeLightbox() {
         if (!lightbox) return;
         lightbox.classList.remove('active');
         lightbox.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-        if (triggerEl && typeof triggerEl.focus === 'function') {
-            triggerEl.focus();
-            triggerEl = null;
-        }
+        modal.close();
     }
 
     if (fullscreenBtn) fullscreenBtn.addEventListener('click', openLightbox);
@@ -435,12 +445,6 @@ marker: "talks"
             if (e.target === lightbox) closeLightbox();
         });
     }
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox && lightbox.classList.contains('active')) {
-            closeLightbox();
-        }
-    });
-
     function flashCopied() {
         if (!copyBtn) return;
         const original = copyBtn.textContent;
