@@ -453,8 +453,6 @@ The multiplicity of AI perspectives embodies interpretive collaboration—differ
 
 ---
 
-## Footnotes
-
 [^1]: Projects launched in June 2024, generating over 500 million user creations in the first year. Provide bounded contexts with 200K token windows, custom instructions, and team sharing with granular access controls. Available across Claude Web and Apps.
 
 [^2]: Support collaboration through activity feeds where Claude Team users share chat results and insights. Access levels include "Can use" vs. "Can edit" permissions.
