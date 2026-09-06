@@ -11,7 +11,14 @@ const MD_PATHS = /^\/(writing\/[^/]+|making\/portraits\/[^/]+|making\/artifacts\
 export default function middleware(request: Request) {
   const accept = request.headers.get('accept') || '';
   const wantsMarkdown = accept.split(',')
-    .some(part => part.trim().split(';')[0].trim() === 'text/markdown');
+    .some(part => {
+      const [mediaType, ...parameters] = part.split(';').map(value => value.trim());
+      if (mediaType.toLowerCase() !== 'text/markdown') return false;
+
+      // Keep explicit Markdown opt-in, including ties with HTML, but respect
+      // q=0: the client has explicitly marked this representation unacceptable.
+      return !parameters.some(parameter => /^q\s*=\s*(?:0(?:\.0*)?|"0(?:\.0*)?")$/i.test(parameter));
+    });
   if (!wantsMarkdown) {
     return next();
   }
