@@ -314,74 +314,11 @@ marker: "writing"
 
 <!-- Article Image Lightbox -->
 <div class="lightbox" id="article-lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox" aria-hidden="true">
-    <button class="lightbox-close" aria-label="Close lightbox">close</button>
+    <button type="button" class="lightbox-close" aria-label="Close lightbox">close</button>
     <img alt="Enlarged image view">
 </div>
 
-<script>
-(function() {
-    const lightbox = document.getElementById('article-lightbox');
-    if (!lightbox) return;
-
-    const lightboxImg = lightbox.querySelector('img');
-    const closeBtn = lightbox.querySelector('.lightbox-close');
-    const articleImages = document.querySelectorAll('.article-body img');
-
-    let triggerElement = null;
-
-    // Make images focusable for keyboard nav
-    articleImages.forEach(img => {
-        img.setAttribute('tabindex', '0');
-        img.setAttribute('role', 'button');
-        img.setAttribute('aria-label', 'View ' + (img.alt || 'image') + ' full size');
-    });
-
-    function openLightbox(img) {
-        triggerElement = img;
-        lightboxImg.src = img.dataset.fullSrc || img.src;
-        lightboxImg.alt = img.alt || '';
-        lightbox.classList.add('active');
-        lightbox.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-        closeBtn.focus();
-    }
-
-    function closeLightbox() {
-        lightbox.classList.remove('active');
-        lightbox.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-        if (triggerElement) {
-            triggerElement.focus();
-            triggerElement = null;
-        }
-    }
-
-    // Click to open
-    articleImages.forEach(img => {
-        img.addEventListener('click', () => openLightbox(img));
-        img.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                openLightbox(img);
-            }
-        });
-    });
-
-    // Close on click anywhere in lightbox
-    lightbox.addEventListener('click', closeLightbox);
-    closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeLightbox();
-    });
-
-    // Escape to close
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-            closeLightbox();
-        }
-    });
-})();
-</script>
+<script defer src="/assets/js/writing-lightbox.js?v={{ site.version }}"></script>
 
 <!-- Marginalia positioning: align notes with their references -->
 <script>

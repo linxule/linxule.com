@@ -444,77 +444,7 @@
     <div class="rendering">one rendering · <a href="{{ mdAlternate }}">the source remains</a></div>
     {% endif %}
     
-    <script>
-        // Bloom cursor effect
-        const bloom = document.getElementById('bloom');
-        document.addEventListener('mousemove', (e) => {
-            bloom.style.left = e.clientX + 'px';
-            bloom.style.top = e.clientY + 'px';
-        });
-
-        // External links open in new tab
-        document.querySelectorAll('a[href^="http"]').forEach(link => {
-            if (!link.href.includes(window.location.hostname)) {
-                link.setAttribute('target', '_blank');
-                link.setAttribute('rel', 'noopener noreferrer');
-            }
-        });
-
-        // Making book mode owns an internal scroller and sets its own semantic
-        // restoration policy. Other pages retain native document restoration.
-        if ('scrollRestoration' in history && !document.getElementById('making-book')) {
-            history.scrollRestoration = 'auto';
-        }
-
-        // Temporarily disable smooth scroll during back/forward navigation.
-        // Restore by CLEARING the inline style (never set 'smooth' inline — it would
-        // override the prefers-reduced-motion CSS; the stylesheet decides).
-        window.addEventListener('pageshow', (event) => {
-            if (event.persisted) {
-                document.documentElement.style.scrollBehavior = 'auto';
-                setTimeout(() => {
-                    document.documentElement.style.scrollBehavior = '';
-                }, 100);
-            }
-        });
-
-        // Scroll position restoration for in-page navigation
-        (function() {
-            const currentPath = window.location.pathname;
-
-            // Save scroll position when clicking links to detail pages
-            // (links that go deeper into the site)
-            document.addEventListener('click', (e) => {
-                const link = e.target.closest('a');
-                if (!link) return;
-
-                const href = link.getAttribute('href');
-                if (!href || href.startsWith('#') || href.startsWith('http')) return;
-
-                // Save current scroll position with current path
-                sessionStorage.setItem('scrollPos_' + currentPath, window.scrollY);
-            });
-
-            // Check if we're returning to a page we left
-            const savedPos = sessionStorage.getItem('scrollPos_' + currentPath);
-            if (savedPos && document.referrer) {
-                // Only restore if coming from a child page (longer path)
-                try {
-                    const referrerPath = new URL(document.referrer).pathname;
-                    if (referrerPath.startsWith(currentPath) && referrerPath !== currentPath) {
-                        document.documentElement.style.scrollBehavior = 'auto';
-                        window.scrollTo(0, parseInt(savedPos));
-                        sessionStorage.removeItem('scrollPos_' + currentPath);
-                        setTimeout(() => {
-                            document.documentElement.style.scrollBehavior = '';
-                        }, 100);
-                    }
-                } catch (e) {
-                    // Malformed referrer, skip restoration
-                }
-            }
-        })();
-    </script>
+    <script defer src="/assets/js/site.js?v={{ site.version }}"></script>
 
     {# Paper texture — generated per session, unique like handmade paper #}
     <script defer src="/assets/js/paper.js?v={{ site.version }}"></script>
