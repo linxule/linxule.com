@@ -4,7 +4,9 @@
  * Honors the design system (.claude/docs/design.md / design-system.md):
  *   - Two voices in counterpoint: IBM Plex Mono (machine — kicker/locator) +
  *     Cormorant Garamond (human — the title/tagline).
- *   - One accident in cyan (#4ee1d4): a quiet DOT; meaningful words always stay in ink.
+ *   - One accident in cyan (#4ee1d4). Authored, never mechanical: when the source
+ *     declares one (a title with `accident: true`, the brand phrase) that text is
+ *     cyan — the same words that are cyan on the page. Otherwise a quiet DOT.
  *   - Paper ground, page-opening left margin, a ghost-ink rule.
  *
  * Renderer: @resvg/resvg-js + static font instances vendored in scripts/og-fonts/
@@ -95,8 +97,8 @@ export function sectionCard({ kicker, title, taglineLines }) {
   ));
 }
 
-/** Ink title with one cyan dot. The locator and optional venue stay separate. */
-export function titleCardSvg({ kicker, title, subtitle, brand = "LINXULE.COM" }) {
+/** Ink title with one cyan dot — or the whole title in cyan when the page's title is the accident. */
+export function titleCardSvg({ kicker, title, subtitle, accident = false, brand = "LINXULE.COM" }) {
   const maxW = 1200 - X * 2;
   let size = 120;
   let lines = wrap(title, size, maxW);
@@ -107,23 +109,28 @@ export function titleCardSvg({ kicker, title, subtitle, brand = "LINXULE.COM" })
   const lh = size * 1.04;
   const startY = 315 - (lines.length * lh) / 2 + size * 0.75;
   const body = lines.map((ln, i) =>
-    `<text x="${X}" y="${startY + i * lh}" font-family="${SERIF_SB}" font-size="${size}" fill="${INK}">${esc(ln)}</text>`
+    `<text x="${X}" y="${startY + i * lh}" font-family="${SERIF_SB}" font-size="${size}" fill="${accident ? CYAN : INK}">${esc(ln)}</text>`
   ).join("");
   const sub = subtitle ? `<text x="${X}" y="475" font-family="${SERIF_IT}" font-size="32" fill="${INK2}">${esc(subtitle)}</text>` : "";
   return svgWrap(
-    kickerEl(kicker, 120, 22, 6) + dot(158) + body + sub +
+    kickerEl(kicker, 120, 22, 6) + (accident ? "" : dot(158)) + body + sub +
     ruleRight(520, 220) + kickerRight(brand, 556)
   );
 }
 export function titleCard(options) { return render(titleCardSvg(options)); }
 
-/** Brand/default card: the whole thesis stays readable; cyan marks the opening. */
+/** Brand/default card: big name · italic thesis; the authored `accent` line is the accident (a dot only if none is). */
 export function brandCardSvg({ name = "Xule Lin", kicker = "LINXULE.COM", taglineLines }) {
+  const accented = taglineLines.some((ln) => typeof ln === "object" && ln.accent);
   const tl = taglineLines
-    .map((ln, i) => `<text x="${X + (i % 2 ? 30 : 0)}" y="${410 + i * 48}" font-family="${SERIF_IT}" font-size="35" fill="${INK2}">${esc(typeof ln === "string" ? ln : ln.text)}</text>`)
+    .map((ln, i) => {
+      const text = typeof ln === "string" ? ln : ln.text;
+      const fill = typeof ln === "object" && ln.accent ? CYAN : INK2;
+      return `<text x="${X + (i % 2 ? 30 : 0)}" y="${410 + i * 48}" font-family="${SERIF_IT}" font-size="35" fill="${fill}">${esc(text)}</text>`;
+    })
     .join("");
   return svgWrap(
-    kickerEl(kicker, 150) + dot(198) +
+    kickerEl(kicker, 150) + (accented ? "" : dot(198)) +
     `<text x="${X - 2}" y="300" font-family="${SERIF_SB}" font-size="116" letter-spacing="2" fill="${INK}">${esc(name)}</text>` +
     tl + rule(556, 268)
   );

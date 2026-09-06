@@ -14,6 +14,12 @@ export function createHostModal(root, { closeControl, requestClose, label }) {
     if (active) closeControl.focus({ preventScroll: true });
   }
 
+  // The visible exit hint is for the reader who is navigating by keyboard;
+  // everyone else sees only the work. (Assistive tech reads it regardless.)
+  function markKeyboard() {
+    if (active) root.setAttribute('data-keyboard', '');
+  }
+
   // The parent's keydown handler cannot see keys inside an opaque/cross-origin
   // iframe. Native Tab navigation *does* leave the frame: catch that next stop
   // on either side, before it can enter the background page or browser chrome.
@@ -23,12 +29,13 @@ export function createHostModal(root, { closeControl, requestClose, label }) {
     guard.hidden = true;
     guard.setAttribute('aria-label', 'Return to close');
     guard.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;';
-    guard.addEventListener('focus', focusClose);
+    guard.addEventListener('focus', () => { markKeyboard(); focusClose(); });
   }
   root.prepend(guards[0]);
   root.append(guards[1]);
 
   function onKeydown(event) {
+    if (event.key === 'Tab') markKeyboard();
     if (active && event.key === 'Escape' && !event.defaultPrevented) {
       event.preventDefault();
       requestClose();
@@ -98,6 +105,7 @@ export function createHostModal(root, { closeControl, requestClose, label }) {
     close() {
       if (!active) return;
       active = false;
+      root.removeAttribute('data-keyboard');
       guards.forEach(guard => { guard.hidden = true; });
       document.removeEventListener('keydown', onKeydown);
       document.removeEventListener('focusin', onFocus);

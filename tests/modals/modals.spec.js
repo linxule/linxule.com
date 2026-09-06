@@ -81,9 +81,13 @@ test('opaque script-free video keeps its sandbox and has a keyboard exit', async
   await expect(control).toBeFocused();
   await expect(artifact).toHaveAttribute('role', 'dialog');
   await expect(artifact).toHaveAttribute('aria-modal', 'true');
-  await expect(page.locator('#artifact-keyboard-hint')).toBeVisible();
+  // A mouse reader sees only the work; the exit hint appears once a keyboard is in play.
+  const hint = page.locator('#artifact-keyboard-hint');
+  expect(await hint.evaluate(el => el.getBoundingClientRect().width)).toBeLessThanOrEqual(1);
   await page.keyboard.press('Shift+Tab');
   await expect(control).toBeFocused();
+  await expect(artifact).toHaveAttribute('data-keyboard', '');
+  expect(await hint.evaluate(el => el.getBoundingClientRect().width)).toBeGreaterThan(1);
   // The script-free player is still a guest document when media is unavailable
   // and none of its native controls are focusable.
   await frame.focus();

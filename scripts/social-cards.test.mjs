@@ -6,7 +6,7 @@ import sharp from "sharp";
 import nunjucks from "nunjucks";
 import { load } from "js-yaml";
 import filters from "../eleventy/filters.js";
-import { BRAND_CARD, DEFAULT_CARD, SERIES_CARDS, ogCard, resolveSocialCard } from "../eleventy/og-card-paths.js";
+import { BRAND_CARD, DEFAULT_CARD, SERIES_CARDS, ogCard, resolveSocialCard, titleCardOptions } from "../eleventy/og-card-paths.js";
 import { titleCardSvg, brandCardSvg } from "./lib/og-cards.mjs";
 import { checkOgImages } from "./check-og-images.mjs";
 
@@ -103,16 +103,27 @@ describe("social cards", () => {
     expect(resolveSocialCard({ ...data, ogImageAlt: "Authored alternative" }).alt).toBe("Authored alternative");
   });
 
-  test("meaningful title and brand words stay in ink with exactly one cyan mark", () => {
+  test("cyan is the authored accident when there is one, otherwise a single quiet dot", () => {
     for (const svg of [
       titleCardSvg({ title: "LOOM III: Between Automated Precision and Lived Understanding", kicker: "WRITING · LOOM · III" }),
       titleCardSvg({ title: "blocked out, then drawn on", kicker: "MAKING · ARTIFACT" }),
-      brandCardSvg(BRAND_CARD),
     ]) {
       expect(svg.match(/fill="#4ee1d4"/g)).toHaveLength(1);
       expect(svg).toMatch(/<circle[^>]+fill="#4ee1d4"/);
       expect(svg).not.toMatch(/<(?:text|tspan)[^>]+fill="#4ee1d4"/);
     }
+    // A title that is the accident on the page is the accident on the card — no dot beside it.
+    const accidentCard = titleCardSvg(titleCardOptions({ layout: "layouts/writing.njk", title: "Epistemic Voids #3: Mechanism Literalism", series: "Epistemic Voids", accident: true }));
+    expect(accidentCard).not.toMatch(/<circle/);
+    expect(accidentCard).toMatch(/<text[^>]+fill="#4ee1d4"[^>]*>Epistemic Voids/);
+    expect(accidentCard).not.toMatch(/<text[^>]+fill="#1a1a1a"[^>]*>(?:Epistemic|Mechanism)/);
+    expect(titleCardOptions({ layout: "layouts/writing.njk", title: "Plain" }).accident).toBe(false);
+    // The brand card carries its authored phrase — "not as tools." — in cyan, and nothing else.
+    const brand = brandCardSvg(BRAND_CARD);
+    expect(brand).not.toMatch(/<circle/);
+    expect(brand.match(/fill="#4ee1d4"/g)).toHaveLength(1);
+    expect(brand).toMatch(/<text[^>]+fill="#4ee1d4"[^>]*>not as tools\./);
+    expect(resolveSocialCard({}).alt).toBe("Xule Lin. What becomes impossible to see when algorithms enter organizational life — not as tools.. LINXULE.COM");
     const making = resolveSocialCard({ ogImage: "/assets/og-cards/making.jpg" });
     expect(making.src).toBe("/assets/og-cards/making-r2.jpg");
     expect(making.alt).toContain("artifacts made by AI");

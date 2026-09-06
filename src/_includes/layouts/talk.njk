@@ -162,6 +162,15 @@ marker: "talks"
         color: var(--paper);
     }
 
+    /* Spoken always; shown only once a keyboard is in play (host-modal sets data-keyboard). */
+    .slides-lightbox:not([data-keyboard]) .slides-keyboard-hint {
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
     .slides-lightbox-close:hover,
     .slides-lightbox-close:focus-visible {
         color: var(--paper);

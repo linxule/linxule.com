@@ -8,8 +8,9 @@ export const DEFAULT_CARD = `${OG_CARDS_DIR}/default-r2.jpg`;
 export const RASTER_CARD_REV = "-r2";
 export const BRAND_CARD = {
   name: "Xule Lin", kicker: "LINXULE.COM",
-  taglineLines: ["What becomes impossible to see when", "algorithms enter organizational life —", "not as tools."],
+  taglineLines: ["What becomes impossible to see when", "algorithms enter organizational life —", { text: "not as tools.", accent: true }],
 };
+const brandTagline = () => BRAND_CARD.taglineLines.map((ln) => (typeof ln === "string" ? ln : ln.text)).join(" ");
 export const SECTION_CARDS = {
   making: ["Portraits as poems, artifacts made by AI,", "and research tools."],
   writing: ["Essays on human–AI collaboration", "in qualitative research."],
@@ -74,18 +75,21 @@ export function ogCard(src) {
   return src;
 }
 
+// `accident` mirrors the page: a title that is cyan on the HTML surface is cyan on its card.
 export function titleCardOptions(data) {
+  const accident = data.accident === true;
   if (data.layout === "layouts/paper.njk") return {
     title: data.paperTitle || data.title,
     kicker: ["PAPER", data.year].filter(Boolean).join(" · "),
     subtitle: data.venue,
+    accident,
   };
-  if (data.layout === "layouts/artifact.njk") return { title: data.title, kicker: "MAKING · ARTIFACT" };
+  if (data.layout === "layouts/artifact.njk") return { title: data.title, kicker: "MAKING · ARTIFACT", accident };
   if (data.layout === "layouts/talk.njk") {
     const year = data.date instanceof Date ? data.date.getUTCFullYear() : String(data.date || "").slice(0, 4);
-    return { title: data.title, kicker: ["TALKS", year].filter(Boolean).join(" · ") };
+    return { title: data.title, kicker: ["TALKS", year].filter(Boolean).join(" · "), accident };
   }
-  return { title: data.title, kicker: typeof data.series === "string" ? `WRITING · ${data.series.toUpperCase()}` : "WRITING" };
+  return { title: data.title, kicker: typeof data.series === "string" ? `WRITING · ${data.series.toUpperCase()}` : "WRITING", accident };
 }
 export function textCardAlt({ kicker, title, subtitle, brand = "LINXULE.COM" }) {
   return [kicker, title, subtitle, brand].filter(Boolean).join(". ");
@@ -103,7 +107,7 @@ export function resolveSocialCard(data, coverAlt = "") {
     alt: data.ogImageAlt || ["XULE LIN", section, SECTION_CARDS[section].join(" ")].join(". "),
   };
   if (hero === DEFAULT_CARD || hero === `${OG_CARDS_DIR}/default.jpg`) return {
-    src: DEFAULT_CARD, alt: data.ogImageAlt || [BRAND_CARD.name, BRAND_CARD.taglineLines.join(" "), BRAND_CARD.kicker].join(". "),
+    src: DEFAULT_CARD, alt: data.ogImageAlt || [BRAND_CARD.name, brandTagline(), BRAND_CARD.kicker].join(". "),
   };
   if (hero) {
     const galleryImage = data.images?.find((img) => img.src === hero);
@@ -118,5 +122,5 @@ export function resolveSocialCard(data, coverAlt = "") {
   }
   const auto = autoCardPath(data.page?.fileSlug, data.layout, url);
   if (auto) return { src: auto, alt: data.ogImageAlt || textCardAlt(titleCardOptions(data)) };
-  return { src: DEFAULT_CARD, alt: data.ogImageAlt || [BRAND_CARD.name, BRAND_CARD.taglineLines.join(" "), BRAND_CARD.kicker].join(". ") };
+  return { src: DEFAULT_CARD, alt: data.ogImageAlt || [BRAND_CARD.name, brandTagline(), BRAND_CARD.kicker].join(". ") };
 }
