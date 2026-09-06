@@ -1,6 +1,8 @@
 import markdownIt from "markdown-it";
 import markdownItFootnote from "markdown-it-footnote";
-import fs from "fs";
+import path from "node:path";
+import { syncImageCache } from "./scripts/lib/image-cache.mjs";
+import { IMAGE_CACHE_DIR, IMAGE_URL_PATH } from "./eleventy/image-pipeline.js";
 
 import collections from './eleventy/collections.js';
 import filters from './eleventy/filters.js';
@@ -51,43 +53,10 @@ export default function(eleventyConfig) {
   shortcodes(eleventyConfig);
   transforms(eleventyConfig);
 
-  // Copy cached optimized images to build output after build (incremental:
-  // copy a file only when the destination is absent or differs in size, so a
-  // build with no image changes is a near-noop instead of re-copying ~886MB).
-  eleventyConfig.on("eleventy.after", () => {
-    const cacheDir = ".cache/@11ty/img/";
-    const outputDir = "_site/assets/images/optimized/";
-    if (!fs.existsSync(cacheDir)) return;
-
-    const copyIncremental = (srcDir, destDir) => {
-      fs.mkdirSync(destDir, { recursive: true });
-      for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
-        const srcPath = srcDir + "/" + entry.name;
-        const destPath = destDir + "/" + entry.name;
-        if (entry.isDirectory()) {
-          copyIncremental(srcPath, destPath);
-        } else if (entry.isFile()) {
-          // eleventy-img never emits filenames with spaces. Anything like
-          // "…-2912w 2.png" is a Finder "keep both" merge duplicate (a 2026-03
-          // cache-merge incident shipped 3.5GB of them in every deploy) — skip.
-          if (entry.name.includes(" ")) continue;
-          let needsCopy = true;
-          try {
-            const destStat = fs.statSync(destPath);
-            const srcStat = fs.statSync(srcPath);
-            // Fresh if same size AND dest is at least as new as src. eleventy-img
-            // bumps the cache file's mtime when it re-encodes, so an in-place
-            // re-encode at an identical byte size still triggers a re-copy.
-            if (destStat.size === srcStat.size && srcStat.mtimeMs <= destStat.mtimeMs) needsCopy = false;
-          } catch {
-            // destination absent → needs copy
-          }
-          if (needsCopy) fs.copyFileSync(srcPath, destPath);
-        }
-      }
-    };
-
-    copyIncremental(cacheDir.replace(/\/$/, ""), outputDir.replace(/\/$/, ""));
+  // Use the same incremental copy policy as persisted-cache synchronization.
+  // Respect --output and programmatic builds instead of always writing _site.
+  eleventyConfig.on("eleventy.after", async ({ dir }) => {
+    await syncImageCache(IMAGE_CACHE_DIR, path.join(dir.output, IMAGE_URL_PATH));
   });
 
   return {

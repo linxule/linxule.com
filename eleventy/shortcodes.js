@@ -4,8 +4,8 @@
  */
 
 import Image from "@11ty/eleventy-img";
-import path from "path";
 import { existsSync, readFileSync } from "fs";
+import { imageOptions, imageHTML, originalImageHTML } from "./image-pipeline.js";
 
 // Decode common HTML entities back to characters.
 function decodeEntities(s) {
@@ -117,22 +117,10 @@ export default function(eleventyConfig) {
     const inputPath = src.startsWith('/') ? `./src${src}` : src;
 
     try {
-      let metadata = await Image(inputPath, {
-        widths: [400, 800, 1200, null], // null = original size
-        formats: ["avif", "webp", "png"],
-        outputDir: "./.cache/@11ty/img/",
-        urlPath: "/assets/images/optimized/",
-        cacheOptions: {
-          directory: "./node_modules/.cache/eleventy-img-fetch/",
-        },
-        filenameFormat: function (id, src, width, format) {
-          // Include parent folder to avoid collisions (01.png exists in multiple folders)
-          const parentDir = path.basename(path.dirname(src));
-          const name = path.basename(src, path.extname(src));
-          const widthStr = width ? `${width}w` : 'original';
-          return `${parentDir}-${name}-${widthStr}.${format}`;
-        }
-      });
+      const metadata = await Image(inputPath, imageOptions(
+        [400, 800, 1200, null], // null = original size
+        ["avif", "webp", "png"],
+      ));
 
       let imageAttributes = {
         alt: alt || '',
@@ -141,11 +129,11 @@ export default function(eleventyConfig) {
         decoding: "async",
       };
 
-      return Image.generateHTML(metadata, imageAttributes);
+      return imageHTML(metadata, imageAttributes);
     } catch (e) {
       console.error(`Error processing image ${src}:`, e.message);
       // Fallback to original image if processing fails
-      return `<img src="${src}" alt="${alt || ''}" loading="lazy">`;
+      return originalImageHTML(src, alt);
     }
   });
 }

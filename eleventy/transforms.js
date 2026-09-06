@@ -4,96 +4,73 @@
  */
 
 import Image from "@11ty/eleventy-img";
-import path from "path";
+import path from "node:path";
+import { imageAttributes, imageHTML, imageOptions } from "./image-pipeline.js";
 
-export default function(eleventyConfig) {
-
-  // Optimize writing images: convert markdown <img> to responsive <picture>
-  // Images are processed through eleventy-img (same pipeline as optimizedImage shortcode)
-  // and served as AVIF/WebP with responsive srcset. Original files remain available
-  // for lightbox full-size view via data-full-src attribute.
-  eleventyConfig.addTransform("optimizeWritingImages", async function(content) {
+// Export the factory so regressions can exercise the real markup generation
+// with a tiny image fixture instead of re-encoding the site's complete gallery.
+export function createWritingImageTransform(processImage = Image) {
+  return async function(content) {
     const outputPath = this.page.outputPath;
-    if (!outputPath || typeof outputPath !== 'string' || !outputPath.endsWith(".html")) return content;
+    if (!outputPath || typeof outputPath !== "string" || !outputPath.endsWith(".html")) return content;
     if (!this.page.inputPath?.includes("/writing/")) return content;
 
-    const imgRegex = /<img\s+([^>]*?)src="(\/writing\/attachments\/[^"]+)"([^>]*?)\/?>/gi;
-    const matches = [...content.matchAll(imgRegex)];
-
+    const imgPattern = /<img(?=\s)(?:[^"'<>]|"[^"]*"|'[^']*')*>/gi;
+    const matches = [...content.matchAll(imgPattern)].map(match => ({
+      tag: match[0], index: match.index, attributes: imageAttributes(match[0]),
+    })).filter(({ attributes }) => {
+      // Authored responsive markup owns its source selection. Leave it intact.
+      return attributes.src?.startsWith("/writing/attachments/") && !("srcset" in attributes);
+    });
     if (!matches.length) return content;
 
-    // Deduplicate: process each unique src once, in parallel
     const srcToMetadata = new Map();
-    const uniqueSrcs = [...new Set(matches.map(m => m[2]))];
-
+    const uniqueSrcs = [...new Set(matches.map(match => match.attributes.src))];
     console.log(`[writing-img] Optimizing ${uniqueSrcs.length} unique images in ${this.page.inputPath}`);
 
     await Promise.all(uniqueSrcs.map(async (src) => {
-      const inputPath = `./src${src}`;
-      const ext = path.extname(src).slice(1).toLowerCase();
-      const fallbackFormat = ext === 'jpg' ? 'jpeg' : ext;
-      const formats = ["avif", "webp"];
-      if (!formats.includes(fallbackFormat)) {
-        formats.push(fallbackFormat);
-      }
-
+      // Query strings and fragments belong to the public/lightbox URL, not the
+      // filesystem path or output format.
       try {
-        const metadata = await Image(inputPath, {
-          widths: [400, 800, 1200],
-          formats,
-          outputDir: "./.cache/@11ty/img/",
-          urlPath: "/assets/images/optimized/",
-          cacheOptions: {
-            directory: "./node_modules/.cache/eleventy-img-fetch/",
-          },
-          filenameFormat: function(id, src, width, format) {
-            const parentDir = path.basename(path.dirname(src));
-            const name = path.basename(src, path.extname(src));
-            const widthStr = width ? `${width}w` : 'original';
-            return `${parentDir}-${name}-${widthStr}.${format}`;
-          }
-        });
+        const pathname = src.split(/[?#]/, 1)[0];
+        const inputPath = `./src${pathname}`;
+        const ext = path.extname(pathname).slice(1).toLowerCase();
+        const fallbackFormat = ext === "jpg" ? "jpeg" : ext;
+        const formats = [...new Set(["avif", "webp", fallbackFormat])];
+        const metadata = await processImage(inputPath, imageOptions([400, 800, 1200], formats));
         srcToMetadata.set(src, metadata);
-      } catch (e) {
-        console.error(`[writing-img] Failed to optimize ${src}:`, e.message);
+      } catch (error) {
+        console.error(`[writing-img] Failed to optimize ${src}:`, error.message);
       }
     }));
 
-    // Replace matches in document order, building result from segments
-    let result = '';
+    let result = "";
     let lastIndex = 0;
-
-    for (const match of matches) {
-      const [fullMatch, beforeSrc, src, afterSrc] = match;
-      const metadata = srcToMetadata.get(src);
-
-      result += content.slice(lastIndex, match.index);
-
+    for (const { tag, index, attributes } of matches) {
+      const metadata = srcToMetadata.get(attributes.src);
+      result += content.slice(lastIndex, index);
       if (metadata) {
-        const altMatch = (beforeSrc + afterSrc).match(/alt="([^"]*)"/);
-        const alt = altMatch ? altMatch[1] : '';
-
-        let pictureHtml = Image.generateHTML(metadata, {
-          alt,
+        result += imageHTML(metadata, {
+          alt: "",
           sizes: "(max-width: 768px) 100vw, 42rem",
           loading: "lazy",
           decoding: "async",
+          ...attributes,
+          "data-full-src": attributes.src,
         });
-
-        // Store original path for lightbox full-size view
-        pictureHtml = pictureHtml.replace('<img', `<img data-full-src="${src}"`);
-
-        result += pictureHtml;
       } else {
-        result += fullMatch;
+        result += tag;
       }
-
-      lastIndex = match.index + fullMatch.length;
+      lastIndex = index + tag.length;
     }
+    return result + content.slice(lastIndex);
+  };
+}
 
-    result += content.slice(lastIndex);
-    return result;
-  });
+export default function(eleventyConfig) {
+  // Writing attachments share the shortcode's cache and responsive formats.
+  // Originals remain available to the lightbox via data-full-src.
+  eleventyConfig.addTransform("optimizeWritingImages", createWritingImageTransform());
 
   // Deep-link blockquote definitions: add id and class to > **Term**: patterns
   // Makes every concept definition deep-linkable via #dfn-slugified-term

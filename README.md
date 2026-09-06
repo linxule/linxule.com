@@ -14,8 +14,11 @@ This site embodies a "book in the algorithmic age" metaphor:
 
 ## Quick Start
 
+Use Node.js 22 or newer and Bun 1.4.2 (the version pinned in CI). Bun's tracked
+`bun.lock` is the source of truth for dependency installs.
+
 ```bash
-bun install    # Install dependencies
+bun install --frozen-lockfile # Install the verified dependency versions
 bun run start  # Dev server at localhost:8080
 bun run build  # Production build + search index
 ```
@@ -149,9 +152,29 @@ bun run build   # Outputs to _site/
   `INDEXNOW_KEY="$(tail -n 1 src/indexnow-key.njk)" INDEXNOW_FORCE=1 bun run publish:indexnow`.
   The key is the public verification token rendered by `src/indexnow-key.njk`,
   not a secret; Vercel Production supplies the same value as `INDEXNOW_KEY`.
-- **Vercel**: Auto-detects Eleventy, deploys on push
+- **Vercel**: Git auto-deployment is disabled. Pushes run the Verify workflow;
+  production uses a separate prebuilt deployment from a detached worktree.
+  See [CLAUDE.md](./CLAUDE.md) for the pinned CLI and deployment commands.
 - **Netlify**: Same, or drag `_site/` folder
 - **GitHub Pages**: Use GitHub Action
+
+## Verification and maintenance
+
+`bun run build` produces a fresh site and runs the output checks plus image-cache,
+image-pipeline, and Markdown-negotiation regressions. `bun run test:making` covers
+the gallery across its viewport boundaries; `bun run test:runtime` covers shared
+links and the article lightbox at desktop and mobile widths. Install Chromium
+first with `bunx playwright install chromium`.
+
+Image-cache restoration preserves newer local images. Repeated syncs copy only
+changed files and omit space-named cache-merge duplicates. Optimized image URLs
+remain stable; use a new source filename when replacing an image because these
+assets are served with immutable caching.
+
+For dependency maintenance, update `package.json` and `bun.lock` together, run
+`bun audit`, then the build and browser checks above. Image encoder upgrades
+also need the pipeline's cold-cache format tests; a warm site build alone can
+reuse files produced by the previous encoder.
 
 ## Credits
 
