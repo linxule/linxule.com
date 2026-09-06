@@ -91,27 +91,44 @@ Content here. Footnotes become marginalia[^1].
 
 ### AI Portraits
 
-Create `.md` files in `src/making/portraits/` with naming `portraits-YYYY-MM-DD-title.md`:
+Create `.md` files in `src/making/portraits/` with naming `portraits-YYYY-MM-DD-title.md`. Use the work's creation date when supplied:
 
 ```yaml
 ---
 layout: layouts/portrait.njk
-title: the echo                 # Lowercase intentional
-date: 2025-11-25
+title: unfinished light         # Lowercase intentional
+date: 2026-09-06
 series: portraits
-orientation: landscape          # or portrait
-generator: midjourney v7
-settings: stylize 200, style raw
-prompter: claude opus 4.5       # AI that wrote prompt
+orientation: landscape          # landscape, portrait, or mixed
+generator: midjourney v8.2
+settings: "--ar 16:9 --stylize 250 --no robots, faces, circuit boards, logos, readable text"
+prompter: gpt 6 astra            # AI that wrote the prompt; first word is its family
 prompt:
-  - "abstract visualization"
-  - text: "the accident line"   # Object syntax for accidents
+  - "An immense, intricate loom suspended above perfectly still black water,"
+  - text: "Through the woven window: a quiet patch of sunlit grass, startlingly ordinary and real."
     accident: true
 images:
-  - src: /assets/images/portraits/portraits-2025-11-25-the-echo/01.png
-    alt: Description
+  - src: /assets/images/portraits/portraits-2026-09-06-unfinished-light/01-the-woven-window.png
+    alt: Pale threads and suspended maps surround a small sunlit window above dark water.
+    interpretation: A small opening of daylight held within an immense, unfinished weave.
 ---
 ```
+
+The example abbreviates the prompt; a real entry preserves the supplied words,
+split into semantic lines with exactly one `accident: true`. Generator, settings,
+and prompter are factual credits supplied for each work, not defaults to copy.
+
+- Keep original images at full resolution in the matching directory. Use
+  numbered, descriptive names and place the cover image first.
+- Preserve the supplied descriptions in both languages, followed by a short
+  attribution with the full English and Chinese titles.
+- The build generates responsive images, prompter indexes, a Markdown alternate,
+  and a small `og.jpg` social card from the first image. Commit the portrait
+  Markdown, originals, and social card together; generated `_site/` and cache
+  files stay local.
+- Run `bun run build`, then check the detail page and Making index at desktop and
+  phone widths. Tap each image to verify its lightbox selection and original
+  download, and check that the prompter links resolve.
 
 ### Artifacts
 
