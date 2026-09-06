@@ -169,7 +169,7 @@ bun run build   # Outputs to _site/
   `INDEXNOW_KEY="$(tail -n 1 src/indexnow-key.njk)" INDEXNOW_FORCE=1 bun run publish:indexnow`.
   The key is the public verification token rendered by `src/indexnow-key.njk`,
   not a secret; Vercel Production supplies the same value as `INDEXNOW_KEY`.
-- **Vercel**: Git auto-deployment is disabled. Pushes run the Verify workflow;
+- **Vercel**: Git auto-deployment is disabled. Pushes trigger nothing — the Verify workflow is on-demand (`gh workflow run verify.yml`) and runs on pull requests;
   production uses a separate prebuilt deployment from a detached worktree.
   See [CLAUDE.md](./CLAUDE.md) for the pinned CLI and deployment commands.
 - **Netlify**: Same, or drag `_site/` folder
