@@ -138,6 +138,7 @@ a:hover {
 /* Nav links - no underline */
 .spine-name,
 .back-link,
+.fn-backref,
 .nav-link,
 .pathway,
 .tag {
@@ -495,7 +496,7 @@ p {
     font-family: 'IBM Plex Mono', monospace;
     font-size: var(--size-label);
     font-style: normal;
-    color: var(--ink-light);
+    color: var(--ink-faint);
 }
 
 .fn-ref,
