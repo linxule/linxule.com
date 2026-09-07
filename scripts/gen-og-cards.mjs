@@ -79,6 +79,13 @@ for (const file of inputs) {
   await imageCard(`src${hero}`, out, mode);
 }
 
+// An undated project note uses an explicit card and the same authored metadata.
+const vellumSource = "src/builds/vellum.md";
+const vellum = readData(vellumSource);
+await writeTextCard(() => titleCard({
+  title: vellum.title, subtitle: vellum.subtitle, kicker: "BUILDS · PUBLIC EXPERIMENT",
+}), `src${vellum.ogImage}`, vellumSource);
+
 await writeTextCard(() => brandCard(BRAND_CARD), `src${DEFAULT_CARD}`);
 for (const [section, taglineLines] of Object.entries(SECTION_CARDS)) {
   await writeTextCard(() => sectionCard({ kicker: "XULE LIN", title: section, taglineLines }), `src${sectionCardPath(section)}`);

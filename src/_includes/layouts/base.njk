@@ -134,7 +134,7 @@
     {%- if page.url and (page.url.startsWith('/writing/') or page.url.startsWith('/making/portraits/') or page.url.startsWith('/making/artifacts/') or page.url.startsWith('/talks/') or page.url.startsWith('/papers/')) and not page.url.startsWith('/writing/series/') and page.url != '/writing/' and page.url != '/talks/' and page.url != '/making/portraits/' and page.url != '/making/artifacts/' and page.url != '/papers/' %}
     {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
     {%- endif %}
-    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' or page.url == '/papers/' or page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' or page.url == '/builds/' %}
+    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' or page.url == '/papers/' or page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' or page.url == '/builds/' or page.url == '/builds/vellum/' %}
     {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
     {%- endif %}
     {%- if page.url == '/' %}

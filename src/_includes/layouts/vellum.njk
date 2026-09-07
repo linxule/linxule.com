@@ -1,0 +1,57 @@
+---
+layout: layouts/base.njk
+marker: builds
+---
+<style>
+    /* An undated Builds note, using the site's paper/detail-page vocabulary. */
+    .vellum-note { max-width: var(--measure); margin: 10rem auto 6rem; padding: 0 2rem; overflow-wrap: anywhere; }
+    .vellum-label { font: var(--size-aside) 'IBM Plex Mono', monospace; letter-spacing: var(--tracking-whisper); text-transform: uppercase; color: var(--ink-faint); }
+    .vellum-note h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 300; line-height: 1.2; margin: .6rem 0 1rem; }
+    .vellum-subtitle { font-size: var(--size-entry); font-style: italic; color: var(--ink-light); }
+    .vellum-links { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; margin: 1.5rem 0; font: var(--size-aside) 'IBM Plex Mono', monospace; }
+    .vellum-opening { margin: 3rem 0; line-height: 1.8; }
+    .vellum-opening span { display: block; }
+    .vellum-opening span:nth-child(2) { margin-left: 1.5rem; }
+    .vellum-opening span:nth-child(3) { margin-left: .75rem; }
+    .vellum-opening span:nth-child(4) { margin-left: 2.25rem; }
+    .vellum-footer { border-top: 1px solid var(--ink-ghost); margin-top: 3rem; padding-top: 1.5rem; }
+    @media (max-width: 768px) {
+        .vellum-note { margin: 7rem auto 4rem; padding: 0 1.5rem; }
+        .vellum-opening span:nth-child(n) { margin-left: 0; }
+    }
+</style>
+<article class="vellum-note" data-pagefind-body data-pagefind-filter="type:builds">
+    <header>
+        <div class="vellum-label">Builds · public experiment</div>
+        <h1>{{ title }}</h1>
+        <p class="vellum-subtitle">{{ subtitle }}</p>
+        <nav class="vellum-links" aria-label="Explore Vellum">
+            <a href="https://vellum.linxule.com">live surface →</a>
+            <a href="https://github.com/linxule/vellum">public source →</a>
+        </nav>
+    </header>
+    <p class="vellum-opening">
+        {% for line in opening %}
+        <span{% if line.accident %} class="accident"{% endif %}>{{ line.text | default(line) }}</span>
+        {% endfor %}
+    </p>
+    <div class="article-body">{{ content | safe }}</div>
+    <footer class="vellum-footer"><a href="/builds/" class="back-link">← all builds</a></footer>
+</article>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": {{ title | jsonScript | safe }},
+  "description": {{ description | jsonScript | safe }},
+  "url": {{ (site.url ~ '/builds/vellum') | jsonScript | safe }},
+  "mainEntityOfPage": {{ (site.url ~ '/builds/vellum') | jsonScript | safe }},
+  "about": {
+    "@type": "SoftwareSourceCode",
+    "name": "Vellum",
+    "url": "https://vellum.linxule.com",
+    "codeRepository": "https://github.com/linxule/vellum",
+    "license": "https://github.com/linxule/vellum/blob/main/LICENSE"
+  }
+}
+</script>

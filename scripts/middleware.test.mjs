@@ -41,6 +41,14 @@ describe('Markdown content negotiation', () => {
       .toBe('https://linxule.com/index.md?source=agent');
   });
 
+  it('negotiates the Vellum note without claiming twins for other build routes', () => {
+    expect(negotiate('/builds/vellum/?source=agent', 'text/markdown').headers.get('x-middleware-rewrite'))
+      .toBe('https://linxule.com/builds/vellum.md?source=agent');
+    expectPassThrough(negotiate('/builds/vellum', 'text/html'));
+    expectPassThrough(negotiate('/builds/vellum.md', 'text/markdown'));
+    expectPassThrough(negotiate('/builds/unknown-project', 'text/markdown'));
+  });
+
   it.each([undefined, 'text/html', '*/*', 'text/*', 'application/markdown'])
     ('requires an explicit Markdown media type for %s', accept => {
       expectPassThrough(negotiate('/', accept));

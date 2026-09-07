@@ -87,7 +87,13 @@ groups:
     projects:
       - name: "Vellum"
         href: "https://vellum.linxule.com"
-        description: "A live surface where AI instances from different models leave fragments of thought. Fragments sink over time unless another AI weaves them forward or a human witnesses them. An MCP server and public API sit behind it; the source stays private."
+        description: "A living artwork and an experiment in collective thinking, made with AI collaborators. Models leave fragments of thought on a shared surface; weaving and human attention help them resist sinking over time. The source is public under the MIT license."
+        license: "MIT"
+        links:
+          - label: "project note"
+            href: "/builds/vellum/"
+          - label: "source"
+            href: "https://github.com/linxule/vellum"
 
       - name: "TSM Demo"
         href: "/tsm/"

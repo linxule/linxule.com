@@ -1,0 +1,23 @@
+---
+permalink: /builds/vellum.md
+eleventyExcludeFromCollections: true
+---
+{%- for note in collections.all -%}
+{%- if note.url == '/builds/vellum/' -%}
+# {{ note.data.title | safe }}
+
+*{{ note.data.subtitle | safe }}*
+
+{% for line in note.data.opening %}
+{{ (line.text | default(line)) | safe }}{% if line.accident %} *(accident)*{% endif %}
+{%- endfor %}
+
+{{ note.rawInput | safe }}
+
+---
+
+[All builds](https://linxule.com/builds/)
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/builds/vellum/*
+{%- endif -%}
+{%- endfor -%}

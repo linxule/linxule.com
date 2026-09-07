@@ -6,7 +6,7 @@ import { rewrite, next } from '@vercel/functions';
 //          /concepts, /builds, index pages
 // NOTE: scripts/check-renderings.mjs parses the next line — keep MD_PATHS a
 // single-line regex literal ending in `;` with NO trailing comment.
-const MD_PATHS = /^\/(writing\/[^/]+|making\/portraits\/[^/]+|making\/artifacts\/[^/]+|talks\/[^/]+|papers\/[^/]+|cv|cv-zh|thinking|teaching|concepts|builds|writing|making|talks|papers)\/?$/;
+const MD_PATHS = /^\/(writing\/[^/]+|making\/portraits\/[^/]+|making\/artifacts\/[^/]+|talks\/[^/]+|papers\/[^/]+|cv|cv-zh|thinking|teaching|concepts|builds|builds\/vellum|writing|making|talks|papers)\/?$/;
 
 export default function middleware(request: Request) {
   const accept = request.headers.get('accept') || '';
@@ -62,5 +62,6 @@ export const config = {
     '/teaching',
     '/concepts',
     '/builds',
+    '/builds/vellum',
   ],
 };

@@ -11,6 +11,17 @@ eleventyExcludeFromCollections: true
     "description": "{{ site.description }}"
   },
   "pages": [
+{%- for note in collections.all %}
+{%- if note.url == '/builds/vellum/' %}
+    {
+      "url": {{ (note.url | replace(r/\/$/, '')) | dump | safe }},
+      "url_md": "/builds/vellum.md",
+      "title": {{ note.data.title | dump | safe }},
+      "section": "builds",
+      "summary": {{ note.data.description | dump | safe }}
+    }{% if collections.writing.length or collections.portraits.length or collections.artifacts.length or collections.talks.length or collections.papers.length %},{% endif %}
+{%- endif %}
+{%- endfor %}
 {%- for post in collections.writing %}
     {
       "url": "{{ post.url | replace(r/\/$/, "") }}",

@@ -45,6 +45,7 @@ const SHAPES = [
   { name: "cv",        kind: "single", path: "cv",        layout: "cv.njk" },
   { name: "cv-zh",     kind: "single", path: "cv-zh",     layout: "cv.njk" },
   { name: "builds",  kind: "single", path: "builds",  layout: "builds.njk" },
+  { name: "vellum",  kind: "single", path: "builds/vellum", layout: "vellum.njk" },
   // Hand-maintained indexes — no layout/pagefind or feed requirement
   { name: "writing-index", kind: "single", path: "writing" },
   { name: "making-index",  kind: "single", path: "making" },
