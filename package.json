@@ -28,15 +28,18 @@
   "dependencies": {
     "@11ty/eleventy": "^3.1.6",
     "@11ty/eleventy-img": "^7.0.0",
+    "entities": "^6.0.1",
+    "image-size": "1.2.1",
     "markdown-it": "^14.3.1",
-    "markdown-it-footnote": "^4.0.0",
-    "entities": "^6.0.1"
+    "markdown-it-footnote": "^4.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@resvg/resvg-js": "^2.6.2",
     "@vercel/functions": "^3.9.5",
+    "gray-matter": "4.0.3",
     "js-yaml": "^4.1.1",
+    "nunjucks": "3.2.4",
     "pagefind": "^1.5.2",
     "path-to-regexp": "^6.3.0",
     "sharp": "^0.35.4"
