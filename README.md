@@ -171,7 +171,9 @@ bun run build   # Outputs to _site/
   not a secret; Vercel Production supplies the same value as `INDEXNOW_KEY`.
 - **Vercel**: Git auto-deployment is disabled. Pushes trigger nothing — the Verify workflow is on-demand (`gh workflow run verify.yml`) and runs on pull requests;
   production uses a separate prebuilt deployment from a detached worktree.
-  See [CLAUDE.md](./CLAUDE.md) for the pinned CLI and deployment commands.
+  Follow [Publishing and deployment retention](./docs/publishing.md): keep current
+  production plus the production deployment recorded before publishing, and prune
+  older versions only after the new release passes live verification.
 - **Netlify**: Same, or drag `_site/` folder
 - **GitHub Pages**: Use GitHub Action
 
