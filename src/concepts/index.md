@@ -3,6 +3,7 @@ ogImage: /assets/og-cards/concepts.jpg
 layout: layouts/concepts.njk
 title: concepts
 seoTitle: "Concepts — a working vocabulary"
+seoDescription: "A working vocabulary for human–AI collaboration: epistemic voids, interpretive orchestration, and patterns made portable through naming."
 seoH1: "Concepts — handles for the things I keep seeing in human–AI work, named so a noticing becomes portable."
 description: "Naming is how you make a noticing portable."
 

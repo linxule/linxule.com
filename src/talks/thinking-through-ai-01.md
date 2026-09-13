@@ -7,6 +7,8 @@ event: New Scholars · Generative AI Series
 speakers:
   - Xule Lin
 youtube: pE0lnabQYg8
+# Recording publication timestamp from YouTube (verified 2026-09-13).
+videoUploadDate: "2026-04-30T06:30:21-07:00"
 slides: /assets/slides/thinking-through-ai-01/
 description: "Literature review as scholarly practice — three orienting principles, live demonstrations across three AI configurations, hands-on workshop. From the New Scholars Generative AI Series."
 keywords:

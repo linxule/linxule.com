@@ -7,6 +7,8 @@ speakers:
   - Kevin Corley
   - Xule Lin
 youtube: fPoVMFEh6TM
+# Recording publication timestamp from YouTube (verified 2026-09-13).
+videoUploadDate: "2026-01-29T08:50:27-08:00"
 slides: https://www.canva.com/design/DAG_WU-RIoc/9Orko4uJAbF3N98WYRrdaw/view?embed
 keywords:
   - human-AI collaboration

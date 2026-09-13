@@ -21,6 +21,33 @@ function walk(dir) {
   });
 }
 
+// Google validates nested talk recordings as well as top-level video artifacts.
+// Parseable JSON alone does not catch missing descriptions or date-only uploads.
+let videos = 0;
+function checkVideos(value, file) {
+  if (!value || typeof value !== "object") return;
+  const types = Array.isArray(value["@type"]) ? value["@type"] : [value["@type"]];
+  if (types.includes("VideoObject")) {
+    videos++;
+    const label = `${path.relative(SITE, file)} VideoObject`;
+    for (const field of ["name", "description"]) {
+      if (typeof value[field] !== "string" || !value[field].trim()) {
+        problems.push(`${label} is missing ${field}`);
+      }
+    }
+    const thumbnails = Array.isArray(value.thumbnailUrl) ? value.thumbnailUrl : [value.thumbnailUrl];
+    if (!thumbnails.length || thumbnails.some(url => typeof url !== "string" || !/^https?:\/\/[^/]+\//.test(url))) {
+      problems.push(`${label} needs an absolute thumbnailUrl`);
+    }
+    if (typeof value.uploadDate !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value.uploadDate) ||
+        !Number.isFinite(Date.parse(value.uploadDate))) {
+      problems.push(`${label} uploadDate must be an ISO datetime with timezone`);
+    }
+  }
+  for (const child of Object.values(value)) checkVideos(child, file);
+}
+
 for (const file of walk(SITE).filter((candidate) => candidate.endsWith(".html"))) {
   const html = readFileSync(file, "utf8");
   for (const match of html.matchAll(
@@ -29,6 +56,7 @@ for (const file of walk(SITE).filter((candidate) => candidate.endsWith(".html"))
     jsonLdBlocks++;
     try {
       const value = JSON.parse(match[1]);
+      checkVideos(value, file);
       if (value.mainEntityOfPage && typeof value.mainEntityOfPage === "string") {
         const url = new URL(value.mainEntityOfPage).pathname.replace(/\/$/, "");
         structuredPages.set(url, { value, file: path.relative(SITE, file) });
@@ -114,5 +142,5 @@ if (problems.length) {
 }
 
 console.log(
-  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), site-index.json, and builds.md parsed/agree`,
+  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), ${videos} VideoObject(s), site-index.json, and builds.md parsed/agree`,
 );

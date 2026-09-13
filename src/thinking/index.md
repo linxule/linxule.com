@@ -3,6 +3,7 @@ ogImage: /assets/og-cards/thinking.jpg
 layout: layouts/thinking.njk
 title: thinking
 seoTitle: "Thinking — the research framework"
+seoDescription: "AI systems carry implicit theories about collective organizing. A research framework tracing what those theories make impossible to see."
 seoH1: "Thinking — what becomes impossible to see when algorithms enter organizational life, not as tools."
 description: "What becomes impossible to see when AI systems carry implicit theories about collective organizing."
 
