@@ -32,9 +32,13 @@ change other projects, image quality, or the site's production domains.
    ```
 
    The normal build runs the site's verification gate. Inspect payload size
-   before upload. Recent output was approximately 2.6 GB as of September 6,
-   2026; measure each release rather than treating this as a permanent budget.
-   Generated optimized images must have zero space-named merge duplicates.
+   before upload. Output was approximately 1.4 GB as of September 13, 2026
+   (down from 2.6 GB once the gallery pipeline stopped re-emitting PNG: AVIF,
+   WebP and a JPEG fallback at 400/800/1200/2000w; the original files under
+   `assets/images/portraits/` remain as the download targets). Measure each
+   release rather than treating this as a permanent budget.
+   Generated optimized images must have zero space-named merge duplicates
+   and no PNG variants except for sources with real transparency.
    Do not wipe the image cache to solve deployment storage: it avoids expensive
    cold builds and is separate from retained deployment output.
 
@@ -85,18 +89,19 @@ change other projects, image quality, or the site's production domains.
 ## Storage budget and recovery
 
 The September 10 cleanup left two READY deployments. A rough estimate was
-`2 × 2.6 GB + 1.7 GB for other projects = 6.9 GB`. A third similar release
-temporarily raises that estimate to 9.5 GB against the account's 10 GB Hobby
-allowance. These are planning estimates, not confirmed metered usage: Vercel's
+`2 × 2.6 GB + 1.7 GB for other projects = 6.9 GB`; a third similar release
+temporarily raised that to 9.5 GB against the account's 10 GB Hobby allowance.
+After the September 13 pipeline change each release is about 1.4 GB, so three
+in flight is roughly `3 × 1.4 + 1.7 = 5.9 GB`. These are planning estimates, not confirmed metered usage: Vercel's
 accounting uses daily maxima and retained deleted data can take time to clear.
 If the payload or other projects grow, investigate before publishing; never
 delete the known-good rollback early merely to make room for an unverified build.
 
 Thirty-day Vercel retention is a fallback, not enforcement of this two-version
 policy. Its minimum-history and alias exceptions can preserve older versions.
-The post-publish helper enforces the narrower project policy. Large originals
-and generated PNG variants still need separate image-pipeline work if the
-storage margin becomes too small.
+The post-publish helper enforces the narrower project policy. What remains
+large is deliberate: portrait originals (~0.5 GB, offered for download as
+wallpapers) and writing attachments (~0.5 GB, passthrough-copied originals).
 
 Routine verified publishing includes the cleanup above. Extra previews, alias
 removal, a different rollback window, and deletion outside this project are

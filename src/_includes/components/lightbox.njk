@@ -54,11 +54,27 @@
         }
     });
 
+    // The lightbox shows the largest generated variant; data-src stays the
+    // original file, which is the gallery identity and the download target.
+    function viewSourceFor(element) {
+        const picture = element.querySelector('picture') || element.closest('picture');
+        const candidates = picture?.querySelector('source[type="image/webp"]')?.srcset
+            || picture?.querySelector('img')?.srcset || '';
+        let best = null;
+        candidates.split(',').forEach(candidate => {
+            const [url, descriptor] = candidate.trim().split(/\s+/);
+            const width = Number.parseInt(descriptor || '0', 10) || 0;
+            if (url && (!best || width > best.width)) best = { url, width };
+        });
+        return best?.url || null;
+    }
+
     function fallbackGallery(specimen) {
         const spread = specimen.closest('.spread, .specimens-field, article') || document;
         return Array.from(spread.querySelectorAll('.specimen[data-src]')).map(item => {
             const image = item.querySelector('img');
-            return { src: item.dataset.src || image?.src || '', alt: image?.alt || '' };
+            const src = item.dataset.src || image?.src || '';
+            return { src, view: viewSourceFor(item) || src, alt: image?.alt || '' };
         });
     }
 
@@ -70,6 +86,7 @@
         try {
             return JSON.parse(source.textContent).map(item => ({
                 src: item.src,
+                view: item.view || item.src,
                 alt: item.alt || ''
             }));
         } catch {
@@ -80,7 +97,7 @@
     function renderImage() {
         const item = activeGallery[activeIndex];
         if (!item) return;
-        lightboxImg.src = item.src;
+        lightboxImg.src = item.view || item.src;
         lightboxImg.alt = item.alt;
         counter.textContent = `${activeIndex + 1} / ${activeGallery.length}`;
         const hasMultiple = activeGallery.length > 1;

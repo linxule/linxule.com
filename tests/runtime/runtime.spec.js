@@ -78,7 +78,13 @@ test("article lightbox contains keyboard focus and restores the reading state", 
   const image = page.locator(".article-body img").first();
   const lightbox = page.locator("#article-lightbox");
   const close = lightbox.getByRole("button", { name: "Close lightbox" });
-  const expectedSource = await image.getAttribute("data-full-src") || await image.getAttribute("src");
+  // Largest generated WebP, not the original named by data-full-src.
+  const expectedSource = await image.evaluate((img) => {
+    const srcset = img.closest("picture")?.querySelector('source[type="image/webp"]')?.srcset || img.srcset;
+    if (!srcset) return img.dataset.fullSrc || img.src;
+    return srcset.split(",").map((c) => c.trim().split(/\s+/))
+      .sort((a, b) => parseInt(b[1]) - parseInt(a[1]))[0][0];
+  });
   await page.evaluate(() => { document.body.style.overflow = "auto"; });
   await image.focus();
   await image.press("Enter");

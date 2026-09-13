@@ -5,7 +5,7 @@
 
 import Image from "@11ty/eleventy-img";
 import { existsSync, readFileSync } from "fs";
-import { imageOptions, imageHTML, originalImageHTML } from "./image-pipeline.js";
+import { GALLERY_FORMATS, GALLERY_WIDTHS, galleryViewUrl, imageOptions, imageHTML, originalImageHTML } from "./image-pipeline.js";
 
 // Decode common HTML entities back to characters.
 function decodeEntities(s) {
@@ -113,6 +113,18 @@ export default function(eleventyConfig) {
     return `\n\n---\n\n## Slide outline\n\n_Auto-extracted from the hosted deck for AI/RSS consumers. The visual deck at ${slidesPath} is canonical._\n\n${extracted}\n`;
   });
 
+  // Gallery JSON for the lightbox: src stays the original (identity + download),
+  // view is the large generated variant the lightbox actually displays.
+  eleventyConfig.addAsyncFilter("galleryItems", async function(images) {
+    return Promise.all((images || []).map(async (image) => {
+      let view = image.src;
+      try { view = await galleryViewUrl(image.src); } catch (e) {
+        console.error(`Error resolving view image ${image.src}:`, e.message);
+      }
+      return { ...image, view };
+    }));
+  });
+
   // Optimized image shortcode - generates AVIF, WebP + responsive srcset
   eleventyConfig.addAsyncShortcode("optimizedImage", async function(src, alt, sizes = "50vw") {
     if (!src) return '';
@@ -121,10 +133,7 @@ export default function(eleventyConfig) {
     const inputPath = src.startsWith('/') ? `./src${src}` : src;
 
     try {
-      const metadata = await Image(inputPath, imageOptions(
-        [400, 800, 1200, null], // null = original size
-        ["avif", "webp", "png"],
-      ));
+      const metadata = await Image(inputPath, imageOptions(GALLERY_WIDTHS, GALLERY_FORMATS));
 
       let imageAttributes = {
         alt: alt || '',

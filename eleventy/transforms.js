@@ -4,12 +4,22 @@
  */
 
 import Image from "@11ty/eleventy-img";
+import sharp from "sharp";
 import path from "node:path";
 import { imageAttributes, imageHTML, imageOptions } from "./image-pipeline.js";
 
 // Export the factory so regressions can exercise the real markup generation
 // with a tiny image fixture instead of re-encoding the site's complete gallery.
-export function createWritingImageTransform(processImage = Image) {
+// PNG stays PNG only when it actually uses transparency; opaque PNG artwork
+// re-encoded as PNG at three widths was most of the deployed payload.
+export async function needsLosslessFallback(inputPath) {
+  const metadata = await sharp(inputPath).metadata();
+  if (!metadata.hasAlpha) return false;
+  const stats = await sharp(inputPath).stats();
+  return !stats.isOpaque;
+}
+
+export function createWritingImageTransform(processImage = Image, keepLossless = needsLosslessFallback) {
   return async function(content) {
     const outputPath = this.page.outputPath;
     if (!outputPath || typeof outputPath !== "string" || !outputPath.endsWith(".html")) return content;
@@ -35,7 +45,9 @@ export function createWritingImageTransform(processImage = Image) {
         const pathname = src.split(/[?#]/, 1)[0];
         const inputPath = `./src${pathname}`;
         const ext = path.extname(pathname).slice(1).toLowerCase();
-        const fallbackFormat = ext === "jpg" ? "jpeg" : ext;
+        // A probe failure is not a format decision; let processImage report the file.
+        const lossless = ext === "png" && await keepLossless(inputPath).catch(() => false);
+        const fallbackFormat = lossless ? "png" : "jpeg";
         const formats = [...new Set(["avif", "webp", fallbackFormat])];
         const metadata = await processImage(inputPath, imageOptions([400, 800, 1200], formats));
         srcToMetadata.set(src, metadata);

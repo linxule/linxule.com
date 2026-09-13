@@ -7,7 +7,7 @@ import { spawnSync } from "node:child_process";
 import markdownIt from "markdown-it";
 import Image from "@11ty/eleventy-img";
 import sharp from "sharp";
-import { createWritingImageTransform } from "../eleventy/transforms.js";
+import { createWritingImageTransform, needsLosslessFallback } from "../eleventy/transforms.js";
 import { imageOptions, originalImageHTML } from "../eleventy/image-pipeline.js";
 import shortcodes from "../eleventy/shortcodes.js";
 
@@ -19,14 +19,23 @@ afterAll(() => rm(fixtureDir, { recursive: true, force: true }));
 
 const page = { inputPath: "./src/writing/test.md", outputPath: "_site/writing/test/index.html" };
 
-function fixtureTransform(calls = []) {
+function fixtureTransform(calls = [], keepLossless = async () => false) {
   return createWritingImageTransform(async (input, options) => {
     calls.push({ input, options });
     return Image(fixturePath, { ...options, outputDir: path.join(fixtureDir, "optimized") });
-  });
+  }, keepLossless);
 }
 
 describe("writing image pipeline", () => {
+  test("opaque PNG falls back to JPEG; transparent PNG keeps PNG", async () => {
+    const original = '<img src="/writing/attachments/pixel.png" alt="">';
+    const opaque = []; await fixtureTransform(opaque).call({ page }, original);
+    expect(opaque[0].options.formats).toEqual(["avif", "webp", "jpeg"]);
+    const alpha = []; await fixtureTransform(alpha, async () => true).call({ page }, original);
+    expect(alpha[0].options.formats).toEqual(["avif", "webp", "png"]);
+    expect(await needsLosslessFallback(fixturePath)).toBe(false);
+  });
+
   test("real markdown keeps its alt text and title through responsive encoding", async () => {
     const markdown = '![A & B say "hello" <there>](/writing/attachments/pixel.png "Title & credit")';
     const original = markdownIt().render(markdown);
@@ -67,7 +76,7 @@ describe("writing image pipeline", () => {
     const original = '<img src="/writing/attachments/pixel.png?v=2&amp;mode=full#detail" alt="">';
     const output = await fixtureTransform(calls).call({ page }, original);
     expect(calls[0].input).toBe("./src/writing/attachments/pixel.png");
-    expect(calls[0].options.formats).toEqual(["avif", "webp", "png"]);
+    expect(calls[0].options.formats).toEqual(["avif", "webp", "jpeg"]);
     expect(output).toContain('data-full-src="/writing/attachments/pixel.png?v=2&amp;mode=full#detail"');
   });
 
@@ -111,19 +120,19 @@ describe("writing image pipeline", () => {
 describe("shared image contract", () => {
   test("preserves existing optimized asset filenames and per-path image widths", () => {
     const writing = imageOptions([400, 800, 1200], ["avif", "webp", "jpeg"]);
-    const making = imageOptions([400, 800, 1200, null], ["avif", "webp", "png"]);
+    const making = imageOptions([400, 800, 1200, 2000], ["avif", "webp", "jpeg"]);
     expect(writing.filenameFormat("hash", "./src/writing/attachments/cover.jpeg", 800, "avif"))
       .toBe("attachments-cover-800w.avif");
     expect(making.filenameFormat("hash", "./src/assets/images/portraits/portrait/01.png", 1200, "webp"))
       .toBe("portrait-01-1200w.webp");
     expect(writing.widths).toEqual([400, 800, 1200]);
-    expect(making.widths).toEqual([400, 800, 1200, null]);
+    expect(making.widths).toEqual([400, 800, 1200, 2000]);
     expect(making.outputDir).toBe(writing.outputDir);
   });
 
   test("shortcode failure keeps quotes and ampersands inside their attributes", async () => {
     let shortcode;
-    shortcodes({ addShortcode() {}, addAsyncShortcode(name, callback) { shortcode = callback; } });
+    shortcodes({ addShortcode() {}, addAsyncFilter() {}, addAsyncShortcode(name, callback) { shortcode = callback; } });
     const source = '/nonexistent/image.png?credit="A"&v=1';
     const output = await shortcode(source, 'A "quoted" & <missing> image');
     expect(output).toBe(originalImageHTML(source, 'A "quoted" & <missing> image'));

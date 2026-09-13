@@ -794,7 +794,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
             <button type="button" class="specimen-more" data-gallery-id="{{ galleryId }}" data-gallery-index="4" aria-label="View {{ portrait.data.images.length - 4 }} more images, starting with image 5">+{{ portrait.data.images.length - 4 }} more</button>
             {%- endif -%}
         </div>
-        <script type="application/json" id="{{ galleryId }}">{{ portrait.data.images | dump | safe }}</script>
+        <script type="application/json" id="{{ galleryId }}">{{ portrait.data.images | galleryItems | dump | safe }}</script>
 
     </section>
     {%- endfor -%}

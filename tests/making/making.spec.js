@@ -168,12 +168,22 @@ test("detail-page lightbox infers the clicked image from its source", async ({
     "/making/portraits/portraits-2026-06-30-self-chiseling/",
   );
   const trigger = page.locator(".specimen[data-src]").nth(2);
-  const expectedSrc = await trigger.getAttribute("data-src");
+  const originalSrc = await trigger.getAttribute("data-src");
+  // The lightbox displays the largest generated WebP; the original file is the
+  // download target, not what the viewer waits on.
+  const expectedSrc = await trigger.evaluate((el) => {
+    const srcset = el.querySelector('source[type="image/webp"]').srcset;
+    return srcset.split(",").map((c) => c.trim().split(/\s+/))
+      .sort((a, b) => parseInt(b[1]) - parseInt(a[1]))[0][0];
+  });
   await trigger.scrollIntoViewIfNeeded();
   await trigger.click();
 
   await expect(page.locator("#lightbox")).toHaveAttribute("aria-hidden", "false");
   await expect(page.locator("#lightbox img")).toHaveAttribute("src", expectedSrc);
+  expect(expectedSrc).not.toBe(originalSrc);
+  expect(expectedSrc).toMatch(/\/assets\/images\/optimized\/.*-\d+w\.webp$/);
+  await expect(trigger.locator("a.specimen-download")).toHaveAttribute("href", originalSrc);
   await expect(page.locator(".lightbox-counter")).toHaveText("3 / 4");
 });
 

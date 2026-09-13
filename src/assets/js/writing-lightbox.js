@@ -28,10 +28,24 @@
         }
     }
 
+    // Largest generated candidate in the picture, not the multi-megabyte
+    // original that data-full-src still names for og:image and markdown.
+    function viewSourceFor(img) {
+        const picture = img.closest('picture');
+        const candidates = picture?.querySelector('source[type="image/webp"]')?.srcset || img.srcset || '';
+        let best = null;
+        candidates.split(',').forEach(candidate => {
+            const [url, descriptor] = candidate.trim().split(/\s+/);
+            const width = Number.parseInt(descriptor || '0', 10) || 0;
+            if (url && (!best || width > best.width)) best = { url, width };
+        });
+        return best?.url || img.dataset.fullSrc || img.src;
+    }
+
     function openLightbox(img) {
         if (lightbox.classList.contains('active')) return;
         triggerElement = img;
-        lightboxImg.src = img.dataset.fullSrc || img.src;
+        lightboxImg.src = viewSourceFor(img);
         lightboxImg.alt = img.alt || '';
         previousBodyOverflow = document.body.style.overflow;
         lightbox.classList.add('active');
