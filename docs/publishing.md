@@ -39,7 +39,11 @@ does not change image quality or either site's production domains.
    `assets/images/portraits/` remain as the download targets). Measure each
    release rather than treating this as a permanent budget.
    Generated optimized images must have zero space-named merge duplicates
-   and no PNG variants except for sources with real transparency.
+   (they are iCloud conflict copies; `_site`, `.cache` and
+   `node_modules/.cache` are symlinks to `*.nosync` directories so iCloud
+   never writes them — check with `ls -la` if any appear) and no PNG
+   variants except for sources with real transparency. `.vercel/output` is
+   not nosync-protected: delete it after the deploy is verified.
    Do not wipe the image cache to solve deployment storage: it avoids expensive
    cold builds and is separate from retained deployment output.
 

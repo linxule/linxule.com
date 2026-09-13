@@ -39,6 +39,7 @@ The site is `xule-site/`, not the parent `personal-website/`. From the parent, u
 7. **FOUC cloak in `base.njk`** hides `body` until fonts are ready (1.5s fallback). Don't move it; it doesn't reach iframes. `.claude/rules/font-loading.md`.
 8. **Pre-commit secret scanner** lives in `.git/hooks` (local-only). Its `sk-` pattern is bounded now; a fresh false positive → verify no real key, then `--no-verify`. Gotcha #59.
 9. **Interactive/video artifacts need `thumbnail:`** or the Making index embeds a live iframe. Big video → R2 (`media.linxule.com`), never git. `.claude/rules/deploying-artifacts.md`, gotcha #60.
+10. **`_site`, `.cache` and `node_modules/.cache` are symlinks to `*.nosync` dirs** so iCloud Drive (which syncs `~/Documents`) never touches build output; every rebuild inside iCloud otherwise leaves byte-identical `name 2.ext` conflict copies. Never `rm -rf _site` (use `scripts/clean-output.mjs`); never recreate those as real directories. Gotcha #57.
 
 ## Commands
 
@@ -50,6 +51,6 @@ bun run test:making | test:runtime | test:ui   # Playwright (needs a free port 4
 
 ## Deployment
 
-Vercel + Cloudflare, `linxule.com`. **Git auto-deploy is disabled**; `git push` deploys nothing (Verify GHA is on-demand). Production is a prebuilt deploy from a **detached worktree at a committed SHA** (`.deploy-worktree`): `bunx vercel@58.8.0 build --prod --scope linxules-projects`, then `… deploy --prebuilt --prod …` (sandbox off). CLI pinned at 58.8.0 (58.9.1 rejects the middleware import). Healthy payload ≈ 1.4 GB / 4.1k files, zero space-named files; if a deploy is slow, measure `du -sh .vercel/output` first.
+Vercel + Cloudflare, `linxule.com`. **Git auto-deploy is disabled**; `git push` deploys nothing (Verify GHA is on-demand). Production is a prebuilt deploy from a **detached worktree at a committed SHA** (`.deploy-worktree`): `bunx vercel@58.8.0 build --prod --scope linxules-projects`, then `… deploy --prebuilt --prod …` (sandbox off). CLI pinned at 58.8.0 (58.9.1 rejects the middleware import). Healthy payload ≈ 1.4 GB / 4.1k files, zero space-named files; if a deploy is slow, measure `du -sh .vercel/output` first, and delete `.vercel/output` after a verified deploy (it is not nosync-protected).
 
 Keep **two READY deployments**: current + the rollback recorded *before* publishing. After live verification: `bun run publish:retention --current dpl_NEW --rollback dpl_PREVIOUS` (dry-run, then `--apply`). Vercel-side 1-day expiry plus a weekly launchd job (`com.xulelin.vercel-retention`) sweep both projects to two; a publish still passes explicit IDs. Full sequence and guards: **`docs/publishing.md`**.

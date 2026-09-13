@@ -3,10 +3,10 @@ node_modules/
 package-lock.json
 
 # Build output
-_site/
+_site
 
 # Eleventy image cache (persisted by Vercel between builds)
-.cache/
+.cache
 
 # System files
 **/.DS_Store
@@ -44,3 +44,7 @@ tools/
 # Browser test artifacts
 playwright-report/
 test-results/
+
+# iCloud-excluded build/cache targets (symlinked from _site and .cache)
+_site.nosync/
+.cache.nosync/
