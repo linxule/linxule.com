@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { planRetention, runRetention, PROJECT, TEAM } from "./deployment-retention.mjs";
+import { planRetention, projectConfig, resolveKeepIds, runRetention, PROJECT, TEAM } from "./deployment-retention.mjs";
 
 function fixture() {
   return {
@@ -85,4 +85,30 @@ test("an API deletion failure stops immediately without retrying or deleting ano
   expect(() => runRetention({ ...options, apply: true }, api, () => {})).toThrow("API failure");
   expect(attempts).toBe(1);
   expect(fake.deleted).toEqual([]);
+});
+
+test("auto mode keeps production and the newest older successful release", () => {
+  const data = fixture();
+  expect(resolveKeepIds(data, {})).toEqual({ current: "dpl_new", rollback: "dpl_previous" });
+  expect(resolveKeepIds(data, { current: "dpl_new", rollback: "dpl_old" })).toEqual({ current: "dpl_new", rollback: "dpl_old" });
+  data.deployments = data.deployments.filter(d => d.uid === "dpl_new");
+  expect(() => resolveKeepIds(data, {})).toThrow("nothing to prune");
+});
+
+test("research-memex is checked against its own project id and domains", () => {
+  const config = projectConfig("research-memex");
+  const data = fixture();
+  data.project.id = config.id;
+  for (const d of data.deployments) d.projectId = config.id;
+  expect(() => planRetention(data, "dpl_new", "dpl_previous", config)).toThrow("research-memex.org does not point");
+  data.aliases = config.domains.map(alias => ({ alias, deploymentId: "dpl_new" }));
+  expect(planRetention(data, "dpl_new", "dpl_previous", config)).toEqual({ preserve: ["dpl_new", "dpl_previous"], remove: ["dpl_old"] });
+  expect(() => planRetention(fixture(), "dpl_new", "dpl_previous", config)).toThrow("Wrong project");
+  expect(() => projectConfig("something-else")).toThrow("Unknown project");
+});
+
+test("auto apply through the API prunes exactly the older release", () => {
+  const fake = fakeAPI(fixture());
+  expect(runRetention({ apply: true }, fake.api, () => {}).remove).toEqual([]);
+  expect(fake.deleted).toEqual(["dpl_old"]);
 });

@@ -6,8 +6,9 @@ During a publish there will temporarily be three. Delete the oldest only after
 the new release passes verification. Git history remains the source archive;
 Vercel snapshots provide the live site and one quick rollback.
 
-This policy is specific to `linxule-com` on `linxules-projects`. It does not
-change other projects, image quality, or the site's production domains.
+This policy applies to `linxule-com` and, in `--auto` mode, to `research-memex`
+on `linxules-projects` (both listed in `scripts/deployment-retention.mjs`). It
+does not change image quality or either site's production domains.
 
 ## Publish sequence
 
@@ -97,9 +98,24 @@ accounting uses daily maxima and retained deleted data can take time to clear.
 If the payload or other projects grow, investigate before publishing; never
 delete the known-good rollback early merely to make room for an unverified build.
 
-Thirty-day Vercel retention is a fallback, not enforcement of this two-version
-policy. Its minimum-history and alias exceptions can preserve older versions.
-The post-publish helper enforces the narrower project policy. What remains
+Vercel's own retention on both projects is set to 1 day for previews,
+production, errored and canceled builds (changed from the 30-day default on
+2026-09-13 via `PATCH /v1/projects/<id>/deployment-expiration`). That clears
+`research-memex` branch previews and failed builds by itself, but Vercel keeps
+a floor of 10 production deployments (`deploymentsToKeep` is not writable on
+Hobby) and never expires aliased deployments, so it is a fallback, not
+enforcement of this two-version policy. The post-publish helper enforces the
+narrower project policy.
+
+A weekly launchd job on the primary Mac (`com.xulelin.vercel-retention`,
+Mondays 09:30, wrapper `~/.local/bin/vercel-retention.sh`, log
+`~/.local/log/vercel-retention.log`) runs
+`bun scripts/deployment-retention.mjs --project <name> --auto --apply` for
+`research-memex` and then `linxule-com`. `--auto` keeps whatever production
+points at plus the newest older READY production deployment; every other guard
+(domains, aliases, in-flight builds, previews) is unchanged. It is a no-op when
+only two successful releases exist. During a `linxule-com` publish still pass
+the recorded IDs explicitly; do not rely on the weekly run. What remains
 large is deliberate: portrait originals (~0.5 GB, offered for download as
 wallpapers) and writing attachments (~0.5 GB, passthrough-copied originals).
 

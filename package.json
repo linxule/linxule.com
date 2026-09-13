@@ -15,6 +15,7 @@
     "publish:indexnow": "bun run freshness:check && bash scripts/indexnow-submit.sh",
     "publish:retention": "bun scripts/deployment-retention.mjs",
     "retention:test": "bun test scripts/deployment-retention.test.mjs",
+    "retention:memex": "bun scripts/deployment-retention.mjs --project research-memex --auto",
     "og:cards": "bun scripts/gen-og-cards.mjs",
     "og:lint": "bun scripts/check-og-images.mjs",
     "renderings:lint": "bun scripts/check-renderings.mjs",
