@@ -28,8 +28,12 @@ function decodeEntities(s) {
 function extractSlidesMarkdown(html) {
   if (!/<deck-stage[\s>]/.test(html)) return null;
 
-  const sectionRe = /<section\s+data-label="([^"]+)"[^>]*>([\s\S]*?)<\/section>/g;
+  // Attributes may precede data-label (e.g. <section class="g-white" data-label="…">).
+  // Script blocks are dropped first so deck-stage.js's own doc comment, which
+  // contains example <section data-label> markup, is never read as a slide.
+  const sectionRe = /<section\b[^>]*?\sdata-label="([^"]+)"[^>]*>([\s\S]*?)<\/section>/g;
   const slides = [];
+  html = html.replace(/<script[\s\S]*?<\/script>/g, "");
 
   for (const match of html.matchAll(sectionRe)) {
     const label = match[1];

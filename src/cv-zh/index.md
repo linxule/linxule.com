@@ -117,7 +117,10 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 
 # 学术报告
 
-- _Thinking Through AI: Literature Review as Scholarly Practice_
+- _Agentic AI and Qualitative Research_
+	- 伦敦文本分析会议 (LTAC)，伦敦大学金史密斯学院，2026([幻灯片](https://linxule.com/talks/agentic-ai-and-qualitative-research/))
+	- 90分钟工作坊：自动化边界、与agent协作的五种安排、一次多模型现场环节，以及把agent编辑的公开wiki读作organizing；另参与会前的领域现状讨论
+- <br/>_Thinking Through AI: Literature Review as Scholarly Practice_
 	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026([视频](https://linxule.com/talks/thinking-through-ai-01/))
 	- 将文献综述视为学术实践：提出三项导向原则，开展跨三种 AI 配置的现场演示与动手实践环节
 - <br/>_Rethinking Human-AI Collaboration in Interpretive Research_
