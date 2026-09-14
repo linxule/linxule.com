@@ -31,8 +31,8 @@
   "dependencies": {
     "@11ty/eleventy": "^3.1.6",
     "@11ty/eleventy-img": "^7.0.0",
-    "entities": "^6.0.1",
-    "markdown-it": "^14.3.2",
+    "entities": "^8.1.0",
+    "markdown-it": "^15.0.2",
     "markdown-it-footnote": "^4.0.0"
   },
   "devDependencies": {
@@ -40,7 +40,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@vercel/functions": "^3.9.7",
     "gray-matter": "4.0.3",
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^5.4.2",
     "nunjucks": "3.2.4",
     "pagefind": "^1.5.2",
     "path-to-regexp": "^6.3.0",

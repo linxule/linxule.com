@@ -198,6 +198,12 @@ For dependency maintenance, update `package.json` and `bun.lock` together, run
 also need the pipeline's cold-cache format tests; a warm site build alone can
 reuse files produced by the previous encoder.
 
+Dependabot checks the native Bun lockfile and GitHub Actions weekly, grouping
+minor/patch updates and security fixes. Keep `path-to-regexp` on its audited v6
+line while the sitemap checker reads Vercel's `:path*` and `:path+` route syntax;
+v8 rejects those patterns. Markdown's bare-domain link setting is explicit so
+parser upgrades preserve existing article links.
+
 ## Credits
 
 Design conversation between Xule Lin and Claude.
