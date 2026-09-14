@@ -203,6 +203,8 @@ minor/patch updates and security fixes. Keep `path-to-regexp` on its audited v6
 line while the sitemap checker reads Vercel's `:path*` and `:path+` route syntax;
 v8 rejects those patterns. Markdown's bare-domain link setting is explicit so
 parser upgrades preserve existing article links.
+Only this parser's non-security major version updates are ignored; its security,
+minor, and patch updates remain enabled.
 
 ## Credits
 

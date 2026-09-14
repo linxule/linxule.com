@@ -4,6 +4,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # The sitemap checker reads Vercel's v6 route DSL. Semver update-type
+    # ignores apply only to version updates; security updates stay enabled.
+    ignore:
+      - dependency-name: path-to-regexp
+        update-types: ['version-update:semver-major']
     groups:
       dependencies:
         patterns: ['*']
