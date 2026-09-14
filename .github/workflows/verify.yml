@@ -1,6 +1,6 @@
 name: Verify
 
-# On demand only — production deploys are manual prebuilt runs whose local
+# PRs and on demand — production deploys are manual prebuilt runs whose local
 # `bun run build` already carries the unit/contract checks. Run the browser
 # sweep when wanted: `gh workflow run verify.yml`.
 on:
@@ -12,21 +12,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '24'
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: '1.4.2'
       - run: bun install --frozen-lockfile
+      - run: bun audit
       - run: bunx playwright install --with-deps chromium
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: |
             node_modules/.cache/site-img
             node_modules/.cache/eleventy-img-fetch
           key: ${{ runner.os }}-eleventy-img-v3-${{ hashFiles('src/**/*.png', 'src/**/*.jpg', 'src/**/*.jpeg', 'src/**/*.webp', 'src/**/*.svg', 'src/**/*.avif', 'src/**/*.gif', 'bun.lock', 'eleventy/image-pipeline.js', 'eleventy/shortcodes.js', 'eleventy/transforms.js') }}
+          restore-keys: |
+            ${{ runner.os }}-eleventy-img-v3-
       - run: bun run build
       - run: bun run test:making
       - run: bun run test:runtime

@@ -14,6 +14,7 @@ function renderMarkdown(source, env = {}) {
     addPassthroughCopy: noop,
     addCollection: noop,
     addFilter: noop,
+    addAsyncFilter: noop,
     addShortcode: noop,
     addAsyncShortcode: noop,
     addTransform: noop,

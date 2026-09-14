@@ -23,7 +23,7 @@
     "sitemap:test": "bun test scripts/check-sitemap-redirects.test.mjs",
     "artifact:test": "bun test scripts/check-artifact-pipeline.test.mjs",
     "play:test": "bun test scripts/check-play-integration.test.mjs",
-    "pipeline:test": "bun test scripts/image-cache.test.mjs scripts/image-pipeline*.test.mjs scripts/middleware.test.mjs",
+    "pipeline:test": "bun test scripts/image-cache.test.mjs scripts/image-pipeline*.test.mjs scripts/middleware.test.mjs scripts/image-aspect.test.mjs",
     "test:runtime": "bun run freshness:check && playwright test tests/runtime --project=desktop --project=mobile-boundary",
     "surface:test": "bun test scripts/social-cards.test.mjs scripts/rendering-fidelity.test.mjs",
     "test:ui": "bun run freshness:check && playwright test tests/reading tests/fonts --project=desktop && playwright test tests/modals --project=desktop --project=phone --project=phone-narrow && playwright test tests/discovery --project=phone --project=desktop"
@@ -32,14 +32,13 @@
     "@11ty/eleventy": "^3.1.6",
     "@11ty/eleventy-img": "^7.0.0",
     "entities": "^6.0.1",
-    "image-size": "1.2.1",
-    "markdown-it": "^14.3.1",
+    "markdown-it": "^14.3.2",
     "markdown-it-footnote": "^4.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@resvg/resvg-js": "^2.6.2",
-    "@vercel/functions": "^3.9.5",
+    "@vercel/functions": "^3.9.7",
     "gray-matter": "4.0.3",
     "js-yaml": "^4.1.1",
     "nunjucks": "3.2.4",
