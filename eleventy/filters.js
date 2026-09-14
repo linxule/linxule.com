@@ -5,17 +5,16 @@
 
 import { autoCardPath, ogCard, resolveSocialCard } from "./og-card-paths.js";
 import { imageAttributes } from "./image-pipeline.js";
-import { imageSize } from "image-size";
-import { readFileSync } from "node:fs";
+import sharp from "sharp";
 
 // Classify an image by aspect ratio for layout routing. Reads header dims only
-// (image-size, no full decode) from the source file behind a public /assets path.
+// (Sharp metadata, no full decode) from the source file behind a public /assets path.
 // Returns 'wide' | 'tall' | 'square', or null if the file can't be measured.
-function aspectClassOf(src) {
+async function aspectClassOf(src) {
   if (!src || typeof src !== "string") return null;
   try {
     const file = src.startsWith("/") ? `./src${src}` : src;
-    const { width, height } = imageSize(readFileSync(file));
+    const { width, height } = await sharp(file).metadata();
     if (!width || !height) return null;
     const ratio = width / height;
     return ratio > 1.15 ? "wide" : ratio < 0.87 ? "tall" : "square";
@@ -111,12 +110,12 @@ export default function(eleventyConfig) {
   //     variants only position 4 and assume a single shape).
   // This keeps a tall frame from overrunning `drift`'s absolute positions, and a
   // 7th image from landing unpositioned.
-  eleventyConfig.addFilter("layoutVariant", (slug, orientation, images) => {
+  eleventyConfig.addFilter("layoutVariant", async (slug, orientation, images) => {
     if (!slug) return 'drift';
 
     if (orientation === 'mixed') return 'salon';
     if (Array.isArray(images)) {
-      const classes = images.map(im => aspectClassOf(im && im.src)).filter(Boolean);
+      const classes = (await Promise.all(images.map(im => aspectClassOf(im && im.src)))).filter(Boolean);
       const heterogeneous = classes.length > 1 && !classes.every(c => c === classes[0]);
       if (heterogeneous) return 'salon';        // mixed shapes → hero + aspect-featured strip
       if (images.length > 4) return 'mosaic';   // uniform but too many for the scatter variants → equal-size array
@@ -139,8 +138,8 @@ export default function(eleventyConfig) {
   // Per-image aspect class for the salon layout's supporting frames, so a tall
   // frame is featured at portrait height instead of squashed to a wide's height.
   // Returns 'is-wide' | 'is-tall' | 'is-square' (empty if unmeasurable).
-  eleventyConfig.addFilter("aspectClass", (src) => {
-    const cls = aspectClassOf(src);
+  eleventyConfig.addFilter("aspectClass", async (src) => {
+    const cls = await aspectClassOf(src);
     return cls ? `is-${cls}` : "";
   });
 

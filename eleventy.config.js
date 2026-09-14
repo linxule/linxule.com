@@ -19,6 +19,9 @@ export default function(eleventyConfig) {
     linkify: true
   }).use(markdownItFootnote);
 
+  // Markdown 15 disables bare-domain links by default; preserve existing prose.
+  md.linkify.set({ fuzzyLink: true });
+
   // Customize footnote output for marginalia
   md.renderer.rules.footnote_ref = (tokens, idx, options, env, slf) => {
     const id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);

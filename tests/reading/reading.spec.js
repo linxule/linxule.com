@@ -14,6 +14,7 @@ function renderMarkdown(source, env = {}) {
     addPassthroughCopy: noop,
     addCollection: noop,
     addFilter: noop,
+    addAsyncFilter: noop,
     addShortcode: noop,
     addAsyncShortcode: noop,
     addTransform: noop,
@@ -50,6 +51,12 @@ test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
   await page.route("**/_vercel/insights/**", route => route.abort());
+});
+
+test("bare domains and email addresses retain their existing links", () => {
+  const html = renderMarkdown("Visit claude.ai or mail name@example.org.");
+  expect(html).toContain('<a href="http://claude.ai">claude.ai</a>');
+  expect(html).toContain('<a href="mailto:name@example.org">name@example.org</a>');
 });
 
 for (const width of [320, 390]) {
