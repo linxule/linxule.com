@@ -13,7 +13,7 @@ beforeAll(async () => {
     quietMode: true,
   });
   rendered = await eleventy.toJSON();
-});
+}, 60_000); // A complete site render exceeds Bun's 5s hook default on CI.
 
 function output(url) {
   const page = rendered.find((entry) => entry.url === url);

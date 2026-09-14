@@ -22,7 +22,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun audit
       - run: bunx playwright install --with-deps chromium
-      - uses: actions/cache@v6
+      - uses: actions/cache/restore@v6
+        id: images
         with:
           path: |
             node_modules/.cache/site-img
@@ -30,7 +31,16 @@ jobs:
           key: ${{ runner.os }}-eleventy-img-v3-${{ hashFiles('src/**/*.png', 'src/**/*.jpg', 'src/**/*.jpeg', 'src/**/*.webp', 'src/**/*.svg', 'src/**/*.avif', 'src/**/*.gif', 'bun.lock', 'eleventy/image-pipeline.js', 'eleventy/shortcodes.js', 'eleventy/transforms.js') }}
           restore-keys: |
             ${{ runner.os }}-eleventy-img-v3-
-      - run: bun run build
+      - run: bun run build:site
+      # Keep a completed image build even if a later regression check fails.
+      - uses: actions/cache/save@v6
+        if: steps.images.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules/.cache/site-img
+            node_modules/.cache/eleventy-img-fetch
+          key: ${{ steps.images.outputs.cache-primary-key }}
+      - run: bun run verify
       - run: bun run test:making
       - run: bun run test:runtime
       - run: bun run test:ui
