@@ -7,6 +7,8 @@ event: London Text Analysis Conference · Goldsmiths, University of London
 speakers:
   - Xule Lin
 slides: /assets/slides/agentic-ai-and-qualitative-research/
+pdf: /assets/slides/agentic-ai-and-qualitative-research/deck.pdf
+pdfVersion: v0.16
 description: "What agents do well today, five arrangements for working with them, one live moment where two other models enter a session, and a public wiki that agents edited — read as organizing. From the London Text Analysis Conference 2026."
 keywords:
   - agentic AI
@@ -26,8 +28,6 @@ From there, five arrangements (conversation, tool-using assistant, continuing pr
 The last third turns to material: a public wiki that benchmark agents edited through May and June 2026, fourteen thousand revisions, every one text. Two consecutive revisions, one byte-identical link, five models reading the same pair. All five see the duplicate; they differ in what they treat as evidence and what they ask to see next. The longer workshop reads all five and the two arrangements built on them; this cut stops at the teaser.
 
 What the room actually asked about was none of the mechanics. It asked what this means for science, and whether one should engage at all. My answer, which became the fourth thing to keep: if an agent can do your research, that is a question about you, not the agent — what you are in it for.
-
-The deck as a PDF, for reading or downloading: [deck.pdf](/assets/slides/agentic-ai-and-qualitative-research/deck.pdf) — public conference cut v0.16, revised 15 September 2026; the live moment is not in it, the saved runs are.
 
 Companion material:
 

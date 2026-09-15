@@ -83,6 +83,8 @@ marker: "talks"
     }
 
     .media-action {
+        text-decoration: none;
+        display: inline-block;
         font-family: 'IBM Plex Mono', monospace;
         font-size: var(--size-meta);
         color: var(--ink-faint);
@@ -348,6 +350,7 @@ marker: "talks"
             <div class="media-actions">
                 <button type="button" class="media-action" data-slides-fullscreen aria-label="Open slides fullscreen">Fullscreen</button>
                 <button type="button" class="media-action" data-slides-copy aria-label="Copy link to share">Copy link</button>
+                {% if pdf %}<a class="media-action" href="{{ pdf }}" download aria-label="Download the slides as a PDF">Download PDF{% if pdfVersion %} · {{ pdfVersion }}{% endif %}</a>{% endif %}
             </div>
         </figure>
         {% endif %}
