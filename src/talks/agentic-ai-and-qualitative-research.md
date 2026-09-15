@@ -27,6 +27,8 @@ The last third turns to material: a public wiki that benchmark agents edited thr
 
 What the room actually asked about was none of the mechanics. It asked what this means for science, and whether one should engage at all. My answer, which became the fourth thing to keep: if an agent can do your research, that is a question about you, not the agent — what you are in it for.
 
+The deck as a PDF, for reading or downloading: [deck.pdf](/assets/slides/agentic-ai-and-qualitative-research/deck.pdf) — public conference cut v0.16, revised 15 September 2026; the live moment is not in it, the saved runs are.
+
 Companion material:
 
 - [Composing an Agentic Research System](https://research-memex.org/docs/advanced-topics/composing-agentic-research-systems) — the seven distinctions and five questions, in page form
