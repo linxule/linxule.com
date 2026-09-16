@@ -93,23 +93,41 @@ does not change image quality or either site's production domains.
 
 ## Storage budget and recovery
 
-The September 10 cleanup left two READY deployments. A rough estimate was
-`2 × 2.6 GB + 1.7 GB for other projects = 6.9 GB`; a third similar release
-temporarily raised that to 9.5 GB against the account's 10 GB Hobby allowance.
-After the September 13 pipeline change each release is about 1.4 GB, so three
-in flight is roughly `3 × 1.4 + 1.7 = 5.9 GB`. These are planning estimates, not confirmed metered usage: Vercel's
-accounting uses daily maxima and retained deleted data can take time to clear.
-If the payload or other projects grow, investigate before publishing; never
-delete the known-good rollback early merely to make room for an unverified build.
+**How Vercel meters it (verified on the usage page, 2026-09-16).** Deployment
+Storage counts build output for every deployment that is retained *or in the
+30-day recovery hold*. Expired and deleted deployments move to the hold
+(project Settings → Security → "Recently Deleted Deployments"; the row menu
+offers only View Source / Restore, no purge) and remain on the meter until the
+hold ends. So pruning changes the number only 30 days later; the ~78 GB plateau
+before 2026-09-13 was roughly a month of ~2.6 GB releases, and the 22 GB read
+on 2026-09-16 was two live 1.3 GB deployments plus 30+ held ones. The usage
+chart shows the daily maximum per project and lags a little.
+
+Consequences for planning:
+
+- Only two levers act inside the current period: **payload per deployment**
+  (≈ 1.3 GB / 4.1k files since the pipeline change; portrait originals ~0.5 GB
+  offered as wallpaper downloads and writing attachments ~0.5 GB are
+  deliberate) and **how many deployments are created** in a trailing 30 days.
+  Batch changes into fewer publishes; do not "deploy to check".
+- Expected floor once the pre-fix holds clear (mid-October 2026): number of
+  deployments in the trailing 30 days × 1.3 GB, less whatever Vercel
+  deduplicates across identical files. Read the chart then before deciding
+  whether the originals need to move to external storage (R2 / release assets).
+- The two-deployment rule below still matters for rollback hygiene and for
+  keeping the list legible; it is not a storage tool.
+- Never delete the known-good rollback early merely to make room for an
+  unverified build.
 
 Vercel's own retention on both projects is set to 1 day for previews,
 production, errored and canceled builds (changed from the 30-day default on
-2026-09-13 via `PATCH /v1/projects/<id>/deployment-expiration`). That clears
-`research-memex` branch previews and failed builds by itself, but Vercel keeps
-a floor of 10 production deployments (`deploymentsToKeep` is not writable on
+2026-09-13 via `PATCH /v1/projects/<id>/deployment-expiration`). Vercel keeps
+a floor of the last 10 deployments (`deploymentsToKeep` is not writable on
 Hobby) and never expires aliased deployments, so it is a fallback, not
-enforcement of this two-version policy. The post-publish helper enforces the
-narrower project policy.
+enforcement of the two-version policy. `research-memex` additionally skips
+builds for `dependabot/*` and `codex/*` branches via `vercel.json`
+`ignoreCommand` (a skipped build holds no files), so weekly dependency PRs no
+longer create preview deployments.
 
 A weekly launchd job on the primary Mac (`com.xulelin.vercel-retention`,
 Mondays 09:30, wrapper `~/.local/bin/vercel-retention.sh`, log
@@ -119,9 +137,7 @@ Mondays 09:30, wrapper `~/.local/bin/vercel-retention.sh`, log
 points at plus the newest older READY production deployment; every other guard
 (domains, aliases, in-flight builds, previews) is unchanged. It is a no-op when
 only two successful releases exist. During a `linxule-com` publish still pass
-the recorded IDs explicitly; do not rely on the weekly run. What remains
-large is deliberate: portrait originals (~0.5 GB, offered for download as
-wallpapers) and writing attachments (~0.5 GB, passthrough-copied originals).
+the recorded IDs explicitly; do not rely on the weekly run.
 
 Routine verified publishing includes the cleanup above. Extra previews, alias
 removal, a different rollback window, and deletion outside this project are
