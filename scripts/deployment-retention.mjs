@@ -6,6 +6,8 @@ import { pathToFileURL } from "node:url";
 // Vercel's own retention (1-day expiry, set 2026-09-13) clears previews and
 // failed builds but keeps a floor of 10 production deployments; this helper
 // enforces the narrower rule of current + one rollback.
+// This is rollback hygiene, not a storage tool: deleted deployments stay on
+// the Deployment Storage meter for the 30-day recovery hold (docs/publishing.md).
 export const TEAM = "team_TT999ORKqVDviH2vw2yzYh8o";
 export const PROJECTS = {
   "linxule-com": { id: "prj_KYGjrsiyQVCOEiLMdIkaWAKc9aiK", domains: ["linxule.com", "www.linxule.com"] },
