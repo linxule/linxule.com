@@ -119,9 +119,12 @@ Consequences for planning:
 - Never delete the known-good rollback early merely to make room for an
   unverified build.
 
-Vercel's own retention on both projects is set to 1 day for previews,
-production, errored and canceled builds (changed from the 30-day default on
-2026-09-13 via `PATCH /v1/projects/<id>/deployment-expiration`). Vercel keeps
+Vercel's own retention on all four team projects (`linxule-com` and
+`research-memex` since 2026-09-13; `openinterviewer` and `mgmt-docs-os` since
+2026-09-18) is set to 1 day for previews, production, errored and canceled
+builds (changed from the 30-day default via
+`PATCH /v1/projects/<id>/deployment-expiration`). The retention helper and
+launchd job still cover only the first two. Vercel keeps
 a floor of the last 10 deployments (`deploymentsToKeep` is not writable on
 Hobby) and never expires aliased deployments, so it is a fallback, not
 enforcement of the two-version policy. Research Memex's `vercel.json` now uses
@@ -184,3 +187,17 @@ separate decisions. A rollback incident itself does not trigger pruning.
 References: [Deployment Storage](https://vercel.com/docs/deployment-storage),
 [Git deployment configuration](https://vercel.com/docs/project-configuration/git-configuration),
 [retention exceptions](https://vercel.com/docs/deployment-retention#exceptions-to-the-retention-policy).
+
+## Provider incidents and the CLI fallback
+
+On 2026-09-18 a `research-memex` push landed inside a Vercel "errors
+triggering deployments" incident. The Git deployment arrived 17 minutes late; a
+CLI fallback submitted after 3 minutes created a second production deployment
+of the same commit that never left INITIALIZING and had to be cancelled. Before
+falling back to `vercel deploy --prod` for any project, check
+`https://www.vercel-status.com/api/v2/status.json` (indicator `none`), wait at
+least 30 minutes, and confirm no deployment already carries the commit SHA. A
+pending `Vercel` commit status on GitHub means the webhook was received. The
+usage page read 25.4 GB Deployment Storage that evening with `linxule-com` at
+22 GB and no deployments since 2026-09-15: the number is the recovery hold, as
+described above, and is expected to fall in mid-October.
