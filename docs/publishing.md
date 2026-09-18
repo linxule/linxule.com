@@ -124,10 +124,14 @@ production, errored and canceled builds (changed from the 30-day default on
 2026-09-13 via `PATCH /v1/projects/<id>/deployment-expiration`). Vercel keeps
 a floor of the last 10 deployments (`deploymentsToKeep` is not writable on
 Hobby) and never expires aliased deployments, so it is a fallback, not
-enforcement of the two-version policy. `research-memex` additionally skips
-builds for `dependabot/*` and `codex/*` branches via `vercel.json`
-`ignoreCommand` (a skipped build holds no files), so weekly dependency PRs no
-longer create preview deployments.
+enforcement of the two-version policy. Research Memex's `vercel.json` now uses
+`git.deploymentEnabled` to suppress Git-triggered deployments for `mcp-worker`,
+`dependabot/**`, and `codex/**`; `main` and unspecified branches remain enabled.
+This replaces `ignoreCommand`, which cancels builds but still creates deployment
+records and consumes deployment/concurrency quota. These exclusions do not
+delete existing previews or block manual deploys. See the Research Memex
+`DEPLOY-CHECKLIST.md` for branch-config propagation and live rollout verification;
+a local edit is not evidence that suppression is active on remote branches.
 
 A weekly launchd job on the primary Mac (`com.xulelin.vercel-retention`,
 Mondays 09:30, wrapper `~/.local/bin/vercel-retention.sh`, log
@@ -139,9 +143,44 @@ points at plus the newest older READY production deployment; every other guard
 only two successful releases exist. During a `linxule-com` publish still pass
 the recorded IDs explicitly; do not rely on the weekly run.
 
+### September 18 audit and remediation
+
+At the pre-release audit, Research Memex had ten READY previews, seven from
+`mcp-worker`, plus stale branch aliases. The branch is checked out in an existing
+worktree. The dry-run stopped with `needs separate review; no automatic preview deletion`.
+Review ownership, aliases and exact deployment IDs separately before removing
+anything. Keep the preview guard; do not classify these as routine production
+deletion candidates. Rerun the read-only plan after authorized cleanup.
+
+The installed weekly job had not yet run (`runs=0` at this audit). The original
+wrapper returned only the final project's exit status, hiding an earlier failure.
+The maintained replacement is `scripts/vercel-retention.sh`; install that exact
+file with `install -m 755 scripts/vercel-retention.sh ~/.local/bin/vercel-retention.sh`
+without changing the LaunchAgent schedule.
+It runs both projects, logs each outcome and returns nonzero if either fails or
+logging cannot start. `bun run retention:test` covers the helper and an isolated,
+stubbed wrapper regression. A manual check is not proof of future unattended
+operation; inspect the next scheduled run's per-project outcomes.
+
+Release checkpoint, September 18 at 22:53 CEST: the reviewed wrapper is installed
+and byte-equal to its tracked source. All 25 helper/wrapper tests pass; Kimi's
+follow-up review approved the execute-bit and test-isolation corrections.
+Research Memex commit `2cc1a41` is pushed to `main` and remote `mcp-worker`.
+The existing local MCP worktree was not changed; it must fast-forward before
+its next push. Its remote now includes branch suppression.
+
+Vercel reports an active "Elevated Errors Triggering Deployments" incident.
+The Git push produced no deployment; the documented CLI fallback created
+`dpl_8KhDgT87RXB7C76roGffuxdBEm3G`, which was still INITIALIZING at this checkpoint.
+Do not retry blindly or prune during this state. Keep live production/rollback
+`dpl_G7EUfCpd95ny5eWBj71K298kHmN8` until the new release is READY and its canonical
+surfaces pass. Preview/alias cleanup and the final retention apply remain pending.
+Provider source: [Vercel status](https://www.vercel-status.com/).
+
 Routine verified publishing includes the cleanup above. Extra previews, alias
 removal, a different rollback window, and deletion outside this project are
 separate decisions. A rollback incident itself does not trigger pruning.
 
 References: [Deployment Storage](https://vercel.com/docs/deployment-storage),
+[Git deployment configuration](https://vercel.com/docs/project-configuration/git-configuration),
 [retention exceptions](https://vercel.com/docs/deployment-retention#exceptions-to-the-retention-policy).

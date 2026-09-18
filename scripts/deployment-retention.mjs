@@ -3,9 +3,9 @@ import { parseArgs } from "node:util";
 import { pathToFileURL } from "node:url";
 
 // Deliberately scoped to these Hobby projects and their canonical domains.
-// Vercel's own retention (1-day expiry, set 2026-09-13) clears previews and
-// failed builds but keeps a floor of 10 production deployments; this helper
-// enforces the narrower rule of current + one rollback.
+// Vercel's own retention (1-day expiry, set 2026-09-13) has a ten-deployment
+// floor and protected-deployment exceptions; it need not clear every preview.
+// This helper targets current + one rollback and stops for extra READY previews.
 // This is rollback hygiene, not a storage tool: deleted deployments stay on
 // the Deployment Storage meter for the 30-day recovery hold (docs/publishing.md).
 export const TEAM = "team_TT999ORKqVDviH2vw2yzYh8o";
