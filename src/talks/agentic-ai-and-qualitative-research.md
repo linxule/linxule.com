@@ -7,8 +7,8 @@ event: London Text Analysis Conference · Goldsmiths, University of London
 speakers:
   - Xule Lin
 slides: /assets/slides/agentic-ai-and-qualitative-research/
-pdf: /assets/slides/agentic-ai-and-qualitative-research/deck.pdf
-pdfVersion: v0.16
+pdf: /assets/slides/agentic-ai-and-qualitative-research/deck-v0.18.pdf
+pdfVersion: v0.18
 description: "What agents do well today, five arrangements for working with them, one live moment where two other models enter a session, and a public wiki that agents edited — read as organizing. From the London Text Analysis Conference 2026."
 keywords:
   - agentic AI
