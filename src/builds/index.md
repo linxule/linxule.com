@@ -26,9 +26,17 @@ groups:
         signal: "works in Claude Code and Codex"
 
       - name: "MCP Music Studio"
-        href: "https://github.com/linxule/mcp-music-studio"
-        description: "A two-mode music studio for AI: ABC-notation composition with rendered sheet music, and Strudel/TidalCycles live coding. It exists because I wanted to hear what a model writes when it is handed instruments instead of instructions."
+        href: "https://music-studio.linxule.com"
+        description: "A music studio for AI: compose ABC sheet music or live-code Strudel patterns, hear the result, analyze harmony, and export MIDI or WAV. Sharing is explicit: create a link when you want to upload a piece. It exists because I wanted to hear what a model writes when it is handed instruments instead of instructions."
+        license: "AGPL-3.0-or-later"
         signal: "independently repackaged for the iFlow 心流 MCP platform"
+        links:
+          - label: "source & setup"
+            href: "https://github.com/linxule/mcp-music-studio"
+          - label: "MCP endpoint"
+            href: "https://music-studio.linxule.com/mcp"
+          - label: "privacy"
+            href: "https://music-studio.linxule.com/privacy"
 
       - name: "Research Memex"
         href: "https://research-memex.org"

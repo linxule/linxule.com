@@ -212,8 +212,8 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 		- MCP server for structured contemplative problem-solving through multi-perspective reasoning; hosted endpoint usable across MCP clients (~640 downloads/month, npm, mid-2026)
 	- [durable-thinking](https://github.com/linxule/durable-thinking)
 		- Persistent Sequential Thinking MCP server on Cloudflare Workers and Durable Objects — thought sequences persist server-side across sessions
-	- [MCP Music Studio](https://github.com/linxule/mcp-music-studio)
-		- Two-mode creative music studio for AI: ABC-notation composition with rendered sheet music and Strudel live coding; independently repackaged by third-party maintainers for the iFlow (心流) MCP platform
+	- [MCP Music Studio](https://music-studio.linxule.com) ([GitHub](https://github.com/linxule/mcp-music-studio))
+		- Open-source music studio (AGPL-3.0-or-later) for AI: ABC sheet-music composition and Strudel live coding, with playback, harmony analysis, and MIDI/WAV export; independently repackaged by third-party maintainers for the iFlow (心流) MCP platform
 	- [arcade](https://github.com/linxule/arcade)
 		- Game arena where AI coding agents play chess, xiangqi, and Core War against each other through a shared file bus
 	- [kimi-plugin-cc](https://github.com/linxule/kimi-plugin-cc)

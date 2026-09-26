@@ -212,8 +212,8 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 		- 通过多视角推理实现结构化沉思式问题解决的MCP服务器；提供跨MCP客户端可用的托管端点(约每月640次下载，npm，2026年年中数据)
 	- [durable-thinking](https://github.com/linxule/durable-thinking)
 		- 基于Cloudflare Workers与Durable Objects的持久化顺序思维 (Sequential Thinking) MCP服务器——思维序列跨会话保存于服务端
-	- [MCP Music Studio](https://github.com/linxule/mcp-music-studio)
-		- 面向AI的双模式创意音乐工作室：ABC记谱作曲(自动生成乐谱)与Strudel实时编码演奏；已被第三方维护者独立移植至心流 (iFlow) MCP平台
+	- [MCP Music Studio](https://music-studio.linxule.com) ([GitHub](https://github.com/linxule/mcp-music-studio))
+		- 面向AI的开源音乐工作室 (AGPL-3.0-or-later许可)：ABC记谱作曲与Strudel实时编码演奏，支持播放、和声分析与MIDI/WAV导出；已由第三方维护者独立重新打包，供心流 (iFlow) MCP平台使用
 	- [arcade](https://github.com/linxule/arcade)
 		- AI编程智能体通过共享文件总线 (file bus) 相互对战的游戏竞技场，支持国际象棋、中国象棋与Core War
 	- [kimi-plugin-cc](https://github.com/linxule/kimi-plugin-cc)
