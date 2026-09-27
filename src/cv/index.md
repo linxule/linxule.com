@@ -239,7 +239,9 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Service
 
-- Breakout Facilitator
+- [Kimi Ambassador](https://www.kimi.ai/lp/kimi-ambassador) (academia)
+	- Kimi (Moonshot AI), 2026 – Present; personal capacity
+- <br/>Breakout Facilitator
 	- _"AI Across the Research Pipeline,"_ [SMS Virtual Workshop Conference](https://www.strategicmanagement.net/conferences-events/2026-virtual-workshop-conference/) (SMS Research Methods Community), Online, 2026
 		- Facilitated a breakout feedback session on integrating AI across the research pipeline; panel featured Felipe Csaszar, Riitta Katila, and Ruixiang Song
 - <br/>Student Representative

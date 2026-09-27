@@ -239,7 +239,9 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 
 # 服务
 
-- 分组讨论主持人
+- [Kimi 全球大使](https://www.kimi.ai/lp/kimi-ambassador) (学术领域)
+	- Kimi (月之暗面, Moonshot AI)，2026至今；以个人身份参与
+- <br/>分组讨论主持人
 	- _"AI Across the Research Pipeline,"_ [SMS虚拟工作坊会议](https://www.strategicmanagement.net/conferences-events/2026-virtual-workshop-conference/) (SMS研究方法社区)，线上，2026
 		- 主持关于AI应用于研究全流程的分组反馈研讨；小组成员包括 Felipe Csaszar、Riitta Katila、Ruixiang Song
 - <br/>学生代表
