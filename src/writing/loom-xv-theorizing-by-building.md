@@ -190,7 +190,7 @@ Watch how we work: the code is visible, the design decisions documented, the phi
 The underlying scholarship exists. But the tools speak for themselves. Try them before reading about them. See what emerges in your context, with your data, for your questions.
 
 **To try:**
-- **OpenInterviewer:** [github.com/linxule/openinterviewer](https://github.com/linxule/openinterviewer) — One-click deploy to Vercel, or run locally
+- **OpenInterviewer:** [source and setup](https://github.com/linxule/openinterviewer) · [synthetic demo](https://open-interview.linxule.com/demo). Updated October 6, 2026: the scripted demo needs no API key, makes no AI calls, and saves no data. Real studies need your own deployment, model access, storage, and decisions about consent and data handling. See the [Cloudflare installer guide](https://github.com/linxule/openinterviewer/blob/main/docs/operations/cloudflare-migration/INSTALLER.md).
 - **Interpretive Orchestration:** [github.com/linxule/interpretive-orchestration](https://github.com/linxule/interpretive-orchestration) — Install as Claude Code plugin, work through the stages
 
 **To contribute:**

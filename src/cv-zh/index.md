@@ -200,18 +200,18 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 	- [Interpretive Orchestration Plugin](https://github.com/linxule/interpretive-orchestration)
 		- Lin & Corley (2026, _Strategic Organization_) 论文的配套软件：Claude Code插件，通过专门的代理 (agents) 与技能 (skills) 实现三阶段诠释编排方法论
 	- [OpenInterviewer](https://github.com/linxule/openinterviewer)
-		- 开源平台 (MIT许可)，支持AI主导的大规模自适应定性访谈，具备研究项目管理与跨访谈综合分析功能；面向缺乏基础设施的研究者提供一键部署
+		- 开源平台 (MIT许可)，支持自适应AI访谈、研究项目管理与跨访谈探索。提供无需API密钥、使用预设合成数据的演示。开展真实研究需要自行部署、配置模型访问与存储，并确定知情同意与数据处理安排
 	- [Memex Plugin](https://github.com/linxule/memex-plugin)
-		- Claude Code插件 (MIT许可)，实现跨会话的持久化、可搜索协作记忆，以结构化备忘录存储于Obsidian知识库
+		- 独立命令行工具与插件 (MIT许可)，将持久化、可搜索的协作记忆存入兼容Obsidian的知识库。支持Claude Code、Codex与Kimi Code；自动钩子仅适用于Claude Code
 	- [Carrel](https://github.com/linxule/carrel)
 		- 面向学术研究者的AI增强研究环境入门工具包；打包为可移植、跨厂商的Agent Skill
 - <br/>Agent与MCP基础设施
 	- [Vox MCP Server](https://github.com/linxule/vox-mcp)
-		- 面向MCP客户端的多模型AI网关，支持8个提供商及本地模型，具备对话线程管理，无系统提示注入
+		- 面向MCP客户端的多模型网关，支持兼容的本地服务器、对话线程管理及JSON或Markdown导出。不向提示词添加行为指令
 	- Lotus Wisdom MCP Server([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
 		- 通过多视角推理实现结构化沉思式问题解决的MCP服务器；提供跨MCP客户端可用的托管端点(约每月640次下载，npm，2026年年中数据)
 	- [durable-thinking](https://github.com/linxule/durable-thinking)
-		- 基于Cloudflare Workers与Durable Objects的持久化顺序思维 (Sequential Thinking) MCP服务器——思维序列跨会话保存于服务端
+		- 基于MCP参考实现Sequential Thinking改编的服务器 (MIT许可)。在部署者自己的Cloudflare环境中跨会话保存显式推理笔记、分支与修订，支持检索和删除，不访问模型的隐藏推理
 	- [MCP Music Studio](https://music-studio.linxule.com) ([GitHub](https://github.com/linxule/mcp-music-studio))
 		- 面向AI的开源音乐工作室 (AGPL-3.0-or-later许可)：ABC记谱作曲与Strudel实时编码演奏，支持播放、和声分析与MIDI/WAV导出；已由第三方维护者独立重新打包，供心流 (iFlow) MCP平台使用
 	- [arcade](https://github.com/linxule/arcade)

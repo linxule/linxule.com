@@ -3,7 +3,7 @@ ogImage: /assets/og-cards/builds.jpg
 layout: layouts/builds.njk
 title: builds
 seoTitle: "Builds — open-source tools and public infrastructure"
-seoDescription: "Open-source MCP servers, Claude Code plugins, and research infrastructure by Xule Lin — kimi-plugin-cc, MCP Music Studio, Lotus Wisdom, OpenInterviewer."
+seoDescription: "Open-source MCP servers, agent plugins, and research tools by Xule Lin, including Memex, Vox MCP, OpenInterviewer, and Durable Thinking."
 seoH1: "Builds — the open-source MCP servers, agent plugins, research tools, and public infrastructure Xule Lin builds alongside the research."
 description: "The code and public infrastructure that came out of the experiments."
 
@@ -52,8 +52,13 @@ groups:
 
       - name: "OpenInterviewer"
         href: "https://github.com/linxule/openinterviewer"
-        description: "A platform for AI-conducted adaptive qualitative interviews at scale, with study management and cross-interview synthesis. One-click deploy, because most researchers who need this do not have infrastructure."
+        description: "A platform for adaptive AI interviews, study management, and cross-interview exploration. Try the scripted, synthetic demo without an API key. It makes no AI calls and saves no data. Running a real study requires your own deployment, model access, storage, and decisions about consent and data handling."
         license: "MIT"
+        links:
+          - label: "try the synthetic demo"
+            href: "https://open-interview.linxule.com/demo"
+          - label: "Cloudflare deployment guide"
+            href: "https://github.com/linxule/openinterviewer/blob/main/docs/operations/cloudflare-migration/INSTALLER.md"
 
   - name: "Open-source tools"
     projects:
@@ -64,7 +69,8 @@ groups:
 
       - name: "Vox MCP"
         href: "https://github.com/linxule/vox-mcp"
-        description: "A multi-model gateway routing any MCP client to eight providers through a single tool, with conversation threading and no system-prompt injection. Prompts pass through untouched — the point is to compare models, not a wrapper's opinion of them."
+        description: "Consult models from different providers through one MCP connection, including compatible local servers. Keep multi-turn conversations and export their records as JSON or Markdown. Vox passes prompts through without adding its own behavioral instructions."
+        license: "Apache-2.0"
 
       - name: "MinerU MCP"
         href: "https://github.com/linxule/mineru-mcp"
@@ -77,7 +83,12 @@ groups:
 
       - name: "Memex"
         href: "https://github.com/linxule/memex-plugin"
-        description: "Persistent collaborative memory for Claude Code. Sessions write structured memos into an Obsidian vault with hybrid search, preserving the collaborative process — including where human and AI disagreed — across context windows."
+        description: "Preserve decisions, disagreements, and working context in a searchable, Obsidian-compatible vault. Memex provides a standalone CLI and plugins for Claude Code, Codex, and Kimi Code. Claude Code adds automatic hooks; the other hosts use portable skills without those hooks."
+        license: "MIT"
+
+      - name: "Durable Thinking"
+        href: "https://github.com/linxule/durable-thinking"
+        description: "An adaptation of MCP's Sequential Thinking server that keeps explicit notes, branches, and revisions across sessions. Store submitted steps in your own Cloudflare deployment, then retrieve or delete a sequence. It records tool-visible notes, not a model's hidden reasoning."
         license: "MIT"
 
       - name: "Carrel"

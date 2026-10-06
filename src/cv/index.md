@@ -200,18 +200,18 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 	- [Interpretive Orchestration Plugin](https://github.com/linxule/interpretive-orchestration)
 		- Software counterpart of Lin & Corley (2026, Strategic Organization): Claude Code plugin implementing the three-stage interpretive orchestration methodology through specialized agents and skills
 	- [OpenInterviewer](https://github.com/linxule/openinterviewer)
-		- Open-source platform (MIT) for AI-conducted adaptive qualitative interviews at scale, with study management and cross-interview synthesis; one-click deployment for researchers without infrastructure
+		- Open-source platform (MIT) for adaptive AI interviews, study management, and cross-interview exploration. Includes a scripted synthetic demo without API keys. Real studies require deployment, model access, storage, and decisions about consent and data handling
 	- [Memex Plugin](https://github.com/linxule/memex-plugin)
-		- Claude Code plugin (MIT) for persistent, searchable collaborative memory across sessions, stored as structured memos in an Obsidian vault
+		- Standalone CLI and plugins (MIT) for persistent, searchable collaborative memory in an Obsidian-compatible vault. Supports Claude Code, Codex, and Kimi Code; automatic hooks are specific to Claude Code
 	- [Carrel](https://github.com/linxule/carrel)
 		- Onboarding toolkit bringing academic researchers into AI-augmented research environments; packaged as a portable, cross-vendor Agent Skill
 - <br/>Agent & MCP Infrastructure
 	- [Vox MCP Server](https://github.com/linxule/vox-mcp)
-		- Multi-model AI gateway for MCP clients supporting 8 providers and local models, with conversation threading and no system prompt injection
+		- Multi-model gateway for MCP clients, including compatible local servers, with conversation threads and JSON or Markdown export. Adds no behavioral instructions to prompts
 	- Lotus Wisdom MCP Server ([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
 		- MCP server for structured contemplative problem-solving through multi-perspective reasoning; hosted endpoint usable across MCP clients (~640 downloads/month, npm, mid-2026)
 	- [durable-thinking](https://github.com/linxule/durable-thinking)
-		- Persistent Sequential Thinking MCP server on Cloudflare Workers and Durable Objects — thought sequences persist server-side across sessions
+		- Adaptation of MCP's Sequential Thinking server (MIT). Stores explicit reasoning notes, branches, and revisions across sessions in the owner's Cloudflare deployment, with retrieval and deletion. Does not access hidden model reasoning
 	- [MCP Music Studio](https://music-studio.linxule.com) ([GitHub](https://github.com/linxule/mcp-music-studio))
 		- Open-source music studio (AGPL-3.0-or-later) for AI: ABC sheet-music composition and Strudel live coding, with playback, harmony analysis, and MIDI/WAV export; independently repackaged by third-party maintainers for the iFlow (心流) MCP platform
 	- [arcade](https://github.com/linxule/arcade)

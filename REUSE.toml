@@ -20,6 +20,7 @@ path = [
   "src/cv/**/*.md",
   "src/cv-zh/**/*.md",
   "src/papers/**/*.md",
+  "src/builds/**/*.md",
 ]
 SPDX-FileCopyrightText = "Xule Lin <x@linxule.com>"
 SPDX-License-Identifier = "CC-BY-4.0"
