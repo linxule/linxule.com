@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync, readFileSync } from "node:fs";
+import registerCollections from "../eleventy/collections.js";
 
 const read = (path) => readFileSync(path, "utf8");
 
@@ -33,6 +34,18 @@ const deployGuideExists = existsSync(deployGuidePath);
 const deployGuide = deployGuideExists ? read(deployGuidePath) : "";
 
 describe("artifact publishing contract", () => {
+  test("a family-only credit stays discoverable without colliding with its family page", () => {
+    const registered = {};
+    registerCollections({ addCollection: (name, callback) => { registered[name] = callback; } });
+    const generic = { data: { creator: "claude" }, date: new Date("2026-10-09") };
+    const specific = { data: { creator: "claude opus 5.5" }, date: new Date("2026-09-28") };
+    const api = { getFilteredByGlob: () => [generic, specific] };
+    const models = registered.artifactsByCreator(api);
+    const families = registered.artifactsByCreatorFamily(api);
+    expect(models.map(item => item.slug)).toEqual(["claude-opus-55"]);
+    expect(families[0].items).toEqual([generic, specific]);
+    expect(new Set([...models, ...families].map(item => item.slug)).size).toBe(2);
+  });
   test("Pagefind covers the full artifact narrative, not only the hero", () => {
     const pagefindStart = artifactLayout.indexOf(
       'class="artifact-page" data-pagefind-body',

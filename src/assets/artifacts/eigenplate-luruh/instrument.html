@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EIGENPLATE — touch the plate</title>
+<style>
+  :root { --dim: #5a6472; --lit: #c8d2e0; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    background: #07080b;
+    color: var(--dim);
+    font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 18px 12px 12px; gap: 12px;
+    user-select: none; -webkit-user-select: none;
+  }
+  h1 { font-size: 15px; letter-spacing: 0.55em; color: var(--lit); font-weight: 400; }
+  h1 span { color: var(--dim); }
+  #stage { position: relative; line-height: 0; }
+  canvas#plate {
+    width: min(76vmin, calc(100vh - 170px), 860px); height: min(76vmin, calc(100vh - 170px), 860px);
+    cursor: crosshair; touch-action: none;
+
+  }
+  #readout {
+    position: absolute; left: 10px; bottom: 8px; line-height: 1.4;
+    color: var(--lit); text-shadow: 0 1px 4px #000; pointer-events: none;
+    white-space: pre;
+  }
+  #bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  label { display: flex; gap: 8px; align-items: center; }
+  input[type=range] { width: 100px; accent-color: #7c8aa0; }
+  #hint { color: #7c8490; font-size: 10px; }
+  kbd { color: var(--dim); }
+</style>
+</head>
+<body>
+  <h1>EIGEN<span>PLATE</span></h1>
+  <div id="stage">
+    <canvas id="plate" width="960" height="960" tabindex="0" aria-label="EIGENPLATE instrument. Touch to strike, hold to bow; press 1 to perform, R to re-dust, E to export."></canvas>
+    <div id="readout"></div>
+  </div>
+  <div id="bar">
+    <label>focus <input id="focus" type="range" min="0" max="100" value="0">
+      <span id="focusval">raw</span></label>
+    <label>rift <input id="rift" type="range" min="0" max="50" value="0">
+      <span id="riftval">unison</span></label>
+    <span id="hint">click strike &middot; hold bow &middot; drag sweep &middot; many fingers = chord &middot; <kbd>&#8679;</kbd> damped &middot; <kbd>&#8997;</kbd> boom &middot; <kbd>R</kbd> re-dust &middot; <kbd>E</kbd> export score &middot; <kbd>1</kbd> perform EIGEN &middot; <kbd>esc</kbd> stop</span>
+  </div>
+  <script src="modes.js"></script>
+  <script src="repertoire.js"></script>
+  <script src="plate.js"></script>
+</body>
+</html>

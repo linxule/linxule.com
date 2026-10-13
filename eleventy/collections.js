@@ -152,6 +152,9 @@ export default function(eleventyConfig) {
 
     allArtifacts.forEach(item => {
       const creator = item.data.creator || 'unknown';
+      // A family-only credit already has its page in artifactsByCreatorFamily.
+      // Do not invent a model or emit a second page at the same family URL.
+      if (!creator.trim().includes(' ')) return;
       const slug = creator.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
       if (!byCreator[slug]) {
         byCreator[slug] = {

@@ -1,0 +1,3132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Jagged Frontier · waiting room — MCP Music Studio</title>
+<style>
+  :root { color-scheme: dark; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #1a1a1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #333;
+    background: #252525;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  h1 { font-size: 16px; font-weight: 600; }
+  .subtitle { font-size: 12px; color: #999; }
+  .controls { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  button {
+    padding: 6px 16px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background: #333;
+    color: #e0e0e0;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  button:hover { border-color: #7c3aed; color: #a78bfa; }
+  button.active { background: #7c3aed; color: white; border-color: #7c3aed; }
+  button[hidden] { display: none; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  #status { font-size: 12px; color: #999; max-width: 46ch; }
+  #status.playing { color: #10b981; }
+  #status.error { color: #ef4444; }
+  main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  strudel-editor { display: block; width: 100%; }
+  /* StrudelMirror puts its CodeMirror in a div that is a SIBLING of
+     <strudel-editor>, so it is this wrapper — not the custom element — that has
+     to fill the frame. Without the flex it stopped at its content height and
+     left a seam of bare body below it. */
+  main > div { flex: 1; min-height: 400px; width: 100%; }
+  .cm-editor { min-height: 400px; }
+
+  /* =========================================================================
+     Visuals — the same layering the ext-apps widget uses (src/strudel-app.css),
+     ported to a full page.
+
+     @strudel/draw's getDrawContext() CREATES its canvas when none exists by id:
+     it prepends a position:fixed, full-viewport canvas with NO z-index to
+     <body> — over the header and controls — while CodeMirror's opaque wrapper
+     hides it behind the code. Pre-creating #test-canvas here means
+     getDrawContext() reuses it (verified against the 1.2.6 source: with the
+     element present it only calls getContext, and registers no resize handler
+     of its own, so the sizing below is uncontested).
+
+     Three layers: the Hydra shader, then the 2D draw canvas over it, then the
+     page chrome above both.
+     ========================================================================= */
+
+  #test-canvas,
+  #hydra-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  /* Prepended by getDrawContext(), so it is already behind #test-canvas in DOM
+     order; pixelated because @strudel/hydra renders it at pixelRatio 1. */
+  #hydra-canvas { image-rendering: pixelated; }
+
+  /* Hidden until a pattern actually draws — an empty dark stage over the page
+     is worse than no stage. NOT !important: initHydra({feedStrudel:true}) hides
+     this canvas with an inline style, and that has to keep winning. */
+  #test-canvas { display: none; background: #0d0b14; }
+  body.viz-on #test-canvas { display: block; }
+  /* With a shader running, the 2D stage must not paint its opaque ground over
+     it. Strudel's draw functions clearRect() each frame, so this is safe. */
+  body.hydra-on #test-canvas { background: transparent; }
+  /* Extra getDrawContext('name') layers, moved above #test-canvas. */
+  body:not(.viz-on) .viz-layer, .viz-layer.viz-layer-idle { display: none; }
+
+  header, main { position: relative; z-index: 1; }
+
+  /* THE occlusion fix (v0.4.2, ported). <strudel-editor> (StrudelMirror) wraps
+     its CodeMirror in an intermediate <div> whose background is set INLINE to
+     var(--background) — an opaque dark fill. That wrapper sits over the canvas
+     and fully hides it, so the visuals only ever peeked out BELOW the editor
+     box. Make the wrapper and the editor transparent and fill the height, and
+     keep the readability scrim on ONE layer (.cm-scroller) so it never
+     double-darkens. !important beats the inline style. */
+  body.viz-on main > div,
+  body.viz-on strudel-editor > div {
+    height: 100% !important;
+    background-color: transparent !important;
+  }
+  body.viz-on .cm-editor {
+    height: 100% !important;
+    background-color: transparent !important;
+  }
+  body.viz-on .cm-scroller {
+    height: 100% !important;
+    background-color: rgba(20, 17, 29, 0.5) !important;
+  }
+  body.viz-on .cm-gutters {
+    background-color: rgba(20, 17, 29, 0.6) !important;
+  }
+  /* Lift the code off the animation, the way strudel.cc does. */
+  body.viz-on .cm-content { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); }
+  /* openStage(): the code steps aside so taps reach a drawing; Code brings it back. */
+  body.stage-on main { visibility: hidden; }
+  #code-btn[hidden] { display: none; }
+</style>
+<style>
+/* Gallery edition: preserve the authored 16:9 stage and keep controls usable on phones. */
+header{flex-wrap:wrap} .controls{flex-wrap:wrap;margin-left:0} button{padding:6px 10px} #status{flex-basis:100%}
+#hydra-canvas,#test-canvas{inset:auto!important;left:var(--stage-left,0px)!important;top:var(--stage-top,120px)!important;width:var(--stage-width,100vw)!important;height:var(--stage-height,56.25vw)!important}
+</style></head>
+<body class="viz-on hydra-on">
+<canvas id="test-canvas" aria-hidden="true"></canvas>
+<header>
+  <div>
+    <h1>The Jagged Frontier · waiting room</h1>
+    <div class="subtitle">MCP Music Studio</div>
+  </div>
+  <div class="controls">
+    <button id="play-btn">Play</button>
+    <button id="stop-btn">Stop</button>
+    <button id="retry-btn" hidden>Retry</button>
+    <button id="stage-btn">Stage</button>
+    <button id="code-btn" hidden title="Show the code again">Code</button>
+    <span id="status" role="status" aria-live="polite">Loading...</span>
+  </div>
+</header>
+<main>
+  <strudel-editor id="editor"></strudel-editor>
+</main>
+<script type="application/json" id="init-data">{"code":"await initHydra()\n// ───────── THE JAGGED FRONTIER · waiting room ─────────\nsetcps(120/60/4)\n// CL01 starts 9:45, CL02 15:00: pick by the Mac's clock\nconst START = new Date().getHours() \u003c 13 ? [9, 45] : [15, 0]\nconst W = 1920, Hh = 1080\nconst mk = () =\u003e { const c = document.createElement('canvas'); c.width = W; c.height = Hh; return c }\nconst ui = mk(), title = mk()\nconst gu = ui.getContext('2d'), gt = title.getContext('2d')\nconst SANS = '\"Avenir Next Condensed\", \"Helvetica Neue\", Impact, sans-serif'\nconst MONO = 'Menlo, \"SF Mono\", monospace'\nconst QS = ['WHO IS PLAYING THIS?', 'IS ANYONE AT THE DECKS?', 'WHAT IF CODE COULD LISTEN?',\n  'WHERE IS THE FRONTIER?', 'WHAT WOULD YOU MAKE WITH IT?', 'HUMAN OR MACHINE?',\n  'WHO WROTE THIS BEAT?', 'CAN A PROMPT HAVE TASTE?', 'THE CODE IS THE SCORE.',\n  'WHERE DID AI LET YOU DOWN?', 'WHAT IS YOUR AI GOOD AT?', 'SMART HERE. LOST THERE.',\n  'WHO CHECKS THE MACHINE?', 'IS THIS EVEN MUSIC?', 'WHO DECIDES WHAT TO BUILD?',\n  'WHAT WOULD YOU ASK IT?', 'GUESS WHO IS THE DJ.', 'HOW WOULD YOU KNOW?',\n  'FAST ANSWER. WHO CHECKS?', 'NO HANDS ON THE DECKS.', 'LAPTOPS OPEN. AI READY.',\n  'WHAT DID AI SAVE YOU TODAY?']\n// sections in cycles (one cycle = one bar = 2 s); scene k drives the look\nconst SEC = [16, 16, 32, 8, 32, 16, 32, 16, 32, 8, 32, 16, 32, 16, 8, 32, 32, 16, 40, 16]\nconst TOTAL = SEC.reduce((a, b) =\u003e a + b, 0)\nlet scene = 0, inLetters = 0, whiteType = 1\nconst sceneAt = c =\u003e { let t = c % TOTAL; for (let i = 0; i \u003c SEC.length; i++) { if (t \u003c SEC[i]) return i; t -= SEC[i] } return 0 }\nconst pad2 = n =\u003e String(n).padStart(2, '0')\nconst frac = x =\u003e x - Math.floor(x)\nconst rnd = n =\u003e frac(Math.sin(n * 12.9898 + 78.233) * 43758.5453)\nconst LINES = [['THE', 210], ['JAGGED', 330], ['FRONTIER', 330]]\nconst GLY = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%\u0026@$/\u003c\u003e{}[]=+*?!'\nconst FONTS = ['900 X Impact', 'italic 700 X Didot', '800 X Futura', '700 X \"Courier New\"', '900 X \"Bodoni 72\"',\n  '900 X \"Avenir Next Condensed\"', '700 X Rockwell', '400 X Chalkduster', '700 X \"American Typewriter\"', '900 X Copperplate']\nconst MODES = ['scramble', 'ransom', 'giant', 'outline', 'marquee', 'saw']\n\nonFrame(f =\u003e {\n  scene = sceneAt(f.cycle)\n  inLetters = [0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1][scene]\n  whiteType = 1 - inLetters\n  const kick = (typeof a !== 'undefined' \u0026\u0026 a.fft) ? a.fft[0] : 0\n  // giant title: six typographic modes, one per section\n  gt.fillStyle = '#000'; gt.fillRect(0, 0, W, Hh)\n  gt.fillStyle = '#fff'; gt.strokeStyle = '#fff'; gt.textBaseline = 'alphabetic'; gt.textAlign = 'left'\n  const mode = MODES[Math.floor(f.cycle / 8) % MODES.length]  // new look every 16 s\n  const beat = Math.floor(f.cycle * 4), bar = Math.floor(f.cycle)\n  const fit = (word, font, maxW) =\u003e { gt.font = font; return maxW / gt.measureText(word).width }\n  if (mode === 'saw' || mode === 'scramble' || mode === 'ransom') {\n    let y = 330\n    LINES.forEach(([word, size], li) =\u003e {\n      const chars = [...word]\n      const fonts = chars.map((ch, i) =\u003e mode === 'ransom'\n        ? FONTS[Math.floor(rnd(i * 7 + li * 31 + Math.floor(f.cycle * 2)) * FONTS.length)].replace('X', Math.round(size * (0.85 + rnd(i + beat) * 0.3)) + 'px')\n        : '900 ' + size + 'px ' + SANS)\n      const shown = chars.map((ch, i) =\u003e {\n        if (mode !== 'scramble') return ch\n        const ph = frac(f.cycle / 4)\n        return ph \u003e (i / chars.length) * 0.6 + li * 0.1 ? ch : GLY[Math.floor(rnd(i * 13 + li * 7 + Math.floor(f.cycle * 12)) * GLY.length)]\n      })\n      const widths = shown.map((ch, i) =\u003e { gt.font = fonts[i]; return gt.measureText(ch).width })\n      let x = (W - widths.reduce((a, b) =\u003e a + b, 0)) / 2\n      shown.forEach((ch, i) =\u003e {\n        gt.font = fonts[i]\n        const dy = mode === 'saw' ? (frac(i * 0.31 + li * 0.17 + f.cycle * 0.25) - 0.5) * (18 + kick * 70)\n          : mode === 'ransom' ? (rnd(i * 3 + beat) - 0.5) * 40 : 0\n        gt.save(); gt.translate(x + widths[i] / 2, y + dy)\n        if (mode === 'ransom') gt.rotate((rnd(i * 5 + beat) - 0.5) * 0.25)\n        gt.fillText(ch, -widths[i] / 2, 0); gt.restore()\n        x += widths[i]\n      })\n      y += 300\n    })\n  } else if (mode === 'giant') {\n    const word = ['THE', 'JAGGED', 'FRONTIER'][bar % 3]\n    const font = '900 300px Impact, ' + SANS\n    const sx = fit(word, font, W - 100)\n    const sy = 2.9 + kick * 0.5\n    gt.save(); gt.translate(50, Hh / 2 + 110 * sy); gt.scale(sx, sy); gt.font = font; gt.fillText(word, 0, 0); gt.restore()\n  } else if (mode === 'outline') {\n    gt.lineWidth = 9\n    let y = 330\n    LINES.forEach(([word, size], li) =\u003e {\n      gt.font = '900 ' + size + 'px ' + SANS\n      const w = gt.measureText(word).width\n      ;(beat + li) % 2 ? gt.strokeText(word, (W - w) / 2, y) : gt.fillText(word, (W - w) / 2, y)\n      y += 300\n    })\n    for (let k = 0; k \u003c 9; k++) {\n      const sy = Math.floor(rnd(k * 17 + beat) * Hh), sh = 20 + Math.floor(rnd(k * 3 + beat) * 90)\n      const dx = (rnd(k * 29 + beat) - 0.5) * (40 + kick * 260)\n      gt.drawImage(title, 0, sy, W, sh, dx, sy, W, sh)\n    }\n  } else if (mode === 'marquee') {\n    const rowH = 140\n    for (let r = 0; r \u003c 5; r++) {\n      const txt = 'THE JAGGED FRONTIER  ·  THE JAGGED FRONTIER  ·  THE JAGGED FRONTIER  ·  '\n      gt.font = '900 130px Impact, ' + SANS\n      const tw = gt.measureText(txt).width / 3\n      const off = ((f.cycle * (r % 2 ? 90 : -120) * (1 + r * 0.15)) % tw + tw) % tw\n      const yy = 290 + r * rowH\n      gt.lineWidth = 4\n      ;(r + bar) % 3 === 0 ? gt.fillText(txt, -off, yy) : gt.strokeText(txt, -off, yy)\n    }\n  }\n  // small type: course line, rotating question, live countdown\n  gu.clearRect(0, 0, W, Hh)\n  gu.shadowColor = 'rgba(0,0,0,0.85)'; gu.shadowBlur = 18\n  gu.textBaseline = 'top'\n  gu.font = '600 30px ' + MONO; gu.fillStyle = '#ffffff'; gu.textAlign = 'left'\n  gu.fillText('SKEMA  ·  AI \u0026 PROJECT MANAGEMENT  ·  SESSION 4', 72, 60)\n  const qi = Math.floor(f.cycle / 8) % QS.length\n  const qf = frac(f.cycle / 8)\n  gu.globalAlpha = Math.min(1, qf * 6, (1 - qf) * 6)\n  gu.font = '700 46px ' + SANS; gu.fillStyle = '#ffffff'\n  gu.textBaseline = 'bottom'; gu.fillText(QS[qi], 72, Hh - 60)\n  gu.globalAlpha = 1\n  const now = new Date(), t = new Date(now); t.setHours(START[0], START[1], 0, 0)\n  const s = Math.round((t - now) / 1000)\n  const label = s \u003e 0 \u0026\u0026 s \u003c 3600 ? 'STARTS IN ' + Math.floor(s / 60) + ':' + pad2(s % 60)\n    : s \u003e= 3600 ? 'STARTS AT ' + START[0] + ':' + pad2(START[1]) : 'STARTING NOW'\n  gu.textAlign = 'right'; gu.font = '700 46px ' + MONO; gu.fillStyle = '#ff3b52'\n  gu.fillText(label, W - 72, Hh - 60)\n})\ns1.init({ src: ui, dynamic: true })\ns2.init({ src: title, dynamic: true })\n\n// shader: six looks that rotate with the sections, pushed by kick and bass\nconst P = [[1, 0.2, 0.35], [0.1, 0.55, 1], [1, 0.75, 0.1], [0.75, 0.2, 1], [0.1, 1, 0.65], [1, 0.35, 0.2]]\nconst pick = (arr) =\u003e () =\u003e arr[scene % arr.length]\nosc(pick([8, 14, 4, 22, 10, 30]), 0.06, 1.2)\n  .color(() =\u003e P[scene % 6][0], () =\u003e P[scene % 6][1], () =\u003e P[scene % 6][2])\n  .kaleid(pick([4, 6, 3, 8, 5, 12]))\n  .modulate(noise(pick([2, 4, 1.5, 6, 3, 8]), 0.12), () =\u003e 0.15 + a.fft[1] * 0.5)\n  .modulateRotate(voronoi(3, 0.2), pick([0.2, 0.6, 0.1, 0.9, 0.4, 1.2]))\n  .rotate(() =\u003e time * 0.03 * [1, -1, 2, -2, 1, 3][scene % 6])\n  .scale(() =\u003e 1 + a.fft[0] * 0.12)\n  .saturate(1.3)\n  .mult(src(s2).add(solid(1, 1, 1), () =\u003e 1 - inLetters))\n  .add(src(s2), () =\u003e whiteType * 0.9)\n  .layer(src(s1))\n  .out(o0)\n\n// ───────── the band: three rooms ─────────\nconst room = (chords, roots, scaleName, lead, g) =\u003e {\n  const kick = s(g.kick).bank(\"RolandTR909\").gain(0.26)\n  const clap = s(g.clap).bank(\"RolandTR909\").gain(0.15).room(0.15)\n  const hats = s(g.hats).bank(\"RolandTR909\").gain(0.11).pan(sine.range(0.35, 0.65).slow(4))\n  const shake = s(\"hh*16\").bank(\"RolandTR909\").gain(rand.range(0.02, 0.05)).pan(rand)\n  const bass = note(roots).struct(g.bass).s(\"sawtooth\").lpf(sine.range(350, 1100).slow(16)).lpq(7)\n    .gain(\"[0.08 0.16 0.16 0.14]*4\").attack(0.005).decay(0.18).sustain(0.4).release(0.1)\n  const stab = note(chords).struct(g.stab).s(g.keys).gain(0.18).room(0.3).velocity(rand.range(0.7, 0.95))\n  const pad = note(chords).s(\"gm_pad_warm\").attack(0.8).release(2).gain(0.18).lpf(2400).room(0.6)\n  const arp = n(g.arp).scale(scaleName).s(lead).gain(0.1).room(0.4)\n    .delay(0.25).delaytime(0.1875).delayfeedback(0.4).lpf(sine.range(1500, 5000).slow(8))\n  const drums = stack(kick, clap, hats, shake)\n  return { kick, clap, hats, shake, bass, stab, pad, arp, drums }\n}\nconst A = room(\"\u003c[a3,c4,e4,g4] [f3,a3,c4,e4] [c4,e4,g4,b4] [g3,b3,d4,f4]\u003e\", \"\u003ca1 f1 c2 g1\u003e\",\n  \"A3:minor:pentatonic\", \"triangle\",\n  { kick: \"bd*4\", clap: \"~ cp ~ cp\", hats: \"[~ oh]*4\", bass: \"[x ~ x x] [~ x ~ x] [x ~ x x] [~ x x ~]\",\n    stab: \"~ x ~ ~ ~ x ~ [x ~]\", keys: \"gm_epiano1\", arp: \"0 2 4 7 4 2 7 9\" })\nconst B = room(\"\u003c[d4,f4,a4,c5] [bb3,d4,f4,a4] [g3,bb3,d4,f4] [a3,c#4,e4,g4]\u003e\", \"\u003cd2 bb1 g1 a1\u003e\",\n  \"D4:minor:pentatonic\", \"gm_kalimba\",\n  { kick: \"[bd ~ ~ ~] [~ ~ bd ~] [~ ~ ~ ~] [~ bd ~ ~]\", clap: \"~ [cp ~ ~ cp] ~ cp\", hats: \"[hh ~ hh hh]*4\",\n    bass: \"[x ~ ~ x] [~ ~ x ~] [x ~ x ~] [~ x ~ ~]\", stab: \"[~ x] ~ [~ x] [x ~]\", keys: \"fmpiano\",\n    arp: \"\u003c[0 ~ 4 ~ 7 ~ 4 2] [7 ~ 4 ~ 2 ~ 0 ~]\u003e\" })\nconst C = room(\"\u003c[f3,a3,c4,e4] [g3,b3,d4,f4] [e3,g3,b3,d4] [a3,c4,e4,g4]\u003e\", \"\u003cf1 g1 e1 a1\u003e\",\n  \"C4:major:pentatonic\", \"supersaw\",\n  { kick: \"bd*4\", clap: \"~ cp ~ cp\", hats: \"[~ oh]*4\", bass: \"[x x ~ x] [~ x x ~] [x x ~ x] [~ x ~ x]\",\n    stab: \"x ~ [~ x] ~ x ~ [~ x] ~\", keys: \"gm_piano\", arp: \"0 4 7 9 7 4 9 12\" })\n\nconst rise = p =\u003e p.lpf(saw.range(300, 8000).slow(8))\n\narrange(\n  // room one — deep house: the room fills\n  [16, stack(A.pad, A.stab, A.shake)],\n  [16, stack(A.pad, A.stab, A.kick, A.shake)],\n  [32, stack(A.drums, A.bass, A.pad)],\n  [8, rise(stack(A.pad, A.stab, A.hats))],\n  [32, stack(A.drums, A.bass, A.stab, A.arp)],\n  [16, stack(A.pad, A.arp, A.clap)],\n  [32, stack(A.drums, A.bass, A.stab, A.arp, A.pad)],\n  // room two — two-step: the floor tilts\n  [16, stack(B.pad, B.stab)],\n  [32, stack(B.drums, B.bass, B.stab)],\n  [8, rise(stack(B.pad, B.hats, B.arp))],\n  [32, stack(B.drums, B.bass, B.stab, B.arp)],\n  [16, stack(B.pad, B.arp, B.shake)],\n  [32, stack(B.drums, B.bass, B.stab, B.arp, B.pad)],\n  // room three — piano house: hands up\n  [16, stack(C.pad, C.stab)],\n  [8, rise(stack(C.stab, C.hats, C.shake))],\n  [32, stack(C.drums, C.bass, C.stab)],\n  [32, stack(C.drums, C.bass, C.stab, C.arp, C.pad)],\n  [16, stack(C.pad, C.arp)],\n  [40, stack(C.drums, C.bass, C.stab, C.arp, C.pad)],\n  [16, stack(C.pad, C.stab, C.shake)]\n)\n","cps":null,"tempoPolicy":null,"hydraCdn":"https://unpkg.com/hydra-synth@1.4.0","vizPatterns":["\\.(pianoroll|punchcard|wordfall|spiral|pitchwheel|tscope|scope|fscope|spectrum|onPaint|draw|animate)\\s*\\(","\\ball\\s*\\(\\s*(pianoroll|punchcard|wordfall|spiral|pitchwheel|tscope|scope|fscope|spectrum|onPaint|draw|animate)\\b","\\bgetDrawContext\\s*\\("],"audio":{"analyser":{"fftSize":2048,"smoothing":0.8,"minDecibels":-90,"maxDecibels":-20,"lowHz":20,"highHz":12000},"defaults":{"bins":4,"cutoff":2,"scale":10,"smooth":0.4,"max":15}},"hydraPattern":"\\binitHydra\\s*\\("}</script>
+<script src="https://unpkg.com/@strudel/repl@1.3.0"></script>
+<script>(() => {
+  // src/shared/hap-number.ts
+  var CHROMAS = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+  var ACCIDENTALS = { "#": 1, b: -1, s: 1, f: -1 };
+  function noteNameToMidi(text) {
+    const match = /^([a-gA-G])([#bsf]*)(-?[0-9]*)$/.exec(text);
+    if (!match)
+      return null;
+    const [, letter, accidentals, octave] = match;
+    const offset = accidentals.split("").reduce((sum, a) => sum + ACCIDENTALS[a], 0);
+    const oct = octave === "" ? 3 : Number(octave);
+    return (oct + 1) * 12 + CHROMAS[letter.toLowerCase()] + offset;
+  }
+
+  // src/shared/tts.ts
+  var TTS_VOICES = [
+    "amalthea",
+    "andromeda",
+    "apollo",
+    "arcas",
+    "aries",
+    "asteria",
+    "athena",
+    "atlas",
+    "aurora",
+    "callista",
+    "cora",
+    "cordelia",
+    "delia",
+    "draco",
+    "electra",
+    "harmonia",
+    "helena",
+    "hera",
+    "hermes",
+    "hyperion",
+    "iris",
+    "janus",
+    "juno",
+    "jupiter",
+    "luna",
+    "mars",
+    "minerva",
+    "neptune",
+    "odysseus",
+    "ophelia",
+    "orion",
+    "orpheus",
+    "pandora",
+    "phoebe",
+    "pluto",
+    "saturn",
+    "thalia",
+    "theia",
+    "vesta",
+    "zeus"
+  ];
+  var DEFAULT_TTS_VOICE = "luna";
+  var TTS_MAX_CHARS = 240;
+  var TTS_MAX_BYTES = 4 * 1024 * 1024;
+  var TTS_SAMPLE_PREFIX = "say_";
+  function normalizeTts(text, voice) {
+    if (typeof text !== "string")
+      return { error: "say() needs the words as a string" };
+    const clean = text.replace(/\s+/g, " ").trim();
+    if (!clean)
+      return { error: "say() needs some words to say" };
+    if (clean.length > TTS_MAX_CHARS) {
+      return {
+        error: `say() renders at most ${TTS_MAX_CHARS} characters per line (got ${clean.length}) — split it into lines`
+      };
+    }
+    const v = voice === undefined || voice === null || voice === "" ? DEFAULT_TTS_VOICE : String(voice).toLowerCase();
+    if (!TTS_VOICES.includes(v)) {
+      return { error: `say() voice "${String(voice)}" is not one of: ${TTS_VOICES.join(", ")}` };
+    }
+    return { text: clean, voice: v };
+  }
+  function fnv1a(input) {
+    let hash = 2166136261;
+    for (let i = 0;i < input.length; i++) {
+      hash ^= input.charCodeAt(i);
+      hash = Math.imul(hash, 16777619) >>> 0;
+    }
+    return hash.toString(16).padStart(8, "0");
+  }
+  function ttsSampleName({ text, voice }) {
+    return `${TTS_SAMPLE_PREFIX}${fnv1a(`${voice}\x00${text}`)}`;
+  }
+  function ttsUrl(origin, { text, voice }) {
+    const params = new URLSearchParams({ voice, text });
+    return `${origin.replace(/\/+$/, "")}/tts?${params.toString()}`;
+  }
+
+  // src/shared/sing-dsp.ts
+  var PITCH_MIN_HZ = 60;
+  var PITCH_MAX_HZ = 600;
+  var YIN_THRESHOLD = 0.2;
+  var ANALYSIS_RATE = 16000;
+  function decimate(samples, factor) {
+    if (factor <= 1)
+      return samples;
+    const out = new Float32Array(Math.floor(samples.length / factor));
+    for (let i = 0;i < out.length; i++) {
+      let sum = 0;
+      for (let k = 0;k < factor; k++)
+        sum += samples[i * factor + k];
+      out[i] = sum / factor;
+    }
+    return out;
+  }
+  function yin(samples, sampleRate, offset, windowSize, { minHz = PITCH_MIN_HZ, maxHz = PITCH_MAX_HZ, threshold = YIN_THRESHOLD } = {}) {
+    const tauMin = Math.max(2, Math.floor(sampleRate / maxHz));
+    const tauMax = Math.min(Math.ceil(sampleRate / minHz), samples.length - offset - windowSize);
+    if (tauMax <= tauMin + 2)
+      return null;
+    const d = new Float64Array(tauMax + 1);
+    for (let tau = 1;tau <= tauMax; tau++) {
+      let sum = 0;
+      for (let i = 0;i < windowSize; i++) {
+        const delta = samples[offset + i] - samples[offset + i + tau];
+        sum += delta * delta;
+      }
+      d[tau] = sum;
+    }
+    const cmnd = new Float64Array(tauMax + 1);
+    cmnd[0] = 1;
+    let running = 0;
+    for (let tau = 1;tau <= tauMax; tau++) {
+      running += d[tau];
+      cmnd[tau] = running > 0 ? d[tau] * tau / running : 1;
+    }
+    let tau = -1;
+    for (let t = tauMin;t <= tauMax; t++) {
+      if (cmnd[t] < threshold) {
+        while (t + 1 <= tauMax && cmnd[t + 1] < cmnd[t])
+          t++;
+        tau = t;
+        break;
+      }
+    }
+    if (tau < 0)
+      return null;
+    let refined = tau;
+    if (tau > 1 && tau < tauMax) {
+      const a = cmnd[tau - 1];
+      const b = cmnd[tau];
+      const c = cmnd[tau + 1];
+      const denom = a - 2 * b + c;
+      if (denom !== 0)
+        refined = tau + (a - c) / (2 * denom);
+    }
+    return sampleRate / refined;
+  }
+  var median = (values) => {
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = sorted.length >> 1;
+    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  };
+  var DEFAULT_PITCH_ANCHOR = "weighted";
+  function anchorPitch(windows, anchor = DEFAULT_PITCH_ANCHOR) {
+    if (!windows.length)
+      return null;
+    if (anchor === "median")
+      return median(windows.map((w) => w.hz));
+    if (anchor === "loudest") {
+      const loud = [...windows].sort((a, b) => b.energy - a.energy).slice(0, Math.max(1, Math.ceil(windows.length * 0.4)));
+      return median(loud.map((w) => w.hz));
+    }
+    const byHz = [...windows].sort((a, b) => a.hz - b.hz);
+    const total = byHz.reduce((n, w) => n + w.energy, 0);
+    if (!(total > 0))
+      return median(byHz.map((w) => w.hz));
+    let acc = 0;
+    for (const w of byHz) {
+      acc += w.energy;
+      if (acc >= total / 2)
+        return w.hz;
+    }
+    return byHz[byHz.length - 1].hz;
+  }
+  var HOP_SECONDS = 0.01;
+  function pitchWindows(samples, sampleRate, from = 0, to = samples.length / sampleRate, options = {}) {
+    const factor = Math.max(1, Math.floor(sampleRate / ANALYSIS_RATE));
+    const rate = sampleRate / factor;
+    const tauMax = Math.ceil(rate / (options.minHz ?? PITCH_MIN_HZ));
+    const a = Math.max(0, Math.floor(from * sampleRate));
+    const b = Math.min(samples.length, Math.ceil(to * sampleRate));
+    if (b <= a)
+      return [];
+    const region = decimate(samples.subarray(a, b), factor);
+    let windowSize = Math.round(rate * 0.04);
+    if (region.length < windowSize + tauMax + 1)
+      windowSize = Math.round(rate * 0.025);
+    const need = windowSize + tauMax + 1;
+    const hop = Math.max(1, Math.round(rate * (options.hopSeconds ?? HOP_SECONDS)));
+    const out = [];
+    for (let at = 0;at + need <= region.length; at += hop) {
+      const hz = yin(region, rate, at, windowSize, options);
+      if (hz === null)
+        continue;
+      let energy = 0;
+      for (let i = at;i < at + windowSize; i++)
+        energy += region[i] * region[i];
+      out.push({ hz, energy, at: at / rate });
+    }
+    return out;
+  }
+  function detectPitch(samples, sampleRate, from = 0, to = samples.length / sampleRate, options = {}) {
+    return anchorPitch(pitchWindows(samples, sampleRate, from, to, options), options.anchor);
+  }
+  function rmsFrames(samples, sampleRate, from, to) {
+    const hop = Math.max(1, Math.round(sampleRate * 0.01));
+    const out = [];
+    for (let a = Math.round(from * sampleRate);a + hop <= Math.round(to * sampleRate); a += hop) {
+      let sum = 0;
+      let n = 0;
+      for (let i = Math.max(0, a);i < Math.min(samples.length, a + hop); i++) {
+        sum += samples[i] * samples[i];
+        n++;
+      }
+      out.push(n ? Math.sqrt(sum / n) : 0);
+    }
+    return out;
+  }
+  var ONSET_SEARCH_SECONDS = 0.15;
+  var SILENCE_FRACTION = 0.02;
+  var GAP_SECONDS = 0.06;
+  var DIP_FRACTION = 0.25;
+  var OFFSET_FRACTION = 0.1;
+  var OFFSET_GROW_SECONDS = 0.2;
+  function snapOnset(samples, sampleRate, at, wordEnd = at + 0.3, notBefore = 0) {
+    const duration = samples.length / sampleRate;
+    const from = Math.max(0, at - ONSET_SEARCH_SECONDS, notBefore);
+    const to = Math.min(duration, Math.max(wordEnd, at + ONSET_SEARCH_SECONDS));
+    const frames = rmsFrames(samples, sampleRate, from, to);
+    if (frames.length < 2)
+      return at;
+    const time = (k) => from + k * 0.01;
+    const own = Math.max(0, Math.min(frames.length - 1, Math.round((at - from) / 0.01)));
+    const ownEnd = Math.max(own + 1, Math.min(frames.length, Math.round((wordEnd - from) / 0.01)));
+    let peakK = own;
+    for (let k = own;k < ownEnd; k++)
+      if (frames[k] > frames[peakK])
+        peakK = k;
+    const peak = frames[peakK];
+    if (peak <= 0)
+      return at;
+    const silent = peak * SILENCE_FRACTION;
+    const gap = Math.round(GAP_SECONDS / 0.01);
+    let run = 0;
+    let onset = -1;
+    for (let k = 0;k <= peakK; k++) {
+      if (frames[k] < silent)
+        run++;
+      else {
+        if (run >= gap || run > 0 && run === k || k === 0 && from === 0)
+          onset = k;
+        run = 0;
+      }
+    }
+    if (onset >= 0)
+      return time(onset);
+    const side = 10;
+    let best = -1;
+    let bestRatio = DIP_FRACTION;
+    for (let k = 1;k < frames.length - 1; k++) {
+      if (Math.abs(time(k) - at) > ONSET_SEARCH_SECONDS + 0.000000001)
+        continue;
+      if (frames[k] > frames[k - 1] || frames[k] > frames[k + 1])
+        continue;
+      const left = Math.max(...frames.slice(Math.max(0, k - side), k));
+      const right = Math.max(...frames.slice(k + 1, k + 1 + side));
+      const ratio = frames[k] / Math.min(left, right);
+      if (ratio < bestRatio) {
+        bestRatio = ratio;
+        best = k;
+      }
+    }
+    return best >= 0 ? time(best) : at;
+  }
+  function snapOffset(samples, sampleRate, start, at, limit) {
+    const duration = samples.length / sampleRate;
+    const to = Math.min(duration, limit, at + OFFSET_GROW_SECONDS);
+    const frames = rmsFrames(samples, sampleRate, start, to);
+    if (frames.length < 2)
+      return at;
+    const peak = Math.max(...frames);
+    if (peak <= 0)
+      return at;
+    const threshold = peak * OFFSET_FRACTION;
+    let last = -1;
+    for (let k = 0;k < frames.length; k++) {
+      if (frames[k] >= threshold)
+        last = k;
+      else if (last >= 0 && start + k * 0.01 >= at)
+        break;
+    }
+    return last < 0 ? at : Math.min(to, start + (last + 1) * 0.01);
+  }
+  var LOOP_SECONDS = 0.08;
+  var LOOP_LADDER_SECONDS = [LOOP_SECONDS, 0.05, 0.035];
+  var LOOP_MAX_CENTS = 50;
+  var LOOP_STEADY_CENTS = 30;
+  var LOOP_STEADY_ENERGY = 2;
+  var LOOP_MIN_WINDOWS = 5;
+  function findLoop(samples, sampleRate, from, to, anchorHz, windows = pitchWindows(samples, sampleRate, from, to)) {
+    for (const seconds of LOOP_LADDER_SECONDS) {
+      const loop = findLoopOfLength(samples, sampleRate, from, to, anchorHz, windows, seconds);
+      if (loop)
+        return loop;
+    }
+    return null;
+  }
+  function findLoopOfLength(samples, sampleRate, from, to, anchorHz, windows, loopSeconds) {
+    if (!(anchorHz > 0) || !windows.length)
+      return null;
+    const a = Math.max(0, Math.floor(from * sampleRate));
+    const b = Math.min(samples.length, Math.ceil(to * sampleRate));
+    const peak = Math.max(...windows.map((w) => w.energy));
+    if (!(peak > 0))
+      return null;
+    const rising = (i) => samples[i - 1] <= 0 && samples[i] > 0;
+    const seam = (start, end, span) => {
+      let d = 0;
+      let p = 0;
+      for (let i = 0;i < span; i++) {
+        const x = samples[start + i] - samples[end + i];
+        d += x * x;
+        p += samples[start + i] * samples[start + i];
+      }
+      return p > 0 ? d / p : Infinity;
+    };
+    const cents = (x, y) => Math.abs(1200 * Math.log2(x / y));
+    const near = windows.filter((w) => cents(w.hz, anchorHz) <= LOOP_MAX_CENTS);
+    const loud = near.filter((w) => w.energy >= peak * 0.5);
+    const quieter = loud.length ? loud : near.filter((w) => w.energy >= peak * 0.2);
+    const glide = (w) => Math.max(0, ...windows.filter((x) => x.at >= w.at && x.at <= w.at + loopSeconds).map((x) => cents(x.hz, w.hz)));
+    const steady = quieter.filter((w) => glide(w) <= LOOP_STEADY_CENTS);
+    const spanWindows = (w) => windows.filter((x) => x.at >= w.at && x.at <= w.at + loopSeconds);
+    const covered = (w) => {
+      const span = spanWindows(w);
+      return span.length >= Math.min(LOOP_MIN_WINDOWS, Math.round(loopSeconds / 0.01) - 3) && span[span.length - 1].at >= w.at + loopSeconds - 0.045;
+    };
+    const whole = (steady.length ? steady : quieter).filter(covered);
+    const pool = whole.length ? whole : steady.length ? steady : quieter;
+    const frame = Math.max(1, Math.round(sampleRate * 0.01));
+    const ripple = (start, end) => {
+      let lo = Infinity;
+      let hi = 0;
+      for (let i = start;i + frame <= end; i += frame) {
+        let e = 0;
+        for (let j = i;j < i + frame; j++)
+          e += samples[j] * samples[j];
+        lo = Math.min(lo, e);
+        hi = Math.max(hi, e);
+      }
+      return lo > 0 ? hi / lo : Infinity;
+    };
+    const candidates = [];
+    for (const w of pool) {
+      const period = sampleRate / w.hz;
+      const span = Math.round(period);
+      const periods = Math.max(2, Math.round(loopSeconds * sampleRate / period));
+      const length = Math.round(periods * period);
+      const windowStart = a + Math.round(w.at * sampleRate);
+      for (let start = Math.max(a + 1, windowStart);start < windowStart + period; start++) {
+        if (!rising(start))
+          continue;
+        const target = start + length;
+        for (let end = Math.max(start + 1, Math.floor(target - period / 2));end <= target + period / 2; end++) {
+          if (end + span > b || !rising(end))
+            continue;
+          const r = ripple(start, end);
+          if (r <= LOOP_STEADY_ENERGY)
+            candidates.push({ start, end, d: seam(start, end, span), r, whz: w.hz });
+        }
+      }
+    }
+    candidates.sort((x, y) => x.d - y.d);
+    for (const c of candidates.slice(0, 12)) {
+      const segment = samples.subarray(c.start, c.end);
+      const repeats = Math.max(2, Math.ceil(0.25 * sampleRate / segment.length));
+      const looped = new Float32Array(segment.length * repeats);
+      for (let i = 0;i < repeats; i++)
+        looped.set(segment, i * segment.length);
+      const hz = detectPitch(looped, sampleRate);
+      if (hz !== null && cents(hz, c.whz) <= LOOP_MAX_CENTS)
+        return { start: c.start / sampleRate, end: c.end / sampleRate, hz };
+    }
+    return null;
+  }
+  function analyseWords(samples, sampleRate, words) {
+    const duration = samples.length / sampleRate;
+    const starts = [];
+    let notBefore = 0;
+    words.forEach((w, i) => {
+      const end = Math.min(duration, Math.max(w.end, w.start + 0.03));
+      const start = Math.max(0, notBefore, Math.min(snapOnset(samples, sampleRate, w.start, end, notBefore), end - 0.03));
+      starts.push(start);
+      const frames = rmsFrames(samples, sampleRate, start, Math.max(start + 0.03, Math.min(end, i + 1 < words.length ? words[i + 1].end : duration)));
+      let peak = 0;
+      for (let k = 1;k < frames.length; k++)
+        if (frames[k] > frames[peak])
+          peak = k;
+      notBefore = Math.max(start + 0.03, start + peak * 0.01);
+    });
+    return words.map((w, i) => {
+      const start = starts[i];
+      const limit = i + 1 < words.length ? Math.max(starts[i + 1], w.end) : duration;
+      const end = Math.max(start + 0.03, Math.min(duration, snapOffset(samples, sampleRate, start, Math.min(duration, w.end), limit)));
+      const windows = pitchWindows(samples, sampleRate, start, end);
+      const hz = anchorPitch(windows);
+      return { word: w.word, start, end, hz, loop: hz ? findLoop(samples, sampleRate, start, end, hz, windows) : null };
+    });
+  }
+
+  // src/shared/sing.ts
+  function ttsWordsUrl(origin, request) {
+    return `${ttsUrl(origin, request)}&words=1`;
+  }
+  var SING_MAX_CYCLES = 16;
+  var REST = /^[~\-_.]$/;
+  function tokenMidi(token) {
+    if (typeof token === "number")
+      return Number.isFinite(token) ? token : null;
+    if (typeof token !== "string")
+      return null;
+    const t = token.trim();
+    if (/^-?\d+(\.\d+)?$/.test(t))
+      return Number(t);
+    return noteNameToMidi(t);
+  }
+  function noteSource(notes, midiOf, toPattern) {
+    if (typeof notes === "string" && toPattern && /[[\]<>{}(),@!*/:?|]/.test(notes)) {
+      notes = toPattern(notes);
+    }
+    if (notes && typeof notes.queryArc === "function") {
+      const pattern = notes;
+      const source = (cycle) => pattern.queryArc(cycle, cycle + 1).filter((hap) => hap?.whole && (typeof hap.hasOnset !== "function" || hap.hasOnset())).map((hap) => ({ begin: Number(hap.whole.begin), end: Number(hap.whole.end), midi: midiOf(hap) })).filter((step) => typeof step.midi === "number" && Number.isFinite(step.midi)).sort((a, b) => a.begin - b.begin);
+      let any = false;
+      for (let c = 0;c < SING_MAX_CYCLES && !any; c++)
+        any = source(c).length > 0;
+      if (!any)
+        throw new TypeError(`sing(line, notes): the notes pattern has no notes — e.g. "c4 e4 g4 c5"`);
+      return source;
+    }
+    const tokens = Array.isArray(notes) ? notes : typeof notes === "string" ? notes.trim().split(/\s+/) : null;
+    if (!tokens || tokens.length === 0 || tokens.length === 1 && tokens[0] === "") {
+      throw new TypeError(`sing(line, notes) needs notes — e.g. sing('still water runs deep', "c4 e4 g4 c5")`);
+    }
+    const steps = tokens.map((token) => {
+      if (typeof token === "string" && REST.test(token.trim()))
+        return null;
+      const midi = tokenMidi(token);
+      if (midi === null)
+        throw new TypeError(`sing(line, notes): "${String(token)}" is not a note — use names like c4, eb3 or MIDI numbers`);
+      return midi;
+    });
+    if (steps.every((s) => s === null))
+      throw new TypeError("sing(line, notes): the notes are all rests");
+    const n = steps.length;
+    return (cycle) => steps.flatMap((midi, k) => midi === null ? [] : [{ begin: cycle + k / n, end: cycle + (k + 1) / n, midi }]);
+  }
+  function layoutWords(wordCount, source) {
+    const placed = [];
+    let cycles = 1;
+    for (let c = 0;c < SING_MAX_CYCLES && placed.length < wordCount; c++) {
+      for (const step of source(c)) {
+        if (placed.length >= wordCount)
+          break;
+        placed.push({ ...step, index: placed.length });
+        cycles = c + 1;
+      }
+    }
+    return { placed, cycles };
+  }
+  var TICKS = 960;
+  var HOLD_RELEASE_SECONDS = 0.05;
+  function buildPhrase(kit, name, layout, slice) {
+    const total = layout.cycles * TICKS;
+    const pairs = [];
+    let at = 0;
+    for (const word of layout.placed) {
+      const b = Math.max(at, Math.round(word.begin * TICKS));
+      const e = Math.min(total, Math.max(b + 1, Math.round(word.end * TICKS)));
+      if (b >= total)
+        break;
+      if (b > at)
+        pairs.push([b - at, kit.silence]);
+      const s = slice(word);
+      let step = kit.sound(name).begin(s.begin).end(s.end).speed(s.speed);
+      if (s.loopBegin !== undefined && s.loopEnd !== undefined) {
+        step = step.loop(1).loopBegin(s.loopBegin).loopEnd(s.loopEnd).clip(1).release(HOLD_RELEASE_SECONDS);
+      }
+      pairs.push([e - b, step]);
+      at = e;
+    }
+    if (at < total)
+      pairs.push([total - at, kit.silence]);
+    const phrase = kit.timecat(...pairs);
+    return layout.cycles > 1 ? phrase.slow(layout.cycles) : phrase;
+  }
+  var midiToHz = (midi) => 440 * 2 ** ((midi - 69) / 12);
+  var SING_MIN_SPEED = 0.25;
+  var SING_MAX_SPEED = 4;
+  function wordSpeeds(spokenHz, targetMidi) {
+    const voiced = spokenHz.filter((h) => typeof h === "number" && h > 0).sort((a, b) => a - b);
+    const fallback = voiced.length ? voiced[voiced.length >> 1] : null;
+    let previous = fallback;
+    let clamped = 0;
+    const speeds = targetMidi.map((midi, i) => {
+      const hz = spokenHz[i % spokenHz.length];
+      const spoken = typeof hz === "number" && hz > 0 ? hz : previous;
+      if (typeof hz === "number" && hz > 0)
+        previous = hz;
+      if (!spoken)
+        return 1;
+      const raw = midiToHz(midi) / spoken;
+      if (raw > SING_MAX_SPEED || raw < SING_MIN_SPEED)
+        clamped++;
+      return Math.min(SING_MAX_SPEED, Math.max(SING_MIN_SPEED, raw));
+    });
+    return { speeds, clamped };
+  }
+  function spokenMedianHz(spokenHz) {
+    const voiced = spokenHz.filter((h) => typeof h === "number" && h > 0).sort((a, b) => a - b);
+    if (!voiced.length)
+      return null;
+    const mid = voiced.length >> 1;
+    return voiced.length % 2 ? voiced[mid] : (voiced[mid - 1] + voiced[mid]) / 2;
+  }
+  var AUTO_OCTAVE_FLOOR_HZ = 80;
+  function autoOctave(noteMidis, spokenHz) {
+    if (!spokenHz || !noteMidis.length)
+      return 0;
+    const sorted = [...noteMidis].sort((a, b) => a - b);
+    const mid = sorted.length >> 1;
+    const notes = sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    const voice = 69 + 12 * Math.log2(spokenHz / 440);
+    const floor = 69 + 12 * Math.log2(AUTO_OCTAVE_FLOOR_HZ / 440);
+    const shifts = [0, -1, 1];
+    let best = 0;
+    for (const k of shifts) {
+      if (Math.abs(notes + 12 * k - voice) < Math.abs(notes + 12 * best - voice) - 0.000000001)
+        best = k;
+    }
+    if (sorted[0] + 12 * best < floor) {
+      const higher = shifts.filter((k) => k > best && sorted[0] + 12 * k >= floor).sort((x, y) => x - y);
+      if (higher.length)
+        best = higher[0];
+    }
+    return best;
+  }
+
+  // src/shared/remember-store.ts
+  var MAX_REMEMBER_PER_EVALUATION = 8;
+  var MAX_REMEMBER_NAMES = 16;
+  var MAX_REMEMBER_JSON = 4096;
+  var MAX_REMEMBER_DEPTH = 8;
+  var MAX_MERGE_IDS = 32;
+  var MAX_REMEMBER_TEXT = 300;
+  function fnv1a2(input) {
+    let hash = 2166136261;
+    for (let i = 0;i < input.length; i++) {
+      hash ^= input.charCodeAt(i);
+      hash = Math.imul(hash, 16777619) >>> 0;
+    }
+    return hash.toString(16).padStart(8, "0");
+  }
+  var DOUBLE_QUOTE_HINT = "double-quoted and `backtick` strings are mini-notation patterns in Strudel code — write plain strings in 'single quotes'";
+  function unwrapMiniWord(value) {
+    if (!value || typeof value !== "object" || typeof value.queryArc !== "function")
+      return value;
+    if (typeof value.__pure === "string")
+      return value.__pure;
+    try {
+      const haps = value.queryArc(0, 1);
+      if (haps.length === 1 && typeof haps[0]?.value === "string") {
+        const whole = haps[0].whole;
+        if (whole && Number(whole.begin) === 0 && Number(whole.end) === 1)
+          return haps[0].value;
+      }
+    } catch {}
+    return value;
+  }
+  var typeOf = (value) => value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
+  function isPlainObject(value) {
+    if (Object.prototype.toString.call(value) !== "[object Object]")
+      return false;
+    const proto = Object.getPrototypeOf(value);
+    return proto === null || Object.getPrototypeOf(proto) === null;
+  }
+  function freezeJson(input, api) {
+    let nodes = 0;
+    const walk = (raw, depth) => {
+      const value = unwrapMiniWord(raw);
+      if (++nodes > MAX_REMEMBER_JSON)
+        throw new RangeError(`${api}: the value has more than ${MAX_REMEMBER_JSON} parts (numbers, strings, arrays, objects)`);
+      if (value === null || typeof value === "boolean")
+        return value;
+      if (typeof value === "number") {
+        if (!Number.isFinite(value))
+          throw new TypeError(`${api}: ${value} isn't JSON — use a finite number or null`);
+        return value;
+      }
+      if (typeof value === "string") {
+        if (value.length > MAX_REMEMBER_JSON)
+          throw new RangeError(`${api}: the value is bigger than ${MAX_REMEMBER_JSON} characters of JSON`);
+        return value;
+      }
+      if (typeof value !== "object") {
+        throw new TypeError(`${api}: a ${typeof value} isn't JSON — store numbers, strings, booleans, null, arrays and plain objects`);
+      }
+      if (depth >= MAX_REMEMBER_DEPTH) {
+        throw new RangeError(`${api}: nested deeper than ${MAX_REMEMBER_DEPTH} levels (or circular)`);
+      }
+      if (Array.isArray(value)) {
+        const out = [];
+        for (let i = 0;i < value.length; i++) {
+          if (!(i in value))
+            throw new TypeError(`${api}: an array with holes isn't JSON — fill it (e.g. Array(16).fill(0))`);
+          out.push(walk(value[i], depth + 1));
+        }
+        return Object.freeze(out);
+      }
+      if (typeof value.queryArc === "function")
+        throw new TypeError(`${api}: a pattern isn't JSON — ${DOUBLE_QUOTE_HINT}`);
+      if (!isPlainObject(value))
+        throw new TypeError(`${api}: only plain objects are JSON (not ${Object.prototype.toString.call(value).slice(8, -1)})`);
+      const out = {};
+      for (const key of Object.keys(value)) {
+        Object.defineProperty(out, key, {
+          value: walk(value[key], depth + 1),
+          enumerable: true,
+          writable: true,
+          configurable: true
+        });
+      }
+      return Object.freeze(out);
+    };
+    const value = walk(input, 0);
+    const json = JSON.stringify(value);
+    if (json === undefined)
+      throw new TypeError(`${api}: the value isn't JSON`);
+    if (json.length > MAX_REMEMBER_JSON) {
+      throw new RangeError(`${api}: the value is ${json.length} characters of JSON — at most ${MAX_REMEMBER_JSON}`);
+    }
+    return { value, json, type: typeOf(value) };
+  }
+  function labelText(label, value) {
+    if (label === undefined)
+      return null;
+    try {
+      const raw = typeof label === "function" ? unwrapMiniWord(label(value)) : label;
+      if (raw === undefined || raw === null)
+        return null;
+      if (typeof raw === "object")
+        return null;
+      return String(raw).slice(0, MAX_REMEMBER_TEXT);
+    } catch {
+      return null;
+    }
+  }
+  function requireLabel(api, label) {
+    if (label === undefined || typeof label === "function")
+      return;
+    const word = unwrapMiniWord(label);
+    if (typeof word === "string")
+      return;
+    throw new TypeError(`${api}: a label is a string or a function — ${DOUBLE_QUOTE_HINT}`);
+  }
+  function describeText(entry) {
+    if (!entry.describe)
+      return null;
+    try {
+      const raw = unwrapMiniWord(entry.describe(entry.value));
+      if (raw === undefined || raw === null || typeof raw === "object")
+        return null;
+      return String(raw).slice(0, MAX_REMEMBER_TEXT);
+    } catch {
+      return null;
+    }
+  }
+  var isThenable = (v) => !!v && (typeof v === "object" || typeof v === "function") && typeof v.then === "function";
+  var MAX_COMMITTED_TOKENS = 8;
+  var MAX_REMEMBER_WAITING = 8;
+  function createRememberStore(hooks) {
+    const store = new Map;
+    let running = null;
+    let deferred = [];
+    let committed = [];
+    const authority = () => committed.length ? committed[committed.length - 1] : 0;
+    const forget = (token) => {
+      committed = committed.filter((t) => t !== token);
+    };
+    const trust = (token) => {
+      forget(token);
+      committed.push(token);
+      if (committed.length > MAX_COMMITTED_TOKENS)
+        committed.splice(0, committed.length - MAX_COMMITTED_TOKENS);
+    };
+    let committedNames = new Set;
+    let disposed = false;
+    let inMerge = 0;
+    let replaying = 0;
+    let inUpdate = 0;
+    let provisional = null;
+    const confirmProvisional = () => {
+      const p = provisional;
+      provisional = null;
+      p?.flush();
+    };
+    const protectedNames = (...extra) => new Set([
+      ...committedNames,
+      ...deferred.flatMap((d) => [...d.decls.keys()]),
+      ...running?.decls.keys() ?? [],
+      ...extra
+    ]);
+    const evict = (protect) => {
+      while (store.size > MAX_REMEMBER_NAMES) {
+        let victim;
+        for (const name of store.keys()) {
+          if (!protect.has(name)) {
+            victim = name;
+            break;
+          }
+        }
+        store.delete(victim ?? store.keys().next().value);
+      }
+    };
+    const put = (entry) => {
+      store.delete(entry.name);
+      store.set(entry.name, entry);
+    };
+    const fresh = (decl, previous) => {
+      const entry = {
+        name: decl.name,
+        value: decl.init,
+        json: decl.initJson,
+        type: decl.type,
+        versionKey: decl.versionKey,
+        describe: decl.describe,
+        text: null,
+        rev: (previous?.rev ?? 0) + 1,
+        at: hooks.now(),
+        mergeIds: []
+      };
+      entry.text = describeText(entry);
+      return entry;
+    };
+    const fits = (entry, decl) => !!entry && entry.versionKey === decl.versionKey && entry.type === decl.type;
+    let landingCycle = null;
+    const announce = (entry, by, label) => {
+      try {
+        hooks.observe?.({ name: entry.name, by, text: label ?? entry.text ?? entry.json.slice(0, MAX_REMEMBER_TEXT), cycle: landingCycle ?? hooks.cycle() });
+      } catch {}
+    };
+    const changed = () => {
+      try {
+        hooks.changed?.();
+      } catch {}
+    };
+    const runMerge = (decl, json) => {
+      const draft = JSON.parse(json);
+      let result;
+      inMerge++;
+      try {
+        result = decl.merge(draft);
+      } finally {
+        inMerge--;
+      }
+      if (isThenable(result))
+        throw new TypeError(`remember('${decl.name}'): merge must be synchronous (no async/await)`);
+      const v = freezeJson(result === undefined ? draft : result, `remember('${decl.name}') merge`);
+      if (v.type !== decl.type)
+        throw new TypeError(`remember('${decl.name}') merge: the value must stay a${v.type === "array" || v.type === "object" ? "n" : ""} ${decl.type}, like its init`);
+      return v;
+    };
+    const stagedBase = (staged, decl) => {
+      for (let i = staged.ops.length - 1;i >= 0; i--)
+        if (staged.ops[i].name === decl.name)
+          return staged.ops[i].value;
+      const stored = store.get(decl.name);
+      return fits(stored, decl) ? stored : { value: decl.init, json: decl.initJson };
+    };
+    const activateStaged = (staged, replaceCommitted, holdNotices = false) => {
+      const none = { ok: false, flush: () => {} };
+      if (disposed)
+        return none;
+      const scratch = new Map;
+      const touched = new Set;
+      const merged = [];
+      replaying++;
+      try {
+        for (const decl of staged.decls.values()) {
+          const stored = store.get(decl.name);
+          let next;
+          if (fits(stored, decl)) {
+            next = { ...stored, describe: decl.describe, mergeIds: [...stored.mergeIds] };
+            if (decl.describe !== stored.describe) {
+              next.text = describeText(next);
+              if (next.text !== stored.text)
+                touched.add(decl.name);
+            }
+          } else {
+            next = fresh(decl, stored);
+            touched.add(decl.name);
+          }
+          scratch.set(decl.name, next);
+        }
+        for (const op of staged.ops) {
+          const next = scratch.get(op.name);
+          if (!next)
+            continue;
+          const v = op.compute(next.value, next.json);
+          next.value = v.value;
+          next.json = v.json;
+          next.rev++;
+          next.text = describeText(next);
+          touched.add(op.name);
+        }
+        for (const decl of staged.decls.values()) {
+          const next = scratch.get(decl.name);
+          if (!decl.merge || !decl.mergeId || next.mergeIds.includes(decl.mergeId))
+            continue;
+          const v = runMerge(decl, next.json);
+          next.value = v.value;
+          next.json = v.json;
+          next.rev++;
+          next.mergeIds.push(decl.mergeId);
+          if (next.mergeIds.length > MAX_MERGE_IDS)
+            next.mergeIds.splice(0, next.mergeIds.length - MAX_MERGE_IDS);
+          next.text = describeText(next);
+          touched.add(decl.name);
+          merged.push({ name: decl.name, label: decl.label ?? null });
+        }
+      } catch (error) {
+        hooks.reportError("remember", error);
+        return none;
+      } finally {
+        replaying--;
+      }
+      const now = hooks.now();
+      for (const entry of scratch.values()) {
+        if (touched.has(entry.name))
+          entry.at = now;
+        put(entry);
+      }
+      const before = committedNames;
+      committedNames = replaceCommitted ? new Set(staged.decls.keys()) : new Set([...committedNames, ...staged.decls.keys()]);
+      evict(protectedNames(...staged.decls.keys()));
+      let flipped = false;
+      for (const name of store.keys())
+        if (before.has(name) !== committedNames.has(name))
+          flipped = true;
+      const notices = merged.map((m) => ({ ...m, entry: store.get(m.name) }));
+      const notify = touched.size > 0 || flipped;
+      const flush = () => {
+        for (const m of notices)
+          if (m.entry)
+            announce(m.entry, "ai", m.label);
+        if (notify)
+          changed();
+      };
+      if (!holdNotices)
+        flush();
+      return { ok: true, flush };
+    };
+    const dropDeferredBefore = (token) => {
+      for (const d of deferred)
+        if (d.token < token)
+          forget(d.token);
+      deferred = deferred.filter((d) => d.token >= token);
+    };
+    const write = (decl, token, compute, label) => {
+      if (disposed)
+        return;
+      const api = `remember('${decl.name}')`;
+      if (inMerge)
+        throw new TypeError(`${api}: a merge can't write through a handle — change its draft (or return a new value) instead`);
+      if (replaying)
+        return;
+      requireLabel(`${api}.set/update`, label);
+      if (running && !running.early && token === running.token) {
+        const base = stagedBase(running, decl);
+        running.ops.push({ name: decl.name, compute, value: compute(base.value, base.json) });
+        return;
+      }
+      if (token !== authority())
+        return;
+      const stored = store.get(decl.name);
+      const pending = deferred.find((d) => d.token === token);
+      if (pending && pending.decls.get(decl.name) === decl && !fits(stored, decl)) {
+        const base = stagedBase(pending, decl);
+        const v = compute(base.value, base.json);
+        pending.ops.push({ name: decl.name, compute, value: v });
+        if (hooks.listenerWriting()) {
+          const shown = { ...fresh(decl, stored), value: v.value, json: v.json };
+          shown.text = describeText(shown);
+          noteListener(shown, label);
+        }
+        return;
+      }
+      const base = fits(stored, decl) ? stored : null;
+      const v = compute(base ? base.value : decl.init, base ? base.json : decl.initJson);
+      const start = base ?? fresh(decl, stored);
+      const next = { ...start, value: v.value, json: v.json, rev: start.rev + 1, at: hooks.now() };
+      next.text = describeText(next);
+      put(next);
+      evict(protectedNames(decl.name));
+      if (hooks.listenerWriting())
+        noteListener(next, label);
+      changed();
+    };
+    const noteListener = (entry, label) => {
+      try {
+        hooks.listenerWrote?.();
+      } catch {}
+      announce(entry, "listener", labelText(label, entry.value));
+    };
+    return {
+      begin(token) {
+        if (provisional && provisional.token !== token)
+          confirmProvisional();
+        running = { token, decls: new Map, ops: [], early: false };
+      },
+      activateEarly(token) {
+        if (!running || running.token !== token || running.early)
+          return;
+        confirmProvisional();
+        const before = new Map(store);
+        const saved = { committedNames, committed: [...committed], deferred: [...deferred] };
+        running.early = true;
+        dropDeferredBefore(token);
+        trust(token);
+        const { flush } = activateStaged(running, true, true);
+        const same = (a, b) => !!a && !!b && a.json === b.json && a.versionKey === b.versionKey && a.type === b.type && a.text === b.text && a.mergeIds.join() === b.mergeIds.join();
+        const affected = new Set;
+        for (const name of new Set([...before.keys(), ...store.keys()])) {
+          if (!same(before.get(name), store.get(name)))
+            affected.add(name);
+        }
+        provisional = { token, before, affected, ...saved, flush };
+      },
+      commit(token, defer) {
+        if (!running || running.token !== token)
+          return;
+        const staged = running;
+        running = null;
+        if (staged.early) {
+          if (provisional?.token === token)
+            confirmProvisional();
+          return;
+        }
+        confirmProvisional();
+        trust(token);
+        if (defer) {
+          deferred.push(staged);
+          while (deferred.length > MAX_REMEMBER_WAITING)
+            forget(deferred.shift().token);
+          return;
+        }
+        dropDeferredBefore(token);
+        activateStaged(staged, true);
+      },
+      activate(token, atCycle) {
+        const i = deferred.findIndex((d) => d.token === token);
+        if (i < 0)
+          return;
+        const staged = deferred[i];
+        for (const d of deferred.slice(0, i))
+          forget(d.token);
+        deferred = deferred.slice(i + 1);
+        landingCycle = typeof atCycle === "number" && Number.isFinite(atCycle) ? atCycle : null;
+        try {
+          activateStaged(staged, true);
+        } finally {
+          landingCycle = null;
+        }
+      },
+      rollback(token) {
+        if (running?.token === token)
+          running = null;
+        if (provisional?.token === token) {
+          const p = provisional;
+          provisional = null;
+          for (const name of p.affected) {
+            const prev = p.before.get(name);
+            if (prev)
+              store.set(name, prev);
+            else
+              store.delete(name);
+          }
+          committedNames = p.committedNames;
+          committed = p.committed;
+          deferred = p.deferred;
+          changed();
+        }
+        deferred = deferred.filter((d) => d.token !== token);
+        forget(token);
+      },
+      declaresNow: (name) => !!running && !running.early && running.decls.has(name),
+      declare(name, init, options) {
+        const api = `remember('${name}')`;
+        if (inMerge)
+          throw new TypeError(`${api}: a merge can't declare remembered state — declare it at the top level`);
+        if (inUpdate || replaying)
+          throw new TypeError(`${api}: declare remembered state at the top level, not inside update()`);
+        if (options !== undefined && (options === null || typeof options !== "object")) {
+          throw new TypeError(`${api}: the third argument is an options object, e.g. { describe: v => '…', version: 1 }`);
+        }
+        const opts = options ?? {};
+        for (const key of ["describe", "merge"]) {
+          if (opts[key] !== undefined && typeof opts[key] !== "function")
+            throw new TypeError(`${api}: ${key} must be a function`);
+        }
+        if (opts.version !== undefined && typeof opts.version !== "number" && typeof opts.version !== "string") {
+          throw new TypeError(`${api}: version must be a number or a string`);
+        }
+        if (opts.label !== undefined)
+          requireLabel(api, opts.label);
+        const label = opts.label === undefined ? undefined : String(unwrapMiniWord(opts.label)).slice(0, MAX_REMEMBER_TEXT);
+        const v = freezeJson(init, api);
+        const versionKey = opts.version === undefined ? "" : String(opts.version);
+        const decl = {
+          name,
+          init: v.value,
+          initJson: v.json,
+          type: v.type,
+          versionKey,
+          describe: opts.describe,
+          merge: opts.merge,
+          label,
+          mergeId: opts.merge ? fnv1a2(`${String(opts.merge)}\x00${label ?? ""}\x00${versionKey}`) : undefined
+        };
+        let token;
+        if (running && !running.early) {
+          if (running.decls.has(name))
+            throw new TypeError(`${api} is declared twice in this piece — declare each name once`);
+          if (running.decls.size >= MAX_REMEMBER_PER_EVALUATION) {
+            throw new RangeError(`At most ${MAX_REMEMBER_PER_EVALUATION} remember() names per piece`);
+          }
+          running.decls.set(name, decl);
+          token = running.token;
+        } else {
+          token = authority();
+          const pending = deferred.find((d) => d.token === token);
+          if (pending) {
+            if (!pending.decls.has(name) && pending.decls.size >= MAX_REMEMBER_PER_EVALUATION) {
+              throw new RangeError(`At most ${MAX_REMEMBER_PER_EVALUATION} remember() names per piece`);
+            }
+            pending.decls.set(name, decl);
+          } else {
+            if (!committedNames.has(name) && committedNames.size >= MAX_REMEMBER_PER_EVALUATION) {
+              throw new RangeError(`At most ${MAX_REMEMBER_PER_EVALUATION} remember() names per piece`);
+            }
+            if (!disposed)
+              activateStaged({ token, decls: new Map([[name, decl]]), ops: [], early: false }, false);
+          }
+        }
+        const read = () => {
+          const entry = store.get(name);
+          return fits(entry, decl) ? entry.value : decl.init;
+        };
+        return {
+          get value() {
+            return read();
+          },
+          set(next, lab) {
+            const out = freezeJson(next, `${api}.set`);
+            if (out.type !== decl.type)
+              throw new TypeError(`${api}.set: the value must stay a${decl.type === "array" || decl.type === "object" ? "n" : ""} ${decl.type}, like its init`);
+            write(decl, token, () => out, lab);
+          },
+          update(fn, lab) {
+            if (typeof fn !== "function")
+              throw new TypeError(`${api}.update(fn) needs a function, got ${typeof fn}`);
+            write(decl, token, (_current, json) => {
+              const draft = JSON.parse(json);
+              let result;
+              inUpdate++;
+              try {
+                result = fn(draft);
+              } finally {
+                inUpdate--;
+              }
+              if (isThenable(result))
+                throw new TypeError(`${api}.update: fn must be synchronous (no async/await)`);
+              const out = freezeJson(result === undefined ? draft : result, `${api}.update`);
+              if (out.type !== decl.type)
+                throw new TypeError(`${api}.update: the value must stay a${decl.type === "array" || decl.type === "object" ? "n" : ""} ${decl.type}, like its init`);
+              return out;
+            }, lab);
+          }
+        };
+      },
+      entries: () => [...store.values()].map((e) => ({ name: e.name, json: e.json, text: e.text, rev: e.rev, at: e.at, declared: committedNames.has(e.name) })),
+      stop() {
+        disposed = true;
+        store.clear();
+        provisional = null;
+        running = null;
+        deferred = [];
+        committed = [];
+        committedNames = new Set;
+      }
+    };
+  }
+
+  // src/shared/stage-runtime.ts
+  var MAX_CONTROLS = 12;
+  var MAX_DT = 0.25;
+  var TAP_MARGIN_SECONDS = 0.03;
+  var UNKNOWN_HORIZON_SECONDS = 0.35;
+  function finite(value) {
+    if (typeof value === "number")
+      return Number.isFinite(value) ? value : undefined;
+    if (typeof value === "bigint")
+      return Number(value);
+    if (value && typeof value === "object") {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : undefined;
+    }
+    return;
+  }
+  function stageEvent(hap, begin) {
+    const raw = hap?.value;
+    const obj = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : undefined;
+    const note = obj ? obj.note : raw;
+    let midi;
+    const freq = finite(obj?.freq);
+    if (freq !== undefined && freq > 0)
+      midi = 12 * Math.log2(freq / 440) + 69;
+    else if (typeof note === "string")
+      midi = noteNameToMidi(note.trim()) ?? finite(Number(note));
+    else
+      midi = finite(note);
+    return {
+      cycle: begin,
+      duration: finite(hap?.duration) ?? (finite(hap?.whole?.end) !== undefined ? finite(hap?.whole?.end) - begin : 0),
+      note,
+      midi,
+      s: obj?.s,
+      n: obj?.n,
+      gain: obj?.gain,
+      pan: obj?.pan,
+      value: raw
+    };
+  }
+  function createStage(env) {
+    let active = new Set;
+    let pending = null;
+    let frameId = null;
+    let lastMs = null;
+    let tapOff = null;
+    let lastCycle = 0;
+    let disposed = false;
+    let generation = 0;
+    let controlSpecs = new Map;
+    let pendingControls = null;
+    const controlValues = new Map;
+    const sensorStates = { tilt: { state: "off" }, mic: { state: "off" } };
+    const sensorLogged = new Map;
+    const SENSOR_LOG_MS = 500;
+    let tapDepth = 0;
+    let tapChangedState = false;
+    let stageAskedPending = false;
+    let stageAskedActive = false;
+    const cycle = () => {
+      const c = env.audibleCycle();
+      if (c !== null && Number.isFinite(c))
+        lastCycle = Math.max(0, c);
+      return lastCycle;
+    };
+    const call = (reg, api, arg) => {
+      const fail = (error) => {
+        if (!reg.failed) {
+          reg.failed = true;
+          env.reportError(api, error);
+        }
+      };
+      try {
+        const result = reg.fn(arg);
+        if (result && typeof result.then === "function")
+          Promise.resolve(result).catch(fail);
+      } catch (error) {
+        fail(error);
+      }
+    };
+    const needsFrames = () => [...active].some((r) => r.kind !== "tap");
+    const fireEvents = (reg, now) => {
+      const from = reg.last;
+      reg.last = now;
+      if (from === null || now <= from || now - from > 1)
+        return;
+      let haps;
+      try {
+        haps = reg.pattern.queryArc(from, now);
+      } catch (error) {
+        if (!reg.failed) {
+          reg.failed = true;
+          env.reportError("onEvent", error);
+        }
+        return;
+      }
+      for (const hap of haps) {
+        if (typeof hap?.hasOnset === "function" && !hap.hasOnset())
+          continue;
+        const begin = finite(hap?.whole?.begin) ?? finite(hap?.part?.begin);
+        if (begin === undefined || begin < from || begin >= now)
+          continue;
+        let event;
+        try {
+          event = stageEvent(hap, begin);
+        } catch {
+          continue;
+        }
+        call(reg, "onEvent", event);
+      }
+    };
+    const tick = (ms) => {
+      frameId = null;
+      const dt = lastMs === null ? 0 : Math.min(MAX_DT, Math.max(0, (ms - lastMs) / 1000));
+      lastMs = ms;
+      const now = cycle();
+      const playing = env.isPlaying();
+      for (const reg of [...active]) {
+        if (!active.has(reg))
+          continue;
+        if (reg.kind === "frame")
+          call(reg, "onFrame", { cycle: now, dt, time: ms / 1000, playing });
+        else if (reg.kind === "event")
+          fireEvents(reg, now);
+      }
+      if (needsFrames() && frameId === null)
+        frameId = env.requestFrame(tick);
+    };
+    const next = (subdivision = 16) => {
+      const n = Number.isFinite(subdivision) && subdivision > 0 ? subdivision : 16;
+      const heard = cycle();
+      const horizon = env.scheduledUntil?.();
+      const cps = env.cps?.() ?? 0.5;
+      const from = (horizon !== null && horizon !== undefined && Number.isFinite(horizon) ? Math.max(horizon, heard) : heard + UNKNOWN_HORIZON_SECONDS * cps) + TAP_MARGIN_SECONDS * cps;
+      return Math.ceil(from * n - 0.000000001) / n;
+    };
+    const deliverTap = (x, y) => {
+      const tap = { x, y, cycle: cycle(), next };
+      tapChangedState = false;
+      for (const reg of [...active]) {
+        if (reg.kind !== "tap")
+          continue;
+        tapDepth++;
+        try {
+          call(reg, "onTap", tap);
+        } finally {
+          tapDepth--;
+        }
+      }
+      try {
+        env.observeTap?.({ x, y, cycle: tap.cycle }, { changedState: tapChangedState });
+      } catch {}
+    };
+    const sync = () => {
+      if (needsFrames()) {
+        if (frameId === null) {
+          lastMs = null;
+          frameId = env.requestFrame(tick);
+        }
+      } else if (frameId !== null) {
+        env.cancelFrame(frameId);
+        frameId = null;
+      }
+      const wantsTaps = [...active].some((r) => r.kind === "tap");
+      if (wantsTaps && !tapOff)
+        tapOff = env.listenTaps(deliverTap);
+      else if (!wantsTaps && tapOff) {
+        tapOff();
+        tapOff = null;
+      }
+    };
+    const add = (reg) => {
+      if (disposed)
+        return () => {
+          return;
+        };
+      (pending ?? active).add(reg);
+      sync();
+      return () => {
+        active.delete(reg);
+        pending?.delete(reg);
+        sync();
+      };
+    };
+    const controlName = (api, name) => {
+      if (name && typeof name === "object" && typeof name.__pure === "string")
+        name = name.__pure;
+      else if (name && typeof name === "object" && typeof name.queryArc === "function") {
+        try {
+          const v = name.queryArc(0, 1)[0]?.value;
+          if (typeof v === "string")
+            name = v;
+        } catch {}
+      }
+      if (typeof name !== "string" || !name.trim())
+        throw new TypeError(`${api} needs a name, e.g. ${api.replace("(name)", "('rain')")}`);
+      return name.trim().slice(0, 32);
+    };
+    const remembering = createRememberStore({
+      now: () => env.now?.() ?? Date.now(),
+      cycle: () => {
+        const c = env.audibleCycle();
+        return c !== null && Number.isFinite(c) ? Math.max(0, c) : null;
+      },
+      listenerWriting: () => tapDepth > 0,
+      listenerWrote: () => {
+        tapChangedState = true;
+      },
+      observe: (change) => env.observeRemembered?.(change),
+      changed: () => env.observeRememberedState?.(),
+      reportError: (api, error) => env.reportError(api, error)
+    });
+    const declare = (spec) => {
+      if (pendingControls && remembering.declaresNow(spec.name)) {
+        throw new TypeError(`'${spec.name}' is already a remember() name in this piece — give the ${spec.kind} its own name`);
+      }
+      const known = controlValues.get(spec.name);
+      const fits = known !== undefined && (spec.kind === "xy" ? Array.isArray(known) : typeof known === "number" && known >= spec.min && known <= spec.max);
+      if (!fits)
+        controlValues.set(spec.name, spec.init);
+      if (!pendingControls)
+        return;
+      if (!pendingControls.has(spec.name) && pendingControls.size >= MAX_CONTROLS) {
+        throw new RangeError(`At most ${MAX_CONTROLS} controls fit on the strip`);
+      }
+      pendingControls.set(spec.name, spec);
+    };
+    const readNumber = (name, index) => {
+      const v = controlValues.get(name);
+      if (Array.isArray(v))
+        return v[index ?? 0];
+      return typeof v === "number" ? v : 0;
+    };
+    const handle = (read) => {
+      const pattern = env.signal?.(read) ?? {};
+      Object.defineProperty(pattern, "value", { get: read, configurable: true, enumerable: false });
+      return pattern;
+    };
+    const setControl = (name, value, final) => {
+      const spec = controlSpecs.get(name);
+      if (!spec || disposed)
+        return;
+      const clean = Array.isArray(value) ? [Math.min(1, Math.max(0, value[0])), Math.min(1, Math.max(0, value[1]))] : Math.min(spec.max, Math.max(spec.min, Number(value) || 0));
+      if (spec.sensor && sensorStates[spec.sensor].state === "live")
+        return;
+      controlValues.set(name, clean);
+      if (final) {
+        try {
+          env.observeControl?.({ name, kind: spec.kind, value: clean, cycle: cycle(), ...spec.sensor ? { source: "manual" } : {} });
+        } catch {}
+      }
+    };
+    const sourceOf = (spec) => spec.sensor ? { ...spec, source: sensorStates[spec.sensor].state === "live" ? "sensor" : "manual" } : spec;
+    const renderControls = () => {
+      try {
+        env.renderControls?.([...controlSpecs.values()].map(sourceOf), controlValues, setControl);
+        env.observeSurface?.();
+      } catch (error) {
+        env.reportError("controls", error);
+      }
+    };
+    const feedSensor = (sensor, value) => {
+      if (disposed || sensorStates[sensor].state !== "live")
+        return;
+      const now = env.now?.() ?? Date.now();
+      for (const spec of controlSpecs.values()) {
+        if (spec.sensor !== sensor)
+          continue;
+        const clean = Array.isArray(value) ? [Math.min(1, Math.max(0, value[0])), Math.min(1, Math.max(0, value[1]))] : Math.min(1, Math.max(0, Number(value) || 0));
+        controlValues.set(spec.name, clean);
+        try {
+          env.showControlValue?.(spec.name, clean);
+        } catch {}
+        const last = sensorLogged.get(spec.name);
+        const moved = !last || distance(last.value, clean) > 0.03;
+        if (moved && (!last || now - last.at >= SENSOR_LOG_MS)) {
+          sensorLogged.set(spec.name, { at: now, value: clean });
+          try {
+            env.observeControl?.({ name: spec.name, kind: spec.kind, value: clean, cycle: cycle(), source: "sensor" });
+          } catch {}
+        }
+      }
+    };
+    const setSensorState = (sensor, state) => {
+      const before = sensorStates[sensor];
+      sensorStates[sensor] = state;
+      if (before.state === "live" !== (state.state === "live") && !disposed)
+        renderControls();
+    };
+    const syncSensors = () => {
+      const want = { tilt: false, mic: false };
+      if (!disposed) {
+        for (const spec of controlSpecs.values())
+          if (spec.sensor)
+            want[spec.sensor] = true;
+      }
+      for (const k of ["tilt", "mic"])
+        if (!want[k])
+          sensorStates[k] = { state: "off" };
+      try {
+        env.sensors?.(want, feedSensor, setSensorState);
+      } catch (error) {
+        env.reportError("sensors", error);
+      }
+    };
+    const sungLines = new Map;
+    const loadSungLine = (request) => {
+      const id = `${request.voice}\x00${request.text}`;
+      const known = sungLines.get(id);
+      if (known)
+        return known;
+      const entry = {
+        promise: env.loadSung(request).then((clip) => {
+          try {
+            const result = { words: analyseWords(clip.channel, clip.sampleRate, clip.words), duration: clip.duration };
+            entry.result = result;
+            return result;
+          } catch (error) {
+            env.reportError("sing", error);
+            throw error;
+          }
+        })
+      };
+      entry.promise.catch(() => sungLines.delete(id));
+      sungLines.set(id, entry);
+      return entry;
+    };
+    let activeSung = [];
+    let pendingSung = null;
+    const notedSung = new WeakSet;
+    const requireFunction = (api, fn) => {
+      if (typeof fn !== "function")
+        throw new TypeError(`${api} needs a function, got ${typeof fn}`);
+    };
+    const globals = {
+      cycle,
+      onFrame(fn) {
+        requireFunction("onFrame(fn)", fn);
+        return add({ kind: "frame", fn, failed: false });
+      },
+      onEvent(pattern, fn) {
+        requireFunction("onEvent(pattern, fn)", fn);
+        const pat = pattern?.queryArc ? pattern : env.toPattern?.(pattern);
+        if (!pat || typeof pat.queryArc !== "function") {
+          throw new TypeError('onEvent(pattern, fn) needs a pattern — e.g. onEvent(note("c e g"), fn)');
+        }
+        return add({ kind: "event", fn, pattern: pat, last: null, failed: false });
+      },
+      onTap(fn) {
+        requireFunction("onTap(fn)", fn);
+        return add({ kind: "tap", fn, failed: false });
+      },
+      say(text, options) {
+        const request = normalizeTts(text, options?.voice);
+        if ("error" in request)
+          throw new TypeError(request.error);
+        if (!env.registerSample || !env.sound || !env.ttsOrigin) {
+          throw new Error("say() is not available on this page");
+        }
+        const name = ttsSampleName(request);
+        const url = ttsUrl(env.ttsOrigin, request);
+        env.registerSample(name, url);
+        env.prefetch?.(url);
+        return env.sound(name);
+      },
+      sing(line, notes, options = {}) {
+        const request = normalizeTts(line, options?.voice);
+        if ("error" in request)
+          throw new TypeError(request.error.replace(/^say\(\)/, "sing()"));
+        const { loadSung, lazyPattern, timecat, sound } = env;
+        if (!loadSung || !lazyPattern || !timecat || !sound || !env.ttsOrigin) {
+          throw new Error("sing() is not available on this page");
+        }
+        const auto = options.octave === undefined || options.octave === "auto";
+        const hold = options.hold !== false;
+        const fixed = auto ? 0 : finite(options.octave);
+        if (fixed === undefined || !Number.isInteger(fixed) || Math.abs(fixed) > 2) {
+          throw new RangeError("sing(): octave is 'auto' or a whole number from -2 to 2");
+        }
+        const source = noteSource(notes, (hap) => stageEvent(hap, Number(hap?.whole?.begin ?? 0)).midi, env.toPattern);
+        const name = ttsSampleName(request);
+        const sung = loadSungLine(request);
+        let phrase = null;
+        const report = { line: request.text, voice: request.voice, ready: false };
+        (pendingSung ?? activeSung).push(report);
+        const build = (words, duration) => {
+          const layout = layoutWords(words.length, source);
+          const spokenHz = words.map((w) => w.hz);
+          const voice = spokenMedianHz(spokenHz);
+          const octave = auto ? autoOctave(layout.placed.map((p) => p.midi), voice) : fixed;
+          const { speeds, clamped } = wordSpeeds(hold ? words.map((w) => w.loop?.hz ?? w.hz) : spokenHz, layout.placed.map((p) => p.midi + 12 * octave));
+          Object.assign(report, { ready: true, octave, auto, spokenHz: voice, words: layout.placed.length, clamped });
+          phrase = buildPhrase({ sound, timecat, silence: lazyPattern(() => null) }, name, layout, (p) => {
+            const word = words[p.index];
+            const loop = hold ? word.loop : null;
+            return {
+              begin: word.start / duration,
+              end: word.end / duration,
+              speed: speeds[p.index],
+              ...loop ? { loopBegin: loop.start / duration, loopEnd: loop.end / duration } : {}
+            };
+          });
+        };
+        if (sung.result)
+          build(sung.result.words, sung.result.duration);
+        else
+          sung.promise.then((r) => {
+            try {
+              build(r.words, r.duration);
+            } catch (error) {
+              env.reportError("sing", error);
+              return;
+            }
+            if (notedSung.has(report) && activeSung.includes(report)) {
+              try {
+                env.observeSung?.({ ...report });
+              } catch (error) {
+                env.reportError("sing", error);
+              }
+            }
+          }, () => {
+            return;
+          });
+        return lazyPattern(() => phrase);
+      },
+      fader(name, options = {}) {
+        const id = controlName("fader(name)", name);
+        const min = finite(options.min) ?? 0;
+        const max = finite(options.max) ?? 1;
+        if (!(max > min))
+          throw new RangeError(`fader('${id}'): max must be greater than min`);
+        const init = Math.min(max, Math.max(min, finite(options.init) ?? min));
+        declare({
+          kind: "fader",
+          name: id,
+          label: typeof options.label === "string" ? options.label.slice(0, 24) : id,
+          min,
+          max,
+          step: finite(options.step) ?? (max - min) / 100,
+          toggle: false,
+          init
+        });
+        return handle(() => readNumber(id));
+      },
+      pad(name, options = {}) {
+        const id = controlName("pad(name)", name);
+        declare({
+          kind: "pad",
+          name: id,
+          label: typeof options.label === "string" ? options.label.slice(0, 24) : id,
+          min: 0,
+          max: 1,
+          step: 1,
+          toggle: options.toggle === true,
+          init: options.init ? 1 : 0
+        });
+        return handle(() => readNumber(id));
+      },
+      xy(name, options = {}) {
+        const id = controlName("xy(name)", name);
+        declare({
+          kind: "xy",
+          name: id,
+          label: typeof options.label === "string" ? options.label.slice(0, 24) : id,
+          min: 0,
+          max: 1,
+          step: 0,
+          toggle: false,
+          init: [0.5, 0.5]
+        });
+        const x = handle(() => readNumber(id, 0));
+        const y = handle(() => readNumber(id, 1));
+        return {
+          x,
+          y,
+          get value() {
+            return [readNumber(id, 0), readNumber(id, 1)];
+          }
+        };
+      },
+      tilt(name = "tilt", options = {}) {
+        const id = controlName("tilt(name)", name);
+        declare({
+          kind: "xy",
+          name: id,
+          label: typeof options.label === "string" ? options.label.slice(0, 24) : id,
+          min: 0,
+          max: 1,
+          step: 0,
+          toggle: false,
+          init: [0.5, 0.5],
+          sensor: "tilt"
+        });
+        const x = handle(() => readNumber(id, 0));
+        const y = handle(() => readNumber(id, 1));
+        return {
+          x,
+          y,
+          get value() {
+            return [readNumber(id, 0), readNumber(id, 1)];
+          }
+        };
+      },
+      mic(name = "mic", options = {}) {
+        const id = controlName("mic(name)", name);
+        declare({
+          kind: "fader",
+          name: id,
+          label: typeof options.label === "string" ? options.label.slice(0, 24) : id,
+          min: 0,
+          max: 1,
+          step: 0.01,
+          toggle: false,
+          init: 0,
+          sensor: "mic"
+        });
+        return handle(() => readNumber(id));
+      },
+      remember(name, init, options) {
+        const id = controlName("remember(name)", name);
+        if (pendingControls?.has(id)) {
+          throw new TypeError(`remember('${id}'): '${id}' is already a control in this piece — give the state its own name`);
+        }
+        return remembering.declare(id, init, options);
+      },
+      openStage() {
+        if (disposed)
+          return;
+        if (pending) {
+          stageAskedPending = true;
+          return;
+        }
+        if (stageAskedActive)
+          return;
+        stageAskedActive = true;
+        try {
+          env.requestStage?.();
+        } catch (error) {
+          env.reportError("openStage", error);
+        }
+      }
+    };
+    return {
+      globals,
+      begin() {
+        pending = new Set;
+        pendingControls = new Map;
+        pendingSung = [];
+        stageAskedPending = false;
+        remembering.begin(generation + 1);
+        return ++generation;
+      },
+      commit(token, options) {
+        if (!pending || token !== undefined && token !== generation)
+          return;
+        active = pending;
+        pending = null;
+        if (pendingControls)
+          controlSpecs = pendingControls;
+        pendingControls = null;
+        if (pendingSung)
+          activeSung = pendingSung;
+        pendingSung = null;
+        remembering.commit(generation, options?.deferState === true);
+        stageAskedActive = stageAskedPending;
+        stageAskedPending = false;
+        syncSensors();
+        renderControls();
+        env.cancelSpeech?.();
+        sync();
+        if (stageAskedActive) {
+          try {
+            env.requestStage?.();
+          } catch (error) {
+            env.reportError("openStage", error);
+          }
+        }
+      },
+      activateState(token, atCycle) {
+        remembering.activate(token, atCycle);
+      },
+      activateStateNow(token) {
+        if (token !== generation || !pending)
+          return;
+        remembering.activateEarly(token);
+      },
+      rollback(token) {
+        if (token !== undefined && token !== generation)
+          return;
+        pending = null;
+        pendingControls = null;
+        pendingSung = null;
+        stageAskedPending = false;
+        remembering.rollback(generation);
+        sync();
+      },
+      stop() {
+        disposed = true;
+        active = new Set;
+        pending = null;
+        pendingControls = null;
+        controlSpecs = new Map;
+        activeSung = [];
+        pendingSung = null;
+        remembering.stop();
+        syncSensors();
+        renderControls();
+        env.cancelSpeech?.();
+        sync();
+      },
+      remembered: () => remembering.entries(),
+      sung: (options) => {
+        if (options?.noted)
+          for (const r of activeSung)
+            notedSung.add(r);
+        return activeSung.map((r) => ({ ...r }));
+      },
+      size: () => active.size,
+      controls: () => [...controlSpecs.values()].map((spec) => ({ spec: sourceOf(spec), value: controlValues.get(spec.name) ?? spec.init })),
+      sensorStates: () => ({ tilt: { ...sensorStates.tilt }, mic: { ...sensorStates.mic } })
+    };
+  }
+  function distance(a, b) {
+    if (Array.isArray(a) && Array.isArray(b))
+      return Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1]));
+    if (typeof a === "number" && typeof b === "number")
+      return Math.abs(a - b);
+    return Infinity;
+  }
+  function guardBrowserSpeech(synth, Utterance) {
+    let unlocked = false;
+    return {
+      unlock() {
+        if (unlocked || !synth || typeof Utterance !== "function")
+          return;
+        unlocked = true;
+        try {
+          const u = new Utterance(" ");
+          u.volume = 0;
+          synth.speak(u);
+        } catch {}
+      },
+      cancel() {
+        if (!synth || !synth.speaking && !synth.pending)
+          return;
+        try {
+          synth.cancel();
+        } catch {}
+      }
+    };
+  }
+  var TAP_SLOP_PX = 10;
+  var TAP_EXCLUDE = "button, input, select, textarea, a, label, summary, .cm-line, .cm-gutters, .cm-panels, .cm-tooltip, [role=button], .ms-controls";
+  function createBrowserStageEnv(options) {
+    const w = globalThis;
+    const speech = guardBrowserSpeech(w.speechSynthesis, w.SpeechSynthesisUtterance);
+    const clips = new Map;
+    const sungLoads = new Set;
+    const register = (name, url) => {
+      if (typeof w.samples !== "function")
+        throw new Error("say(): samples() is not loaded yet");
+      w.samples({ [name]: [url] });
+    };
+    const loadClip = (url) => {
+      const existing = clips.get(url);
+      if (existing && existing.state !== "failed")
+        return existing;
+      const clip = { state: "loading", done: Promise.resolve(), names: existing?.names ?? new Set };
+      clip.done = (async () => {
+        try {
+          const res = await w.fetch(url, { mode: "cors" });
+          if (!res.ok) {
+            const why = String(await res.text().catch(() => "")).slice(0, 160);
+            throw new Error(`HTTP ${res.status}${why ? ` — ${why}` : ""}`);
+          }
+          await res.arrayBuffer();
+          clip.state = "ok";
+          for (const name of clip.names)
+            register(name, url);
+          const ac = typeof w.getAudioContext === "function" ? w.getAudioContext() : null;
+          if (typeof w.loadBuffer === "function" && ac)
+            await w.loadBuffer(url, ac).catch(() => {
+              return;
+            });
+        } catch (err) {
+          clip.state = "failed";
+          options.reportSpeech?.(url, err?.message ?? String(err));
+        }
+      })();
+      clips.set(url, clip);
+      return clip;
+    };
+    const num = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+    const sensors = createBrowserSensors(w);
+    const env = {
+      audibleCycle() {
+        const scheduler = options.getScheduler();
+        if (!scheduler || !options.isPlaying() || typeof scheduler.now !== "function")
+          return null;
+        const now = num(scheduler.now());
+        if (now === null)
+          return null;
+        const latency = num(scheduler.latency) ?? 0.1;
+        const cps = num(scheduler.cps) ?? 0.5;
+        return now - latency * cps;
+      },
+      isPlaying: options.isPlaying,
+      scheduledUntil() {
+        const scheduler = options.getScheduler();
+        if (!scheduler || !options.isPlaying())
+          return null;
+        return num(scheduler.lastEnd);
+      },
+      cps: () => num(options.getScheduler()?.cps),
+      requestFrame: (cb) => w.requestAnimationFrame(cb),
+      cancelFrame: (id) => w.cancelAnimationFrame(id),
+      listenTaps(deliver) {
+        const area = options.tapArea;
+        const touches = new Map;
+        const position = (event) => {
+          const rect = area.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0)
+            return null;
+          const x = (event.clientX - rect.left) / rect.width;
+          const y = (event.clientY - rect.top) / rect.height;
+          return x < 0 || x > 1 || y < 0 || y > 1 ? null : [x, y];
+        };
+        const down = (event) => {
+          if (event.isPrimary === false)
+            return;
+          const target = event.target;
+          if (target?.closest?.(TAP_EXCLUDE))
+            return;
+          const at = position(event);
+          if (!at)
+            return;
+          if (event.pointerType === "touch") {
+            touches.set(event.pointerId, { x: event.clientX, y: event.clientY, moved: false });
+            touches.get(event.pointerId).at = at;
+          } else {
+            deliver(at[0], at[1]);
+          }
+        };
+        const move = (event) => {
+          const t = touches.get(event.pointerId);
+          if (t && Math.hypot(event.clientX - t.x, event.clientY - t.y) > TAP_SLOP_PX)
+            t.moved = true;
+        };
+        const up = (event) => {
+          const t = touches.get(event.pointerId);
+          touches.delete(event.pointerId);
+          if (t && !t.moved)
+            deliver(t.at[0], t.at[1]);
+        };
+        const cancel = (event) => void touches.delete(event.pointerId);
+        area.addEventListener("pointerdown", down);
+        area.addEventListener("pointermove", move);
+        area.addEventListener("pointerup", up);
+        area.addEventListener("pointercancel", cancel);
+        return () => {
+          area.removeEventListener("pointerdown", down);
+          area.removeEventListener("pointermove", move);
+          area.removeEventListener("pointerup", up);
+          area.removeEventListener("pointercancel", cancel);
+        };
+      },
+      toPattern: (value) => typeof w.reify === "function" ? w.reify(value) : undefined,
+      reportError: options.reportError,
+      observeTap: options.observeTap,
+      observeControl: options.observeControl,
+      observeRemembered: options.observeRemembered,
+      observeRememberedState: options.observeRememberedState,
+      requestStage: options.requestStage,
+      observeSung: options.observeSung,
+      signal: (read) => typeof w.signal === "function" ? w.signal(() => read()) : undefined,
+      renderControls: (specs, values, input) => renderControlStrip(options.controlsHost ?? options.tapArea, specs, values, input),
+      showControlValue: (name, value) => {
+        const host = options.controlsHost ?? options.tapArea;
+        host.querySelector(":scope > .ms-controls")?.__msShow?.get(name)?.(value);
+      },
+      observeSurface: options.observeSurface,
+      now: () => Date.now(),
+      sensors: (want, feed, status) => sensors.sync(want, feed, (sensor, state) => {
+        status(sensor, state);
+        options.observeSensor?.(sensor, state);
+      }),
+      ttsOrigin: options.ttsOrigin,
+      registerSample(name, url) {
+        const clip = loadClip(url);
+        clip.names.add(name);
+        if (clip.state === "ok")
+          register(name, url);
+      },
+      sound(name) {
+        if (typeof w.s !== "function")
+          throw new Error("say(): s() is not loaded yet");
+        return w.s(name);
+      },
+      prefetch(url) {
+        loadClip(url);
+      },
+      cancelSpeech: () => speech.cancel(),
+      loadSung(request) {
+        const url = ttsUrl(options.ttsOrigin, request);
+        const done = (async () => {
+          let words;
+          try {
+            const res = await w.fetch(ttsWordsUrl(options.ttsOrigin, request), { mode: "cors" });
+            if (!res.ok) {
+              const why = String(await res.text().catch(() => "")).slice(0, 160);
+              throw new Error(`HTTP ${res.status}${why ? ` — ${why}` : ""}`);
+            }
+            const body = await res.json();
+            words = Array.isArray(body?.words) ? body.words : [];
+            if (!words.length)
+              throw new Error("no words came back for this line");
+          } catch (err) {
+            options.reportSpeech?.(url, err?.message ?? String(err));
+            throw err;
+          }
+          const clip = loadClip(url);
+          clip.names.add(ttsSampleName(request));
+          await clip.done;
+          if (clip.state !== "ok")
+            throw new Error("the clip did not load");
+          register(ttsSampleName(request), url);
+          let buffer;
+          try {
+            const res = await w.fetch(url, { mode: "cors" });
+            const ac = typeof w.getAudioContext === "function" ? w.getAudioContext() : new w.OfflineAudioContext(1, 1, 48000);
+            buffer = await ac.decodeAudioData(await res.arrayBuffer());
+          } catch (err) {
+            options.reportSpeech?.(url, `sing() could not decode the line: ${err?.message ?? String(err)}`);
+            throw err;
+          }
+          let channel = buffer.getChannelData(0);
+          if (buffer.numberOfChannels > 1) {
+            channel = new Float32Array(channel);
+            for (let c = 1;c < buffer.numberOfChannels; c++) {
+              const other = buffer.getChannelData(c);
+              for (let i = 0;i < channel.length; i++)
+                channel[i] += other[i];
+            }
+            for (let i = 0;i < channel.length; i++)
+              channel[i] /= buffer.numberOfChannels;
+          }
+          return { words, channel, sampleRate: buffer.sampleRate, duration: buffer.duration };
+        })();
+        sungLoads.add(done);
+        const forget = () => void sungLoads.delete(done);
+        done.then(forget, forget);
+        return done;
+      },
+      lazyPattern(get) {
+        if (typeof w.Pattern !== "function")
+          throw new Error("sing(): Strudel is not loaded yet");
+        return new w.Pattern((state) => {
+          const inner = get();
+          return inner && typeof inner.query === "function" ? inner.query(state) : [];
+        });
+      },
+      timecat(...pairs) {
+        const cat = w.stepcat ?? w.timecat ?? w.timeCat;
+        if (typeof cat !== "function")
+          throw new Error("sing(): Strudel is not loaded yet");
+        return cat(...pairs);
+      }
+    };
+    const speechReady = async (timeoutMs) => {
+      const loading = [
+        ...[...clips.values()].filter((c) => c.state === "loading").map((c) => c.done),
+        ...sungLoads
+      ];
+      if (!loading.length)
+        return;
+      let timer;
+      await Promise.race([
+        Promise.allSettled(loading),
+        new Promise((resolve) => {
+          timer = w.setTimeout(resolve, timeoutMs);
+        })
+      ]);
+      w.clearTimeout(timer);
+    };
+    return { env, speech, speechReady };
+  }
+  var CONTROL_STYLE = `
+.ms-controls{position:absolute;left:0;right:0;bottom:0;z-index:20;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+ padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--background,#111) 72%,transparent);
+ backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font:12px/1.2 system-ui,sans-serif;color:var(--foreground,#eee);touch-action:none}
+.ms-controls.ms-fixed{position:fixed}
+.ms-fader{display:flex;align-items:center;gap:6px;flex:1 1 140px;min-width:120px}
+.ms-fader span{min-width:3em;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ms-fader input{flex:1;min-width:0;height:32px;accent-color:var(--caret,#7aa2f7)}
+.ms-pad{min-width:56px;min-height:44px;padding:0 12px;border-radius:10px;border:1px solid currentColor;background:transparent;
+ color:inherit;font:600 12px system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;touch-action:none;user-select:none;-webkit-user-select:none}
+.ms-pad[aria-pressed=true]{background:var(--caret,#7aa2f7);color:var(--background,#111);border-color:transparent}
+.ms-xy{position:relative;width:96px;height:96px;border-radius:10px;border:1px solid currentColor;touch-action:none;flex:none}
+.ms-xy i{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--caret,#7aa2f7);pointer-events:none}
+.ms-xy span{position:absolute;left:6px;top:4px;opacity:.75;pointer-events:none}
+.ms-src{font-style:normal;font-size:10px;opacity:.7;margin-left:4px;letter-spacing:.03em}
+.ms-src[data-live]{opacity:1;color:var(--caret,#7aa2f7)}
+.ms-xy .ms-src{position:absolute;right:6px;bottom:4px;left:auto;top:auto}
+.ms-live{pointer-events:none}
+`;
+  function renderControlStrip(host, specs, values, input) {
+    const doc = host.ownerDocument;
+    if (!doc.getElementById("ms-controls-style")) {
+      const style = doc.createElement("style");
+      style.id = "ms-controls-style";
+      style.textContent = CONTROL_STYLE;
+      doc.head.appendChild(style);
+    }
+    let strip = host.querySelector(":scope > .ms-controls");
+    if (!specs.length) {
+      strip?.remove();
+      return;
+    }
+    if (!strip) {
+      strip = doc.createElement("div");
+      strip.className = "ms-controls";
+      strip.setAttribute("role", "group");
+      strip.setAttribute("aria-label", "Controls");
+      if (host === doc.body || host === doc.documentElement)
+        strip.classList.add("ms-fixed");
+      host.appendChild(strip);
+    }
+    strip.replaceChildren();
+    const show = new Map;
+    strip.__msShow = show;
+    const sourceTag = (spec) => {
+      if (!spec.sensor)
+        return null;
+      const tag = doc.createElement("em");
+      tag.className = "ms-src";
+      const live = spec.source === "sensor";
+      if (live)
+        tag.dataset.live = "";
+      tag.textContent = live ? `● ${spec.sensor === "tilt" ? "tilt" : "mic"}` : "by hand";
+      tag.title = live ? `Played by the device's ${spec.sensor === "tilt" ? "motion sensor" : "microphone"}` : `The ${spec.sensor === "tilt" ? "motion sensor" : "microphone"} isn't available here (yet) — tap to allow it, or play it by hand`;
+      return tag;
+    };
+    for (const spec of specs) {
+      const value = values.get(spec.name) ?? spec.init;
+      if (spec.kind === "fader") {
+        const label = doc.createElement("label");
+        label.className = "ms-fader";
+        const name = doc.createElement("span");
+        name.textContent = spec.label;
+        const range = doc.createElement("input");
+        range.type = "range";
+        range.min = String(spec.min);
+        range.max = String(spec.max);
+        range.step = String(spec.step || "any");
+        range.value = String(value);
+        range.setAttribute("aria-label", spec.label);
+        range.addEventListener("input", () => input(spec.name, Number(range.value), false));
+        range.addEventListener("change", () => input(spec.name, Number(range.value), true));
+        const tag = sourceTag(spec);
+        if (tag)
+          name.appendChild(tag);
+        if (spec.source === "sensor") {
+          range.disabled = true;
+          show.set(spec.name, (v) => {
+            if (typeof v === "number")
+              range.value = String(v);
+          });
+        }
+        label.append(name, range);
+        strip.appendChild(label);
+      } else if (spec.kind === "pad") {
+        const button = doc.createElement("button");
+        button.type = "button";
+        button.className = "ms-pad";
+        button.textContent = spec.label;
+        const show = (on) => button.setAttribute("aria-pressed", String(on));
+        show(value === 1);
+        if (spec.toggle) {
+          button.addEventListener("click", () => {
+            const on = button.getAttribute("aria-pressed") !== "true";
+            show(on);
+            input(spec.name, on ? 1 : 0, true);
+          });
+        } else {
+          const press = (on) => {
+            if (button.getAttribute("aria-pressed") === "true" === on)
+              return;
+            show(on);
+            input(spec.name, on ? 1 : 0, true);
+          };
+          button.addEventListener("pointerdown", (e) => {
+            button.setPointerCapture?.(e.pointerId);
+            press(true);
+          });
+          for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) {
+            button.addEventListener(type, () => press(false));
+          }
+          button.addEventListener("keydown", (e) => {
+            if ((e.key === " " || e.key === "Enter") && !e.repeat)
+              press(true);
+          });
+          button.addEventListener("keyup", (e) => {
+            if (e.key === " " || e.key === "Enter")
+              press(false);
+          });
+        }
+        strip.appendChild(button);
+      } else {
+        const pad = doc.createElement("div");
+        pad.className = "ms-xy";
+        pad.setAttribute("role", "slider");
+        pad.setAttribute("aria-label", `${spec.label} (x and y)`);
+        pad.tabIndex = 0;
+        const dot = doc.createElement("i");
+        const name = doc.createElement("span");
+        name.textContent = spec.label;
+        pad.append(name, dot);
+        const place = ([x, y]) => {
+          dot.style.left = `${x * 100}%`;
+          dot.style.top = `${(1 - y) * 100}%`;
+          pad.setAttribute("aria-valuetext", `x ${x.toFixed(2)}, y ${y.toFixed(2)}`);
+        };
+        place(Array.isArray(value) ? value : [0.5, 0.5]);
+        const tag = sourceTag(spec);
+        if (tag)
+          pad.appendChild(tag);
+        if (spec.source === "sensor") {
+          pad.classList.add("ms-live");
+          show.set(spec.name, (v) => {
+            if (Array.isArray(v))
+              place(v);
+          });
+        }
+        let dragging = false;
+        const at = (e) => {
+          const r = pad.getBoundingClientRect();
+          const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+          const y = Math.min(1, Math.max(0, 1 - (e.clientY - r.top) / r.height));
+          return [x, y];
+        };
+        pad.addEventListener("pointerdown", (e) => {
+          dragging = true;
+          pad.setPointerCapture?.(e.pointerId);
+          const v = at(e);
+          place(v);
+          input(spec.name, v, false);
+        });
+        pad.addEventListener("pointermove", (e) => {
+          if (!dragging)
+            return;
+          const v = at(e);
+          place(v);
+          input(spec.name, v, false);
+        });
+        const end = (e) => {
+          if (!dragging)
+            return;
+          dragging = false;
+          const v = at(e);
+          place(v);
+          input(spec.name, v, true);
+        };
+        pad.addEventListener("pointerup", end);
+        pad.addEventListener("pointercancel", end);
+        strip.appendChild(pad);
+      }
+    }
+  }
+  var SENSOR_SMOOTHING = 0.25;
+  var TILT_RANGE_DEG = 35;
+  var MIC_GAIN = 5;
+  function createBrowserSensors(w) {
+    let want = { tilt: false, mic: false };
+    let feed = () => {
+      return;
+    };
+    let report = () => {
+      return;
+    };
+    const state = { tilt: { state: "off" }, mic: { state: "off" } };
+    const set = (sensor, next) => {
+      if (state[sensor].state === next.state && state[sensor].detail === next.detail)
+        return;
+      state[sensor] = next;
+      report(sensor, next);
+    };
+    let orientationOn = false;
+    let tilt = null;
+    let baseBeta = null;
+    const onOrientation = (e) => {
+      const beta = Number(e?.beta);
+      const gamma = Number(e?.gamma);
+      if (!Number.isFinite(beta) || !Number.isFinite(gamma) || e.beta === null && e.gamma === null)
+        return;
+      if (baseBeta === null)
+        baseBeta = beta;
+      const x = Math.min(1, Math.max(0, 0.5 + gamma / (2 * TILT_RANGE_DEG)));
+      const y = Math.min(1, Math.max(0, 0.5 + (baseBeta - beta) / (2 * TILT_RANGE_DEG)));
+      tilt = tilt ? [tilt[0] + (x - tilt[0]) * SENSOR_SMOOTHING, tilt[1] + (y - tilt[1]) * SENSOR_SMOOTHING] : [x, y];
+      if (state.tilt.state !== "live")
+        set("tilt", { state: "live" });
+      feed("tilt", tilt);
+    };
+    const listenOrientation = (on) => {
+      if (on === orientationOn)
+        return;
+      orientationOn = on;
+      if (on)
+        w.addEventListener?.("deviceorientation", onOrientation);
+      else {
+        w.removeEventListener?.("deviceorientation", onOrientation);
+        tilt = null;
+        baseBeta = null;
+      }
+    };
+    const tiltNeedsPermission = () => typeof w.DeviceOrientationEvent?.requestPermission === "function";
+    let tiltAsked = false;
+    let micStream = null;
+    let micTimer = null;
+    let micNodes = [];
+    let micAsked = false;
+    let micLevel = 0;
+    let micGen = 0;
+    const stopMic = () => {
+      micGen++;
+      if (micTimer !== null)
+        w.clearInterval?.(micTimer);
+      micTimer = null;
+      for (const n of micNodes) {
+        try {
+          n.disconnect();
+        } catch {}
+      }
+      micNodes = [];
+      micStream?.getTracks?.().forEach((t) => t.stop());
+      micStream = null;
+      micAsked = false;
+      micLevel = 0;
+    };
+    const startMic = () => {
+      const gen = ++micGen;
+      micAsked = true;
+      set("mic", { state: "listening" });
+      Promise.resolve().then(() => w.navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+      })).then((stream) => {
+        if (gen !== micGen || !want.mic) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        micStream = stream;
+        try {
+          const ctx = (typeof w.getAudioContext === "function" ? w.getAudioContext() : null) ?? new (w.AudioContext ?? w.webkitAudioContext);
+          const source = ctx.createMediaStreamSource(stream);
+          const analyser = ctx.createAnalyser();
+          analyser.fftSize = 1024;
+          source.connect(analyser);
+          micNodes = [source, analyser];
+          const buf = new Float32Array(analyser.fftSize);
+          micTimer = w.setInterval(() => {
+            analyser.getFloatTimeDomainData(buf);
+            let sum = 0;
+            for (let i = 0;i < buf.length; i++)
+              sum += buf[i] * buf[i];
+            const target = Math.min(1, Math.sqrt(sum / buf.length) * MIC_GAIN);
+            micLevel += (target - micLevel) * SENSOR_SMOOTHING;
+            feed("mic", micLevel);
+          }, 50);
+        } catch (err) {
+          stream.getTracks().forEach((t) => t.stop());
+          micStream = null;
+          throw err;
+        }
+        set("mic", { state: "live" });
+      }).catch((err) => {
+        set("mic", { state: "denied", detail: String(err?.name ?? err?.message ?? err) });
+      });
+    };
+    let gestureOn = false;
+    const onGesture = () => {
+      if (want.tilt && tiltNeedsPermission() && !tiltAsked) {
+        tiltAsked = true;
+        set("tilt", { state: "listening" });
+        try {
+          Promise.resolve(w.DeviceOrientationEvent.requestPermission()).then((answer) => {
+            if (answer === "granted")
+              listenOrientation(want.tilt);
+            else
+              set("tilt", { state: "denied", detail: answer });
+          }, (err) => set("tilt", { state: "denied", detail: String(err?.name ?? err) }));
+        } catch (err) {
+          set("tilt", { state: "denied", detail: String(err?.name ?? err) });
+        }
+      }
+      if (want.mic && !micAsked && !micStream && w.navigator?.mediaDevices?.getUserMedia)
+        startMic();
+    };
+    const listenGestures = (on) => {
+      if (on === gestureOn)
+        return;
+      gestureOn = on;
+      for (const type of ["pointerup", "keydown", "touchend"]) {
+        if (on)
+          w.addEventListener?.(type, onGesture, true);
+        else
+          w.removeEventListener?.(type, onGesture, true);
+      }
+    };
+    return {
+      sync(next, nextFeed, nextReport) {
+        want = { ...next };
+        feed = nextFeed;
+        report = nextReport;
+        if (!want.tilt) {
+          listenOrientation(false);
+          tiltAsked = false;
+          set("tilt", { state: "off" });
+        } else if (!w.DeviceOrientationEvent) {
+          set("tilt", { state: "unsupported" });
+        } else if (tiltNeedsPermission() && !tiltAsked) {
+          set("tilt", { state: "waiting" });
+        } else if (state.tilt.state !== "live" && state.tilt.state !== "denied") {
+          listenOrientation(true);
+          set("tilt", { state: "listening" });
+        }
+        if (!want.mic) {
+          stopMic();
+          set("mic", { state: "off" });
+        } else if (!w.navigator?.mediaDevices?.getUserMedia) {
+          set("mic", { state: "unsupported" });
+        } else if (!micStream && !micAsked && state.mic.state !== "denied") {
+          set("mic", { state: "waiting" });
+        }
+        listenGestures(want.tilt || want.mic);
+      },
+      states: () => ({ tilt: { ...state.tilt }, mic: { ...state.mic } })
+    };
+  }
+
+  // src/shared/sample-url-fix.ts
+  var VCSL_RAW = "https://raw.githubusercontent.com/sgossner/VCSL/master/";
+  var VCSL_JSDELIVR = "https://cdn.jsdelivr.net/gh/sgossner/VCSL@master/";
+  function fixSampleUrl(url) {
+    if (!url.startsWith(VCSL_RAW))
+      return url;
+    const path = url.slice(VCSL_RAW.length);
+    return /,|%2c/i.test(path) ? VCSL_JSDELIVR + path : url;
+  }
+  function installSampleUrlFix(scope) {
+    const original = scope.fetch;
+    if (typeof original !== "function" || original.__sampleUrlFix)
+      return;
+    const wrapped = function(input, init) {
+      if (typeof input === "string")
+        input = fixSampleUrl(input);
+      else if (input instanceof URL)
+        input = new URL(fixSampleUrl(input.href));
+      else if (typeof Request !== "undefined" && input instanceof Request) {
+        const fixed = fixSampleUrl(input.url);
+        if (fixed !== input.url)
+          input = new Request(fixed, input);
+      }
+      return original.call(this ?? scope, input, init);
+    };
+    wrapped.__sampleUrlFix = true;
+    scope.fetch = wrapped;
+  }
+
+  // src/shared/stage-runtime-global.ts
+  globalThis.MusicStudioStage = { createStage, createBrowserStageEnv };
+  installSampleUrlFix(globalThis);
+})();
+</script>
+<script>
+  const INIT = JSON.parse(document.getElementById('init-data').textContent);
+
+  // ===========================================================================
+  // Eval-scope hooks — pin hydra-synth, and stop H() dying on a rest
+  // ===========================================================================
+  //
+  // A plain 'globalThis.x = wrapper' does NOT hold here. The REPL publishes its
+  // eval scope with Object.assign(globalThis, module) across several async
+  // chunks, so a wrapper installed mid-publish is silently overwritten by a
+  // later one. An accessor turns every republish into a call to our setter,
+  // which re-wraps the incoming original instead of losing to it. Same
+  // technique as the ext-apps widget (installEvalScopeHooks in
+  // src/strudel-app.ts) — install it eagerly, before the globals exist.
+  var WRAPPED = '__musicStudioWrapped';
+
+  function defineWrappedGlobal(key, wrap) {
+    var apply = function (value) {
+      if (typeof value !== 'function' || value[WRAPPED] === true) return value;
+      var wrapped = wrap(value);
+      try {
+        Object.defineProperty(wrapped, WRAPPED, { value: true, configurable: true });
+      } catch (e) { /* exotic function — worst case it is wrapped again */ }
+      return wrapped;
+    };
+    var exposed = apply(globalThis[key]);
+    Object.defineProperty(globalThis, key, {
+      configurable: true,
+      enumerable: true,
+      get: function () { return exposed; },
+      set: function (value) { exposed = apply(value); },
+    });
+  }
+
+  // @strudel/hydra loads hydra-synth from an UNVERSIONED specifier
+  // ('https://unpkg.com/hydra-synth' — i.e. whatever "latest" is today), so a
+  // page that works now can break on any upstream release. Pin it, unless the
+  // pattern names its own src.
+  defineWrappedGlobal('initHydra', function (original) {
+    return function (options) {
+      var merged = Object.assign({ src: INIT.hydraCdn }, options || {});
+      return original(merged);
+    };
+  });
+
+  // a:begin
+  // The widget's audio-reactive `a` (hydra's audio object, over Strudel's own
+  // master bus — never the microphone). The band math is src/shared/audio-bands.ts,
+  // copied because this page cannot import; tests/share-page-audio.test.ts holds
+  // this copy to that module's numbers.
+  var AUDIO = INIT.audio;
+
+  function bandLevels(bytes, sampleRate, fftSize, count, lowHz, highHz) {
+    var hzPerBin = sampleRate / fftSize;
+    var ratio = Math.pow(highHz / lowHz, 1 / count);
+    var levels = [];
+    for (var i = 0; i < count; i++) {
+      var lo = lowHz * Math.pow(ratio, i);
+      var hi = lo * ratio;
+      var start = Math.min(bytes.length - 1, Math.floor(lo / hzPerBin));
+      var end = Math.min(bytes.length, Math.max(start + 1, Math.ceil(hi / hzPerBin)));
+      var sum = 0;
+      for (var j = start; j < end; j++) sum += bytes[j];
+      levels.push(sum / Math.max(1, end - start) / 255);
+    }
+    return levels;
+  }
+
+  function stepBands(levels, prevBins, settings, max, bins, fft) {
+    var total = 0;
+    for (var i = 0; i < levels.length; i++) {
+      var smooth = settings[i].smooth;
+      bins[i] = levels[i] * max * (1 - smooth) + (prevBins[i] === undefined ? 0 : prevBins[i]) * smooth;
+      total += bins[i];
+    }
+    for (var k = 0; k < levels.length; k++) {
+      fft[k] = Math.max(0, (bins[k] - settings[k].cutoff) / settings[k].scale);
+    }
+    return total / Math.max(1, levels.length);
+  }
+
+  var audioApi = (function () {
+    var d = AUDIO.defaults;
+    var api = { vol: 0, cutoff: d.cutoff, scale: d.scale, smooth: d.smooth, max: d.max, bins: [], prevBins: [], fft: [], settings: [] };
+    var bandNames = [];
+    api.setBins = function (count) {
+      var n = Math.max(1, Math.floor(count) || 1);
+      api.bins = []; api.prevBins = []; api.fft = []; api.settings = [];
+      for (var i = 0; i < n; i++) {
+        api.bins.push(0); api.prevBins.push(0); api.fft.push(0);
+        api.settings.push({ cutoff: api.cutoff, scale: api.scale, smooth: api.smooth });
+      }
+      bandNames.forEach(function (k) { delete globalThis[k]; });
+      bandNames = [];
+      for (var b = 0; b < n; b++) {
+        (function (i) {
+          var k = 'a' + i;
+          globalThis[k] = function (scale, offset) {
+            var s = scale === undefined ? 1 : scale;
+            var o = offset === undefined ? 0 : offset;
+            return function () { return api.fft[i] * s + o; };
+          };
+          bandNames.push(k);
+        })(b);
+      }
+    };
+    api.setCutoff = function (v) { api.cutoff = v; api.settings.forEach(function (s) { s.cutoff = v; }); };
+    api.setSmooth = function (v) { api.smooth = v; api.settings.forEach(function (s) { s.smooth = v; }); };
+    api.setScale = function (v) { api.scale = v; api.settings.forEach(function (s) { s.scale = v; }); };
+    // The widget's debug meter has no place on this page.
+    api.show = function () {};
+    api.hide = function () {};
+    api.setBins(d.bins);
+    return api;
+  })();
+  globalThis.a = audioApi;
+
+  var analyser = null;
+  var analyserBytes = null;
+
+  /** Tap the master bus, once audio exists (the AudioContext is lazy). */
+  function ensureAnalyser() {
+    if (analyser) return true;
+    try {
+      var ctx = typeof getAudioContext === 'function' ? getAudioContext() : null;
+      var controller = typeof getSuperdoughAudioController === 'function' ? getSuperdoughAudioController() : null;
+      var master = controller && controller.output && controller.output.destinationGain;
+      if (!ctx || !master || !master.connect) return false;
+      var node = ctx.createAnalyser();
+      node.fftSize = AUDIO.analyser.fftSize;
+      node.smoothingTimeConstant = AUDIO.analyser.smoothing;
+      node.minDecibels = AUDIO.analyser.minDecibels;
+      node.maxDecibels = AUDIO.analyser.maxDecibels;
+      master.connect(node); // a tap: never connected onward
+      analyser = node;
+      analyserBytes = new Uint8Array(node.frequencyBinCount);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /** One frame of band analysis, while something on the page can react. */
+  var audioLoopRunning = false;
+
+  /** Start the band loop; it stops itself while no visuals are showing. */
+  function startAudioLoop() {
+    if (audioLoopRunning || typeof requestAnimationFrame !== 'function') return;
+    audioLoopRunning = true;
+    requestAnimationFrame(audioFrame);
+  }
+
+  function audioFrame() {
+    if (!document.body.classList.contains('viz-on')) {
+      audioLoopRunning = false;
+      return;
+    }
+    if (ensureAnalyser()) {
+      analyser.getByteFrequencyData(analyserBytes);
+      var levels = bandLevels(analyserBytes, analyser.context.sampleRate, analyser.fftSize,
+        audioApi.bins.length, AUDIO.analyser.lowHz, AUDIO.analyser.highHz);
+      audioApi.prevBins = audioApi.bins.slice(0);
+      audioApi.vol = stepBands(levels, audioApi.prevBins, audioApi.settings, audioApi.max, audioApi.bins, audioApi.fft);
+    }
+    requestAnimationFrame(audioFrame);
+  }
+  // a:end
+
+  // hap:begin
+  // H() values as numbers: a note becomes its MIDI number by Strudel's own rule
+  // (c3 = 48), a frequency its MIDI pitch. Copied from src/shared/hap-number.ts;
+  // tests/share-page-audio.test.ts holds this copy to it.
+  var CHROMAS = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+  var ACCIDENTALS = { '#': 1, b: -1, s: 1, f: -1 };
+
+  function noteNameToMidi(text) {
+    var match = /^([a-gA-G])([#bsf]*)(-?[0-9]*)$/.exec(text);
+    if (!match) return null;
+    var offset = match[2].split('').reduce(function (sum, x) { return sum + ACCIDENTALS[x]; }, 0);
+    var oct = match[3] === '' ? 3 : Number(match[3]);
+    return (oct + 1) * 12 + CHROMAS[match[1].toLowerCase()] + offset;
+  }
+
+  function hapNumber(value) {
+    var n = rawHapNumber(value);
+    return isFinite(n) ? n : 0;
+  }
+
+  function rawHapNumber(value) {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'bigint') return Number(value);
+    if (typeof value === 'string') {
+      var trimmed = value.trim();
+      if (trimmed !== '' && isFinite(Number(trimmed))) return Number(trimmed);
+      var midi = noteNameToMidi(trimmed);
+      return midi === null ? 0 : midi;
+    }
+    if (value && typeof value === 'object') {
+      // A Strudel Fraction ({s, n, d}, BigInt fields): its n is the numerator.
+      var primitive = typeof value.valueOf === 'function' ? value.valueOf() : value;
+      if (typeof primitive === 'number') return primitive;
+      // freq outranks note, as in Strudel's valueToMidi.
+      if (typeof value.freq === 'number' && value.freq > 0) return 12 * Math.log2(value.freq / 440) + 69;
+      if (value.note !== undefined) return rawHapNumber(value.note);
+      if (value.n !== undefined) return rawHapNumber(value.n);
+      if (value.value !== undefined) return rawHapNumber(value.value);
+    }
+    return 0;
+  }
+  // hap:end
+
+  // Upstream H is  p => () => reify(p).queryArc(t, t)[0].value  — a zero-width
+  // query. Under a REST there is no hap, so [0] is undefined and reading
+  // .value throws. Hydra calls this every frame, so one rest killed the shader
+  // while the audio kept going. Return 0 instead.
+  defineWrappedGlobal('H', function (original) {
+    return function (pattern) {
+      var sample = original(pattern);
+      return function () {
+        try {
+          // A note becomes its MIDI number, so pitch can drive a shader.
+          return hapNumber(sample());
+        } catch (e) {
+          return 0;
+        }
+      };
+    };
+  });
+
+  // ===========================================================================
+  // Visuals stage
+  // ===========================================================================
+  //
+  // The body class is set server-side from the code we shipped; re-derive it
+  // after an edit. The patterns come from src/shared/viz-detect.ts so the two
+  // cannot disagree about what counts as a draw method.
+  var VIZ_RES = INIT.vizPatterns.map(function (s) { return new RegExp(s); });
+  var HYDRA_RE = new RegExp(INIT.hydraPattern);
+  var vizCanvas = document.getElementById('test-canvas');
+
+  /** Cheap comment strip — the guide's examples comment out draw calls. */
+  function stripComments(code) {
+    return String(code)
+      .replace(/\/\*[\s\S]*?\*\//g, ' ')
+      .replace(/\/\/[^\n]*/g, ' ');
+  }
+
+  function applyVizState(code) {
+    var scan = stripComments(code);
+    var hydra = HYDRA_RE.test(scan);
+    var any = hydra || VIZ_RES.some(function (re) { return re.test(scan); });
+    document.body.classList.toggle('viz-on', any);
+    document.body.classList.toggle('hydra-on', hydra);
+    if (any) {
+      sizeVizCanvas();
+      startAudioLoop();
+    }
+  }
+
+  // getDrawContext() only sizes a canvas it CREATES; ours pre-exists, so its
+  // backing store is ours to maintain. Match the device pixel ratio or the
+  // piano roll draws blurry and off-scale.
+  function sizeVizCanvas() {
+    if (!vizCanvas) return;
+    var dpr = window.devicePixelRatio || 1;
+    var w = Math.round(window.innerWidth * dpr);
+    var h = Math.round(window.innerHeight * dpr);
+    if (vizCanvas.width !== w) vizCanvas.width = w;
+    if (vizCanvas.height !== h) vizCanvas.height = h;
+  }
+
+  window.addEventListener('resize', sizeVizCanvas);
+  sizeVizCanvas();
+
+  // layers:begin
+  // Extra getDrawContext('name') canvases. Strudel prepends each as a fixed,
+  // full-page canvas BEFORE #test-canvas, so the stage's opaque ground covered
+  // it. Move each one just above #test-canvas; drop the ones the next
+  // evaluation no longer names, and clear them all on Stop. The id rule is
+  // src/shared/viz-detect.ts drawLayerIds(); tests/share-page-audio.test.ts
+  // holds this copy to it.
+  function drawLayerIds(code) {
+    // The RAW code, not stripComments(): that strips from any '//', including
+    // one inside a URL string, and so could hide a call still in use (Codex).
+    // A commented-out call errs the safe way — its layer stays.
+    var scan = String(code);
+    var ids = [];
+    var call = /\bgetDrawContext\s*\(/g;
+    var m;
+    while ((m = call.exec(scan)) !== null) {
+      var rest = scan.slice(m.index + m[0].length);
+      if (/^\s*\)/.test(rest)) continue;
+      var literal = /^\s*(['"`])([^'"`\\$]+)\1\s*[,)]/.exec(rest);
+      if (!literal) return null;
+      if (ids.indexOf(literal[2]) < 0) ids.push(literal[2]);
+    }
+    return ids;
+  }
+
+  var drawLayers = [];
+
+  function adoptLayer(c) {
+    if (drawLayers.indexOf(c) >= 0) return;
+    c.classList.add('viz-layer');
+    c.style.zIndex = '0';
+    // Above #test-canvas and every earlier layer: creation order, as in the widget.
+    var anchor = drawLayers.length ? drawLayers[drawLayers.length - 1] : vizCanvas;
+    anchor.parentNode.insertBefore(c, anchor.nextSibling);
+    drawLayers.push(c);
+  }
+
+  // Hide (and clear) unnamed layers rather than removing them: getDrawContext()
+  // reuses a canvas it finds by id, but re-creates a removed one with a second
+  // window-resize listener that keeps the old canvas alive (Codex).
+  function pruneLayers(code) {
+    var keep = drawLayerIds(code);
+    drawLayers = drawLayers.filter(function (c) { return c.isConnected; });
+    drawLayers.forEach(function (c) {
+      var used = keep === null || keep.indexOf(c.id) >= 0;
+      if (!used) clearLayer(c);
+      c.classList.toggle('viz-layer-idle', !used);
+    });
+  }
+
+  function clearLayer(c) {
+    try { var g = c.getContext('2d'); if (g) g.clearRect(0, 0, c.width, c.height); } catch (e) { /* WebGL: hiding is enough */ }
+  }
+
+  function clearLayers() {
+    drawLayers.forEach(clearLayer);
+  }
+
+  if (typeof MutationObserver === 'function') new MutationObserver(function (records) {
+    records.forEach(function (r) {
+      r.addedNodes.forEach(function (n) {
+        if (n instanceof HTMLCanvasElement && n.id !== 'test-canvas' && n.id !== 'hydra-canvas' && n.parentNode === document.body) adoptLayer(n);
+      });
+    });
+  }).observe(document.body, { childList: true });
+  // layers:end
+
+  var editorEl = document.getElementById('editor');
+  const playBtn = document.getElementById('play-btn');
+  const stopBtn = document.getElementById('stop-btn');
+  const retryBtn = document.getElementById('retry-btn');
+  const statusEl = document.getElementById('status');
+  let playing = false;
+  let ready = false;
+
+  // stage:begin
+  // cycle(), onFrame, onEvent, onTap, say() — the same runtime the widget
+  // publishes (src/shared/stage-runtime.ts, bundled into the script above by
+  // scripts/build-stage-runtime.mjs). Registrations belong to the evaluation
+  // that made them; the evaluate wrapper below begins/commits/rolls back.
+  var stageBundle = globalThis.MusicStudioStage.createBrowserStageEnv({
+    getScheduler: function () { var ed = getEditor(); return (ed && ed.repl && ed.repl.scheduler) || null; },
+    isPlaying: function () { var ed = getEditor(); return !!(ed && ed.repl && ed.repl.state && ed.repl.state.started); },
+    tapArea: document.documentElement,
+    controlsHost: document.body,
+    reportError: function (api, err) { console.error('[stage] ' + api + ' callback threw:', err); },
+    ttsOrigin: "https://music-studio.linxule.com",
+    reportSpeech: function (url, reason) {
+      console.warn('[stage] a say() line could not load: ' + reason);
+    },
+    requestStage: function () { requestStageFromPiece(0); },
+  });
+  // openStage(): show the visuals, not the code, so taps reach what the piece
+  // draws — as the widget's Stage mode does. Leaving it (Code, Escape) declines
+  // it for that same piece only; a different piece asks afresh.
+  var stageDeclinedFor = null;
+  var stageOpenedFor = null;
+  var codeBtn = document.getElementById('code-btn');
+  function stageCode() { var ed = getEditor(); return (ed && typeof ed.code === 'string') ? ed.code : ''; }
+  function requestStageFromPiece(attempt) {
+    var code = stageCode();
+    if (stageDeclinedFor !== null && stageDeclinedFor === code) return;
+    // Already open: it is open for THIS piece now, so leaving declines this one.
+    if (document.body.classList.contains('stage-on')) { stageOpenedFor = code; return; }
+    var shown = document.body.classList.contains('viz-on') || document.body.classList.contains('hydra-on');
+    if (!shown) {
+      if (attempt < 10) setTimeout(function () { requestStageFromPiece(attempt + 1); }, 100);
+      return;
+    }
+    stageOpenedFor = code;
+    document.body.classList.add('stage-on');
+    if (codeBtn) codeBtn.hidden = false;
+  }
+  function leaveStage() {
+    if (!document.body.classList.contains('stage-on')) return;
+    if (stageOpenedFor !== null) stageDeclinedFor = stageOpenedFor;
+    stageOpenedFor = null;
+    document.body.classList.remove('stage-on');
+    if (codeBtn) codeBtn.hidden = true;
+  }
+  document.getElementById("stage-btn").addEventListener("click", () => { stageDeclinedFor = null; requestStageFromPiece(0); });
+  if (codeBtn) codeBtn.addEventListener('click', leaveStage);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') leaveStage(); });
+  var stage = globalThis.MusicStudioStage.createStage(stageBundle.env);
+  Object.assign(globalThis, stage.globals);
+  // Raw speechSynthesis (not say(), which is a sample) needs a speak() inside a
+  // gesture on WebKit: unlock on the first one.
+  ['pointerup', 'keydown', 'touchend'].forEach(function (type) {
+    document.addEventListener(type, function () { stageBundle.speech.unlock(); }, true);
+  });
+  function hookStage(ed) {
+    if (ed.__stageHooked) return;
+    ed.__stageHooked = true;
+    var originalEvaluate = ed.evaluate.bind(ed);
+    // One evaluation at a time: they share one pending set of registrations,
+    // so two in flight would commit each other's (Play pressed during a slow
+    // evaluation, or Play plus the editor shortcut).
+    var evaluationTail = Promise.resolve();
+    // An instance property, so Play AND the editor's own shortcut both pass here.
+    ed.evaluate = function (shouldPlay) {
+      var run = evaluationTail.then(async function () {
+        var token = stage.begin();
+        var code = getLiveCode(ed);
+        // Voiced and about to start: load the say() and sing() clips first (superdough
+        // drops a sample that isn't ready by its start time).
+        var hold = shouldPlay !== false && /\b(?:say|sing)\s*\(/.test(code) &&
+          !(ed.repl && ed.repl.state && ed.repl.state.started);
+        try {
+          await originalEvaluate(hold ? false : shouldPlay);
+        } catch (e) {
+          stage.rollback(token);
+          throw e;
+        }
+        var st = (ed.repl && ed.repl.state) || {};
+        if (st.evalError || st.schedulerError) { stage.rollback(token); return; }
+        stage.commit(token);
+        if (hold) {
+          setStatus('Loading voice…');
+          await stageBundle.speechReady(4000);
+          if (ed.repl && typeof ed.repl.start === 'function') ed.repl.start();
+        }
+      });
+      evaluationTail = run.catch(function () {});
+      return run;
+    };
+  }
+  // stage:end
+
+  // How long to wait for <strudel-editor> to define itself before saying the
+  // CDN never arrived. The old loop polled forever, so a blocked or offline
+  // unpkg left the page sitting on "Loading..." with nothing to click.
+  const EDITOR_TIMEOUT_MS = 20000;
+
+  function setStatus(text, kind) {
+    statusEl.textContent = text;
+    statusEl.className = kind || '';
+  }
+
+  function getEditor() { return editorEl?.editor || null; }
+
+  /** What is in the editor right now — the user may have edited it. */
+  function getLiveCode(ed) {
+    try {
+      var live = ed && (ed.code || (ed.repl && ed.repl.state && ed.repl.state.code));
+      return typeof live === 'string' && live.length > 0 ? live : INIT.code;
+    } catch (e) {
+      return INIT.code;
+    }
+  }
+
+  function waitForEditor(timeoutMs) {
+    return new Promise((resolve, reject) => {
+      const start = Date.now();
+      const check = () => {
+        const ed = getEditor();
+        if (ed?.setCode) { resolve(ed); return; }
+        if (Date.now() - start > timeoutMs) {
+          reject(new Error('Strudel editor did not initialize'));
+          return;
+        }
+        setTimeout(check, 150);
+      };
+      check();
+    });
+  }
+
+  function showLoadError() {
+    ready = false;
+    setStatus("Couldn't load the Strudel player (network or CDN issue).", 'error');
+    retryBtn.hidden = false;
+  }
+
+  // The requested tempo could not be written into the source (the pattern binds
+  // or aliases setcps itself), so apply it through the runtime API once the
+  // scheduler is up. Only this one policy needs it — the others baked it in.
+  let tempoNote = '';
+  function applyRuntimeTempo(ed) {
+    tempoNote = '';
+    if (INIT.tempoPolicy !== 'unchanged-ambiguous' || !INIT.cps) return;
+    try {
+      if (typeof ed?.repl?.setCps === 'function') {
+        ed.repl.setCps(INIT.cps);
+      } else if (typeof setcps === 'function') {
+        setcps(INIT.cps);
+      } else {
+        return;
+      }
+      tempoNote = ' (tempo applied at runtime: the pattern defines its own setcps)';
+    } catch (e) { /* the pattern still plays, at its own tempo */ }
+  }
+
+  // A shared pattern is JavaScript. Inspecting or selecting its code must never
+  // evaluate it, even if an older share link asks for autoplay. Play and the
+  // editor's own evaluation shortcut are the intentional execution paths.
+  function togglePlay() {
+    if (playing) stopPattern();
+    else startPattern();
+  }
+
+  async function startPattern() {
+    const ed = getEditor();
+    if (!ed || !ready) { setStatus('Initializing...'); return; }
+    playBtn.disabled = true;
+    // The user may have added (or removed) a draw method since the page loaded.
+    // The code this Play evaluates — the buffer may change during the await.
+    const evaluated = getLiveCode(ed);
+    applyVizState(evaluated);
+    try {
+      // StrudelMirror.evaluate() takes ONE boolean (shouldPlay) and always
+      // evaluates its own buffer — passing the code as the first argument
+      // silently made the boolean the second, ignored, parameter.
+      //
+      // It also NEVER rejects: repl.evaluate() catches everything and parks the
+      // failure on repl.state.evalError while logging to the console. A broken
+      // pattern therefore used to sit at "Playing..." forever. Read the outcome
+      // out of the repl state instead of assuming success.
+      await ed.evaluate(true);
+      const state = ed.repl?.state || {};
+      const err = state.evalError || state.schedulerError;
+      if (err) {
+        playing = false;
+        playBtn.textContent = 'Play';
+        playBtn.classList.remove('active');
+        setStatus('Error: ' + (err.message || String(err)), 'error');
+        return;
+      }
+      applyRuntimeTempo(ed);
+      pruneLayers(evaluated);
+      playing = state.started !== false;
+      playBtn.textContent = playing ? 'Playing' : 'Play';
+      playBtn.classList.toggle('active', playing);
+      setStatus(
+        playing ? 'Playing...' + tempoNote : 'Loaded — press Play',
+        playing ? 'playing' : '',
+      );
+    } catch (e) {
+      playing = false;
+      setStatus('Error: ' + e.message, 'error');
+    } finally {
+      playBtn.disabled = false;
+    }
+  }
+
+  function stopPattern() {
+    const ed = getEditor();
+    if (!ed) return;
+    try {
+      ed.stop();
+      clearLayers();
+      stageBundle.speech.cancel();
+      playing = false;
+      playBtn.textContent = 'Play';
+      playBtn.classList.remove('active');
+      setStatus('Stopped');
+    } catch (e) {
+      setStatus('Error: ' + e.message, 'error');
+    }
+  }
+
+  playBtn.addEventListener('click', togglePlay);
+  stopBtn.addEventListener('click', stopPattern);
+  retryBtn.addEventListener('click', () => location.reload());
+
+  waitForEditor(EDITOR_TIMEOUT_MS).then((ed) => {
+    hookStage(ed);
+    ed.setCode(INIT.code);
+    applyVizState(INIT.code);
+    ready = true;
+    retryBtn.hidden = true;
+    setStatus('Click Play to start');
+  }).catch(showLoadError);
+
+</script>
+<footer style="font-size:12px;padding:12px;text-align:center"><a href="https://github.com/linxule/mcp-music-studio/blob/aea7e387af73e204c2820d768414ff488c528049/SOURCE.md" target="_blank" rel="noopener noreferrer">Source &amp; licenses</a></footer>
+<script>
+function fitAuthoredStage(){const h=document.querySelector('header').getBoundingClientRect().height;const available=Math.max(1,innerHeight-h-38);const w=Math.min(innerWidth,available*16/9),height=w*9/16;const s=document.documentElement.style;s.setProperty('--stage-width',w+'px');s.setProperty('--stage-height',height+'px');s.setProperty('--stage-left',(innerWidth-w)/2+'px');s.setProperty('--stage-top',(h+(available-height)/2)+'px');}
+new ResizeObserver(fitAuthoredStage).observe(document.querySelector('header'));addEventListener('resize',fitAuthoredStage);fitAuthoredStage();
+</script></body>
+</html>

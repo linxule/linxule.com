@@ -1,0 +1,195 @@
+await initHydra()
+// ───────── THE JAGGED FRONTIER · waiting room ─────────
+setcps(120/60/4)
+// CL01 starts 9:45, CL02 15:00: pick by the Mac's clock
+const START = new Date().getHours() < 13 ? [9, 45] : [15, 0]
+const W = 1920, Hh = 1080
+const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = Hh; return c }
+const ui = mk(), title = mk()
+const gu = ui.getContext('2d'), gt = title.getContext('2d')
+const SANS = '"Avenir Next Condensed", "Helvetica Neue", Impact, sans-serif'
+const MONO = 'Menlo, "SF Mono", monospace'
+const QS = ['WHO IS PLAYING THIS?', 'IS ANYONE AT THE DECKS?', 'WHAT IF CODE COULD LISTEN?',
+  'WHERE IS THE FRONTIER?', 'WHAT WOULD YOU MAKE WITH IT?', 'HUMAN OR MACHINE?',
+  'WHO WROTE THIS BEAT?', 'CAN A PROMPT HAVE TASTE?', 'THE CODE IS THE SCORE.',
+  'WHERE DID AI LET YOU DOWN?', 'WHAT IS YOUR AI GOOD AT?', 'SMART HERE. LOST THERE.',
+  'WHO CHECKS THE MACHINE?', 'IS THIS EVEN MUSIC?', 'WHO DECIDES WHAT TO BUILD?',
+  'WHAT WOULD YOU ASK IT?', 'GUESS WHO IS THE DJ.', 'HOW WOULD YOU KNOW?',
+  'FAST ANSWER. WHO CHECKS?', 'NO HANDS ON THE DECKS.', 'LAPTOPS OPEN. AI READY.',
+  'WHAT DID AI SAVE YOU TODAY?']
+// sections in cycles (one cycle = one bar = 2 s); scene k drives the look
+const SEC = [16, 16, 32, 8, 32, 16, 32, 16, 32, 8, 32, 16, 32, 16, 8, 32, 32, 16, 40, 16]
+const TOTAL = SEC.reduce((a, b) => a + b, 0)
+let scene = 0, inLetters = 0, whiteType = 1
+const sceneAt = c => { let t = c % TOTAL; for (let i = 0; i < SEC.length; i++) { if (t < SEC[i]) return i; t -= SEC[i] } return 0 }
+const pad2 = n => String(n).padStart(2, '0')
+const frac = x => x - Math.floor(x)
+const rnd = n => frac(Math.sin(n * 12.9898 + 78.233) * 43758.5453)
+const LINES = [['THE', 210], ['JAGGED', 330], ['FRONTIER', 330]]
+const GLY = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&@$/<>{}[]=+*?!'
+const FONTS = ['900 X Impact', 'italic 700 X Didot', '800 X Futura', '700 X "Courier New"', '900 X "Bodoni 72"',
+  '900 X "Avenir Next Condensed"', '700 X Rockwell', '400 X Chalkduster', '700 X "American Typewriter"', '900 X Copperplate']
+const MODES = ['scramble', 'ransom', 'giant', 'outline', 'marquee', 'saw']
+
+onFrame(f => {
+  scene = sceneAt(f.cycle)
+  inLetters = [0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1][scene]
+  whiteType = 1 - inLetters
+  const kick = (typeof a !== 'undefined' && a.fft) ? a.fft[0] : 0
+  // giant title: six typographic modes, one per section
+  gt.fillStyle = '#000'; gt.fillRect(0, 0, W, Hh)
+  gt.fillStyle = '#fff'; gt.strokeStyle = '#fff'; gt.textBaseline = 'alphabetic'; gt.textAlign = 'left'
+  const mode = MODES[Math.floor(f.cycle / 8) % MODES.length]  // new look every 16 s
+  const beat = Math.floor(f.cycle * 4), bar = Math.floor(f.cycle)
+  const fit = (word, font, maxW) => { gt.font = font; return maxW / gt.measureText(word).width }
+  if (mode === 'saw' || mode === 'scramble' || mode === 'ransom') {
+    let y = 330
+    LINES.forEach(([word, size], li) => {
+      const chars = [...word]
+      const fonts = chars.map((ch, i) => mode === 'ransom'
+        ? FONTS[Math.floor(rnd(i * 7 + li * 31 + Math.floor(f.cycle * 2)) * FONTS.length)].replace('X', Math.round(size * (0.85 + rnd(i + beat) * 0.3)) + 'px')
+        : '900 ' + size + 'px ' + SANS)
+      const shown = chars.map((ch, i) => {
+        if (mode !== 'scramble') return ch
+        const ph = frac(f.cycle / 4)
+        return ph > (i / chars.length) * 0.6 + li * 0.1 ? ch : GLY[Math.floor(rnd(i * 13 + li * 7 + Math.floor(f.cycle * 12)) * GLY.length)]
+      })
+      const widths = shown.map((ch, i) => { gt.font = fonts[i]; return gt.measureText(ch).width })
+      let x = (W - widths.reduce((a, b) => a + b, 0)) / 2
+      shown.forEach((ch, i) => {
+        gt.font = fonts[i]
+        const dy = mode === 'saw' ? (frac(i * 0.31 + li * 0.17 + f.cycle * 0.25) - 0.5) * (18 + kick * 70)
+          : mode === 'ransom' ? (rnd(i * 3 + beat) - 0.5) * 40 : 0
+        gt.save(); gt.translate(x + widths[i] / 2, y + dy)
+        if (mode === 'ransom') gt.rotate((rnd(i * 5 + beat) - 0.5) * 0.25)
+        gt.fillText(ch, -widths[i] / 2, 0); gt.restore()
+        x += widths[i]
+      })
+      y += 300
+    })
+  } else if (mode === 'giant') {
+    const word = ['THE', 'JAGGED', 'FRONTIER'][bar % 3]
+    const font = '900 300px Impact, ' + SANS
+    const sx = fit(word, font, W - 100)
+    const sy = 2.9 + kick * 0.5
+    gt.save(); gt.translate(50, Hh / 2 + 110 * sy); gt.scale(sx, sy); gt.font = font; gt.fillText(word, 0, 0); gt.restore()
+  } else if (mode === 'outline') {
+    gt.lineWidth = 9
+    let y = 330
+    LINES.forEach(([word, size], li) => {
+      gt.font = '900 ' + size + 'px ' + SANS
+      const w = gt.measureText(word).width
+      ;(beat + li) % 2 ? gt.strokeText(word, (W - w) / 2, y) : gt.fillText(word, (W - w) / 2, y)
+      y += 300
+    })
+    for (let k = 0; k < 9; k++) {
+      const sy = Math.floor(rnd(k * 17 + beat) * Hh), sh = 20 + Math.floor(rnd(k * 3 + beat) * 90)
+      const dx = (rnd(k * 29 + beat) - 0.5) * (40 + kick * 260)
+      gt.drawImage(title, 0, sy, W, sh, dx, sy, W, sh)
+    }
+  } else if (mode === 'marquee') {
+    const rowH = 140
+    for (let r = 0; r < 5; r++) {
+      const txt = 'THE JAGGED FRONTIER  ·  THE JAGGED FRONTIER  ·  THE JAGGED FRONTIER  ·  '
+      gt.font = '900 130px Impact, ' + SANS
+      const tw = gt.measureText(txt).width / 3
+      const off = ((f.cycle * (r % 2 ? 90 : -120) * (1 + r * 0.15)) % tw + tw) % tw
+      const yy = 290 + r * rowH
+      gt.lineWidth = 4
+      ;(r + bar) % 3 === 0 ? gt.fillText(txt, -off, yy) : gt.strokeText(txt, -off, yy)
+    }
+  }
+  // small type: course line, rotating question, live countdown
+  gu.clearRect(0, 0, W, Hh)
+  gu.shadowColor = 'rgba(0,0,0,0.85)'; gu.shadowBlur = 18
+  gu.textBaseline = 'top'
+  gu.font = '600 30px ' + MONO; gu.fillStyle = '#ffffff'; gu.textAlign = 'left'
+  gu.fillText('SKEMA  ·  AI & PROJECT MANAGEMENT  ·  SESSION 4', 72, 60)
+  const qi = Math.floor(f.cycle / 8) % QS.length
+  const qf = frac(f.cycle / 8)
+  gu.globalAlpha = Math.min(1, qf * 6, (1 - qf) * 6)
+  gu.font = '700 46px ' + SANS; gu.fillStyle = '#ffffff'
+  gu.textBaseline = 'bottom'; gu.fillText(QS[qi], 72, Hh - 60)
+  gu.globalAlpha = 1
+  const now = new Date(), t = new Date(now); t.setHours(START[0], START[1], 0, 0)
+  const s = Math.round((t - now) / 1000)
+  const label = s > 0 && s < 3600 ? 'STARTS IN ' + Math.floor(s / 60) + ':' + pad2(s % 60)
+    : s >= 3600 ? 'STARTS AT ' + START[0] + ':' + pad2(START[1]) : 'STARTING NOW'
+  gu.textAlign = 'right'; gu.font = '700 46px ' + MONO; gu.fillStyle = '#ff3b52'
+  gu.fillText(label, W - 72, Hh - 60)
+})
+s1.init({ src: ui, dynamic: true })
+s2.init({ src: title, dynamic: true })
+
+// shader: six looks that rotate with the sections, pushed by kick and bass
+const P = [[1, 0.2, 0.35], [0.1, 0.55, 1], [1, 0.75, 0.1], [0.75, 0.2, 1], [0.1, 1, 0.65], [1, 0.35, 0.2]]
+const pick = (arr) => () => arr[scene % arr.length]
+osc(pick([8, 14, 4, 22, 10, 30]), 0.06, 1.2)
+  .color(() => P[scene % 6][0], () => P[scene % 6][1], () => P[scene % 6][2])
+  .kaleid(pick([4, 6, 3, 8, 5, 12]))
+  .modulate(noise(pick([2, 4, 1.5, 6, 3, 8]), 0.12), () => 0.15 + a.fft[1] * 0.5)
+  .modulateRotate(voronoi(3, 0.2), pick([0.2, 0.6, 0.1, 0.9, 0.4, 1.2]))
+  .rotate(() => time * 0.03 * [1, -1, 2, -2, 1, 3][scene % 6])
+  .scale(() => 1 + a.fft[0] * 0.12)
+  .saturate(1.3)
+  .mult(src(s2).add(solid(1, 1, 1), () => 1 - inLetters))
+  .add(src(s2), () => whiteType * 0.9)
+  .layer(src(s1))
+  .out(o0)
+
+// ───────── the band: three rooms ─────────
+const room = (chords, roots, scaleName, lead, g) => {
+  const kick = s(g.kick).bank("RolandTR909").gain(0.26)
+  const clap = s(g.clap).bank("RolandTR909").gain(0.15).room(0.15)
+  const hats = s(g.hats).bank("RolandTR909").gain(0.11).pan(sine.range(0.35, 0.65).slow(4))
+  const shake = s("hh*16").bank("RolandTR909").gain(rand.range(0.02, 0.05)).pan(rand)
+  const bass = note(roots).struct(g.bass).s("sawtooth").lpf(sine.range(350, 1100).slow(16)).lpq(7)
+    .gain("[0.08 0.16 0.16 0.14]*4").attack(0.005).decay(0.18).sustain(0.4).release(0.1)
+  const stab = note(chords).struct(g.stab).s(g.keys).gain(0.18).room(0.3).velocity(rand.range(0.7, 0.95))
+  const pad = note(chords).s("gm_pad_warm").attack(0.8).release(2).gain(0.18).lpf(2400).room(0.6)
+  const arp = n(g.arp).scale(scaleName).s(lead).gain(0.1).room(0.4)
+    .delay(0.25).delaytime(0.1875).delayfeedback(0.4).lpf(sine.range(1500, 5000).slow(8))
+  const drums = stack(kick, clap, hats, shake)
+  return { kick, clap, hats, shake, bass, stab, pad, arp, drums }
+}
+const A = room("<[a3,c4,e4,g4] [f3,a3,c4,e4] [c4,e4,g4,b4] [g3,b3,d4,f4]>", "<a1 f1 c2 g1>",
+  "A3:minor:pentatonic", "triangle",
+  { kick: "bd*4", clap: "~ cp ~ cp", hats: "[~ oh]*4", bass: "[x ~ x x] [~ x ~ x] [x ~ x x] [~ x x ~]",
+    stab: "~ x ~ ~ ~ x ~ [x ~]", keys: "gm_epiano1", arp: "0 2 4 7 4 2 7 9" })
+const B = room("<[d4,f4,a4,c5] [bb3,d4,f4,a4] [g3,bb3,d4,f4] [a3,c#4,e4,g4]>", "<d2 bb1 g1 a1>",
+  "D4:minor:pentatonic", "gm_kalimba",
+  { kick: "[bd ~ ~ ~] [~ ~ bd ~] [~ ~ ~ ~] [~ bd ~ ~]", clap: "~ [cp ~ ~ cp] ~ cp", hats: "[hh ~ hh hh]*4",
+    bass: "[x ~ ~ x] [~ ~ x ~] [x ~ x ~] [~ x ~ ~]", stab: "[~ x] ~ [~ x] [x ~]", keys: "fmpiano",
+    arp: "<[0 ~ 4 ~ 7 ~ 4 2] [7 ~ 4 ~ 2 ~ 0 ~]>" })
+const C = room("<[f3,a3,c4,e4] [g3,b3,d4,f4] [e3,g3,b3,d4] [a3,c4,e4,g4]>", "<f1 g1 e1 a1>",
+  "C4:major:pentatonic", "supersaw",
+  { kick: "bd*4", clap: "~ cp ~ cp", hats: "[~ oh]*4", bass: "[x x ~ x] [~ x x ~] [x x ~ x] [~ x ~ x]",
+    stab: "x ~ [~ x] ~ x ~ [~ x] ~", keys: "gm_piano", arp: "0 4 7 9 7 4 9 12" })
+
+const rise = p => p.lpf(saw.range(300, 8000).slow(8))
+
+arrange(
+  // room one — deep house: the room fills
+  [16, stack(A.pad, A.stab, A.shake)],
+  [16, stack(A.pad, A.stab, A.kick, A.shake)],
+  [32, stack(A.drums, A.bass, A.pad)],
+  [8, rise(stack(A.pad, A.stab, A.hats))],
+  [32, stack(A.drums, A.bass, A.stab, A.arp)],
+  [16, stack(A.pad, A.arp, A.clap)],
+  [32, stack(A.drums, A.bass, A.stab, A.arp, A.pad)],
+  // room two — two-step: the floor tilts
+  [16, stack(B.pad, B.stab)],
+  [32, stack(B.drums, B.bass, B.stab)],
+  [8, rise(stack(B.pad, B.hats, B.arp))],
+  [32, stack(B.drums, B.bass, B.stab, B.arp)],
+  [16, stack(B.pad, B.arp, B.shake)],
+  [32, stack(B.drums, B.bass, B.stab, B.arp, B.pad)],
+  // room three — piano house: hands up
+  [16, stack(C.pad, C.stab)],
+  [8, rise(stack(C.stab, C.hats, C.shake))],
+  [32, stack(C.drums, C.bass, C.stab)],
+  [32, stack(C.drums, C.bass, C.stab, C.arp, C.pad)],
+  [16, stack(C.pad, C.arp)],
+  [40, stack(C.drums, C.bass, C.stab, C.arp, C.pad)],
+  [16, stack(C.pad, C.stab, C.shake)]
+)
