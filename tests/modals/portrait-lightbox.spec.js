@@ -15,9 +15,7 @@ test('each stacked portrait opens its own image and keeps its download reachable
     await page.getByRole('button', { name: 'Close lightbox' }).click();
     const download = specimen.getByRole('link', { name: 'Download original' });
     await download.scrollIntoViewIfNeeded();
-    expect(await download.evaluate(link => {
-      const r = link.getBoundingClientRect();
-      return document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2) === link;
-    })).toBe(true);
+    // Wait for the lightbox close animation before checking the hit target.
+    await download.click({ trial: true });
   }
 });
