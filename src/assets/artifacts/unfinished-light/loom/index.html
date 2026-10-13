@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071011">
+  <meta name="description" content="An immense loom. A little ordinary daylight. A three-minute audiovisual passage through what remains unfinished.">
+  <title>Unfinished Light</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23071011'/%3E%3Cpath d='M22 15h21v35H22zM19 10v46M25 9v45M39 12v43M45 8v46' fill='none' stroke='%23cab482' stroke-width='.8'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <canvas id="world" tabindex="-1" aria-describedby="gesture-hint" aria-label="An immense unfinished loom of papers and threads suspended above black water, with a small window of sunlit grass."></canvas>
+  <div id="loading" role="status"><span class="loading-thread"></span><span>Gathering the scattered things</span></div>
+  <main id="invitation" aria-labelledby="title">
+    <p class="eyebrow">A place to remain a while</p>
+    <h1 id="title">Unfinished<br><em>Light</em></h1>
+    <p class="invitation-copy">The light finds its way back.</p>
+    <div class="entry-actions"><button id="enter" class="enter" disabled>Enter the loom <span aria-hidden="true">↗</span></button><button id="drift" class="quiet" disabled>Or simply linger</button></div>
+    <p class="entry-note">A three-minute passage. Sound is part of the work.</p>
+  </main>
+  <div id="small-title" aria-hidden="true">Unfinished <em>Light</em></div>
+  <p id="gesture-hint">Take a thread gently. Let it go. Follow the warmth.</p>
+  <div id="presence" aria-hidden="true"><svg viewBox="0 0 56 56"><path class="shuttle" d="M28 4C41 18 41 38 28 52C15 38 15 18 28 4Z"/><path d="M28 15v26M24 21l8 3-8 3 8 3-8 3 8 3"/><circle cx="28" cy="28" r="2"/></svg><span id="cursor-word"></span></div>
+  <footer id="controls" inert aria-label="Experience controls">
+    <div class="chapter"><span id="chapter-number">I</span><span id="chapter-name">The scattered things</span></div>
+    <div class="control-buttons">
+      <button id="pause-toggle" aria-label="Pause the passage">Pause</button>
+      <button id="sound-toggle" aria-pressed="true" aria-label="Mute sound">Sound on</button>
+      <button id="restart" aria-label="Restart the passage">Begin again</button>
+      <button id="about-toggle" aria-haspopup="dialog">About</button>
+      <button id="fullscreen" aria-label="Enter fullscreen">⛶</button>
+    </div>
+    <div id="progress" role="progressbar" aria-label="Passage" aria-valuemin="0" aria-valuemax="180" aria-valuenow="0"><span></span></div>
+  </footer>
+  <div id="ending" hidden><p>Something has taken root.<br><em>Some threads remain loose.</em></p><button id="stay">Stay a little longer</button><button id="again">Begin again</button></div>
+  <dialog id="about-panel" aria-labelledby="about-title">
+    <button id="about-close" aria-label="Close about">Close ×</button>
+    <p class="eyebrow">On the other side of the weave</p><h2 id="about-title">Unfinished Light</h2>
+    <p>An immense structure assembles something small: a patch of ordinary, sunlit grass. Then the light finds its way back. Warmth travels through the weave. Botanical traces lift from their paper and learn to live in the room that held them.</p>
+    <p>This piece began with a prompt from an earlier language-model conversation and four images made with Midjourney, brought here by Xule Lin. Their paper, weather, cloth, and botanical fragments became an inhabited space and a score.</p>
+    <p>Move gently to shift your view. Find a thread with the small shuttle, then hold and drag to feel its tension. Neighboring fibers answer, and the sound follows their movement. You can touch their reflections, too. With a keyboard, hold Space and use the arrow keys. Let go, and follow the warmth to the paper it reaches. What unfolds there stays with you while you linger. There is nothing to complete.</p>
+    <div class="reference-grid">
+      <a href="/assets/images/portraits/portraits-2026-09-06-unfinished-light/01-the-woven-window.png" target="_blank" rel="noopener"><img src="/assets/images/portraits/portraits-2026-09-06-unfinished-light/01-the-woven-window.png" alt="The first source image: weather maps and silk descending toward still water." loading="lazy"></a>
+      <a href="/assets/images/portraits/portraits-2026-09-06-unfinished-light/02-the-daylit-weave.png" target="_blank" rel="noopener"><img src="/assets/images/portraits/portraits-2026-09-06-unfinished-light/02-the-daylit-weave.png" alt="The second source image: hanging papers and fine filaments around a little daylight." loading="lazy"></a>
+      <a href="/assets/images/portraits/portraits-2026-09-06-unfinished-light/04-the-unfinished-knots.png" target="_blank" rel="noopener"><img src="/assets/images/portraits/portraits-2026-09-06-unfinished-light/04-the-unfinished-knots.png" alt="The third source image: green and gold fragments and a tangled unfinished frame." loading="lazy"></a>
+      <a href="/assets/images/portraits/portraits-2026-09-06-unfinished-light/03-the-loose-fibers.png" target="_blank" rel="noopener"><img src="/assets/images/portraits/portraits-2026-09-06-unfinished-light/03-the-loose-fibers.png" alt="The fourth source image: translucent cloth and a small aperture above black water." loading="lazy"></a>
+    </div>
+    <p class="colophon">Original images: Xule Lin / Midjourney.<br>Spatial composition, material studies, and procedural score: Codex, with Xule Lin.<br>September 2026.</p>
+    <label class="motion-option"><input type="checkbox" id="stillness"> A still viewpoint</label>
+    <label class="motion-option"><input type="checkbox" id="full-detail"> Full detail</label>
+    <p class="detail-note">For looking closely. Leave off for smoother touch on larger screens.</p>
+  </dialog>
+  <p id="error" role="alert" hidden></p>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

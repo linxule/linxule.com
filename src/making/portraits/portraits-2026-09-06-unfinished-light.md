@@ -3,6 +3,11 @@ layout: layouts/portrait.njk
 title: unfinished light
 date: 2026-09-06
 series: portraits
+companion:
+  href: /making/artifacts/artifact-2026-09-08-unfinished-light/
+  relation: the living loom
+  title: unfinished light
+  note: A three-minute world and score, with threads you can touch.
 orientation: landscape
 generator: midjourney v8.2
 settings: "--ar 16:9 --stylize 250 --no robots, faces, circuit boards, logos, readable text"

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Why Put a Ventriloquist on the Air?</title>
+<style>*{box-sizing:border-box}html,body{height:100%;margin:0;background:#080808;color:#e7d9ba;font:13px/1.4 system-ui}body{display:flex;flex-direction:column}.screen{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}video{display:block;width:100%;max-height:100%}nav{padding:10px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;max-height:45%;overflow:auto}button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:3px;background:transparent;color:inherit;border:1px solid #706754;padding:8px;font:inherit;cursor:pointer}time{font:11px ui-monospace,monospace;opacity:.8}button[aria-current=true]{background:#e7d9ba;color:#080808}button:focus-visible{outline:2px solid #00a8a8;outline-offset:2px}@media(max-width:520px){nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:6px}button{font-size:12px;padding:6px;flex-direction:row;align-items:baseline;gap:7px}time{flex-shrink:0}}</style></head><body>
+<div class="screen"><video id="film" src="film.mp4" poster="poster.jpg" controls playsinline preload="metadata" aria-label="Why Put a Ventriloquist on the Air? — full album film"></video></div>
+<nav aria-label="Album chapters">
+<button data-start="0"><time>0:00</time><span>1. Dial</span></button>
+<button data-start="132.5129"><time>2:12</time><span>2. Why Not?</span></button>
+<button data-start="259.4575"><time>4:19</time><span>3. This Bar</span></button>
+<button data-start="281.0775"><time>4:41</time><span>4. Laughing Record</span></button>
+<button data-start="405.4775"><time>6:45</time><span>5. The Light’s On</span></button>
+<button data-start="619.2021"><time>10:19</time><span>6. The Room Emptying</span></button>
+<button data-start="699.7021"><time>11:39</time><span>7. Purr</span></button>
+</nav><script>
+const film=document.querySelector('#film'),chapters=[...document.querySelectorAll('[data-start]')];
+function mark(){let current=0;chapters.forEach((b,i)=>{if(film.currentTime>=Number(b.dataset.start))current=i;});chapters.forEach((b,i)=>b.setAttribute('aria-current',String(i===current)));}
+chapters.forEach(button=>button.addEventListener('click',()=>{film.currentTime=Number(button.dataset.start);film.play().catch(()=>{});mark();}));
+film.addEventListener('timeupdate',mark);mark();
+</script></body></html>
