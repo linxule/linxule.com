@@ -29,22 +29,22 @@
     "test:ui": "bun run freshness:check && playwright test tests/reading tests/fonts --project=desktop && playwright test tests/modals --project=desktop --project=phone --project=phone-narrow && playwright test tests/discovery --project=phone --project=desktop"
   },
   "dependencies": {
-    "@11ty/eleventy": "^3.1.6",
-    "@11ty/eleventy-img": "^7.0.0",
+    "@11ty/eleventy": "^3.1.7",
+    "@11ty/eleventy-img": "^7.1.1",
     "entities": "^8.1.0",
-    "markdown-it": "^15.0.2",
+    "markdown-it": "^15.0.3",
     "markdown-it-footnote": "^4.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
+    "@playwright/test": "^1.64.1",
     "@resvg/resvg-js": "^2.6.2",
-    "@vercel/functions": "^3.9.7",
+    "@vercel/functions": "^3.10.3",
     "gray-matter": "4.0.3",
-    "js-yaml": "^5.4.2",
+    "js-yaml": "^5.5.0",
     "nunjucks": "3.2.4",
     "pagefind": "^1.5.2",
     "path-to-regexp": "^6.3.0",
-    "sharp": "^0.35.4"
+    "sharp": "^0.35.5"
   },
   "packageManager": "bun@1.4.2",
   "engines": {
