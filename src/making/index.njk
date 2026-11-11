@@ -120,8 +120,8 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
     .header-spread .search-link {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        letter-spacing: 0.1em;
+        font-size: var(--size-label);
+        letter-spacing: var(--tracking-quiet);
         color: var(--ink-faint);
         text-decoration: none;
         transition: color 0.2s ease;
@@ -133,15 +133,15 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
     .header-spread .page-marker {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
     }
 
     .header-spread .section-label {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.6rem;
-        letter-spacing: 0.15em;
-        color: var(--ink-ghost);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-label);
+        color: var(--ink-faint);
         text-transform: uppercase;
         margin-bottom: 1.5rem;
     }
@@ -184,7 +184,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         display: flex;
         gap: 1.5rem;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
     }
 
     .filter-chip {
@@ -215,8 +215,8 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         left: 50%;
         transform: translateX(-50%);
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        color: var(--ink-ghost);
+        font-size: var(--size-label);
+        color: var(--ink-faint);
         text-align: center;
         opacity: 1;
         transition: opacity 0.5s ease;
@@ -272,7 +272,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
     }
 
     .spread-title {
-        font-size: 0.95rem;
+        font-size: var(--size-quiet);
         font-weight: 300;
         font-style: italic;
         margin-bottom: 0.5rem;
@@ -289,7 +289,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
     .spread-info {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.6rem;
+        font-size: var(--size-whisper);
         color: var(--ink-faint);
         line-height: 1.8;
     }
@@ -378,9 +378,14 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         width: 100%;
         height: auto;
         display: block;
-        filter: grayscale(30%);
-        opacity: 0.8;
         transition: filter 0.5s ease, opacity 0.5s ease;
+    }
+
+    @media (hover: hover) and (min-width: 901px) and (min-height: 700px) {
+        .specimen img {
+            filter: grayscale(30%);
+            opacity: 0.8;
+        }
     }
 
     .specimen:hover img {
@@ -393,7 +398,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         bottom: 0.5rem;
         right: 0.5rem;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.5rem;
+        font-size: var(--size-whisper);
         color: var(--bloom);
         opacity: 0;
         transition: opacity 0.3s ease;
@@ -415,7 +420,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         background: rgba(26, 26, 26, 0.88);
         color: var(--paper);
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         cursor: pointer;
     }
 
@@ -439,9 +444,14 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         border: none;
         display: block;
         pointer-events: none;
-        filter: grayscale(30%);
-        opacity: 0.8;
         transition: filter 0.5s ease, opacity 0.5s ease;
+    }
+
+    @media (hover: hover) and (min-width: 901px) and (min-height: 700px) {
+        .specimen-iframe {
+            filter: grayscale(30%);
+            opacity: 0.8;
+        }
     }
 
     .specimen--interactive:hover .specimen-iframe {
@@ -523,9 +533,9 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
 
     .tools-label {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.6rem;
-        letter-spacing: 0.2em;
-        color: var(--ink-ghost);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-marker);
+        color: var(--ink-faint);
         text-transform: uppercase;
         margin-bottom: 2rem;
     }
@@ -542,7 +552,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
     }
 
     .tool-title {
-        font-size: 0.9rem;
+        font-size: var(--size-quiet);
         font-weight: 400;
         margin-bottom: 0.5rem;
     }
@@ -561,7 +571,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
     }
 
     .tool-description {
-        font-size: 0.75rem;
+        font-size: var(--size-label);
         color: var(--ink-light);
         line-height: 1.6;
     }
@@ -612,7 +622,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         }
 
         .spread-line {
-            font-size: 0.9rem;
+            font-size: var(--size-quiet);
             line-height: 1.55;
         }
 
@@ -681,20 +691,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         }
 
         .spread-poem {
-            font-size: 0.95rem;
-        }
-
-        /* Images full color on mobile (no hover to earn) */
-        .specimen img,
-        .specimen:hover img {
-            filter: none;
-            opacity: 1;
-        }
-
-        .specimen-iframe,
-        .specimen--interactive:hover .specimen-iframe {
-            filter: none;
-            opacity: 1;
+            font-size: var(--size-quiet);
         }
 
         /* Tools section */
