@@ -24,9 +24,9 @@ marker: "making"
     
     .portrait-num {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.6rem;
-        color: var(--ink-ghost);
-        letter-spacing: 0.2em;
+        font-size: var(--size-whisper);
+        color: var(--ink-faint);
+        letter-spacing: var(--tracking-marker);
         margin-bottom: 3rem;
     }
     
@@ -93,14 +93,14 @@ marker: "making"
     
     .portrait-meta {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
         line-height: 1.8;
     }
 
     .portrait-description {
         margin-top: 2rem;
-        font-size: 0.95rem;
+        font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 1.9;
         font-style: italic;
@@ -402,23 +402,28 @@ marker: "making"
         width: 100%;
         height: auto;
         display: block;
-        filter: grayscale(30%);
-        opacity: 0.8;
         transition: all 0.5s ease;
         cursor: zoom-in;
+    }
+
+    @media (hover: hover) {
+        .specimen img {
+            filter: grayscale(30%);
+            opacity: 0.8;
+        }
     }
 
     .specimen:hover img {
         filter: grayscale(0%);
         opacity: 1;
     }
-    
+
     .specimen-num {
         position: absolute;
         bottom: 0.5rem;
         right: 0.5rem;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.55rem;
+        font-size: var(--size-whisper);
         color: var(--bloom);
         opacity: 0;
         transition: opacity 0.3s ease;
@@ -433,7 +438,7 @@ marker: "making"
         bottom: 0.5rem;
         left: 0.5rem;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.55rem;
+        font-size: var(--size-whisper);
         color: var(--bloom);
         opacity: 0;
         transition: opacity 0.3s ease;
@@ -450,6 +455,13 @@ marker: "making"
         opacity: 1;
     }
 
+    @media (hover: none) {
+        .specimen-num,
+        .specimen-download {
+            opacity: 1;
+        }
+    }
+
     .portrait-nav {
         display: flex;
         justify-content: space-between;
@@ -460,14 +472,14 @@ marker: "making"
     
     .nav-link {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
     }
 
     .page-marker {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        color: var(--ink-ghost);
+        font-size: var(--size-label);
+        color: var(--ink-faint);
     }
     
     @media (max-width: 1000px) {
@@ -525,13 +537,6 @@ marker: "making"
         .prompt-line {
             font-size: 1rem;
             line-height: 2;
-        }
-
-        /* Images full color on mobile (no hover to earn) */
-        .specimen img,
-        .specimen:hover img {
-            filter: none;
-            opacity: 1;
         }
 
         /* All layouts become simple vertical stack */

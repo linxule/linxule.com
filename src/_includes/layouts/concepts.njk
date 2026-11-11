@@ -25,14 +25,14 @@ marker: "concepts"
         top: 0;
         right: 0;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
     }
 
     .territory-label {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        letter-spacing: 0.2em;
+        font-size: var(--size-label);
+        letter-spacing: var(--tracking-marker);
         color: var(--ink-faint);
         text-transform: uppercase;
         margin-bottom: 1rem;
@@ -75,8 +75,8 @@ marker: "concepts"
 
     .territory-name {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        letter-spacing: 0.15em;
+        font-size: var(--size-label);
+        letter-spacing: var(--tracking-label);
         color: var(--ink-faint);
         text-transform: uppercase;
         padding-top: 0.5rem;
@@ -102,7 +102,7 @@ marker: "concepts"
     }
 
     .concept-entry-name.emerging {
-        color: var(--ink-ghost);
+        color: var(--ink-faint);
     }
 
     a.concept-entry-name:hover {
@@ -112,7 +112,7 @@ marker: "concepts"
     .concept-oneliner {
         font-style: italic;
         color: var(--ink-light);
-        font-size: 0.95rem;
+        font-size: var(--size-quiet);
         line-height: 1.8;
         margin-top: 0.4rem;
         margin-left: 1rem;
@@ -125,7 +125,7 @@ marker: "concepts"
 
     .territory-question {
         padding: 0.6rem 0;
-        font-size: 0.95rem;
+        font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 1.8;
         transition: color 0.3s ease;
@@ -148,7 +148,7 @@ marker: "concepts"
 
     .back-link {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
         text-decoration: none;
     }

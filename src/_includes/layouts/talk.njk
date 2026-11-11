@@ -21,9 +21,9 @@ marker: "talks"
 
     .talk-num {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.6rem;
-        color: var(--ink-ghost);
-        letter-spacing: 0.2em;
+        font-size: var(--size-whisper);
+        color: var(--ink-faint);
+        letter-spacing: var(--tracking-marker);
         margin-bottom: 1.5rem;
     }
 
@@ -36,7 +36,7 @@ marker: "talks"
 
     .talk-meta {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
         display: flex;
         flex-wrap: wrap;
@@ -45,7 +45,7 @@ marker: "talks"
     }
 
     .meta-label {
-        color: var(--ink-ghost);
+        color: var(--ink-faint);
     }
 
     .talk-tags {
@@ -67,7 +67,7 @@ marker: "talks"
     /* "The caption" composite: machine voice, meta size, faint, centered */
     .media-caption {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: var(--size-meta);
+        font-size: var(--size-label);
         color: var(--ink-faint);
         text-align: center;
         margin: 0.75rem 0 0;
@@ -86,7 +86,7 @@ marker: "talks"
         text-decoration: none;
         display: inline-block;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: var(--size-meta);
+        font-size: var(--size-label);
         color: var(--ink-faint);
         background: transparent;
         border: 1px solid var(--ink-ghost);
@@ -146,8 +146,8 @@ marker: "talks"
         top: 2rem;
         right: 2rem;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: var(--size-meta);
-        color: var(--ink-faint);
+        font-size: var(--size-label);
+        color: var(--ink-on-dark);
         background: none;
         border: none;
         cursor: pointer;
@@ -160,7 +160,7 @@ marker: "talks"
         left: 1.5rem;
         right: 6rem;
         margin: 0;
-        font: 0.65rem 'IBM Plex Mono', monospace;
+        font: var(--size-label) 'IBM Plex Mono', monospace;
         color: var(--paper);
     }
 
@@ -240,7 +240,7 @@ marker: "talks"
         display: inline-block;
         margin-top: 2rem;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.75rem;
+        font-size: var(--size-label);
         color: var(--ink-light);
         text-decoration: none;
         padding: 0.75rem 1.25rem;
@@ -267,14 +267,14 @@ marker: "talks"
 
     .nav-link {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
     }
 
     .page-marker {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        color: var(--ink-ghost);
+        font-size: var(--size-label);
+        color: var(--ink-faint);
     }
 
     @media (max-width: 1100px) {

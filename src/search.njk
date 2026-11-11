@@ -25,7 +25,7 @@ robots: noindex,follow
     }
 
     .page-description {
-        font-size: 0.9rem;
+        font-size: var(--size-quiet);
         color: var(--ink-light);
         max-width: 400px;
     }
@@ -35,7 +35,7 @@ robots: noindex,follow
         top: 0;
         right: 0;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
     }
 
@@ -127,7 +127,7 @@ robots: noindex,follow
 
     .pagefind-ui__result-excerpt {
         font-family: 'Cormorant Garamond', Georgia, serif !important;
-        font-size: 0.95rem !important;
+        font-size: var(--size-quiet) !important;
         color: var(--ink-light) !important;
         line-height: 1.8 !important;
     }
@@ -139,7 +139,7 @@ robots: noindex,follow
     }
 
     .search-fallback {
-        font-size: 0.9rem;
+        font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 1.8;
     }
@@ -151,8 +151,8 @@ robots: noindex,follow
 
     .pagefind-ui__result-tag {
         font-family: 'IBM Plex Mono', monospace !important;
-        font-size: 0.65rem !important;
-        letter-spacing: 0.1em !important;
+        font-size: var(--size-label) !important;
+        letter-spacing: var(--tracking-quiet) !important;
         text-transform: uppercase !important;
         background: var(--paper-dark) !important;
         color: var(--ink-faint) !important;
@@ -162,8 +162,8 @@ robots: noindex,follow
 
     .pagefind-ui__button {
         font-family: 'IBM Plex Mono', monospace !important;
-        font-size: 0.75rem !important;
-        letter-spacing: 0.1em !important;
+        font-size: var(--size-label) !important;
+        letter-spacing: var(--tracking-quiet) !important;
         background: var(--paper) !important;
         border: 1px solid var(--ink-ghost) !important;
         color: var(--ink-faint) !important;

@@ -23,7 +23,7 @@ marker: "teaching"
         top: 0;
         right: 0;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
     }
 
@@ -34,7 +34,7 @@ marker: "teaching"
     }
 
     .page-description {
-        font-size: 0.9rem;
+        font-size: var(--size-quiet);
         color: var(--ink-light);
         max-width: 400px;
     }
@@ -58,9 +58,9 @@ marker: "teaching"
 
     .item-label {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.6rem;
-        letter-spacing: 0.15em;
-        color: var(--ink-ghost);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-label);
+        color: var(--ink-faint);
         text-transform: uppercase;
         margin-bottom: 1rem;
     }
@@ -76,7 +76,7 @@ marker: "teaching"
     }
 
     .item-description {
-        font-size: 0.9rem;
+        font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 1.8;
     }

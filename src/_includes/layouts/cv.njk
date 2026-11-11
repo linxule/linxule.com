@@ -19,7 +19,7 @@ marker: "cv"
         top: 0;
         right: 0;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
     }
 
@@ -36,7 +36,7 @@ marker: "cv"
     /* Contact info (h3s after name) */
     .cv-content > h3 {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
         font-style: normal;
         font-weight: 400;
@@ -55,8 +55,8 @@ marker: "cv"
     /* Section headers (h1) */
     .cv-content h1 {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        letter-spacing: 0.2em;
+        font-size: var(--size-label);
+        letter-spacing: var(--tracking-marker);
         color: var(--ink-faint);
         text-transform: uppercase;
         margin: 3rem 0 1.5rem;
@@ -71,7 +71,7 @@ marker: "cv"
 
     /* Research interests paragraph */
     .cv-content > p {
-        font-size: 0.95rem;
+        font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 2;
         max-width: 650px;
@@ -91,7 +91,7 @@ marker: "cv"
 
     .cv-content > ul > li {
         margin-bottom: 0.75rem;
-        font-size: 0.95rem;
+        font-size: var(--size-quiet);
         line-height: 1.7;
     }
 
@@ -110,7 +110,7 @@ marker: "cv"
     }
 
     .cv-content > ul > li > ul > li {
-        font-size: 0.9rem;
+        font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 1.8;
         margin-bottom: 0.25rem;
@@ -122,7 +122,7 @@ marker: "cv"
         content: "–";
         position: absolute;
         left: 0;
-        color: var(--ink-ghost);
+        color: var(--ink-ghost); /* ornament */
     }
 
     /* Third level nesting */
@@ -133,7 +133,7 @@ marker: "cv"
     }
 
     .cv-content > ul > li > ul > li > ul > li {
-        font-size: 0.85rem;
+        font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 1.7;
         margin-bottom: 0.25rem;
@@ -145,7 +145,7 @@ marker: "cv"
         content: "·";
         position: absolute;
         left: 0.2rem;
-        color: var(--ink-ghost);
+        color: var(--ink-ghost); /* ornament */
     }
 
     /* Fourth level nesting */
@@ -156,7 +156,7 @@ marker: "cv"
     }
 
     .cv-content > ul > li > ul > li > ul > li > ul > li {
-        font-size: 0.8rem;
+        font-size: var(--size-note);
         color: var(--ink-faint);
         line-height: 1.6;
         margin-bottom: 0.2rem;
@@ -168,7 +168,7 @@ marker: "cv"
         content: "·";
         position: absolute;
         left: 0.2rem;
-        color: var(--ink-ghost);
+        color: var(--ink-ghost); /* ornament */
     }
 
     /* Links */
@@ -208,8 +208,8 @@ marker: "cv"
 
     .cv-updated {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        color: var(--ink-ghost);
+        font-size: var(--size-label);
+        color: var(--ink-faint);
     }
 
     @media print {

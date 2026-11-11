@@ -24,8 +24,8 @@ marker: "writing"
     
     .article-series {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        letter-spacing: 0.15em;
+        font-size: var(--size-label);
+        letter-spacing: var(--tracking-label);
         color: var(--ink-faint);
         text-transform: uppercase;
         margin-bottom: 1.5rem;
@@ -48,7 +48,7 @@ marker: "writing"
     
     .article-meta {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
         display: flex;
         flex-wrap: wrap;
@@ -56,7 +56,7 @@ marker: "writing"
     }
     
     .meta-label {
-        color: var(--ink-ghost);
+        color: var(--ink-faint);
     }
     
     .article-tags {
@@ -116,7 +116,7 @@ marker: "writing"
     
     .pullquote-source {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
         margin-top: 0.75rem;
     }
@@ -125,7 +125,7 @@ marker: "writing"
         display: inline-block;
         margin-top: 2rem;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.75rem;
+        font-size: var(--size-label);
         color: var(--ink-light);
         text-decoration: none;
         padding: 0.75rem 1.25rem;
@@ -147,8 +147,8 @@ marker: "writing"
 
     .citation-label {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        letter-spacing: 0.15em;
+        font-size: var(--size-label);
+        letter-spacing: var(--tracking-label);
         color: var(--ink-faint);
         text-transform: uppercase;
         margin-bottom: 0.75rem;
@@ -157,7 +157,7 @@ marker: "writing"
     .citation-terms {
         font-style: italic;
         color: var(--ink-light);
-        font-size: 0.95rem;
+        font-size: var(--size-quiet);
         margin-bottom: 1rem;
     }
 
@@ -169,14 +169,14 @@ marker: "writing"
 
     .citation-full {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.75rem;
+        font-size: var(--size-label);
         color: var(--ink-light);
         line-height: 1.8;
     }
 
     .citation-copy {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
         background: none;
         border: 1px solid var(--ink-ghost);
@@ -194,9 +194,9 @@ marker: "writing"
     .article-license {
         margin-top: 2rem;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
-        letter-spacing: 0.05em;
+        letter-spacing: var(--tracking-whisper);
     }
 
     .article-license a {
@@ -218,14 +218,14 @@ marker: "writing"
     
     .nav-link {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
+        font-size: var(--size-label);
         color: var(--ink-faint);
     }
 
     .page-marker {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        color: var(--ink-ghost);
+        font-size: var(--size-label);
+        color: var(--ink-faint);
     }
     
     @media (max-width: 1100px) {
