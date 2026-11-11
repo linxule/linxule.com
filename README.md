@@ -54,9 +54,9 @@ eleventy/
 ```css
 --paper: #f4f1eb;           /* Background */
 --ink: #1a1a1a;             /* Primary text */
---ink-light: #6b6b6b;       /* Secondary text */
---ink-faint: #a0a0a0;       /* Tertiary text */
---ink-ghost: #c8c8c8;       /* Borders */
+--ink-light: #555555;       /* Secondary text */
+--ink-faint: #666666;       /* Labels, metadata */
+--ink-ghost: #c8c8c8;       /* Rules and ornament only, never a word */
 --accident: #4ee1d4;        /* The wrong color - cyan */
 --bloom: #8b7089;           /* Interaction color - violet */
 ```

@@ -13,7 +13,7 @@ Loaded into every session; keep it short. Path-scoped rules in `.claude/rules/` 
 
 ## Philosophy
 
-A "book in the algorithmic age": paper/ink colors, marginalia, spine navigation, bloom-on-hover, one cyan "accident" per page (intentional wrongness). Content lists human + AI authors as arrays.
+A "book in the algorithmic age": paper/ink colors, marginalia, spine navigation, bloom-on-hover, one cyan "accident" per work (intentional wrongness). Content lists human + AI authors as arrays.
 
 ## Repo
 
