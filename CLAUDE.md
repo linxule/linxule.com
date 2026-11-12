@@ -2,12 +2,15 @@
 
 Loaded into every session, so it holds only what applies whatever you touch. `AGENTS.md` is a symlink to this file.
 
-Knowledge about one kind of work lives next to that work: path rules in `.claude/rules/` (Claude Code loads them by path; other agents read the one that matches), reasoning in `.claude/docs/` (both local-only, gitignored), and tracked `docs/`. **Add new knowledge there, not here.** A line belongs in this file only if a session that never opens the relevant path could still do damage without it.
+Knowledge about one kind of work lives next to that work: tracked `docs/`, path rules in `.claude/rules/` (Claude Code loads them by path; other agents read the one that matches), and reasoning in `.claude/docs/`. **Add new knowledge there, not here.** A line belongs in this file only if a session that never opens the relevant path could still do damage without it.
+
+`.claude/` is gitignored and exists only in the main checkout. In a fresh clone or the deploy worktree, the tracked `docs/` are all you have, so anything a clone needs in order to edit safely goes in `docs/`.
 
 | When you are… | Read |
 |---|---|
+| editing templates, frontmatter or content for the first time | **`docs/authoring.md`** (code map + the gotchas that bite first) |
 | publishing, deploying, pruning deployments | **`docs/publishing.md`** (the checklist) · `.claude/docs/infrastructure.md` |
-| changing config, the image pipeline or templates | `.claude/rules/architecture.md` |
+| changing config or the image pipeline | `.claude/rules/architecture.md` |
 | adding portraits / artifacts / papers / talks / sub-apps / social cards | the matching rule in `.claude/rules/` |
 | writing or porting an essay | `.claude/rules/writing-links.md`, `seo.md`, `concept-propagation.md` |
 | setting frontmatter for a content type | `.claude/docs/content-patterns.md` |
