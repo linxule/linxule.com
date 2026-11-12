@@ -322,75 +322,126 @@ marker: "writing"
 
 <script defer src="/assets/js/writing-lightbox.js?v={{ site.version }}"></script>
 
-<!-- Marginalia positioning: align notes with their references -->
+<!-- Marginalia placement: each note as close to its reference as the notes before it allow -->
 <script>
 (function() {
-    var marginalia = document.querySelector('.article-body .marginalia');
-    if (!marginalia) return;
-
     var body = document.querySelector('.article-body');
-    var notes = marginalia.querySelectorAll('.margin-note');
+    var marginalia = body && body.querySelector('.marginalia');
+    if (!marginalia) return;
+    var notes = Array.prototype.slice.call(marginalia.querySelectorAll('.margin-note'));
     if (!notes.length) return;
 
-    var MQ = window.matchMedia('(min-width: 1101px)');
+    // The same string as the CSS margin block; its complement is the endnote
+    // query (max-width: 1100px).
+    var MQ = window.matchMedia('not all and (max-width: 1100px)');
+    var GAP = 12;
+    // A note may start at most this far above its reference (about 3.5 lines of
+    // body text); further up, it reads as belonging to the sentence before.
+    var MAX_RISE = 120;
 
-    function position(animate) {
+    // Least-squares tops: minimise sum (p_i - d_i)^2 over the wanted tops d_i
+    // (each reference) subject to p_(i+1) >= p_i + h_i + GAP, p_1 >= 0 and the
+    // last note ending inside the article. Subtracting the cumulative heights
+    // turns the spacing constraint into plain monotonicity, which
+    // pool-adjacent-violators solves in one pass. A crowded run of notes then
+    // centres on its references instead of trailing below them.
+    function solve(wanted, heights, limit) {
+        var n = wanted.length, offset = [], blocks = [], acc = 0, i;
+        for (i = 0; i < n; i++) {
+            offset.push(acc);
+            blocks.push({ sum: wanted[i] - acc, count: 1 });
+            acc += heights[i] + GAP;
+            while (blocks.length > 1) {
+                var b = blocks[blocks.length - 1], a = blocks[blocks.length - 2];
+                if (a.sum / a.count <= b.sum / b.count) break;
+                a.sum += b.sum; a.count += b.count;
+                blocks.pop();
+            }
+        }
+        var hi = limit - offset[n - 1] - heights[n - 1];
+        if (hi < 0) hi = Infinity;
+        var tops = [], floor = 0, k = 0;
+        blocks.forEach(function(b) {
+            var q = Math.max(0, Math.min(hi, b.sum / b.count));
+            for (var j = 0; j < b.count; j++, k++) {
+                // The rise cap only ever moves a note down, so a forward pass
+                // keeps every note clear of the one before it.
+                var p = Math.max(q + offset[k], wanted[k] - MAX_RISE, floor);
+                tops.push(p);
+                floor = p + heights[k] + GAP;
+            }
+        });
+        return tops;
+    }
+
+    // Writes only `top` (and .positioned, which changes opacity) on notes that
+    // are absolutely positioned inside a zero-height box, so placing them never
+    // resizes the article or a note: the observer below cannot feed itself.
+    var placed = false;
+    function position() {
         if (!MQ.matches) {
             notes.forEach(function(n) {
-                n.style.cssText = '';
+                n.style.top = '';
                 n.classList.add('positioned');
             });
             return;
         }
 
-        if (!animate) {
-            marginalia.style.transition = 'none';
+        // The first placement appears at once instead of fading in.
+        var instant = !placed;
+        placed = true;
+        if (instant) {
             notes.forEach(function(n) { n.style.transition = 'none'; });
         }
 
         var bodyRect = body.getBoundingClientRect();
-        var lastBottom = 0;
-
+        var wanted = [], heights = [], last = 0;
         notes.forEach(function(note) {
             var ref = body.querySelector('.fn-ref[href="#' + note.id + '"]');
-            if (!ref) { note.classList.add('positioned'); return; }
+            last = ref ? ref.getBoundingClientRect().top - bodyRect.top : last;
+            wanted.push(last);
+            heights.push(note.offsetHeight);
+        });
 
-            var top = ref.getBoundingClientRect().top - bodyRect.top;
-            if (top < lastBottom) top = lastBottom;
-
-            note.style.position = 'absolute';
-            note.style.top = top + 'px';
-            note.style.left = 'calc(100% + 1.5rem)';
-            note.style.width = 'clamp(180px, 20vw, 260px)';
-
-            lastBottom = top + note.offsetHeight + 12;
+        var tops = solve(wanted, heights, bodyRect.height);
+        notes.forEach(function(note, i) {
+            note.style.top = tops[i] + 'px';
             note.classList.add('positioned');
         });
 
-        if (!animate) {
-            // Force reflow then restore transitions
+        if (instant) {
             marginalia.offsetHeight;
-            marginalia.style.transition = '';
             notes.forEach(function(n) { n.style.transition = ''; });
         }
     }
 
-    // Initial position with fade-in
-    if (document.fonts) {
-        document.fonts.ready.then(function() { position(true); });
+    // The script follows the article, so its layout exists already (fonts or not).
+    position();
+
+    if (window.ResizeObserver) {
+        // Anything that moves a reference changes the article's size: a late
+        // font swap, an image arriving without reserved height, a <details>
+        // opening, a width change. Notes are watched too, because their width
+        // follows the viewport (20vw) while the article column may not, and
+        // crossing the breakpoint resizes both. That covers window resize and
+        // the media query, so there are no separate listeners for them. The
+        // observer reports once per frame, after layout and before paint, so
+        // re-placing here costs no frame of lag.
+        var ro = new ResizeObserver(function() { position(); });
+        ro.observe(body);
+        notes.forEach(function(n) { ro.observe(n); });
     } else {
-        window.addEventListener('load', function() { position(true); });
+        var again = function() { position(); };
+        if (document.fonts) document.fonts.ready.then(again);
+        window.addEventListener('load', again);
+        // Engines this old also lack MediaQueryList.addEventListener; resizing
+        // is the only way across the breakpoint anyway.
+        var timer;
+        window.addEventListener('resize', function() {
+            clearTimeout(timer);
+            timer = setTimeout(again, 100);
+        });
     }
-
-    // Breakpoint crossing — instant, no debounce
-    MQ.addEventListener('change', function() { position(false); });
-
-    // Resize within same mode — debounced, no animation
-    var timer;
-    window.addEventListener('resize', function() {
-        clearTimeout(timer);
-        timer = setTimeout(function() { position(false); }, 100);
-    });
 
     // Marginalia bloom — ref and note highlight together on hover
     document.querySelectorAll('.fn-ref').forEach(function(ref) {

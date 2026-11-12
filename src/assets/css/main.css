@@ -482,23 +482,53 @@ a:focus-visible .accident {
    Marginalia / Footnotes
    ======================================== */
 
-/* Marginalia container: collapse in flow, notes escape via absolute positioning */
-.article-body .marginalia {
-    height: 0;
-    overflow: visible;
-}
-
+/* The base note stays in flow and readable; everything that only makes sense
+   beside the text lives in the margin block below. */
 .margin-note {
     font-size: var(--size-note);
     color: var(--ink-faint);
     line-height: 1.6;
     font-style: italic;
-    opacity: 0;
     transition: opacity 0.3s ease;
 }
 
-.margin-note.positioned {
-    opacity: 1;
+/* Margin mode: the exact complement of the endnote query (max-width: 1100px),
+   written as its negation so no width (fractional or rounded) gets both or
+   neither. (min-width: 1100.01px) matched at 1100px in Chromium and WebKit,
+   which round to 1/64px. The script in writing.njk matches the same string
+   and sets only each note's top. */
+@media not all and (max-width: 1100px) {
+    /* Collapse in flow, notes escape via absolute positioning */
+    .article-body .marginalia {
+        height: 0;
+        overflow: visible;
+    }
+
+    .margin-note {
+        position: absolute;
+        /* 2.5rem clears the 2rem figure bleed (.article-body img / figure) */
+        left: calc(100% + 2.5rem);
+        /* Grows with the empty margin, capped near 66 characters at the note size */
+        width: clamp(180px, 20vw, 23.5em);
+        opacity: 0;
+    }
+
+    .margin-note.positioned {
+        opacity: 1;
+    }
+}
+
+/* The number runs into the note's first line */
+.article-body .margin-note p {
+    margin: 0;
+}
+
+.article-body .margin-note .fn-num + p {
+    display: inline;
+}
+
+.article-body .margin-note p + p {
+    margin-top: 0.6em;
 }
 
 .fn-num {
@@ -1049,7 +1079,9 @@ a:focus-visible {
    Responsive
    ======================================== */
 
-@media (max-width: 1100px) {
+/* Endnote mode: narrow screens, print, and readers without scripting
+   (the script is what places notes in the margin). */
+@media (max-width: 1100px), print, (scripting: none) {
     .article-body .marginalia {
         height: auto;
         width: 100%;
@@ -1074,7 +1106,9 @@ a:focus-visible {
         opacity: 1 !important;
         top: auto !important;
         left: auto !important;
-        width: 100% !important;
+        width: auto !important;
+        /* ≈75 characters per line at the note size */
+        max-width: 27em;
         margin-bottom: 1.5rem;
     }
 
@@ -1360,16 +1394,7 @@ a:focus-visible {
     }
 
     .article-body .marginalia {
-        height: auto;
-        width: 100%;
         margin-top: 2rem;
-        border-top: 1px solid var(--ink-ghost);
-    }
-
-    .article-body .margin-note {
-        position: static !important;
-        opacity: 1 !important;
-        left: auto !important;
     }
 }
 

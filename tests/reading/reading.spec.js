@@ -161,6 +161,85 @@ for (const width of [390, 1100, 1440]) {
   });
 }
 
+// Notes are placed by least squares around their references, 12px apart and
+// never more than 120px above one. How far a note ends up from its reference
+// depends on where the lines break, so on the typeface (this suite aborts the
+// web fonts), and a pixel limit tuned on one face fails on another. These are
+// the promises that hold in any face:
+// - no note overlaps the one before it or sits more than 120px above its reference;
+// - a note sits below its reference only when the note before it forces it
+//   there, so it is exactly one gap under that note;
+// - a run of touching notes centres on its references: its mean offset is not
+//   above zero, unless a note in it is held at the 120px limit or the run is
+//   pinned to the top of the article.
+// The old push-down placement passes the first two and fails the third: every
+// crowded run sat entirely at or below its references.
+const NOTE_GAP = 12;
+const MAX_RISE = 120;
+
+const readNotes = page => page.locator(".article-body .margin-note").evaluateAll(elements => {
+  const article = document.querySelector(".article-body").getBoundingClientRect();
+  return elements.map(note => {
+    const box = note.getBoundingClientRect();
+    const reference = document.querySelector(`.article-body .fn-ref[href="#${note.id}"]`).getBoundingClientRect();
+    return { id: note.id, top: box.top, bottom: box.bottom, fromTop: box.top - article.top, offset: box.top - reference.top };
+  });
+});
+
+// Notes are placed at once and again on every resize, so measure after the
+// fonts have settled and the observer has had a frame to answer the last swap.
+async function settled(page) {
+  await expect(page.locator(".article-body .margin-note:not(.positioned)")).toHaveCount(0);
+  await page.evaluate(() => document.fonts.ready.then(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done)))));
+}
+
+function expectBeside(notes) {
+  expect(notes.length).toBeGreaterThan(20);
+  const overlaps = notes.slice(1).filter((note, index) => note.top < notes[index].bottom - epsilon);
+  expect(overlaps.map(note => note.id)).toEqual([]);
+  expect(Math.min(...notes.map(note => note.offset))).toBeGreaterThanOrEqual(-MAX_RISE - epsilon);
+
+  const touching = notes.map((note, index) => index > 0 && note.top - notes[index - 1].bottom <= NOTE_GAP + epsilon);
+  const unforced = notes.filter((note, index) => note.offset > epsilon && !touching[index]);
+  expect(unforced.map(note => note.id), "below their reference with nothing above forcing them").toEqual([]);
+
+  const runs = [];
+  notes.forEach((note, index) => (touching[index] ? runs.at(-1).push(note) : runs.push([note])));
+  expect(runs.some(run => run.length > 1), "the essay still has a crowded run to test").toBe(true);
+  const sunk = runs.filter(run => run.length > 1
+    && run[0].fromTop > epsilon
+    && run.every(note => note.offset > -MAX_RISE + epsilon)
+    && run.reduce((sum, note) => sum + note.offset, 0) / run.length > epsilon);
+  expect(sunk.map(run => `${run[0].id}..${run.at(-1).id}`), "runs sitting below their references on average").toEqual([]);
+}
+
+for (const width of [1280, 1440]) {
+  test(`margin notes stay beside their references without overlapping at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(articlePath);
+    await settled(page);
+    expectBeside(await readNotes(page));
+  });
+}
+
+// A late font swap, an image without reserved height or an opened <details>
+// moves every reference below it after the notes were placed. Without
+// re-placement each note would sit 300px above its reference here.
+test("margin notes follow their references when the article grows after load", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto(articlePath);
+  await settled(page);
+  const before = await readNotes(page);
+  await page.evaluate(() => {
+    const block = document.createElement("div");
+    block.style.height = "300px";
+    const first = document.querySelector(".article-body .fn-ref").closest(".article-body > *");
+    first.before(block);
+  });
+  await expect.poll(async () => (await readNotes(page))[0].top - before[0].top).toBeGreaterThan(300 - MAX_RISE);
+  expectBeside(await readNotes(page));
+});
+
 test("repeated footnotes return to the selected reference", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const fixture = renderMarkdown([
