@@ -16,15 +16,17 @@
  *     MD_PATHS; tags/series/prompter are excluded by design, not checked here)
  *   - each Law-layout in LAYOUTS carries data-pagefind-body (source grep)
  *   - _site/feed.xml has an <entry> for at least one URL from each dated shape
- *   - every spread of a scroll book has an id equal to its data-book-target, and
- *     no id repeats on a book page (scripts/lib/spread-ids.mjs)
+ *   - every spread of a scroll book has an id equal to its data-book-target
+ *   - no id repeats on a page the site's templates rendered; pages copied in
+ *     whole (artifacts, decks, the TSM demo) are not checked
+ *     (both in scripts/lib/spread-ids.mjs)
  *
  * Runs post-eleventy in `bun run build` (see package.json). Node/Bun-runnable,
  * no headless browser.
  */
 import { existsSync, readFileSync, readdirSync } from "fs";
 import path from "path";
-import { checkSpreadIds, isBookPage } from "./lib/spread-ids.mjs";
+import { checkSpreadIds, checkUniqueIds, isBookPage, isSitePage } from "./lib/spread-ids.mjs";
 
 const SITE = "_site";
 
@@ -182,11 +184,16 @@ function walkHtml(dir) {
 }
 let alternatesChecked = 0;
 let bookPages = 0;
+let idPages = 0;
 for (const abs of walkHtml(SITE)) {
   const html = readFileSync(abs, "utf8");
   if (isBookPage(html)) {
     bookPages++;
     for (const p of checkSpreadIds(html, path.relative(SITE, abs))) problems.push(`${p} — fix: src/making/index.njk or src/_includes/components/writing-book.njk`);
+    idPages++;
+  } else if (isSitePage(html)) {
+    for (const p of checkUniqueIds(html, path.relative(SITE, abs))) problems.push(`${p} — fix: the template or transform that writes the id (definition callouts: addDefinitionIds in eleventy/transforms.js)`);
+    idPages++;
   }
   for (const m of html.matchAll(/<link rel="alternate" type="text\/markdown" href="([^"]+)"/g)) {
     const href = m[1];
@@ -198,6 +205,9 @@ for (const abs of walkHtml(SITE)) {
     }
   }
 }
+// The id check finds the site's own pages by their stylesheet link. If that
+// link ever changes shape, say so, do not pass with nothing checked.
+if (!idPages) problems.push(`[unique-ids] no built page loads /assets/css/main.css, so none was checked for repeated ids — fix: isSitePage in scripts/lib/spread-ids.mjs`);
 
 // ── report ───────────────────────────────────────────────────────────────
 if (problems.length) {
@@ -209,4 +219,4 @@ if (problems.length) {
   process.exit(1);
 }
 
-console.log(`[renderings-lint] OK — ${SHAPES.length} shapes, ${pagesChecked} page(s) checked, ${alternatesChecked} alternate link(s) verified, ${bookPages} book page(s) with addressable spreads, all twinned/negotiated/indexed/fed.`);
+console.log(`[renderings-lint] OK — ${SHAPES.length} shapes, ${pagesChecked} page(s) checked, ${alternatesChecked} alternate link(s) verified, ${bookPages} book page(s) with addressable spreads, ${idPages} page(s) with unique ids, all twinned/negotiated/indexed/fed.`);

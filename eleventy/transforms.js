@@ -81,6 +81,24 @@ export function createWritingImageTransform(processImage = Image, keepLossless =
   };
 }
 
+// Blockquotes that open with a bold term and a colon (> **Term**: or
+// > **Term** (qualifier):) become deep-linkable definitions, #dfn-<slug>.
+// A term that recurs on one page (four "Quick Application" callouts in loom-ix)
+// keeps the bare id on its first use and gets -2, -3 after, so the id a link
+// already points at never moves and no two elements share one.
+const DEFINITION = /<blockquote>\s*\n<p><strong>([^<]+)<\/strong>\s*(?:\([^)]*\)\s*)?:/g;
+
+export function addDefinitionIds(content) {
+  const used = new Set();
+  return content.replace(DEFINITION, (match, term) => {
+    const slug = term.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+    let id = `dfn-${slug}`;
+    for (let n = 2; used.has(id); n++) id = `dfn-${slug}-${n}`;
+    used.add(id);
+    return match.replace('<blockquote>', `<blockquote id="${id}" class="concept-definition">`);
+  });
+}
+
 export default function(eleventyConfig) {
   // Writing attachments share the shortcode's cache and responsive formats.
   // Originals remain available to the lightbox via data-full-src.
@@ -93,13 +111,6 @@ export default function(eleventyConfig) {
     if (!outputPath || typeof outputPath !== 'string' || !outputPath.endsWith(".html")) return content;
     if (!this.page.inputPath?.includes("/writing/")) return content;
 
-    // Add id and class to blockquote definitions: > **Term** (optional qualifier):
-    const bqRegex = /<blockquote>\s*\n<p><strong>([^<]+)<\/strong>\s*(?:\([^)]*\)\s*)?:/g;
-    content = content.replace(bqRegex, (match, term) => {
-      const slug = term.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-      return match.replace('<blockquote>', `<blockquote id="dfn-${slug}" class="concept-definition">`);
-    });
-
-    return content;
+    return addDefinitionIds(content);
   });
 }

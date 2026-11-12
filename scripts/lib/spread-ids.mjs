@@ -10,8 +10,10 @@
  * a URL fragment; getElementById() and :target need no escaping, only a CSS
  * selector written by hand does (#artifact\:slug).
  *
- * Pure: takes HTML text, returns problem strings. check-renderings.mjs runs it on
- * every built page that holds a book; spread-ids.test.mjs pins its behaviour.
+ * Pure: takes HTML text, returns problem strings. check-renderings.mjs runs
+ * checkSpreadIds on every built page that holds a book and checkUniqueIds on
+ * every other page the site's templates rendered (isSitePage);
+ * spread-ids.test.mjs pins the behaviour of all three.
  */
 
 const BOOK = /<div class="(?:making-book|writing-book)"/;
@@ -26,6 +28,30 @@ function stripInert(html) {
 
 export function isBookPage(html) {
   return BOOK.test(html);
+}
+
+// A page the site's own templates rendered loads the site stylesheet (base.njk).
+// Pages copied in whole do not: artifacts and slide decks under /assets/, the
+// TSM demo. Those are works with their own authors; their markup is not ours to
+// correct, and nothing on the site links into them by fragment, so the id check
+// leaves them alone.
+const SITE_STYLESHEET = /<link\b[^>]*\shref="\/assets\/css\/main\.css/;
+
+export function isSitePage(html) {
+  return SITE_STYLESHEET.test(html);
+}
+
+// A site page: an id that repeats makes #fragment links and label/aria references
+// land on whichever element comes first. Ids are read from tags only, with
+// scripts and comments removed, so markup inside a string is not counted.
+export function checkUniqueIds(html, page = "page", label = "unique-ids") {
+  const seen = new Map();
+  for (const m of stripInert(html).matchAll(ID)) seen.set(m[1], (seen.get(m[1]) || 0) + 1);
+  const problems = [];
+  for (const [id, n] of seen) {
+    if (n > 1) problems.push(`[${label}] ${page}: id "${id}" appears ${n} times`);
+  }
+  return problems;
 }
 
 export function checkSpreadIds(html, page = "page") {
@@ -48,10 +74,5 @@ export function checkSpreadIds(html, page = "page") {
   }
   if (!spreads) problems.push(`[spread-ids] ${page}: a book with no spreads found`);
 
-  const seen = new Map();
-  for (const m of body.matchAll(ID)) seen.set(m[1], (seen.get(m[1]) || 0) + 1);
-  for (const [id, n] of seen) {
-    if (n > 1) problems.push(`[spread-ids] ${page}: id "${id}" appears ${n} times`);
-  }
-  return problems;
+  return problems.concat(checkUniqueIds(html, page, "spread-ids"));
 }
