@@ -30,7 +30,7 @@
     "play:test": "bun test scripts/check-play-integration.test.mjs",
     "pipeline:test": "bun test scripts/image-cache.test.mjs scripts/image-pipeline*.test.mjs scripts/middleware.test.mjs scripts/image-aspect.test.mjs",
     "test:runtime": "bun run freshness:check && playwright test tests/runtime --project=desktop --project=mobile-boundary",
-    "surface:test": "bun test scripts/social-cards.test.mjs scripts/rendering-fidelity.test.mjs",
+    "surface:test": "bun test scripts/social-cards.test.mjs scripts/rendering-fidelity.test.mjs scripts/spread-ids.test.mjs",
     "test:ui": "bun run freshness:check && playwright test tests/reading tests/fonts --project=desktop && playwright test tests/modals --project=desktop --project=phone --project=phone-narrow && playwright test tests/discovery --project=phone --project=desktop"
   },
   "dependencies": {

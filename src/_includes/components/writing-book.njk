@@ -16,7 +16,7 @@
 <div class="writing-book" id="writing-book">
 
     <!-- Header Spread -->
-    <section class="essay-spread header-spread" data-spread="0">
+    <section class="essay-spread header-spread" data-spread="0" data-book-target="opening" id="opening">
         {% if headerPoem %}
         <pre class="header-poem">{{ headerPoem | safe }}</pre>
         {% endif %}
@@ -33,7 +33,7 @@
 
     <!-- Essay Spreads -->
     {% for essay in essays %}
-    <section class="essay-spread" data-spread="{{ loop.index }}">
+    <section class="essay-spread" data-spread="{{ loop.index }}" data-book-target="essay:{{ essay.fileSlug }}" id="essay:{{ essay.fileSlug }}">
         <span class="spread-position">{{ loop.index | padStart(3, '0') }} / {{ essays | length | padStart(3, '0') }}</span>
 
         {% if essay.data.series %}
@@ -65,7 +65,7 @@
        companionLink (set in series.njk). Renders nowhere else (writing index, tag
        pages) since the var is undefined there. #}
     {% if companionLink %}
-    <section class="essay-spread companion-spread" data-spread="{{ (essays | length) + 1 }}">
+    <section class="essay-spread companion-spread" data-spread="{{ (essays | length) + 1 }}" data-book-target="companion" id="companion">
         <span class="spread-position">◆</span>
 
         <div class="essay-series">companion</div>
@@ -103,11 +103,32 @@
     const scrollHint = document.getElementById('writing-scroll-hint');
     const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
 
+    // The address names the spread in view once the book comes to rest
+    // (each spread's id is its data-book-target, e.g. essay:loom-i-...), so a
+    // copied link opens the same page. replaceState adds no history; the
+    // opening spread is the bare address. The book scrolls (and so fires
+    // this) only in book mode.
+    let addressTimer;
+    function writeAddress(index) {
+        const spread = spreads[index];
+        if (!spread || !spread.id) return;
+        const hash = index === 0 ? '' : '#' + spread.id;
+        let current = window.location.hash.slice(1);
+        try { current = decodeURIComponent(current); } catch (_) {}
+        if (hash.slice(1) === current) return;
+        try {
+            history.replaceState(history.state, '', window.location.pathname + window.location.search + hash);
+        } catch (_) {}
+    }
+
     // Update active dot on scroll
     book.addEventListener('scroll', () => {
         const scrollPos = book.scrollTop;
         const spreadHeight = window.innerHeight;
         const currentIndex = Math.round(scrollPos / spreadHeight);
+
+        clearTimeout(addressTimer);
+        addressTimer = setTimeout(() => writeAddress(Math.round(book.scrollTop / window.innerHeight)), 200);
 
         dots.forEach((dot, i) => {
             dot.classList.toggle('active', i === currentIndex);
