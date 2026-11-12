@@ -134,7 +134,9 @@
     // ── Stock Selection ────────────────────────────────────────────
     // Maps page sections to paper stocks
     function detectStock() {
-        const path = window.location.pathname;
+        // Canonical URLs have no trailing slash (/making, not /making/), so
+        // match the section itself as well as the pages beneath it.
+        const path = window.location.pathname.replace(/\/+$/, '') + '/';
         if (path === '/') return 'title';
         if (path.startsWith('/writing/')) return 'body';
         if (path.startsWith('/making/') || path.startsWith('/concepts/') || path.startsWith('/thinking/')) return 'workshop';
