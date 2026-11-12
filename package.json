@@ -12,6 +12,7 @@
     "built-json:lint": "bun scripts/check-built-json.mjs",
     "test:making": "bun run freshness:check && playwright test tests/making",
     "serve:built": "bun scripts/serve-built-site.mjs",
+    "workspace:link": "bun scripts/link-workspace.mjs",
     "publish:indexnow": "bun run freshness:check && bash scripts/indexnow-submit.sh",
     "publish:retention": "bun scripts/deployment-retention.mjs",
     "retention:test": "bun test scripts/deployment-retention.test.mjs scripts/deployment-retention-wrapper.test.mjs",

@@ -4,7 +4,7 @@ Loaded into every session, so it holds only what applies whatever you touch. `AG
 
 Knowledge about one kind of work lives next to that work: tracked `docs/`, path rules in `.claude/rules/` (Claude Code loads them by path; other agents read the one that matches), and reasoning in `.claude/docs/`. **Add new knowledge there, not here.** A line belongs in this file only if a session that never opens the relevant path could still do damage without it.
 
-`.claude/` is gitignored and exists only in the main checkout. In a fresh clone or the deploy worktree, the tracked `docs/` are all you have, so anything a clone needs in order to edit safely goes in `docs/`.
+`.claude/` is gitignored on purpose: this repo is public and the rules are private operational guidance. It exists only in the main checkout. In a clone on either Mac, run `bun run workspace:link` to link the rules and docs in (`--copy` for a sandbox that cannot follow links). Leave the deploy worktree unlinked, so a production build depends only on its committed SHA. Without the link, the tracked `docs/` are all you have, so anything a clone needs in order to edit safely goes in `docs/`, and nothing private does.
 
 | When you are… | Read |
 |---|---|

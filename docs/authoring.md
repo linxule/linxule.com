@@ -1,10 +1,18 @@
 # Authoring: code map and the gotchas that bite first
 
-Tracked on purpose. `.claude/rules/` and `.claude/docs/` are gitignored and
-exist only in the main checkout, so a fresh clone, the deploy worktree, or an
-agent that reads only `AGENTS.md` has this file and nothing else. Keep it to
-what someone editing templates or content needs before their first change;
-the long numbered list stays in `.claude/docs/gotchas.md`.
+Tracked on purpose. `.claude/rules/` and `.claude/docs/` are gitignored (the
+repo is public; they are private) and exist only in the main checkout, so a
+fresh clone or an agent that reads only `AGENTS.md` starts with this file and
+nothing else. Keep it to what someone editing templates or content needs
+before their first change; the long numbered list stays in
+`.claude/docs/gotchas.md`.
+
+For the full procedures (adding a portrait, deploying an artifact, papers,
+talks, social cards), a clone on either of the author's Macs runs
+`bun run workspace:link`, which links the private rules and docs in from the
+main checkout. It finds that checkout through the worktree link, then the
+usual location, or `XULE_SITE_MAIN`. Use `--copy` where links cannot be
+followed; copies are disposable, so edit only in the main checkout.
 
 ## Code map
 
