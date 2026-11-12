@@ -23,16 +23,16 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 
 - 帝国理工商学院，英国伦敦，2019 – 2025
 	- 哲学博士，管理学与创业学
-	- 论文题目：重新思考组织设计：去中心化自治组织 (DAOs) 中代币赋能的协调与治理适应 (_Rethinking Organizational Design: Token-Enabled Coordination and Governance Adaptation in Decentralized Autonomous Organizations (DAOs)_)(**Mike Wright教授纪念奖**，最佳博士论文)
-	- 论文委员会：Erkko Autio、Ying-Ying Hsieh、柯文凯 (Kevin Corley)、Viviana Fang He(伦敦大学学院 UCL)
+	- 论文题目：重新思考组织设计：去中心化自治组织 (DAOs) 中代币赋能的协调与治理适应 (_Rethinking Organizational Design: Token-Enabled Coordination and Governance Adaptation in Decentralized Autonomous Organizations (DAOs)_) (**Mike Wright教授纪念奖**，最佳博士论文)
+	- 论文委员会：Erkko Autio、Ying-Ying Hsieh、柯文凯 (Kevin Corley)、Viviana Fang He (伦敦大学学院 UCL)
 - <br/>芝加哥大学 (University of Chicago)，美国，2018 – 2019
 	- 非学位研究生 (Graduate Student At-Large)
 - <br/>圣母大学 (University of Notre Dame)，美国，2011 – 2016
-	- 会计学硕士 (MSc in Accountancy) 与工商管理学士(会计方向)(BBA in Accounting)
+	- 会计学硕士 (MSc in Accountancy) 与工商管理学士 (会计方向) (BBA in Accounting)
 
 # 研究兴趣
 
-我致力于发展"算法时代"的组织理论，研究当人类与算法系统共同决定结果时，组织如何进行协调。我的研究问题包括：什么治理机制能够实现有效运作？<span class="accident">什么样的组织形式正在涌现？</span>在实证层面，我研究：(1) 去中心化自治组织 (DAOs) 中的代币治理 (token governance)，识别代币二元性 (token duality)、选择性中心化 (selective centralization) 和结构化透明度 (structured transparency) 等机制；(2) 组织环境中的人机协作 (human-AI collaboration)，揭示协调模式和新兴组织能力；(3) 传统手工艺组织作为历史参照案例。在方法论层面，我开创了SIGNA框架：一种人工智能增强的定性研究方法，在保持诠释深度的同时实现计算规模的分析，适用于组织研究和社会科学研究。
+我致力于发展“算法时代”的组织理论，研究当人类与算法系统共同决定结果时，组织如何进行协调。我的研究问题包括：什么治理机制能够实现有效运作？<span class="accident">什么样的组织形式正在涌现？</span>在实证层面，我研究：(1) 去中心化自治组织 (DAOs) 中的代币治理 (token governance)，识别代币二元性 (token duality)、选择性中心化 (selective centralization) 和结构化透明度 (structured transparency) 等机制；(2) 组织环境中的人机协作 (human-AI collaboration)，揭示协调模式和新兴组织能力；(3) 传统手工艺组织作为历史参照案例。在方法论层面，我开创了SIGNA框架：一种人工智能增强的定性研究方法，在保持诠释深度的同时实现计算规模的分析，适用于组织研究和社会科学研究。
 
 # 奖项与资助
 
@@ -49,7 +49,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 # 发表论文
 
 - Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. 《战略组织》_Strategic Organization_. https://doi.org/10.1177/14761270261448645 [在线优先发表] [[论文页面]](/papers/interpretive-orchestration/) | [[SSRN]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) | [[GitHub]](https://github.com/linxule/interpretive-orchestration-paper)
-	- 受邀理论贡献，提出"诠释性编排" (interpretive orchestration) 框架，将定性研究者重新定位为人机协作的编排者，应对两大认识论挑战：将隐性知识转化为AI可处理的形式(翻译挑战)，以及对"1.5阶数据" (1.5 order data)——通过计算得出但需人类诠释才具理论意义的模式——行使学术判断(判断挑战)。提出三种战略模型(苏格拉底式、欧几里得式、维特鲁威式)以维护认识论责任。
+	- 受邀理论贡献，提出“诠释性编排” (interpretive orchestration) 框架，将定性研究者重新定位为人机协作的编排者，应对两大认识论挑战：将隐性知识转化为AI可处理的形式 (翻译挑战)，以及对“1.5阶数据” (1.5 order data)——通过计算得出但需人类诠释才具理论意义的模式——行使学术判断 (判断挑战)。提出三种战略模型 (苏格拉底式、欧几里得式、维特鲁威式) 以维护认识论责任。
 
 # 审稿中论文
 
@@ -69,7 +69,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 	- 战略管理学会 (SMS) 年会研究方法论文奖提名，2023
 	- 战略管理学会 (SMS) 年会博士生研究论文奖提名，2023
 - <br/>Lin, X., & Corley, K. G. (2025). _Preserving Researcher Agency When Adding AI Tools to a Grounded Theory Study: Introducing Scalable Inductive Grounded NLP Approach (SIGNA)._ [撰写中]
-	- 研究基础设施，使社会科学领域的定性研究者能够分析大规模数据(2490万字，17.7万份提案)，同时保持诠释严谨性。解决了在计算规模上研究组织现象而不失去理论深度的瓶颈。展示了可迁移性：已应用于组织战略(AMJ修改中)、DAO治理(博士论文)和创业过程。
+	- 研究基础设施，使社会科学领域的定性研究者能够分析大规模数据 (2490万字，17.7万份提案)，同时保持诠释严谨性。解决了在计算规模上研究组织现象而不失去理论深度的瓶颈。展示了可迁移性：已应用于组织战略 (AMJ修改中)、DAO治理 (博士论文) 和创业过程。
 	- 获得OpenAI Researcher Access Program资助，2024
 	- 获得Cohere for AI Research Grant Program资助，2024
 	- 获得Google Cloud Research Credits Program资助，2023
@@ -86,14 +86,14 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 # 公共学术
 
 - [**Research Memex**](https://research-memex.org)
-  - 与Claude模型共同开发(2025)
+  - 与Claude模型共同开发 (2025)
   - 源于与Erkko Autio共同教授系统性文献综述的人机研究协作框架
   - 应用诠释编排 (Interpretive Orchestration) 原则的AI增强研究工作流的综合文档
 - <br/>[**任务结构矩阵 (交互式)**](https://linxule.com/tsm/)
   - Carliss Baldwin 任务结构矩阵的动画解读，附实时结构发现算法
   - SEAM 系列的交互式配套工具
 - <br/>[Making](/making/)：AI作为具名创作者
-  - [Kimi K3](/making/creator/kimi-k3/)在Kimi Code中创作了生成式视听作品[《三生万物》](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/)；参与创作的模型均有独立的创作者页面
+  - [Kimi K3](/making/creator/kimi-k3/) 在Kimi Code中创作了生成式视听作品[《三生万物》](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/)；参与创作的模型均有独立的创作者页面
 - <br/>短篇随笔系列：聚焦AI增强研究与组织未来 ([写作](/writing/) | [GitHub](https://github.com/linxule/loom)，CC BY 4.0许可)
   - 44篇英文随笔，其中40篇亦有中文版，分属六个系列：[LOOM (Locus of Observed Meanings)](/writing/series/loom/)、[Organizational Futures](/writing/series/organizational-futures/)、Research with AI、Epistemic Voids、AI Whispers 与 [SEAM](/writing/series/seam/)
   - 与柯文凯 (Kevin Corley，帝国理工学院) 及AI协作者合作撰写；为诠释编排 (Interpretive Orchestration) 框架的方法论配套读物
@@ -104,27 +104,27 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 
 - [_Human & Artificial Intelligence in Organizations (HAIO): Interdisciplinary Impact_](https://haiosymposium.com/)
 	- 研讨会，2024年9月，帝国理工学院
-	- 共同组织者：柯文凯 (Kevin Corley，管理与创业系)、Chris Tucci (Imperial-X)、David Shrier(数字化转型中心)、Mark Kennedy(数据科学研究所)
-	- 嘉宾：Jennifer Ding(艾伦图灵研究所)、Lujain Ibrahim(牛津大学)、Winnie Street (谷歌研究院)、Kevin R. McKee (谷歌DeepMind)、Aidan Peppin (Cohere for AI)、Martin Anthony(伦敦政经学院)、Susan Scott(帝国理工学院)
+	- 共同组织者：柯文凯 (Kevin Corley，管理与创业系)、Chris Tucci (Imperial-X)、David Shrier (数字化转型中心)、Mark Kennedy (数据科学研究所)
+	- 嘉宾：Jennifer Ding (艾伦图灵研究所)、Lujain Ibrahim (牛津大学)、Winnie Street (谷歌研究院)、Kevin R. McKee (谷歌DeepMind)、Aidan Peppin (Cohere for AI)、Martin Anthony (伦敦政经学院)、Susan Scott (帝国理工学院)
 - <br/>_Humans and Algorithms in Organizations: Navigating the Intersection of Blockchain and AI_
-	- 小组研讨会，管理学会年会 (AOM)，2024(伊利诺伊州芝加哥)
-	- 共同主席：Magnus van Haaren(鹿特丹管理学院)& Carlos Santana(挪威科技大学)
-	- 嘉宾：Oliver Baumann(南丹麦大学)、Robert Wayne Gregory(密歇根大学)、Hanna Halaburda(纽约大学斯特恩商学院)、Vivianna Fang He(圣加仑大学)、Alex Murray(俄勒冈大学)
+	- 小组研讨会，管理学会年会 (AOM)，2024 (伊利诺伊州芝加哥)
+	- 共同主席：Magnus van Haaren (鹿特丹管理学院) & Carlos Santana (挪威科技大学)
+	- 嘉宾：Oliver Baumann (南丹麦大学)、Robert Wayne Gregory (密歇根大学)、Hanna Halaburda (纽约大学斯特恩商学院)、Vivianna Fang He (圣加仑大学)、Alex Murray (俄勒冈大学)
 - <br/>_Web3 Decentralization: Blockchain Technologies' Impact on Modern Organizational Governance_
-	- 小组研讨会，管理学会年会 (AOM)，2023(马萨诸塞州波士顿)
-	- 共同主席：Magnus van Haaren(鹿特丹管理学院)& Wenqian Wang(香港浸会大学)
-	- 嘉宾：Ethan Bernstein(哈佛商学院)、Hanna Halaburda(纽约大学)、Ying-Ying Hsieh(帝国理工学院)、Alex Murray(俄勒冈大学)、Joana Pereira(利兹大学商学院)、Jean-Philippe Vergne(伦敦大学学院)
+	- 小组研讨会，管理学会年会 (AOM)，2023 (马萨诸塞州波士顿)
+	- 共同主席：Magnus van Haaren (鹿特丹管理学院) & Wenqian Wang (香港浸会大学)
+	- 嘉宾：Ethan Bernstein (哈佛商学院)、Hanna Halaburda (纽约大学)、Ying-Ying Hsieh (帝国理工学院)、Alex Murray (俄勒冈大学)、Joana Pereira (利兹大学商学院)、Jean-Philippe Vergne (伦敦大学学院)
 
 # 学术报告
 
 - _Agentic AI and Qualitative Research_
-	- 伦敦文本分析会议 (LTAC)，伦敦大学金史密斯学院，2026([幻灯片](https://linxule.com/talks/agentic-ai-and-qualitative-research/))
+	- 伦敦文本分析会议 (LTAC)，伦敦大学金史密斯学院，2026 ([幻灯片](https://linxule.com/talks/agentic-ai-and-qualitative-research/))
 	- 90分钟工作坊：自动化边界、与agent协作的五种安排、一次多模型现场环节，以及把agent编辑的公开wiki读作organizing；另参与会前的领域现状讨论
 - <br/>_Thinking Through AI: Literature Review as Scholarly Practice_
-	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026([视频](https://linxule.com/talks/thinking-through-ai-01/))
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026 ([视频](https://linxule.com/talks/thinking-through-ai-01/))
 	- 将文献综述视为学术实践：提出三项导向原则，开展跨三种 AI 配置的现场演示与动手实践环节
 - <br/>_Rethinking Human-AI Collaboration in Interpretive Research_
-	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026([视频](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research/))
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026 ([视频](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research/))
 	- 与柯文凯 (Kevin Corley) 合作
 	- 引入天体隐喻探讨人机协作，研究AI增强定性研究中的认识论责任
 - <br/>_Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_
@@ -144,15 +144,15 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 # 客座讲座
 
 - _What AI Tool to Pick When_
-	- Learning to Research with AI，IDEA Lab，帝国理工商学院，2026([幻灯片](https://linxule.com/talks/what-ai-tool-to-pick-when/))
+	- Learning to Research with AI，IDEA Lab，帝国理工商学院，2026 ([幻灯片](https://linxule.com/talks/what-ai-tool-to-pick-when/))
 	- 基于验证可行性和解空间匹配AI工具与研究任务的框架
 - <br/>_AI for Social Science: The Evolution of AI in Literature Reviews and Beyond_
-	- 帝国理工商学院博士项目系统性文献综述模块，2023 & 2024([幻灯片](https://linxule.com/talks/ai-for-social-science/))
+	- 帝国理工商学院博士项目系统性文献综述模块，2023 & 2024 ([幻灯片](https://linxule.com/talks/ai-for-social-science/))
 - <br/>_How will AI Transform Research Process_
 	- 研究研讨会，伦敦国王学院商学院，2024
 	- 受Phanish Puranam教授 (INSEAD) 邀请，主讲研讨会
 - <br/>_Teaching AI to Lend a Hand: Customizing Large Language Models (LLMs) for Data, Writing & Coding_
-	- 方法阅读小组，帝国理工商学院，2023 & 2024([幻灯片](https://linxule.com/talks/teaching-ai-to-lend-a-hand/))
+	- 方法阅读小组，帝国理工商学院，2023 & 2024 ([幻灯片](https://linxule.com/talks/teaching-ai-to-lend-a-hand/))
 
 # 教学经历
 
@@ -167,12 +167,12 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 	- 工作坊讲师；MSc Product Management & UX Design，巴黎
 	- 动手实践课程：构建面向产品管理的AI智能体，并在产品全生命周期中应用生成式AI (generative AI) 工具
 - 系统性文献综述 (Systematic Reviews)，帝国理工商学院，2025
-	- 与Erkko Autio共同授课(研究型硕士模块)
+	- 与Erkko Autio共同授课 (研究型硕士模块)
 	- 共同设计AI增强系统性文献综述课程；培训博士生进行战略性任务委派、输出验证和学术成果归属
 	- 课程材料记录于[Research Memex](https://research-memex.org)
 - 金融科技的管理、战略与创新 (Management, Strategy, and Innovation in FinTech)，帝国理工商学院，2022-2024
 	- 担任 Ying-Ying Hsieh 的助教
-	- 开发了教学案例，帮助学生理解集体管理和发展DAO的独特方面([案例材料](https://makerdao.daogov.info/))
+	- 开发了教学案例，帮助学生理解集体管理和发展DAO的独特方面 ([案例材料](https://makerdao.daogov.info/))
 - 技术与创新管理 (Technology and Innovation Management)，帝国理工商学院，2023-2024
 	- 担任 Anne ter Wal 的助教
 - 战略管理 (Strategic Management)，帝国理工商学院，2022-2024
@@ -208,8 +208,8 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 - <br/>Agent与MCP基础设施
 	- [Vox MCP Server](https://github.com/linxule/vox-mcp)
 		- 面向MCP客户端的多模型网关，支持兼容的本地服务器、对话线程管理及JSON或Markdown导出。不向提示词添加行为指令
-	- Lotus Wisdom MCP Server([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
-		- 通过多视角推理实现结构化沉思式问题解决的MCP服务器；提供跨MCP客户端可用的托管端点(约每月640次下载，npm，2026年年中数据)
+	- Lotus Wisdom MCP Server ([GitHub](https://github.com/linxule/lotus-wisdom-mcp) & [Smithery](https://smithery.ai/server/@linxule/lotus-wisdom-mcp))
+		- 通过多视角推理实现结构化沉思式问题解决的MCP服务器；提供跨MCP客户端可用的托管端点 (约每月640次下载，npm，2026年年中数据)
 	- [durable-thinking](https://github.com/linxule/durable-thinking)
 		- 基于MCP参考实现Sequential Thinking改编的服务器 (MIT许可)。在部署者自己的Cloudflare环境中跨会话保存显式推理笔记、分支与修订，支持检索和删除，不访问模型的隐藏推理
 	- [MCP Music Studio](https://music-studio.linxule.com) ([GitHub](https://github.com/linxule/mcp-music-studio))
@@ -217,14 +217,14 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 	- [arcade](https://github.com/linxule/arcade)
 		- AI编程智能体通过共享文件总线 (file bus) 相互对战的游戏竞技场，支持国际象棋、中国象棋与Core War
 	- [kimi-plugin-cc](https://github.com/linxule/kimi-plugin-cc)
-		- 为智能体编程环境(Claude Code、Codex)引入独立的第二模型，用于差异审查 (diff review)、对抗性质询与委托任务，配备钩子 (hook) 强制执行的安全边界
+		- 为智能体编程环境 (Claude Code、Codex) 引入独立的第二模型，用于差异审查 (diff review)、对抗性质询与委托任务，配备钩子 (hook) 强制执行的安全边界
 	- [deepthonk](https://github.com/linxule/deepthonk)
-		- OpenDeepThink算法(Zhou等，2026)的提供商中立实现，用于基于群体的答案精炼，以可检视的MCP资源形式提供(约每月780次下载，npm，2026年年中数据)
+		- OpenDeepThink算法 (Zhou等，2026) 的提供商中立实现，用于基于群体的答案精炼，以可检视的MCP资源形式提供 (约每月780次下载，npm，2026年年中数据)
 	- [MinerU MCP](https://github.com/linxule/mineru-mcp)
-		- 面向AI研究工作流的文档与PDF提取桥接工具 (MIT许可)(约每月830次下载，npm，2026年年中数据)
+		- 面向AI研究工作流的文档与PDF提取桥接工具 (MIT许可) (约每月830次下载，npm，2026年年中数据)
 - <br/>数据与提示词
-	- daogov：DAO治理协调公开数据集(准备中)
-		- 78个去中心化组织，26万条治理讨论，约4030万字(详见"工作论文")
+	- daogov：DAO治理协调公开数据集 (准备中)
+		- 78个去中心化组织，26万条治理讨论，约4030万字 (详见“工作论文”)
 	- [AI Research Prompts](https://github.com/linxule/prompts)
 		- 面向研究用途的认知技术策划提示词库；Lotus Wisdom框架的源起
 - <br/>完整的开源与公开项目作品集：[linxule.com/builds](/builds/)
@@ -233,9 +233,9 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 
 - 特约审稿人
 	- 战略管理学会年会 (SMS Annual Conference)，2024至今
-	- Data for Policy，"解码未来：人工智能的可信治理？" (Decoding the Future: Trustworthy Governance with AI?)，伦敦，2024
+	- Data for Policy，“解码未来：人工智能的可信治理？” (Decoding the Future: Trustworthy Governance with AI?)，伦敦，2024
 	- 管理学会年会 (AOM Annual Meeting)，2021至今
-	- 《管理学会发现》_Academy of Management Discoveries_，特别研究论坛 (SRF) "工作未来的人性面：理解人在塑造变化世界中的角色"，2022
+	- 《管理学会发现》_Academy of Management Discoveries_，特别研究论坛 (SRF) “工作未来的人性面：理解人在塑造变化世界中的角色”，2022
 
 # 服务
 
@@ -269,9 +269,9 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 
 # 语言
 
-普通话(母语)<br/>
-英语(流利)<br/>
-英语盲文(一级)
+普通话 (母语)<br/>
+英语 (流利)<br/>
+英语盲文 (一级)
 
 # 推荐人
 
