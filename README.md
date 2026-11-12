@@ -2,7 +2,7 @@
 
 Book aesthetic, algorithmic age. Built with Eleventy.
 
-> **For AI assistants**: See [CLAUDE.md](./CLAUDE.md) for architecture, philosophy, and gotchas.
+> **For AI assistants**: Start at [CLAUDE.md](./CLAUDE.md): the few things that apply everywhere, and an index of where the rest lives.
 
 ## Philosophy
 

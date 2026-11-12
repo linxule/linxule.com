@@ -24,13 +24,25 @@ does not change image quality or either site's production domains.
    Serialize publishing for this project: do not deploy, promote, roll back, or
    change aliases concurrently with retention cleanup.
 
-2. **Build the authorized committed SHA in a detached worktree.** Never publish
-   the shared dirty checkout. Preserve the existing cache workflow and CLI pin:
+2. **Build the authorized committed SHA in a detached worktree**
+   (`.deploy-worktree`, beside `xule-site/`). Never publish the shared dirty
+   checkout: uncommitted work such as `src/tsm/` would ship. Git auto-deploy is
+   disabled, so `git push` deploys nothing. Preserve the existing cache
+   workflow and CLI pin (58.9.1 built but rejected the middleware import at
+   deploy, 2026-08-11):
 
    ```bash
+   # iCloud empties files it has uploaded; reading one blocks the build forever.
+   find .cache.nosync node_modules.nosync -flags +dataless | head   # expect nothing
    bunx vercel@58.8.0 build --prod --scope linxules-projects
    du -sh .vercel/output
    ```
+
+   If the first command lists files, restore them before building: cache
+   images from the main checkout's `.cache.nosync`, dependencies with
+   `~/.local/bin/nosync-deps --apply`. A build showing 0% CPU for a minute is
+   stuck on such a file, not slow (it cost 25 minutes on 2026-11-12; see
+   `docs/releases/design-2026-11-12.md`).
 
    The normal build runs the site's verification gate. Inspect payload size
    before upload. Output was approximately 1.4 GB as of September 13, 2026
