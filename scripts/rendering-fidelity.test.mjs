@@ -90,6 +90,87 @@ describe("artifact Markdown catalogs", () => {
   });
 });
 
+describe("text-surface repairs", () => {
+  test("Markdown bodies translate accidents and clean authoring-only markup while preserving deliberate anchors", () => {
+    const input = [
+      'Before <span class="accident">two readers</span>.',
+      '{% raw %}`@/{+*\\-#}`{% endraw %}',
+      '<a id="deliberate"></a>',
+      '<details class="notes"><summary>Liner &quot;notes&quot;</summary><p>One &middot; two &rarr; three &rsquo; four.</p><h2>Sources</h2><ul><li>First<br/>Second</li></ul></details>',
+    ].join("\n\n");
+    const output = env.getFilter("markdownBody")(input);
+    expect(output).toContain("*two readers* *(accident)*");
+    expect(output).toContain('`@/{+*\\-#}`');
+    expect(output).toContain('<a id="deliberate"></a>');
+    expect(output).toContain('**Liner "notes"**');
+    expect(output).toContain("One · two → three ’ four.");
+    expect(output).toContain("## Sources");
+    expect(output).not.toMatch(/<details|<summary|<br\s*\/?|&quot;|&middot;|&rarr;|&rsquo;|\{% raw %\}|\{% endraw %\}/);
+  });
+
+  // 2026-11-12: a first version turned every <br> into a paragraph break. The CV
+  // opens ~60 list items with one as a spacer, so each became an empty bullet
+  // with its text cut loose below it.
+  test("a line break never empties a list item or splits a paragraph", () => {
+    const markdownBody = env.getFilter("markdownBody");
+    expect(markdownBody("- First\n\t- role\n- <br/>Second, 2025\n\t- role")).toBe("- First\n\t- role\n- Second, 2025\n\t- role");
+    expect(markdownBody("AOM<br/>\nSMS<br/>\n\n# Next")).toBe("AOM  \nSMS\n\n# Next");
+    expect(markdownBody("one<br>two")).toBe("one  \ntwo");
+  });
+
+  test("code is quoted, not translated", () => {
+    const markdownBody = env.getFilter("markdownBody");
+    const fenced = "```html\n<details><summary>a &amp; b</summary><br/></details>\n<span class=\"accident\">x</span>\n```";
+    expect(markdownBody(`Before &amp; after.\n\n${fenced}\n\nInline \`&lt;br/&gt; <br/>\` stays.`))
+      .toBe(`Before & after.\n\n${fenced}\n\nInline \`&lt;br/&gt; <br/>\` stays.`);
+  });
+
+  test("liner notes keep their emphasis, quotation, code, lists and links", () => {
+    const output = env.getFilter("markdownBody")([
+      "<details><summary>Notes</summary>",
+      "<blockquote>\n<p>&quot;Why not?&quot;\n— the announcer</p>\n</blockquote>",
+      "<p><strong>1. Dial</strong> (2:12). <em>send me one thing</em> in <code>engine/</code>, see <a href=\"https://example.org/a?b=1&amp;c=2\">the source</a>. If a < b then stop.</p>",
+      "<ul>\n<li><em>Kimi</em>: piano.</li>\n<li>Grok: dry,\nthen silence.</li>\n</ul>",
+      "<ol><li>first</li><li>second</li></ol>",
+      "</details>",
+    ].join("\n"));
+    expect(output).toContain('> "Why not?"\n> — the announcer');
+    expect(output).toContain("**1. Dial** (2:12). *send me one thing* in `engine/`, see [the source](https://example.org/a?b=1&c=2). If a < b then stop.");
+    expect(output).toContain("- *Kimi*: piano.\n- Grok: dry,\nthen silence.");
+    expect(output).toContain("1. first\n2. second");
+    expect(output).not.toMatch(/<\/?[a-z]/);
+  });
+
+  test("artifact twins carry poster alternatives and absolute companion links", () => {
+    const artifact = source("src/making/artifacts/artifact-2026-07-26-order-is-the-only-image.md");
+    const output = markdownTemplate.render({ artifact, site });
+    expect(output).toContain(`**Poster alt**: ${artifact.data.thumbnailAlt}`);
+    expect(output).toContain(`## Companions — ${artifact.data.companions.intro}`);
+    for (const companion of artifact.data.companions.items) {
+      expect(output).toContain(`](${new URL(companion.href, site.url).href})`);
+    }
+    expect(output).toContain(artifact.data.companions.note);
+  });
+
+  test("paper twins include full text and BibTeX, and the HTML index uses the same collection", () => {
+    const papers = [
+      source("src/papers/interpretive-orchestration/index.md"),
+      source("src/papers/cognitio-emergens/index.md"),
+    ];
+    const twin = nunjucks.compile(matter(read("src/md-outputs/papers.md.njk")).content, env)
+      .render({ paper: papers[0], site });
+    expect(twin).toContain(`[Download PDF (full text)](${site.url}${papers[0].url}${papers[0].data.pdf})`);
+    expect(twin).toContain("```bibtex\n@article{lin2026interpretive,");
+
+    const index = nunjucks.compile(matter(read("src/papers/index.njk")).content, env)
+      .render({ collections: { papers } });
+    for (const paper of papers) {
+      expect(index).toContain(`<a href="${paper.url}">${paper.data.title}</a>`);
+      expect(index).toContain(`<span class="ref">${paper.data.indexReference}</span>`);
+    }
+  });
+});
+
 describe("Atom fidelity", () => {
   test("real source author shapes and full captions survive feed rendering", () => {
     const seam = source("src/writing/seam-02-the-saturday-meeting.md");

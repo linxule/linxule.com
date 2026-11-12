@@ -51,10 +51,10 @@ companions:
     - href: /making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock/
       relation: work I
       title: the loom forgets which clock
-    - href: /making/artifacts/the-equation-remembers-where-it-folded/
+    - href: /making/artifacts/artifact-2026-07-26-the-equation-remembers-where-it-folded/
       relation: work II
       title: the equation remembers where it folded
-    - href: /making/artifacts/the-copy-outlives-the-source/
+    - href: /making/artifacts/artifact-2026-07-27-the-copy-outlives-the-source/
       relation: work IV
       title: the copy outlives the source
 ---

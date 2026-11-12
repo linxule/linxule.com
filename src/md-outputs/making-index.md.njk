@@ -6,6 +6,11 @@ eleventyExcludeFromCollections: true
 
 Portraits and artifacts.
 
+> Prompts as poems.
+> Midjourney as collaborator.
+> Self-representation
+> through machine rendering. *(accident)*
+
 ## Portraits
 
 {% for portrait in collections.portraits %}- [{{ portrait.data.title | safe }}](https://linxule.com{{ portrait.url | replace(r/\/$/, "") }}.md) — {{ portrait.date | readableDate }}{% if portrait.data.generator %} · Generator: {{ portrait.data.generator }}{% endif %}{% if portrait.data.prompter %} · Prompter: {{ portrait.data.prompter }}{% endif %}

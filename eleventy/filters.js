@@ -6,6 +6,73 @@
 import { autoCardPath, ogCard, resolveSocialCard } from "./og-card-paths.js";
 import { imageAttributes } from "./image-pipeline.js";
 import sharp from "sharp";
+import { decodeHTML } from "entities";
+
+// The Markdown twin of a body. Source bodies are Markdown with a little HTML in
+// them (accident spans, <br>, one <details> of liner notes); the twin says the
+// same thing in Markdown alone. Code is quoted, never translated: fenced blocks
+// and inline code spans pass through byte for byte.
+const FENCE = /^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/gm;
+const CODE_SPAN = /(`+)(?!`)[^\n]*?(?<!`)\1(?!`)/g;
+const DETAILS = /<details\b[^>]*>([\s\S]*?)<\/details>/gi;
+const ACCIDENT = /<span\b[^>]*\bclass=(["'])(?:[^"']*\s)?accident(?:\s[^"']*)?\1[^>]*>([\s\S]*?)<\/span>/gi;
+const BREAK = /<br\s*\/?>/.source;
+
+function weave(text, pattern, onMatch, onRest) {
+  let out = "";
+  let last = 0;
+  for (const match of text.matchAll(pattern)) {
+    out += onRest(text.slice(last, match.index)) + onMatch(match);
+    last = match.index + match[0].length;
+  }
+  return out + onRest(text.slice(last));
+}
+
+// A <br> that opens a list item is a spacer on the HTML page and nothing in
+// Markdown; one that ends a paragraph breaks nothing; any other is a hard break
+// (two trailing spaces), so the lines stay one paragraph, or one list item.
+function lineBreaks(text) {
+  return text
+    .replace(new RegExp(`^([ \\t]*(?:[-*+]|\\d+[.)])[ \\t]+)${BREAK}[ \\t]*`, "gim"), "$1")
+    .replace(new RegExp(`${BREAK}[ \\t]*(?=\\n[ \\t]*\\n)`, "gi"), "")
+    .replace(new RegExp(`${BREAK}[ \\t]*\\n?`, "gi"), "  \n");
+}
+
+function proseToMarkdown(text) {
+  return decodeHTML(lineBreaks(text.replace(ACCIDENT, "*$2* *(accident)*")));
+}
+
+function htmlToMarkdown(html) {
+  const tidy = text => text.replace(/[ \t]+$/gm, match => (match === "  " ? match : "")).replace(/\n{3,}/g, "\n\n").trim();
+  const blocks = text => text
+    .replace(/<\/li>\s*/gi, "")
+    .replace(/<ol\b[^>]*>([\s\S]*?)<\/ol>/gi, (_, items) => {
+      let n = 0;
+      return `\n\n${items.replace(/<li\b[^>]*>/gi, () => `\n${++n}. `)}\n\n`;
+    })
+    .replace(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi, (_, level, heading) => `\n\n${"#".repeat(Number(level))} ${heading.trim()}\n\n`)
+    .replace(/<li\b[^>]*>/gi, "\n- ")
+    .replace(/<hr\b[^>]*>/gi, "\n\n---\n\n")
+    .replace(/<\/?(?:p|ul|div)\b[^>]*>/gi, "\n\n");
+  const text = blocks(html
+    .replace(/<summary\b[^>]*>([\s\S]*?)<\/summary>/gi, "\n\n**$1**\n\n")
+    .replace(/<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/gi, (_, quoted) =>
+      `\n\n${tidy(blocks(quoted)).replace(/^/gm, "> ").replace(/^> $/gm, ">")}\n\n`))
+    .replace(ACCIDENT, "*$2* *(accident)*")
+    .replace(/<(strong|b)\b[^>]*>([\s\S]*?)<\/\1>/gi, "**$2**")
+    .replace(/<(em|i)\b[^>]*>([\s\S]*?)<\/\1>/gi, "*$2*")
+    .replace(/<code\b[^>]*>([\s\S]*?)<\/code>/gi, "`$1`")
+    .replace(/<a\b[^>]*\bhref=(["'])(.*?)\1[^>]*>([\s\S]*?)<\/a>/gi, "[$3]($2)");
+  return decodeHTML(tidy(lineBreaks(text).replace(/<\/?[a-z][^>]*>/gi, "")));
+}
+
+function markdownBody(value) {
+  if (!value) return "";
+  const source = String(value).replace(/\{%-?\s*(?:end)?raw\s*-?%\}/g, "");
+  return weave(source, FENCE, match => match[0], outsideFences =>
+    weave(outsideFences, DETAILS, match => `\n\n${htmlToMarkdown(match[1])}\n\n`, outsideDetails =>
+      weave(outsideDetails, CODE_SPAN, match => match[0], proseToMarkdown)));
+}
 
 // Classify an image by aspect ratio for layout routing. Reads header dims only
 // (Sharp metadata, no full decode) from the source file behind a public /assets path.
@@ -166,6 +233,8 @@ export default function(eleventyConfig) {
       .replace(/<[^>]+>/g, '')           // Strip remaining HTML tags
       .trim();
   });
+
+  eleventyConfig.addFilter("markdownBody", markdownBody);
 
   // Combine and sort multiple arrays by date (newest first)
   eleventyConfig.addFilter("combineByDate", (...arrays) => {

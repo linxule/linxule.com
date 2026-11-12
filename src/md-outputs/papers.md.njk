@@ -13,6 +13,7 @@ eleventyExcludeFromCollections: true
 {% if paper.data.doi %}**DOI**: https://doi.org/{{ paper.data.doi }}
 {% endif %}{% if paper.data.arxivId %}**arXiv**: {{ paper.data.arxivId }}
 {% endif %}{% if paper.data.license %}**License**: {{ paper.data.license }}
+{% endif %}{% if paper.data.pdf %}**Full text**: [Download PDF (full text)]({{ site.url }}{{ paper.url }}{{ paper.data.pdf }})
 {% endif %}
 {% if paper.data.abstract %}
 ## Abstract
@@ -28,10 +29,16 @@ eleventyExcludeFromCollections: true
 ## Cite
 
 {% for a in paper.data.authors %}{{ a.name | safe }}{% if not loop.last %}, {% endif %}{% endfor %} ({{ paper.data.year }}). {{ (paper.data.paperTitle | default(paper.data.title)) | safe }}. {% if paper.data.venue %}{{ paper.data.venue | safe }}. {% endif %}{% if paper.data.doi %}https://doi.org/{{ paper.data.doi }}{% elif paper.data.arxivId %}arXiv:{{ paper.data.arxivId }}{% endif %}
+{% if paper.data.bibtex %}
+### BibTeX
 
+```bibtex
+{{ paper.data.bibtex | trim | safe }}
+```
+{% endif %}
 ---
 
-{{ paper.rawInput | safe }}
+{{ paper.rawInput | markdownBody | safe }}
 
 ---
 

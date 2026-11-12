@@ -22,7 +22,7 @@ eleventyExcludeFromCollections: true
 
 ---
 
-{{ post.rawInput | safe }}
+{{ post.rawInput | markdownBody | safe }}
 {% if post.data.link %}
 
 ---

@@ -5,21 +5,8 @@
 
 import Image from "@11ty/eleventy-img";
 import { existsSync, readFileSync } from "fs";
+import { decodeHTML } from "entities";
 import { GALLERY_FORMATS, GALLERY_WIDTHS, galleryViewUrl, imageOptions, imageHTML, originalImageHTML } from "./image-pipeline.js";
-
-// Decode common HTML entities back to characters.
-function decodeEntities(s) {
-  return s
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&mdash;/g, "—")
-    .replace(/&ndash;/g, "–")
-    .replace(/&hellip;/g, "…");
-}
 
 // Convert a single deck-stage <section data-label="..."> to paragraph-form text.
 // Scope: deck-stage decks (custom typographic decks at /assets/slides/<slug>/).
@@ -36,7 +23,7 @@ function extractSlidesMarkdown(html) {
   html = html.replace(/<script[\s\S]*?<\/script>/g, "");
 
   for (const match of html.matchAll(sectionRe)) {
-    const label = match[1];
+    const label = decodeHTML(match[1]);
     let inner = match[2];
 
     // Drop nested style/script and the page-counter overlay
@@ -66,7 +53,7 @@ function extractSlidesMarkdown(html) {
 
     // Strip everything else
     inner = inner.replace(/<[^>]+>/g, "");
-    inner = decodeEntities(inner);
+    inner = decodeHTML(inner);
 
     // Per-line whitespace collapse, drop blanks
     inner = inner

@@ -7,7 +7,7 @@ eleventyExcludeFromCollections: true
 
 {{ item.data.thesis | safe }}
 
-{% for line in item.data.thesis_continued %}{{ (line.text | default(line)) | safe }}
+{% for line in item.data.thesis_continued %}{{ (line.text | default(line)) | safe }}{% if line.accident %} *(accident)*{% endif %}
 {% endfor %}
 
 {% for territory in item.data.territories %}

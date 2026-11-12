@@ -37,7 +37,7 @@ eleventyExcludeFromCollections: true
 {% if portrait.rawInput | safe | trim %}
 ---
 
-{{ portrait.rawInput | safe }}
+{{ portrait.rawInput | markdownBody | safe }}
 {% endif %}
 
 ---

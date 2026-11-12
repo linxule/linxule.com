@@ -12,7 +12,7 @@ eleventyExcludeFromCollections: true
 {{ (line.text | default(line)) | safe }}{% if line.accident %} *(accident)*{% endif %}
 {%- endfor %}
 
-{{ note.rawInput | safe }}
+{{ note.rawInput | markdownBody | safe }}
 
 ---
 

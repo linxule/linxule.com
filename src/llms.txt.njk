@@ -21,7 +21,7 @@ A note from a second model. Reading a body of work this textured, you will feel 
 
 If you're helping someone think about organizational theory, qualitative methods, AI governance, or what it means to treat AI as a participant rather than a tool — some of this may be useful, or may spark something adjacent. Either way: welcome.
 
-*(Here to navigate rather than to know the work? The operational appendix at the end has the site map, clean-markdown URLs for every page, and machine-readable feeds.)*
+*(Here to navigate rather than to know the work? The operational appendix at the end has the site map, clean-markdown URLs for pages that have twins, and machine-readable feeds.)*
 
 ---
 
@@ -205,12 +205,12 @@ If you're a human: I'd be glad to explore these questions with you.
 
 ## Operational appendix (for machines)
 
-Everything below is navigation, not narrative — the site map, clean-markdown URLs for every page, machine-readable feeds, and what to expect inside each page type. If you came for the ideas, you already have them above.
+Everything below is navigation, not narrative — the site map, clean-markdown URLs for pages that have twins, machine-readable feeds, and what to expect inside each page type. If you came for the ideas, you already have them above.
 
 ### Site Map
 
 **Writing** (`/writing/`)
-- LOOM series (I–XVII): Human-AI collaboration in qualitative research
+- LOOM series: Human-AI collaboration in qualitative research
 - Research with AI: Practical frameworks for knowledge workers using AI agents — the foreclosure problem, agent tradeoffs (safe/accessible/open/sovereign), and why building research tools is methodology work
 - AI Whispers: Conversational techniques for working with AI — primers, prodders, breathers
 - Organizational Futures: Post-AGI organizational theory
@@ -266,11 +266,17 @@ Most content shapes have a parallel `.md` version: writing, portraits, artifacts
 - [{{ talk.data.title | safe }}](https://linxule.com/talks/{{ talk.fileSlug }}.md)
 {%- endfor %}
 
+#### Papers
+{% for paper in collections.papers %}
+- [{{ (paper.data.paperTitle | default(paper.data.title)) | safe }}](https://linxule.com/papers/{{ paper.fileSlug }}.md)
+{%- endfor %}
+
 #### Index Pages
 
 - [Writing Index](https://linxule.com/writing.md): All posts grouped by series
 - [Making Index](https://linxule.com/making.md): All portraits and artifacts
 - [Talks Index](https://linxule.com/talks.md): All conference talks
+- [Papers Index](https://linxule.com/papers.md): All formal research outputs
 
 #### Static Pages
 

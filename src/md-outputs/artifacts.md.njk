@@ -22,7 +22,8 @@ eleventyExcludeFromCollections: true
 **Image**: [Open the image]({{ artifact.data.src | absoluteContentUrl(site.url) | safe }})
 {% endif %}{% if artifact.data.thumbnail %}
 **Poster**: [Open the poster]({{ artifact.data.thumbnail | absoluteContentUrl(site.url) | safe }})
-{% endif %}
+{% if artifact.data.thumbnailAlt %}**Poster alt**: {{ artifact.data.thumbnailAlt | safe }}
+{% endif %}{% endif %}
 {% if artifact.data.keywords %}**Keywords**: {{ artifact.data.keywords | join(", ") | safe }}
 {% endif %}
 
@@ -70,7 +71,7 @@ This text catalogs the collection. Each linked image or interactive variation re
 {% if artifact.rawInput | safe | trim %}
 ---
 
-{{ artifact.rawInput | safe }}
+{{ artifact.rawInput | markdownBody | safe }}
 {% endif %}
 
 {% if artifact.data.witnesses %}
@@ -80,6 +81,18 @@ This text catalogs the collection. Each linked image or interactive variation re
 
 {{ artifact.data.witnesses | striptags | safe }}
 {% endif %}
+{%- if artifact.data.companions %}
+
+---
+
+## Companions{% if artifact.data.companions.intro %} — {{ artifact.data.companions.intro | safe }}{% endif %}
+
+{% for c in artifact.data.companions.items %}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ c.href | absoluteContentUrl(site.url) | safe }})
+{% endfor %}
+{%- if artifact.data.companions.note %}
+{{ artifact.data.companions.note | safe }}
+{%- endif %}
+{%- endif %}
 
 ---
 

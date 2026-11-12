@@ -54,7 +54,7 @@ companions:
     - href: /making/artifacts/artifact-2026-07-26-order-is-the-only-image/
       relation: work III
       title: order is the only image
-    - href: /making/artifacts/the-copy-outlives-the-source/
+    - href: /making/artifacts/artifact-2026-07-27-the-copy-outlives-the-source/
       relation: work IV
       title: the copy outlives the source
 ---

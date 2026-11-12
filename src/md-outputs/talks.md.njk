@@ -6,7 +6,7 @@ pagination:
 permalink: /talks/{{ talk.fileSlug }}.md
 eleventyExcludeFromCollections: true
 ---
-# {{ talk.data.title | safe }}
+# {{ talk.data.title | safe }}{% if talk.data.accident %} *(accident)*{% endif %}
 
 {% if talk.data.event %}**Event**: {{ talk.data.event | safe }}
 {% endif %}**Date**: {{ talk.date | readableDate }}
@@ -18,7 +18,7 @@ eleventyExcludeFromCollections: true
 
 ---
 
-{{ talk.rawInput | safe }}
+{{ talk.rawInput | markdownBody | safe }}
 {% if talk.data.slides %}{% slidesOutline talk.data.slides %}{% endif %}
 
 ---
