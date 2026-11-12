@@ -8,6 +8,10 @@
     /* Paper */
     --paper: #f4f1eb;
     --paper-dark: #e8e4dc;
+    --paper-tile: 768px;      /* = TILE in scripts/gen-paper.mjs (its test checks) */
+    --paper-sheet: none;      /* the stock's tile, named per page in base.njk */
+    --paper-cut-x: 0px;       /* where this session cuts the sheet (base.njk) */
+    --paper-cut-y: 0px;
 
     /* Ink — every ink that carries words clears 4.5:1 on both papers.
        Ghost is for rules and ornament only: it never carries a word. */
@@ -62,7 +66,14 @@ html {
 
 body {
     font-family: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif;
-    background: var(--paper);
+    /* The paper is the page background: it propagates to the canvas, so it
+       scrolls with the ink and sits under every box. The sheet is made at
+       build time (scripts/gen-paper.mjs) and named per page in base.njk; the
+       session only moves the cut. The tile is 2x; the size is its CSS size. */
+    background-color: var(--paper);
+    background-image: var(--paper-sheet);
+    background-size: var(--paper-tile) var(--paper-tile);
+    background-position: var(--paper-cut-x) var(--paper-cut-y);
     color: var(--ink);
     line-height: 1.7;
     font-size: 18px;
@@ -82,22 +93,6 @@ body {
     overflow: hidden;
     white-space: nowrap;
     border: 0;
-}
-
-/* Paper texture */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0.35;
-    pointer-events: none;
-    /* Under the ink. Without this the layer paints above every box that is
-       not positioned, and washes the text toward the paper colour. */
-    z-index: -1;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 /* ========================================
@@ -1315,8 +1310,8 @@ a:focus-visible {
         display: none;
     }
 
-    body::before {
-        display: none !important;
+    body {
+        background-image: none;
     }
 
     .article-body .marginalia {

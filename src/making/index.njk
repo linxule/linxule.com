@@ -26,6 +26,9 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
         scroll-behavior: smooth;
         overscroll-behavior: contain;
         scrollbar-width: none; /* Firefox */
+        /* The book scrolls itself while the page stays put, so it carries
+           the sheet: same tile and cut as the page, attached to its content. */
+        background: var(--paper-sheet) var(--paper-cut-x) var(--paper-cut-y) / var(--paper-tile) var(--paper-tile) local;
     }
 
     /* Hide scrollbar but keep functionality */
@@ -649,6 +652,7 @@ seoDescription: "Portraits prompted as poems and rendered by Midjourney, and art
             scroll-snap-type: none;
             height: auto;
             overflow-y: visible;
+            background: none; /* the page scrolls here; its own sheet carries the ink */
         }
 
         .spread {

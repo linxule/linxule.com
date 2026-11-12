@@ -35,6 +35,7 @@ const FILES = [
   "bun.lock",
   "scripts/build-freshness.mjs",
   "scripts/gen-og-cards.mjs",
+  "scripts/gen-paper.mjs",
   "vercel.json",
 ];
 const EXCLUDED_PREFIXES = ["src/tsm/"];

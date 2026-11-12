@@ -59,6 +59,8 @@ export default function(eleventyConfig) {
 
   // Passthrough copy
   eleventyConfig.addPassthroughCopy("src/assets");
+  // The paper tiles are made per commit by scripts/gen-paper.mjs, outside src and git.
+  eleventyConfig.addPassthroughCopy({ ".cache/paper/*.avif": "assets/paper" });
   eleventyConfig.addPassthroughCopy("src/writing/attachments");
   // TSM demo — self-contained static sub-app, copied verbatim, served at /tsm/
   eleventyConfig.addPassthroughCopy("src/tsm");

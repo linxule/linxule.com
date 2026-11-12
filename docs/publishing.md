@@ -58,6 +58,10 @@ does not change image quality or either site's production domains.
    not nosync-protected: delete it after the deploy is verified.
    Do not wipe the image cache to solve deployment storage: it avoids expensive
    cold builds and is separate from retained deployment output.
+   The paper is made per commit: `scripts/gen-paper.mjs` writes one tile per
+   stock to `.cache/paper/`, seeded by the short SHA, and the build copies them
+   to `assets/paper/` (about 190 KB in all). They are not in git and need no
+   step here; a new SHA gives a new `?v=` and new paper.
 
 3. **Deploy once and record the new deployment ID and URL.**
 

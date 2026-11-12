@@ -111,6 +111,33 @@
     })();
     </script>
 
+    {# Paper — made when the book is printed (scripts/gen-paper.mjs: one tile per
+       stock, seeded by this commit), cut when it is read. The stock is declared
+       here, overridable with front matter `paper: title | body | workshop`; an
+       unknown value falls back rather than naming a tile that does not exist.
+       The session only chooses where the sheet is cut (same key across page
+       turns); without JS the cut is at the origin and the paper is still there.
+       main.css paints it on the page background, under every box. #}
+    {%- if paper in ['title', 'body', 'workshop'] %}{% set paperStock = paper %}
+    {%- elif page.url == '/' %}{% set paperStock = 'title' %}
+    {%- elif page.url.startsWith('/making/') or page.url.startsWith('/concepts/') or page.url.startsWith('/thinking/') %}{% set paperStock = 'workshop' %}
+    {%- else %}{% set paperStock = 'body' %}{% endif %}
+    {%- set paperTile = '/assets/paper/' ~ paperStock ~ '.avif?v=' ~ site.version %}
+    {# Preloaded so the sheet is there when the cloak lifts; low priority so it
+       never holds back the fonts the cloak is waiting for. #}
+    <link rel="preload" as="image" type="image/avif" fetchpriority="low" href="{{ paperTile }}">
+    <script>
+    (function(){
+        var s;
+        try{s=sessionStorage.getItem('paper-seed');if(!s){s=String(Math.floor(Math.random()*100000));sessionStorage.setItem('paper-seed',s);}}
+        catch(e){s=Math.floor(Math.random()*100000);}
+        s=+s||0;
+        var r=document.documentElement.style;
+        r.setProperty('--paper-cut-x',-(s%1000)+'px');
+        r.setProperty('--paper-cut-y',-(Math.floor(s/100)%1000)+'px');
+    })();
+    </script>
+
     {# Fonts - loaded as <link> not @import to start download early #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,6 +145,8 @@
 
     <link rel="alternate" type="application/atom+xml" title="{{ site.title }} - Writing" href="/feed.xml">
     <link rel="stylesheet" href="/assets/css/main.css?v={{ site.version }}">
+    {# After main.css, whose :root declares the paper tokens' defaults. #}
+    <style>:root{--paper-sheet:url("{{ paperTile }}")}</style>
 
     {# LLMs.txt for AI assistants - emerging standard for machine-readable site context #}
     <link rel="llms-txt" href="/llms.txt" type="text/plain">
@@ -447,9 +476,6 @@
     {% endif %}
     
     <script defer src="/assets/js/site.js?v={{ site.version }}"></script>
-
-    {# Paper texture — generated per session, unique like handmade paper #}
-    <script defer src="/assets/js/paper.js?v={{ site.version }}"></script>
 
 </body>
 </html>

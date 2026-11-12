@@ -4,6 +4,7 @@ import path from "node:path";
 const ROOT = path.resolve(process.env.SITE_ROOT || "_site");
 const PORT = Number(process.env.PORT || 4173);
 const TYPES = {
+  ".avif": "image/avif",
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
   ".jpeg": "image/jpeg",
