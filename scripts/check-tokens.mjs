@@ -14,6 +14,13 @@
  *               `/* ornament *\/` on the same line. Ghost never carries a word.
  *   T5 earned   filter: grayscale(<non-zero>) only inside @media (hover: hover);
  *               on touch screens a specimen is full colour at rest.
+ *   T6 typeface no declaration names a web face ('Cormorant Garamond', 'IBM Plex Mono',
+ *               'Noto Serif SC') in font-family, the font shorthand, a custom property
+ *               or a JS fontFamily: use var(--font-serif) / var(--font-mono). The faces are
+ *               named only in main.css's --font-* tokens (any --font-* declared there, so a
+ *               new voice needs no change here) and inside @font-face rules. Strings that
+ *               are not declarations, such as document.fonts.load('400 1em "Cormorant
+ *               Garamond"'), are not checked.
  * Content rule:
  *   A1 accident a work's source file authors at most one DISTINCT accident. Marks are
  *               truthy `accident:` keys anywhere in its front matter and
@@ -48,6 +55,8 @@ const SECTION_DEPTH = 2; // the section dir itself plus two levels of subdirecto
 const WORK_DIRS = SECTION_DIRS;
 
 const TOKEN_PREFIX = /^(size-|tracking-|ink|paper|bloom|accident|measure)/;
+const WEB_FACE = /(["']?)(Cormorant Garamond|IBM Plex Mono|Noto Serif SC)\1/i;
+const FONT_TOKEN = /^--font-[\w-]+$/i;
 const CSS_WIDE = new Set(["inherit", "initial", "unset", "revert", "revert-layer"]);
 
 // ── text helpers ────────────────────────────────────────────────────────────
@@ -133,6 +142,22 @@ function grayscaleNonZero(value) {
     if (!/^0*(\.0+)?%?$/.test(arg) || arg === "") return true; // "" = grayscale() = 100%
   }
   return false;
+}
+
+/** [{start, end}] offsets of every @font-face block body, from neutralised text. */
+function fontFaceRanges(clean) {
+  const out = [];
+  for (const m of clean.matchAll(/@font-face\s*\{/gi)) {
+    let depth = 1;
+    let i = m.index + m[0].length;
+    while (i < clean.length && depth > 0) {
+      if (clean[i] === "{") depth++;
+      else if (clean[i] === "}") depth--;
+      i++;
+    }
+    out.push({ start: m.index, end: i });
+  }
+  return out;
 }
 
 const hoverHoverQuery = (prelude) =>
@@ -278,6 +303,30 @@ export function lintSource(text, file, { defined } = {}) {
       for (const f of m[2].matchAll(/(?<![\w-])(?:-webkit-)?filter\s*:\s*([^;]*)/gi)) {
         if (grayscaleNonZero(f[1])) push(m.index, "T5", `inline style filter: ${f[1].trim()} cannot be gated by @media (hover: hover)`);
       }
+    }
+  }
+
+  // T6 — no declaration names a web face; templates use var(--font-serif|--font-mono)
+  const faces = fontFaceRanges(cssText);
+  const inFontFace = (i) => faces.some((r) => i >= r.start && i < r.end);
+  const isMainCss = file.replace(/\\/g, "/").endsWith(MAIN_CSS);
+  for (const m of noComments.matchAll(/(?<![\w-])(font-family|font|--[\w-]+)\s*:([^;{}<>\n]*)/gi)) {
+    const [, prop, value] = m;
+    const face = value.match(WEB_FACE);
+    if (!face) continue;
+    checked++;
+    if (inFontFace(m.index)) continue;
+    if (isMainCss && FONT_TOKEN.test(prop)) continue;
+    const use = /Plex/i.test(face[2]) ? "var(--font-mono)" : "var(--font-serif)";
+    push(m.index, "T6", `${prop}: names '${face[2]}' — use ${use}; faces are named only in main.css's --font-* tokens and @font-face`);
+  }
+  if (!isCss) {
+    for (const m of noComments.matchAll(/\bfontFamily\s*[:=]\s*(?:"([^"\n]*)"|'([^'\n]*)'|`([^`\n]*)`)/g)) {
+      const value = m[1] ?? m[2] ?? m[3];
+      const face = value.match(WEB_FACE);
+      if (!face) continue;
+      checked++;
+      push(m.index, "T6", `fontFamily = ${value} — use var(--font-${/Plex/i.test(face[2]) ? "mono" : "serif"})`);
     }
   }
 
@@ -429,7 +478,7 @@ function main() {
     const fileCount = new Set(problems.map((p) => p.file)).size;
     console.error(
       `[tokens-lint] FAILED — ${problems.length} problem(s) in ${fileCount} file(s) (${summary}).\n` +
-      `Fix: sizes/tracking/ghost/hover rules in main.css :root comments; one accident per work.`,
+      `Fix: sizes/tracking/ghost/hover/typeface rules in main.css :root comments; one accident per work.`,
     );
     process.exit(1);
   }

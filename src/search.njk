@@ -34,7 +34,7 @@ robots: noindex,follow
         position: absolute;
         top: 0;
         right: 0;
-        font-family: 'IBM Plex Mono', monospace;
+        font-family: var(--font-mono);
         font-size: var(--size-label);
         color: var(--ink-faint);
     }
@@ -67,7 +67,7 @@ robots: noindex,follow
         --pagefind-ui-tag: var(--ink-faint);
         --pagefind-ui-border-width: 1px;
         --pagefind-ui-border-radius: 2px;
-        --pagefind-ui-font: 'Cormorant Garamond', Georgia, serif;
+        --pagefind-ui-font: var(--font-serif);
     }
 
     /* Hide the default search icon - it's a :before pseudo-element on the form */
@@ -78,7 +78,7 @@ robots: noindex,follow
 
     /* Search input field - reset padding since icon is hidden */
     .pagefind-ui__search-input {
-        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        font-family: var(--font-serif) !important;
         font-size: 1rem !important;
         padding: 1rem !important;
         padding-left: 1rem !important;
@@ -118,7 +118,7 @@ robots: noindex,follow
     }
 
     .pagefind-ui__result-title {
-        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        font-family: var(--font-serif) !important;
         font-weight: 400 !important;
         font-size: 1.1rem !important;
     }
@@ -133,7 +133,7 @@ robots: noindex,follow
     }
 
     .pagefind-ui__result-excerpt {
-        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        font-family: var(--font-serif) !important;
         font-size: var(--size-quiet) !important;
         color: var(--ink-light) !important;
         line-height: 1.8 !important;
@@ -152,12 +152,12 @@ robots: noindex,follow
     }
 
     .pagefind-ui__message {
-        font-family: 'Cormorant Garamond', Georgia, serif !important;
+        font-family: var(--font-serif) !important;
         color: var(--ink-light) !important;
     }
 
     .pagefind-ui__result-tag {
-        font-family: 'IBM Plex Mono', monospace !important;
+        font-family: var(--font-mono) !important;
         font-size: var(--size-label) !important;
         letter-spacing: var(--tracking-quiet) !important;
         text-transform: uppercase !important;
@@ -168,7 +168,7 @@ robots: noindex,follow
     }
 
     .pagefind-ui__button {
-        font-family: 'IBM Plex Mono', monospace !important;
+        font-family: var(--font-mono) !important;
         font-size: var(--size-label) !important;
         letter-spacing: var(--tracking-quiet) !important;
         background: var(--paper) !important;

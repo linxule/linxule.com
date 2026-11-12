@@ -31,6 +31,13 @@
     /* Measure */
     --measure: 38rem;
 
+    /* Voices - the typefaces are named here and nowhere else. Every rule and
+       template sets font-family: var(--font-*) (scripts/check-tokens.mjs T6
+       fails the build otherwise). A further voice, such as a display or a
+       note face, is one more --font-* token here; the lint accepts any. */
+    --font-serif: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
     /* Scale - below body, four steps of 0.1rem. Every font-size under 1rem
        is one of these (scripts/check-tokens.mjs fails the build otherwise). */
     --size-whisper: 0.6rem;   /* glyphs, tags, footnote refs, markers */
@@ -65,7 +72,7 @@ html {
 }
 
 body {
-    font-family: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif;
+    font-family: var(--font-serif);
     /* The paper is the page background: it propagates to the canvas, so it
        scrolls with the ink and sits under every box. The sheet is made at
        build time (scripts/gen-paper.mjs) and named per page in base.njk; the
@@ -193,7 +200,7 @@ a:hover {
 }
 
 .spine-name {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     letter-spacing: var(--tracking-spine);
     color: var(--ink-light);
@@ -316,7 +323,7 @@ a:hover {
 }
 
 .spine-marker {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
 }
@@ -357,11 +364,11 @@ p {
    ======================================== */
 
 .mono {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 .label {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     letter-spacing: var(--tracking-label);
     color: var(--ink-faint);
@@ -423,13 +430,13 @@ a:focus-visible .accident {
 }
 
 .page-number {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
 }
 
 .back-link {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
 }
@@ -444,7 +451,7 @@ a:focus-visible .accident {
 .rendering {
     margin: 6rem auto 2rem;
     text-align: center;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-whisper);
     color: var(--ink-faint);
     transition: color 0.3s ease;
@@ -465,7 +472,7 @@ a:focus-visible .accident {
 }
 
 .tag {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-whisper);
     color: var(--ink-faint);
     padding: 0.3rem 0.6rem;
@@ -532,7 +539,7 @@ a:focus-visible .accident {
 }
 
 .fn-num {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-whisper);
     color: var(--ink-faint);
     font-style: normal;
@@ -540,7 +547,7 @@ a:focus-visible .accident {
 }
 
 .fn-ref {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-whisper);
     color: var(--ink-faint);
     vertical-align: super;
@@ -557,7 +564,7 @@ a:focus-visible .accident {
    their references. Hash links also work when JavaScript is unavailable. */
 .fn-backref {
     display: none;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     font-style: normal;
     color: var(--ink-faint);
@@ -654,7 +661,7 @@ a:focus-visible .accident {
     max-width: 100%;
     overflow-wrap: normal;
     border-radius: 2px;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-note);
     line-height: 1.6;
 }
@@ -662,7 +669,7 @@ a:focus-visible .accident {
 .article-body code,
 .context-text code,
 .portrait-description code {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.85em;
     font-style: normal;
     color: var(--ink-light);
@@ -720,7 +727,7 @@ a:focus-visible .accident {
 }
 
 .article-body th {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     letter-spacing: var(--tracking-quiet);
     text-transform: uppercase;
@@ -769,7 +776,7 @@ a:focus-visible .accident {
 }
 
 .article-body figcaption {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
     text-align: center;
@@ -789,7 +796,7 @@ a:focus-visible .accident {
 }
 
 .concept-term {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     letter-spacing: var(--tracking-quiet);
     color: var(--ink);
@@ -822,7 +829,7 @@ a:focus-visible .accident {
     position: absolute;
     left: -1.5rem;
     top: 1.5rem;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-ghost); /* ornament */
     font-style: normal;
@@ -986,7 +993,7 @@ a:focus-visible {
     position: absolute;
     top: 2rem;
     right: 2rem;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-on-dark);
     background: none;
@@ -1033,7 +1040,7 @@ a:focus-visible {
     transform: translateX(-50%);
     margin: 0;
     color: var(--paper);
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
 }
 
@@ -1093,7 +1100,7 @@ a:focus-visible {
     .article-body .marginalia::before {
         content: 'Notes';
         display: block;
-        font-family: 'IBM Plex Mono', monospace;
+        font-family: var(--font-mono);
         font-size: var(--size-label);
         letter-spacing: var(--tracking-label);
         color: var(--ink-faint);
@@ -1182,7 +1189,7 @@ a:focus-visible {
 }
 
 .header-poem {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: clamp(var(--size-whisper), 1vw, var(--size-label));
     line-height: 1.3;
     color: var(--ink-faint);
@@ -1201,14 +1208,14 @@ a:focus-visible {
 }
 
 .header-count {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
     margin-bottom: 2rem;
 }
 
 .header-description {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: clamp(var(--size-label), 1.2vw, var(--size-note));
     color: var(--ink-light);
     line-height: 1.6;
@@ -1228,14 +1235,14 @@ a:focus-visible {
 }
 
 .header-nav .scroll-hint {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
 }
 
 /* Essay content */
 .essay-series {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     letter-spacing: var(--tracking-label);
     color: var(--ink-faint);
@@ -1273,7 +1280,7 @@ a:focus-visible {
 }
 
 .essay-meta {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
     margin-top: 2rem;
@@ -1284,7 +1291,7 @@ a:focus-visible {
     position: absolute;
     bottom: 8rem;
     right: 12vw;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
     text-decoration: none;
@@ -1299,7 +1306,7 @@ a:focus-visible {
     position: absolute;
     top: 8rem;
     right: 12vw;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
 }
@@ -1310,7 +1317,7 @@ a:focus-visible {
     bottom: 4rem;
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-label);
     color: var(--ink-faint);
     transition: opacity 0.5s ease;
@@ -1413,7 +1420,7 @@ a:focus-visible {
 
 .companion-label {
     display: block;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-whisper);
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
@@ -1439,7 +1446,7 @@ a:focus-visible {
 
 .companion-arrow {
     font-style: normal;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-note);
     transition: transform 0.25s ease;
 }
@@ -1452,7 +1459,7 @@ a:focus-visible {
 .companion-note {
     display: block;
     margin-top: 0.7rem;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-whisper);
     letter-spacing: var(--tracking-whisper);
     line-height: 1.7;
@@ -1478,7 +1485,7 @@ a:focus-visible {
     flex-shrink: 0;
     min-width: 5.25rem;
     font-style: normal;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: var(--size-whisper);
     letter-spacing: var(--tracking-quiet);
     text-transform: uppercase;

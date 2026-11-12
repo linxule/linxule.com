@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { accidentsIn, lintSource, neutraliseCss, rootTokens } from "./check-tokens.mjs";
+import { accidentsIn, lintSource, neutraliseCss, rootTokens, tokenScope } from "./check-tokens.mjs";
 
 const ROOT = `:root {
   --paper: #f4f1eb; --ink: #1a1a1a; --ink-faint: #666; --ink-ghost: #c8c8c8;
@@ -110,6 +110,40 @@ describe("T5 earned colour", () => {
   });
   test("inline style grayscale cannot be gated", () => {
     expect(rules('<img style="filter: grayscale(1)">')).toEqual(["T5"]);
+  });
+});
+
+describe("T6 typeface", () => {
+  test("a template naming a face fails, in a style block, the font shorthand and style=\"\"", () => {
+    expect(rules(style(".a { font-family: 'IBM Plex Mono', monospace; }"))).toEqual(["T6"]);
+    expect(rules(style('.a { font-family: "Cormorant Garamond", Georgia, serif !important; }'))).toEqual(["T6"]);
+    expect(rules(style(".a { font: var(--size-label) 'IBM Plex Mono', monospace; }"))).toEqual(["T6"]);
+    expect(rules('<span style="font-family: \'IBM Plex Mono\', monospace">x</span>')).toEqual(["T6"]);
+    expect(rules(style(".a { font-family: Cormorant Garamond, serif; }"))).toEqual(["T6"]); // unquoted
+  });
+  test("a custom property naming a face fails unless it is a --font-* token in main.css", () => {
+    expect(rules(style("main { --pagefind-ui-font: 'Cormorant Garamond', Georgia, serif; }"))).toEqual(["T6"]);
+    expect(rules(style(":root { --font-mono: 'IBM Plex Mono', monospace; }"))).toEqual(["T6"]); // templates never redefine
+    expect(rules(":root { --font-serif: 'Cormorant Garamond', 'Cormorant Fallback', Georgia, serif; --font-mono: 'IBM Plex Mono', 'Plex Fallback', monospace; }\nhtml.cjk { --font-serif: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif; }", "src/assets/css/main.css")).toEqual([]);
+    expect(rules(":root { --pagefind-ui-font: 'Cormorant Garamond', serif; }", "src/assets/css/main.css")).toEqual(["T6"]);
+    expect(rules(":root { --font-display: 'Cormorant Garamond', Georgia, serif; }", "src/assets/css/main.css")).toEqual([]); // a later voice needs no lint change
+  });
+  test("@font-face rules may name faces", () => {
+    expect(rules("@font-face { font-family: 'Cormorant Garamond'; font-style: normal; src: url('/assets/fonts/x.woff2') format('woff2'); }\n@font-face { font-family: 'Plex Fallback'; src: local('Menlo'); }", "src/assets/css/main.css")).toEqual([]);
+  });
+  test("variables, generic families and non-declaration strings pass", () => {
+    expect(rules(style(".a { font-family: var(--font-mono); } .b { font: var(--size-label) var(--font-serif); } .c { font-family: monospace; }"))).toEqual([]);
+    expect(rules("<script>document.fonts.load('400 1em \"Cormorant Garamond\"');</script>")).toEqual([]);
+    expect(rules(style("/* was font-family: 'IBM Plex Mono', monospace; */ .a { color: red; }"))).toEqual([]);
+  });
+  test("JS fontFamily assignments", () => {
+    expect(rules("<script>el.style.fontFamily = \"'IBM Plex Mono', monospace\";</script>")).toEqual(["T6"]);
+    expect(rules("<script>el.style.fontFamily = 'var(--font-mono)';</script>")).toEqual([]);
+  });
+  test("scope leaves slide decks and the TSM sub-app alone", () => {
+    const scope = tokenScope(".").map((f) => f.replace(/\\/g, "/"));
+    expect(scope.length).toBeGreaterThan(0);
+    expect(scope.filter((f) => f.includes("src/assets/slides/") || f.includes("src/tsm/"))).toEqual([]);
   });
 });
 
