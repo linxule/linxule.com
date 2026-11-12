@@ -96,16 +96,13 @@ seoH1: "Xule Lin — organization scholar, AI researcher, and open-source builde
         color: var(--ink-light);
     }
     
-    .core-question .line:hover {
+    /* The accident keeps its colour under hover (main.css "The Accident"). */
+    .core-question .line:not(.accident):hover {
         color: var(--bloom) !important;
     }
-    
+
     .core-question .line.accident {
         color: var(--accident);
-    }
-
-    .core-question:hover .line.accident {
-        color: var(--bloom);
     }
 
     .page-marker {

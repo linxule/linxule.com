@@ -5,14 +5,17 @@
         let pendingFrame = false;
         let clientX = 0;
         let clientY = 0;
-        document.addEventListener('mousemove', event => {
+        // Mouse only: touch and pen also fire pointer (and synthetic mouse)
+        // events, and a tap must not move the glow. A transform, not left/top,
+        // so a move costs no layout.
+        document.addEventListener('pointermove', event => {
+            if (event.pointerType !== 'mouse') return;
             clientX = event.clientX;
             clientY = event.clientY;
             if (pendingFrame) return;
             pendingFrame = true;
             requestAnimationFrame(() => {
-                bloom.style.left = clientX + 'px';
-                bloom.style.top = clientY + 'px';
+                bloom.style.transform = 'translate(' + clientX + 'px, ' + clientY + 'px) translate(-50%, -50%)';
                 pendingFrame = false;
             });
         });

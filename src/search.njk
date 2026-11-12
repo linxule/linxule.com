@@ -105,6 +105,13 @@ robots: noindex,follow
         color: var(--ink-faint) !important;
     }
 
+    /* Pagefind marks the clear button suppressed while the field is empty and
+       only fades it (opacity 0), so it stayed an invisible Tab stop. Hidden
+       leaves the tab order until there is something to clear. */
+    .pagefind-ui__search-clear.pagefind-ui__suppressed {
+        visibility: hidden;
+    }
+
     .pagefind-ui__result {
         padding: 1.5rem 0 !important;
         border-bottom: 1px solid var(--ink-ghost) !important;

@@ -99,8 +99,13 @@ body {
    Bloom Cursor
    ======================================== */
 
+/* site.js moves it with a transform (no layout per move), from mouse pointers
+   only. A tap must neither move nor reveal it: on touch, sticky :hover after a
+   tap would otherwise park the glow at the tap point. */
 .bloom-cursor {
     position: fixed;
+    left: 0;
+    top: 0;
     width: 350px;
     height: 350px;
     border-radius: 50%;
@@ -112,8 +117,10 @@ body {
     z-index: 0;
 }
 
-body:hover .bloom-cursor {
-    opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+    body:hover .bloom-cursor {
+        opacity: 1;
+    }
 }
 
 /* ========================================
@@ -348,6 +355,18 @@ p {
 
 .accident {
     color: var(--accident) !important;
+}
+
+/* The accident never takes the bloom: its colour does not change on hover or
+   focus. Where it is, or sits inside, a link, attention shows in the underline
+   instead, at the offset every link uses. */
+a.accident:hover,
+a.accident:focus-visible,
+a:hover .accident,
+a:focus-visible .accident {
+    text-decoration-line: underline;
+    text-decoration-color: var(--bloom);
+    text-underline-offset: 0.15em;
 }
 
 /* ========================================
@@ -849,6 +868,13 @@ a:focus-visible {
 .specimen:focus-visible {
     outline: 2px solid var(--bloom);
     outline-offset: 4px;
+    opacity: 1;
+    filter: grayscale(0%);
+}
+
+/* Focus inside a plate (its lightbox trigger or download link) earns the
+   colour too; otherwise the plate's grayscale also greys the focus ring. */
+.specimen:has(:focus-visible) {
     opacity: 1;
     filter: grayscale(0%);
 }

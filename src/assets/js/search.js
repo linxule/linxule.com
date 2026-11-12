@@ -75,6 +75,9 @@
     if (!event.target.closest('.pagefind-ui__search-clear')) return;
     term = '';
     saveState();
+    // The clear button hides itself once the field is empty (search.njk), so
+    // focus would fall to the page. Hand it back to the field instead.
+    container.querySelector('.pagefind-ui__search-input')?.focus();
   });
   container.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape' || !event.target.matches('.pagefind-ui__search-input')) return;

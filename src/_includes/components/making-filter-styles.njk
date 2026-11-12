@@ -238,7 +238,9 @@
         }
     }
 
-    .specimen:hover img {
+    /* Focus on a plate, or inside it, earns the colour the way hover does.
+       :is() keeps the rule alive where :has() is unsupported. */
+    .specimen:is(:hover, :focus-visible, :has(:focus-visible)) img {
         filter: grayscale(0%);
         opacity: 1;
     }
@@ -254,8 +256,15 @@
         transition: opacity 0.3s ease;
     }
 
-    .specimen:hover .specimen-num {
+    .specimen:is(:hover, :focus-visible, :has(:focus-visible)) .specimen-num {
         opacity: 1;
+    }
+
+    /* No pointer, no hover to reveal the number: it is simply shown. */
+    @media (hover: none) {
+        .specimen-num {
+            opacity: 1;
+        }
     }
 
 {% if makingFilter == "creator" %}
@@ -282,7 +291,7 @@
         }
     }
 
-    .specimen--interactive:hover .specimen-iframe {
+    .specimen--interactive:is(:hover, :focus-visible, :has(:focus-visible)) .specimen-iframe {
         filter: grayscale(0%);
         opacity: 1;
     }
