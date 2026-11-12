@@ -5,6 +5,7 @@ pagination:
   alias: tag
 permalink: /tag/{{ tag.slug }}/
 layout: layouts/base.njk
+preloadDisplay: true
 marker: tag
 eleventyComputed:
   robots: "noindex, follow"
@@ -36,6 +37,7 @@ eleventyComputed:
     }
 
     .tag-name {
+        font-family: var(--font-display);
         font-size: 1.5rem;
         font-weight: 300;
         color: var(--ink);

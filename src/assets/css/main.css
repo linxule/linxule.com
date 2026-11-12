@@ -1,4 +1,277 @@
-/* Fonts loaded via <link> in base.njk — not @import — to avoid render-blocking waterfall */
+/* ========================================
+   Type: self-hosted faces and their fallbacks
+   ======================================== */
+/* Self-hosted from /assets/fonts (MANIFEST.tsv there records each file's source, command, hash and licence).
+   Only the upright Noto Serif SC faces still come from Google Fonts, by <link> in base.njk. */
+
+/* FILE NAMES ARE CONTENT-ADDRESSED (name.<sha256 first 8>.woff2); MANIFEST.tsv beside the files records source,
+   command, full hash and licence for each. Every unicode-range is the file's own cmap, so a character a face lacks
+   falls through to the next family instead of being claimed and then missed.
+
+   Text: Octavio Pardo's EB Garamond (google/fonts), static 400 and 500, roman and italic. Proportional old-style
+   figures are the files' default (cmap frozen to .osf), so the English book voice needs no font-variant rule and
+   the mono voice, whose Plex also has onum, is untouched; :lang(zh) asks for lining-nums (lnum is kept). */
+@font-face {
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/assets/fonts/eb-garamond-roman-400-latin.c793c7ba.woff2') format('woff2');
+    unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-2011, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2190-2193, U+2197, U+2212;
+}
+@font-face {
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/assets/fonts/eb-garamond-roman-400-latin-ext-a.a1cb887a.woff2') format('woff2');
+    unicode-range: U+0100-0130, U+0132-0151, U+0154-017F;
+}
+@font-face {
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/assets/fonts/eb-garamond-roman-500-latin.07a5316a.woff2') format('woff2');
+    unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-2011, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2190-2193, U+2197, U+2212;
+}
+@font-face {
+    font-family: 'EB Garamond';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/assets/fonts/eb-garamond-roman-500-latin-ext-a.8fe5b590.woff2') format('woff2');
+    unicode-range: U+0100-0130, U+0132-0151, U+0154-017F;
+}
+@font-face {
+    font-family: 'EB Garamond';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/assets/fonts/eb-garamond-italic-400-latin.befdf137.woff2') format('woff2');
+    unicode-range: U+0020-007E, U+00A0-00B1, U+00B4-00B8, U+00BA-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-2011, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2190-2193, U+2197, U+2212;
+}
+@font-face {
+    font-family: 'EB Garamond';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/assets/fonts/eb-garamond-italic-400-latin-ext-a.ae6a44a1.woff2') format('woff2');
+    unicode-range: U+0100-0130, U+0132-0151, U+0154-017F;
+}
+@font-face {
+    font-family: 'EB Garamond';
+    font-style: italic;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/assets/fonts/eb-garamond-italic-500-latin.3b47cf51.woff2') format('woff2');
+    unicode-range: U+0020-007E, U+00A0-00B1, U+00B4-00B8, U+00BA-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-2011, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2190-2193, U+2197, U+2212;
+}
+@font-face {
+    font-family: 'EB Garamond';
+    font-style: italic;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/assets/fonts/eb-garamond-italic-500-latin-ext-a.f493fb94.woff2') format('woff2');
+    unicode-range: U+0100-0130, U+0132-0151, U+0154-017F;
+}
+/* The italics have no superior figures (¹ ² ³); without these they would fall to a system face. The roman's are
+   declared as italic faces for just those code points (upright superiors in italic text, the same trick as Kai). */
+@font-face { font-family: 'EB Garamond'; font-style: italic; font-weight: 400; font-display: swap;
+    src: url('/assets/fonts/eb-garamond-roman-400-latin.c793c7ba.woff2') format('woff2'); unicode-range: U+00B2-00B3, U+00B9; }
+@font-face { font-family: 'EB Garamond'; font-style: italic; font-weight: 500; font-display: swap;
+    src: url('/assets/fonts/eb-garamond-roman-500-latin.07a5316a.woff2') format('woff2'); unicode-range: U+00B2-00B3, U+00B9; }
+
+/* Small sizes (--font-small, every book-voice rule at 13px or below): Georg Duffner's 8-point cut, italic 400 only.
+   It sets the margin notes, the one small rule that is italic. It has no arrows, primes or minus sign; the range
+   leaves them out, so the text face that follows in --font-small sets them.
+   GUARDS: a family with only an italic face would set UPRIGHT text in that italic (font matching falls back from
+   normal to italic), and a <strong> in a note would match the 400 and lose its weight (no synthesis). So the family
+   also declares upright 400, upright 500 and italic 500 faces whose source never resolves: those requests skip the
+   family and fall through to the text face (.group-note, .paper-license, the witness <cite> and .tool-description
+   are upright: EB Garamond roman; a strong in a note: EB Garamond italic 500). Proved in Chromium, WebKit and
+   Firefox (the font proofs, guard-proof6.mjs). To set the upright small rows in the 8-point roman as well, replace
+   the upright 400 guard with its face (eb-garamond-08-roman-latin, 17 kB, built beside the others). To drop the cut,
+   set --font-small: var(--font-serif) and delete these four faces. */
+@font-face {
+    font-family: 'EB Garamond 08';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/assets/fonts/eb-garamond-08-italic-latin.7210d0fe.woff2') format('woff2');
+    unicode-range: U+0020-007E, U+00A0-00A1, U+00A3-00A4, U+00A6-00A9, U+00AB, U+00AD, U+00AF-00B8, U+00BB, U+00BF-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-2011, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2021, U+2026, U+2039-203A, U+2044, U+20AC;
+}
+@font-face { font-family: 'EB Garamond 08'; font-style: normal; font-weight: 400; src: local('xule-no-such-face'); }
+@font-face { font-family: 'EB Garamond 08'; font-style: normal; font-weight: 500; src: local('xule-no-such-face'); }
+@font-face { font-family: 'EB Garamond 08'; font-style: italic; font-weight: 500; src: local('xule-no-such-face'); }
+
+/* Display: Cormorant Garamond, roman 300 only. There is NO italic display face, so italic display rows are set in
+   the text italic (lint T7). An <em> inside a display row would still ask this family for italic, and font matching
+   would hand it the roman (no synthesis: set upright, silently). The italic guards below make that request skip
+   Cormorant and its two fallbacks and fall to EB Garamond italic, next in --font-display. One guard per weight the
+   site asks for (300 inherited, 400, 500 for strong): WebKit skips a family only for a guard at the exact weight
+   (guard-proof7.mjs: a 300 guard alone, or a 300 500 range, left 400/500 upright in WebKit; Chromium and Firefox
+   pass either way). */
+@font-face {
+    font-family: 'Cormorant Garamond';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/assets/fonts/cormorant-garamond-roman-300-latin.e20d4fa2.woff2') format('woff2');
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212;
+}
+@font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 300; src: local('xule-no-such-face'); }
+@font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 400; src: local('xule-no-such-face'); }
+@font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 500; src: local('xule-no-such-face'); }
+
+/* Chinese italic: LXGW WenKai declared as the ITALIC face of the Chinese family. Google's stylesheet supplies the
+   upright Noto Serif SC faces (300/400/500); these rules add italic ones, so every existing italic rule sets hanzi in
+   Kai with no markup change (proved pixel-identical in Chromium 158, WebKit 27.2, Firefox 159: the font proofs,
+   kai-proof.mjs). Subset to the italic CJK the built site sets, in two slices: `shared` holds every italic hanzi used
+   outside /making/ plus CJK punctuation (an essay that italicises a name fetches ~11 kB), `making` holds the rest.
+   ORDER IS LOAD-BEARING: the making face (broad range) comes first and the shared face (its exact characters) last,
+   because browsers try a family's faces last-declared first (kai-slice-proof.mjs, all three engines).
+   `bun run fonts:kai` regenerates both and rewrites the shared range; verify (check-cjk-italic) fails, naming page
+   and characters, when they fall behind. */
+@font-face {
+    font-family: 'Noto Serif SC';
+    font-style: italic;
+    font-weight: 300 500;
+    font-display: swap;
+    src: url('/assets/fonts/lxgw-wenkai-italic-making.ddfd51e4.woff2') format('woff2');
+    unicode-range: U+2E80-2FFF, U+3000-303F, U+3400-9FFF, U+F900-FAFF, U+FF00-FFEF, U+20000-2FFFF;
+}
+@font-face {
+    font-family: 'Noto Serif SC';
+    font-style: italic;
+    font-weight: 300 500;
+    font-display: swap;
+    src: url('/assets/fonts/lxgw-wenkai-italic-shared.c3f1336e.woff2') format('woff2');
+    unicode-range: U+B7, U+2026, U+3000, U+3001, U+3002, U+3008, U+3009, U+300A, U+300B, U+300C, U+300D, U+300E, U+300F, U+3010, U+3011, U+3014, U+3015, U+4E09, U+4E8B, U+4F1F, U+514D, U+533A, U+540C, U+5546, U+56FD, U+590D, U+5927, U+5B66, U+5DF4, U+5E73, U+62DC, U+6545, U+65B0, U+6821, U+6CD5, U+6D2A, U+6D4E, U+738B, U+751F, U+79D1, U+803F, U+804C, U+8654, U+88AB, U+8BB2, U+8BDA, U+8D22, U+91CD, U+957F, U+9662, U+9ECE, U+FF01, U+FF08, U+FF09, U+FF0C, U+FF1A, U+FF1B, U+FF1F, U+FF5E;
+}
+
+/* Guard: upright faces of the same family whose source never resolves. Without them, a page whose Google Fonts
+   stylesheet has not arrived (blocked or failed; the Playwright suites abort it) has no upright Noto Serif SC face,
+   and all three engines then set UPRIGHT hanzi in the italic Kai face (font matching falls back from normal to italic
+   faces). With the guard, upright hanzi fall through to the system serif; when Google's faces are present they still
+   win, because a failed local() face is skipped (the font proofs, guard-proof5.mjs). Three single-weight faces, not
+   one 300 500 range: WebKit 27.2 still picked Kai at 500 behind a range guard. The local() name exists nowhere, so
+   no installed font ever stands in for Google's. */
+@font-face { font-family: 'Noto Serif SC'; font-style: normal; font-weight: 300; src: local('xule-no-such-face'); unicode-range: U+2E80-2FFF, U+3000-303F, U+3400-9FFF, U+F900-FAFF, U+FF00-FFEF, U+20000-2FFFF; }
+@font-face { font-family: 'Noto Serif SC'; font-style: normal; font-weight: 400; src: local('xule-no-such-face'); unicode-range: U+2E80-2FFF, U+3000-303F, U+3400-9FFF, U+F900-FAFF, U+FF00-FFEF, U+20000-2FFFF; }
+@font-face { font-family: 'Noto Serif SC'; font-style: normal; font-weight: 500; src: local('xule-no-such-face'); unicode-range: U+2E80-2FFF, U+3000-303F, U+3400-9FFF, U+F900-FAFF, U+FF00-FFEF, U+20000-2FFFF; }
+
+/* IBM Plex Mono: IBM's own split WOFF2 (the Original Version as IBM distributes it, so the reserved name "Plex"
+   may be used), unicode-ranges exactly as in IBM's CSS for each split, except Pi (narrowed below). */
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/assets/fonts/ibm-plex-mono-300-latin1.ec385511.woff2') format('woff2');
+    unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122, U+2212, U+FB01-FB02;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/assets/fonts/ibm-plex-mono-300-latin2.d9739e42.woff2') format('woff2');
+    unicode-range: U+0100-0101, U+0104-0130, U+0132-0151, U+0154-017F, U+018F, U+0192, U+01A0-01A1, U+01AF-01B0, U+01FA-01FF, U+0218-021B, U+0237, U+0259, U+1E80-1E85, U+1E9E, U+20A1, U+20A4, U+20A6, U+20A8-20AA, U+20AD-20AE, U+20B1-20B2, U+20B4-20B5, U+20B8-20BA, U+20BD, U+20BF;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/assets/fonts/ibm-plex-mono-300-latin3.db7483bb.woff2') format('woff2');
+    unicode-range: U+0102-0103, U+01CD-01DC, U+1E0C-1E0D, U+1E12-1E13, U+1E24-1E25, U+1E36-1E37, U+1E3C-1E3D, U+1E40-1E47, U+1E4A-1E4B, U+1E62-1E63, U+1E6C-1E6D, U+1E70-1E71, U+1E92-1E93, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+    /* Pi is limited to the characters Google's Plex subsets carried (arrows up/down, primes,
+       division slash, script l). Its other glyphs, among them left/right arrows and box drawing,
+       stay out so those keep rendering in the system monospace exactly as today; widening this
+       range is a visible design change across the site (the back-link arrow). */
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/assets/fonts/ibm-plex-mono-300-pi.b2a806c5.woff2') format('woff2');
+    unicode-range: U+2032-2033, U+2113, U+2191, U+2193, U+2215;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/assets/fonts/ibm-plex-mono-400-latin1.e8993d94.woff2') format('woff2');
+    unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122, U+2212, U+FB01-FB02;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/assets/fonts/ibm-plex-mono-400-latin2.8c5e48e4.woff2') format('woff2');
+    unicode-range: U+0100-0101, U+0104-0130, U+0132-0151, U+0154-017F, U+018F, U+0192, U+01A0-01A1, U+01AF-01B0, U+01FA-01FF, U+0218-021B, U+0237, U+0259, U+1E80-1E85, U+1E9E, U+20A1, U+20A4, U+20A6, U+20A8-20AA, U+20AD-20AE, U+20B1-20B2, U+20B4-20B5, U+20B8-20BA, U+20BD, U+20BF;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/assets/fonts/ibm-plex-mono-400-latin3.1ff2d301.woff2') format('woff2');
+    unicode-range: U+0102-0103, U+01CD-01DC, U+1E0C-1E0D, U+1E12-1E13, U+1E24-1E25, U+1E36-1E37, U+1E3C-1E3D, U+1E40-1E47, U+1E4A-1E4B, U+1E62-1E63, U+1E6C-1E6D, U+1E70-1E71, U+1E92-1E93, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/assets/fonts/ibm-plex-mono-400-pi.b8002770.woff2') format('woff2');
+    unicode-range: U+2032-2033, U+2113, U+2191, U+2193, U+2215;
+}
+
+/* Metric-matched local fallbacks (the font proofs, metrics2.mjs, metrics3.mjs): size-adjust matches advance width
+   over an essay sample; ascent/descent then reproduce the web face's line box. Android: Noto Serif (local() names
+   unverified). Every common monospace is 0.6em wide, like Plex, so only the vertical metrics need forcing. Consolas (0.55em) is
+   deliberately not listed. */
+@font-face {
+    font-family: 'Plex Fallback';
+    font-style: normal;
+    font-weight: 300 400;
+    src: local('Menlo'), local('Menlo-Regular'), local('Courier New'), local('CourierNewPSMT'), local('Droid Sans Mono'), local('DroidSansMono'), local('Noto Sans Mono');
+    ascent-override: 102%;
+    descent-override: 27%;
+    line-gap-override: 0%;
+    unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+20AC, U+2122, U+2212, U+FB01-FB02, U+0100-0101, U+0104-0130, U+0132-0151, U+0154-017F, U+018F, U+0192, U+01A0-01A1, U+01AF-01B0, U+01FA-01FF, U+0218-021B, U+0237, U+0259, U+1E80-1E85, U+1E9E, U+20A1, U+20A4, U+20A6, U+20A8-20AA, U+20AD-20AE, U+20B1-20B2, U+20B4-20B5, U+20B8-20BA, U+20BD, U+20BF, U+0102-0103, U+01CD-01DC, U+1E0C-1E0D, U+1E12-1E13, U+1E24-1E25, U+1E36-1E37, U+1E3C-1E3D, U+1E40-1E47, U+1E4A-1E4B, U+1E62-1E63, U+1E6C-1E6D, U+1E70-1E71, U+1E92-1E93, U+1EA0-1EF9, U+20AB, U+2032-2033, U+2113, U+2191, U+2193, U+2215;
+}
+@font-face { font-family: 'EB Garamond Fallback'; font-style: normal; font-weight: 400;
+    src: local('Georgia'); size-adjust: 85.5%; ascent-override: 118.1%; descent-override: 35.1%; line-gap-override: 0%; }
+@font-face { font-family: 'EB Garamond Fallback'; font-style: normal; font-weight: 500;
+    src: local('Georgia'); size-adjust: 88.6%; ascent-override: 114%; descent-override: 33.9%; line-gap-override: 0%; }
+@font-face { font-family: 'EB Garamond Fallback'; font-style: italic; font-weight: 400 500;
+    src: local('Georgia Italic'), local('Georgia-Italic'); size-adjust: 81.2%; ascent-override: 124.4%; descent-override: 37%; line-gap-override: 0%; }
+@font-face { font-family: 'EB Garamond Fallback Android'; font-style: normal; font-weight: 400;
+    src: local('Noto Serif'), local('NotoSerif-Regular'); size-adjust: 78.9%; ascent-override: 127.9%; descent-override: 38%; line-gap-override: 0%; }
+@font-face { font-family: 'EB Garamond Fallback Android'; font-style: normal; font-weight: 500;
+    src: local('Noto Serif'), local('NotoSerif-Regular'); size-adjust: 81.8%; ascent-override: 123.5%; descent-override: 36.7%; line-gap-override: 0%; }
+@font-face { font-family: 'EB Garamond Fallback Android'; font-style: italic; font-weight: 400 500;
+    src: local('Noto Serif Italic'), local('NotoSerif-Italic'); size-adjust: 78.8%; ascent-override: 128.2%; descent-override: 38.1%; line-gap-override: 0%; }
+@font-face { font-family: 'Cormorant Fallback'; font-style: normal; font-weight: 300 400;
+    src: local('Georgia'); size-adjust: 87.7%; ascent-override: 104.9%; descent-override: 33.1%; line-gap-override: 0%;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212; }
+@font-face { font-family: 'Cormorant Fallback Android'; font-style: normal; font-weight: 300 400;
+    src: local('Noto Serif'), local('NotoSerif-Regular'); size-adjust: 81%; ascent-override: 113.6%; descent-override: 35.8%; line-gap-override: 0%;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212; }
+/* The display italic guards again, for the two fallbacks (each has only a roman face; see the display face above). */
+@font-face { font-family: 'Cormorant Fallback'; font-style: italic; font-weight: 300; src: local('xule-no-such-face'); }
+@font-face { font-family: 'Cormorant Fallback'; font-style: italic; font-weight: 400; src: local('xule-no-such-face'); }
+@font-face { font-family: 'Cormorant Fallback'; font-style: italic; font-weight: 500; src: local('xule-no-such-face'); }
+@font-face { font-family: 'Cormorant Fallback Android'; font-style: italic; font-weight: 300; src: local('xule-no-such-face'); }
+@font-face { font-family: 'Cormorant Fallback Android'; font-style: italic; font-weight: 400; src: local('xule-no-such-face'); }
+@font-face { font-family: 'Cormorant Fallback Android'; font-style: italic; font-weight: 500; src: local('xule-no-such-face'); }
+
 
 /* ========================================
    Design Tokens
@@ -36,10 +309,24 @@
 
     /* Voices - the typefaces are named here and nowhere else. Every rule and
        template sets font-family: var(--font-*) (scripts/check-tokens.mjs T6
-       fails the build otherwise). A further voice, such as a display or a
-       note face, is one more --font-* token here; the lint accepts any. */
-    --font-serif: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif;
-    --font-mono: 'IBM Plex Mono', monospace;
+       fails the build otherwise). A further voice is one more --font-* token
+       here; the lint accepts any.
+       serif   the text: EB Garamond (body, italics, subtitles, small heads).
+       display large light roman only (Cormorant 300, 24px and up at desktop);
+               it has no italic face (T7).
+       small   every book-voice rule at 13px or below: Duffner's 8-point
+               italic, then the text face (upright and 500 fall through to
+               it, by the guards above). To drop the cut: var(--font-serif),
+               and delete its faces above. While the 8-point file loads, the
+               text face stands in, so it needs no fallback face of its own.
+       mono    the machine voice; the CJK sans faces keep Chinese in mono off
+               a bitmap Song on Windows.
+       'Noto Serif SC' (Google's upright faces, our Kai italic) sits in the
+       serif stacks on every page; unicode-range keeps it inert without hanzi. */
+    --font-serif: 'EB Garamond', 'EB Garamond Fallback', 'EB Garamond Fallback Android', 'Noto Serif SC', Georgia, serif;
+    --font-display: 'Cormorant Garamond', 'Cormorant Fallback', 'Cormorant Fallback Android', 'EB Garamond', 'Noto Serif SC', Georgia, serif;
+    --font-small: 'EB Garamond 08', var(--font-serif);
+    --font-mono: 'IBM Plex Mono', 'Plex Fallback', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', monospace;
 
     /* Scale - below body, four steps of 0.1rem. Every font-size under 1rem
        is one of these (scripts/check-tokens.mjs fails the build otherwise). */
@@ -72,6 +359,21 @@
 
 html {
     scroll-behavior: smooth;
+    /* Nothing is ever faked: no faux bold, no slanted upright (Plex; Song where
+       the Kai file lacks a hanzi, which verify catches first), no fake small
+       caps. A request with no matching face renders the nearest real face. */
+    font-synthesis: none;
+}
+
+/* The English book voice sets old-style figures by default (the text files'
+   own default); Chinese sets lining ones. */
+:lang(zh) {
+    font-variant-numeric: lining-nums;
+}
+
+/* One bold: the 500 the text face ships (Noto Serif SC 500 for hanzi). */
+strong, b {
+    font-weight: 500;
 }
 
 body {
@@ -495,6 +797,7 @@ a:focus-visible .accident {
 /* The base note stays in flow and readable; everything that only makes sense
    beside the text lives in the margin block below. */
 .margin-note {
+    font-family: var(--font-small);
     font-size: var(--size-note);
     color: var(--ink-faint);
     line-height: 1.6;
@@ -557,6 +860,7 @@ a:focus-visible .accident {
 
 .fn-ref {
     font-family: var(--font-mono);
+    font-style: normal;  /* Plex has no italic; inside an italic passage it stays upright */
     font-size: var(--size-whisper);
     color: var(--ink-faint);
     vertical-align: super;
@@ -583,6 +887,11 @@ a:focus-visible .accident {
 .margin-note {
     scroll-margin-top: 8rem;
     scroll-margin-bottom: 2rem;
+}
+
+/* Emphasis inside an italic note is roman: EB Garamond roman 500, by the 8-point family's upright-500 guard. */
+.margin-note strong {
+    font-style: normal;
 }
 
 /* Marginalia dialogue — ref and note bloom together */
@@ -1237,6 +1546,7 @@ a:focus-visible {
 }
 
 .header-title {
+    font-family: var(--font-display);
     font-size: clamp(2rem, 5vw, 4rem);
     font-weight: 300;
     margin-bottom: 1rem;
@@ -1286,6 +1596,7 @@ a:focus-visible {
 }
 
 .essay-title {
+    font-family: var(--font-display);
     font-size: clamp(2rem, 5vw, 4rem);
     font-weight: 300;
     line-height: 1.3;
@@ -1472,6 +1783,12 @@ a:focus-visible {
     font-size: 1.05rem;
     color: var(--ink-light);
     transition: color 0.25s ease;
+}
+
+/* On a series landing the companion link is also .essay-read-link, the mono
+   voice, which has no italic face. */
+.essay-read-link.companion-link {
+    font-style: normal;
 }
 
 .companion-link:hover,

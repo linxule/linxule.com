@@ -113,6 +113,17 @@ describe("T5 earned colour", () => {
   });
 });
 
+describe("T7 display", () => {
+  test("the display voice set italic fails, in a block or the font shorthand", () => {
+    expect(rules(style(".a { font-family: var(--font-display); font-style: italic; }"))).toEqual(["T7"]);
+    expect(rules(style(".a { font: italic 300 2rem var(--font-display); }"))).toEqual(["T7"]);
+    expect(rules(":root{}\n.a {\n  font-style: oblique;\n  font-family: var(--font-display);\n}", "src/assets/css/main.css")).toEqual(["T7"]);
+  });
+  test("display roman and text italic pass", () => {
+    expect(rules(style(".a { font-family: var(--font-display); font-weight: 300; } .b { font-family: var(--font-serif); font-style: italic; } .c { font-style: italic; }"))).toEqual([]);
+  });
+});
+
 describe("T6 typeface", () => {
   test("a template naming a face fails, in a style block, the font shorthand and style=\"\"", () => {
     expect(rules(style(".a { font-family: 'IBM Plex Mono', monospace; }"))).toEqual(["T6"]);
@@ -120,6 +131,9 @@ describe("T6 typeface", () => {
     expect(rules(style(".a { font: var(--size-label) 'IBM Plex Mono', monospace; }"))).toEqual(["T6"]);
     expect(rules('<span style="font-family: \'IBM Plex Mono\', monospace">x</span>')).toEqual(["T6"]);
     expect(rules(style(".a { font-family: Cormorant Garamond, serif; }"))).toEqual(["T6"]); // unquoted
+    expect(rules(style(".a { font-family: 'EB Garamond', serif; }"))).toEqual(["T6"]);
+    expect(rules(style(".a { font-family: 'EB Garamond 08', serif; }"))).toEqual(["T6"]);
+    expect(rules(style(".a { font-family: 'PingFang SC', sans-serif; }"))).toEqual(["T6"]);
   });
   test("a custom property naming a face fails unless it is a --font-* token in main.css", () => {
     expect(rules(style("main { --pagefind-ui-font: 'Cormorant Garamond', Georgia, serif; }"))).toEqual(["T6"]);

@@ -3,6 +3,7 @@ ogImage: /assets/og-cards/cv.jpg
 layout: layouts/cv.njk
 title: 简历 — 林徐乐
 lang: zh-CN
+preloadItalic: true
 description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴黎)，帝国理工学院管理学博士。研究人机协作、后AGI组织、去中心化治理、AI治理与定性研究方法。"
 ---
 

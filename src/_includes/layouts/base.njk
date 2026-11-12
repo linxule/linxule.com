@@ -138,10 +138,26 @@
     })();
     </script>
 
-    {# Fonts - loaded as <link> not @import to start download early #}
+    {# Fonts. The faces are self-hosted and declared in main.css; the cloak above
+       waits for the ones this page uses. Preloaded: what the first screen sets,
+       so it is in flight before main.css is parsed. Every page: the text roman
+       and Plex 400 (Latin-1). Layout or page front matter adds the display face
+       (preloadDisplay) and the text italic (preloadItalic) where the first screen
+       sets them. Never preloaded: the 500s, the 8-point cut, the Kai italic,
+       Google's Noto Serif SC. Names match main.css (scripts/check-fonts.mjs). #}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/eb-garamond-roman-400-latin.c793c7ba.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/ibm-plex-mono-400-latin1.e8993d94.woff2">
+    {%- if preloadDisplay %}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/cormorant-garamond-roman-300-latin.e20d4fa2.woff2">
+    {%- endif %}
+    {%- if preloadItalic %}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/eb-garamond-italic-400-latin.befdf137.woff2">
+    {%- endif %}
+    {# Google Fonts now serves only the upright Chinese serif (the live site
+       rewrites it to /cf-fonts/); <link>, not @import, to start it early. #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500&display=swap">
 
     <link rel="alternate" type="application/atom+xml" title="{{ site.title }} - Writing" href="/feed.xml">
     <link rel="stylesheet" href="/assets/css/main.css?v={{ site.version }}">

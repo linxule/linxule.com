@@ -1,5 +1,6 @@
 ---
 layout: layouts/base.njk
+preloadDisplay: true
 marker: "cv"
 ---
 
@@ -25,6 +26,7 @@ marker: "cv"
 
     /* CV Header - name (h2) */
     .cv-content > h2:first-of-type {
+        font-family: var(--font-display);
         font-size: clamp(1.3rem, 2.2vw, 1.8rem);
         font-weight: 300;
         margin-bottom: 0.5rem;

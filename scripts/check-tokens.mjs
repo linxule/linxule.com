@@ -14,13 +14,18 @@
  *               `/* ornament *\/` on the same line. Ghost never carries a word.
  *   T5 earned   filter: grayscale(<non-zero>) only inside @media (hover: hover);
  *               on touch screens a specimen is full colour at rest.
- *   T6 typeface no declaration names a web face ('Cormorant Garamond', 'IBM Plex Mono',
- *               'Noto Serif SC') in font-family, the font shorthand, a custom property
- *               or a JS fontFamily: use var(--font-serif) / var(--font-mono). The faces are
+ *   T6 typeface no declaration names a face ('EB Garamond' (also 'EB Garamond 08'),
+ *               'Cormorant Garamond', 'IBM Plex Mono', 'Noto Serif SC', 'LXGW WenKai', or the
+ *               system CJK sans faces the mono voice names) in font-family, the font
+ *               shorthand, a custom property or a JS fontFamily: use var(--font-serif),
+ *               var(--font-display), var(--font-small) or var(--font-mono). The faces are
  *               named only in main.css's --font-* tokens (any --font-* declared there, so a
  *               new voice needs no change here) and inside @font-face rules. Strings that
  *               are not declarations, such as document.fonts.load('400 1em "Cormorant
  *               Garamond"'), are not checked.
+ *   T7 display  no rule block sets var(--font-display) together with font-style: italic
+ *               (or the font shorthand with italic): the display face ships roman only,
+ *               and font-synthesis: none would set the "italic" upright.
  * Content rule:
  *   A1 accident a work's source file authors at most one DISTINCT accident. Marks are
  *               truthy `accident:` keys anywhere in its front matter and
@@ -55,7 +60,8 @@ const SECTION_DEPTH = 2; // the section dir itself plus two levels of subdirecto
 const WORK_DIRS = SECTION_DIRS;
 
 const TOKEN_PREFIX = /^(size-|tracking-|ink|paper|bloom|accident|measure)/;
-const WEB_FACE = /(["']?)(Cormorant Garamond|IBM Plex Mono|Noto Serif SC)\1/i;
+const WEB_FACE = /(["']?)(EB Garamond|Cormorant Garamond|IBM Plex Mono|Noto Serif SC|LXGW WenKai|PingFang SC|Microsoft YaHei|Noto Sans CJK SC)\1/i;
+const tokenFor = (face) => /Plex|PingFang|YaHei|Sans CJK/i.test(face) ? "var(--font-mono)" : /Cormorant/i.test(face) ? "var(--font-display)" : "var(--font-serif)";
 const FONT_TOKEN = /^--font-[\w-]+$/i;
 const CSS_WIDE = new Set(["inherit", "initial", "unset", "revert", "revert-layer"]);
 
@@ -225,7 +231,7 @@ function ungatedGrayscale(clean, start, end) {
 }
 
 /**
- * Lint one source file's text against T1–T5.
+ * Lint one source file's text against T1–T7.
  * @param {string} text file contents
  * @param {string} file path used in messages; `.css` files are pure CSS
  * @param {{defined?: Set<string>}} [options] tokens from main.css :root (T3 skipped if absent)
@@ -317,8 +323,7 @@ export function lintSource(text, file, { defined } = {}) {
     checked++;
     if (inFontFace(m.index)) continue;
     if (isMainCss && FONT_TOKEN.test(prop)) continue;
-    const use = /Plex/i.test(face[2]) ? "var(--font-mono)" : "var(--font-serif)";
-    push(m.index, "T6", `${prop}: names '${face[2]}' — use ${use}; faces are named only in main.css's --font-* tokens and @font-face`);
+    push(m.index, "T6", `${prop}: names '${face[2]}' — use ${tokenFor(face[2])}; faces are named only in main.css's --font-* tokens and @font-face`);
   }
   if (!isCss) {
     for (const m of noComments.matchAll(/\bfontFamily\s*[:=]\s*(?:"([^"\n]*)"|'([^'\n]*)'|`([^`\n]*)`)/g)) {
@@ -326,8 +331,18 @@ export function lintSource(text, file, { defined } = {}) {
       const face = value.match(WEB_FACE);
       if (!face) continue;
       checked++;
-      push(m.index, "T6", `fontFamily = ${value} — use var(--font-${/Plex/i.test(face[2]) ? "mono" : "serif"})`);
+      push(m.index, "T6", `fontFamily = ${value} — use ${tokenFor(face[2])}`);
     }
+  }
+
+  // T7 — the display face is roman only
+  for (const m of noComments.matchAll(/\{([^{}]*)\}/g)) {
+    const body = m[1];
+    const display = /(?<![\w-])font(?:-family)?\s*:[^;{}]*var\(\s*--font-display\b/i.test(body);
+    const italic = /(?<![\w-])font-style\s*:\s*(italic|oblique)/i.test(body) || /(?<![\w-])font\s*:[^;{}]*\b(italic|oblique)\b/i.test(body);
+    if (!display || !italic) continue;
+    checked++;
+    push(m.index, "T7", "var(--font-display) with italic — the display face is roman only (font-synthesis: none sets it upright); italic belongs to var(--font-serif)");
   }
 
   problems.sort((a, b) => a.line - b.line || a.rule.localeCompare(b.rule));

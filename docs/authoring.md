@@ -59,6 +59,12 @@ followed; copies are disposable, so edit only in the main checkout.
   `images`) with `{% if array %}` before reading them.
 - **Don't move the FOUC cloak in `base.njk`.** It hides `body` until fonts are
   ready (1.5 s fallback) and does not reach iframes.
+- **Typefaces are self-hosted and named only by `--font-*` tokens.** The faces
+  are declared at the top of `main.css` (files in `src/assets/fonts/`, each
+  named by its hash and listed in `MANIFEST.tsv`); only the upright Chinese
+  serif comes from Google Fonts. After adding text that sets Chinese in italic,
+  build and run `bun run fonts:kai`, then commit what it changes with the
+  content; `verify` names the page and characters until you do.
 - **Sizes under 1rem and letter-spacing use tokens** (`--size-*`,
   `--tracking-*`); `--ink-ghost` is for rules and ornament, not text; resting
   grayscale goes inside `@media (hover: hover)`. The token lint fails the

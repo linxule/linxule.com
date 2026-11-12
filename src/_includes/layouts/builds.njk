@@ -1,5 +1,6 @@
 ---
 layout: layouts/base.njk
+preloadDisplay: true
 marker: "builds"
 ---
 
@@ -39,6 +40,7 @@ marker: "builds"
     }
 
     .thesis-statement {
+        font-family: var(--font-display);
         font-size: clamp(1.3rem, 2.2vw, 1.8rem);
         font-weight: 300;
         line-height: 1.9;
@@ -159,6 +161,7 @@ marker: "builds"
     }
 
     .group-note {
+        font-family: var(--font-small);
         margin-top: 2.5rem;
         margin-left: 2rem;
         max-width: 38rem;
