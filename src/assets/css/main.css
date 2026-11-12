@@ -772,6 +772,24 @@ a:focus-visible .accident {
     filter: grayscale(0%);
 }
 
+/* An image narrower than the figure measure is centred on the text column,
+   not left at the figure's edge. The picture becomes the figure-width box and
+   centres its image, so a full-width image lands exactly where it did, and a
+   caption sharing the image's paragraph starts its own line. Blockquote and
+   figure images keep their own rules; phones keep the inline flow. */
+@media not all and (max-width: 768px) {
+    .article-body picture:not(blockquote picture, figure picture) {
+        display: block;
+        margin-inline: calc(-1 * var(--bleed));
+        text-align: center;
+    }
+
+    .article-body picture:not(blockquote picture, figure picture) img {
+        margin-inline: 0;
+        max-width: 100%;
+    }
+}
+
 .article-body blockquote img {
     max-width: 100%;
     margin: 1.5rem 0;

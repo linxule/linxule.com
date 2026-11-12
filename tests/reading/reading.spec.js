@@ -302,6 +302,58 @@ for (const width of [390, 820, 1024, 1100]) {
   });
 }
 
+// An image narrower than the figure measure is centred on the text column; a
+// full-width one keeps the figure bleed. seam-01 has both, each followed by an
+// italic caption in the image's own paragraph, which must sit below its image.
+// Phones keep the inline flow, where every image starts at the bleed.
+const imagePath = "/writing/seam-01-the-seventy-percent/";
+
+const readImages = page => page.evaluate(async () => {
+  const body = document.querySelector(".article-body");
+  const images = [...body.querySelectorAll("img")].filter(image => !image.closest("blockquote"));
+  images.forEach(image => { image.loading = "eager"; });
+  await Promise.all(images.map(image => image.decode().catch(() => {})));
+  const column = body.getBoundingClientRect();
+  // --bleed is a calc() of other tokens; a probe resolves it to pixels.
+  const probe = body.appendChild(document.createElement("div"));
+  probe.style.width = "var(--bleed)";
+  const bleed = probe.getBoundingClientRect().width;
+  probe.remove();
+  if (!(bleed > 0)) throw new Error(`--bleed resolved to ${bleed}`);
+  return { bleed, columnWidth: column.width, images: images.map(image => {
+    const box = image.getBoundingClientRect();
+    const caption = image.closest("p")?.querySelector(":scope > em");
+    return {
+      width: box.width, left: box.left - column.left, right: column.right - box.right,
+      bottom: box.bottom, captionTop: caption ? caption.getClientRects()[0].top : null,
+    };
+  }) };
+});
+
+for (const width of [820, 1280]) {
+  test(`a narrow image is centred on the text column at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(imagePath);
+    const { bleed, columnWidth, images } = await readImages(page);
+    const narrow = images.filter(image => image.width < columnWidth + 2 * bleed - 1);
+    const wide = images.filter(image => !narrow.includes(image));
+    expect(narrow.length, "seam-01 has a narrow image").toBeGreaterThan(0);
+    expect(wide.length, "seam-01 has a full-width image").toBeGreaterThan(0);
+    for (const image of narrow) expect(Math.abs(image.left - image.right)).toBeLessThanOrEqual(1);
+    for (const image of wide) expect(Math.abs(image.left + bleed)).toBeLessThanOrEqual(1);
+    for (const image of images.filter(image => image.captionTop !== null)) {
+      expect(image.captionTop, "the caption starts below its image").toBeGreaterThanOrEqual(image.bottom);
+    }
+  });
+}
+
+test("images keep the inline flow on a phone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(imagePath);
+  const { bleed, images } = await readImages(page);
+  for (const image of images) expect(Math.abs(image.left + bleed)).toBeLessThanOrEqual(1);
+});
+
 test("repeated footnotes return to the selected reference", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const fixture = renderMarkdown([
