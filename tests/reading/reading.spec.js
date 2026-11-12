@@ -126,9 +126,19 @@ for (const width of [320, 390]) {
   });
 }
 
+// The return link is a plain hash link, and `html { scroll-behavior: smooth }`
+// animates it for about 1.4s. These tests are about where the reader lands,
+// not the animation, so they ask for reduced motion, which the site honours
+// with an instant jump. With the animation, a renderer starved for 4s or more
+// under a loaded machine left the scroll part-way when toBeInViewport's 5s
+// ran out: three failures in about a thousand runs on 2026-11-12, reproduced
+// on demand by freezing the renderer, never a wrong landing.
+const landWithoutAnimation = page => page.emulateMedia({ reducedMotion: "reduce" });
+
 for (const width of [390, 1100, 1440]) {
   test(`footnotes preserve the reading journey at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
+    await landWithoutAnimation(page);
     await page.goto(articlePath);
     const reference = page.locator(".article-body .fn-ref").first();
     const referenceId = await reference.getAttribute("id");
@@ -356,6 +366,7 @@ test("images keep the inline flow on a phone", async ({ page }) => {
 
 test("repeated footnotes return to the selected reference", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
+  await landWithoutAnimation(page);
   const fixture = renderMarkdown([
     "First passage.[^shared]", "", "Second passage.[^shared]", "",
     "[^shared]: One note shared by both passages.",
