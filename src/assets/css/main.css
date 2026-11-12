@@ -78,6 +78,18 @@ body {
     line-height: 1.7;
     font-size: 18px;
     min-height: 100vh;
+    /* No block ends on a stub. Inherited by everything; a browser without it
+       (Firefox, late 2026) breaks lines as before. */
+    text-wrap: pretty;
+}
+
+/* A title is balanced: its lines come out even. Only titles and their
+   subtitles. A wrapped line of a poem or a prompt keeps its turnover (pretty),
+   because halving it would read as two lines of verse. */
+h1, h2, h3, h4, h5, h6,
+.article-subtitle,
+.essay-subtitle {
+    text-wrap: balance;
 }
 
 /* Screen-reader only / visually hidden content
