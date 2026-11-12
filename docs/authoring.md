@@ -69,6 +69,9 @@ followed; copies are disposable, so edit only in the main checkout.
   `--tracking-*`); `--ink-ghost` is for rules and ornament, not text; resting
   grayscale goes inside `@media (hover: hover)`. The token lint fails the
   build otherwise.
+- **Prose set smaller than the body takes `max-width: var(--measure-own)`**
+  (28em of its own size, about 70 characters), not a rem width and not the
+  width of its container. `--measure` is for body-size text only.
 
 ## Writing
 

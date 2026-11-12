@@ -78,6 +78,16 @@ does not change image quality or either site's production domains.
    Markdown negotiation when middleware changed. If verification fails or is
    ambiguous, keep the previous snapshots and diagnose or roll back first.
 
+   When the release adds or changes font files (`src/assets/fonts/`, each named
+   by its hash): fetch each new file once with a cache-busting query
+   (`…woff2?cb=<n>`) and require 200 before requesting its bare URL, because a
+   404 on a new `/assets/` path is cached for a year. Then open one essay,
+   `/cv-zh/` and one portrait in a browser with an empty cache and check that
+   text, titles, margin notes and italic Chinese are in the site's faces, not
+   Georgia or a system serif. The stylesheet link carries the release SHA
+   (`main.css?v=<sha>`), so a new release never pairs new pages with an old
+   stylesheet; no cache purge is needed for that.
+
 5. **Prune only after successful verification.** Replace the placeholders with
    the new current ID and the production ID recorded in step 1:
 
