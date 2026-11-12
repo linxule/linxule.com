@@ -11,7 +11,18 @@ marker: "writing"
         padding: 10rem 2rem 6rem;
         overflow-x: clip;
     }
-    
+
+    /* A lone column is centred, as paper and vellum pages are; a column with a
+       margin apparatus makes room for it. Notes are rendered into the HTML at
+       build time (markdown-it footnotes, eleventy.config.js), so this holds from
+       the first paint. Browsers without :has() keep the notes track on every
+       essay, which is the layout before this rule. */
+    @media not all and (max-width: 1100px) {
+        .article-container:not(:has(.margin-note)) {
+            grid-template-columns: 1fr minmax(0, var(--measure)) 1fr;
+        }
+    }
+
     article {
         grid-column: 2;
         min-width: 0;

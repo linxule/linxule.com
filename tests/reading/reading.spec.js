@@ -240,6 +240,68 @@ test("margin notes follow their references when the article grows after load", a
   expectBeside(await readNotes(page));
 });
 
+// A lone column is centred; a column with margin notes keeps room for them.
+// The centring is one rule in writing.njk. Deleting it from the live
+// stylesheet and comparing every element's box shows what it changes: nothing
+// on an essay with notes, and nothing on either kind at 1100px and below.
+const notelessPath = "/writing/epistemic-voids-03-mechanism-literalism/";
+
+const layout = page => page.evaluate(() => [...document.body.querySelectorAll("*")].map(element => {
+  const box = element.getBoundingClientRect();
+  return `${element.tagName} ${box.x.toFixed(1)} ${box.y.toFixed(1)} ${box.width.toFixed(1)} ${box.height.toFixed(1)}`;
+}).join("\n"));
+
+const dropCentring = page => page.evaluate(() => {
+  for (const sheet of document.styleSheets) {
+    let rules;
+    try { rules = sheet.cssRules; } catch { continue; } // a cross-origin font sheet
+    for (const group of rules) {
+      const inner = group.cssRules ? [...group.cssRules] : [];
+      const index = inner.findIndex(rule => rule.selectorText?.includes(":has(.margin-note)"));
+      if (index >= 0) { group.deleteRule(index); return true; }
+    }
+  }
+  return false;
+});
+
+async function changedByCentring(page) {
+  await settled(page);
+  const withRule = await layout(page);
+  expect(await dropCentring(page), "the centring rule is in the page").toBe(true);
+  await page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
+  return withRule !== (await layout(page));
+}
+
+for (const width of [1280, 1440, 1920]) {
+  test(`an essay without notes is centred in the window at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(notelessPath);
+    await expect(page.locator(".article-body .margin-note")).toHaveCount(0);
+    await settled(page);
+    const column = await page.evaluate(() => {
+      const box = document.querySelector("article").getBoundingClientRect();
+      return { left: box.left, right: document.documentElement.clientWidth - box.right };
+    });
+    expect(Math.abs(column.left - column.right), `margins ${column.left} and ${column.right}`).toBeLessThanOrEqual(1);
+  });
+
+  test(`an essay with notes keeps its layout at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(articlePath);
+    expect(await changedByCentring(page)).toBe(false);
+  });
+}
+
+for (const width of [390, 820, 1024, 1100]) {
+  test(`centring changes nothing at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of [articlePath, notelessPath]) {
+      await page.goto(path);
+      expect(await changedByCentring(page), path).toBe(false);
+    }
+  });
+}
+
 test("repeated footnotes return to the selected reference", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const fixture = renderMarkdown([
