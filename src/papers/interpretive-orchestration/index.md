@@ -2,6 +2,7 @@
 layout: layouts/paper.njk
 title: "Interpretive Orchestration"
 paperTitle: "Interpretive orchestration: An essay exploring the epistemic intersection of human intuition and machine intelligence"
+indexReference: 'Lin, X., &amp; Corley, K. G. (2026). <em>Strategic Organization</em>. CC BY 4.0.'
 description: "Lin & Corley (2026), Strategic Organization. A framework for human–AI collaboration in interpretive research — Socratic tension, Euclidean documentation, Vitruvian mastery. CC BY 4.0."
 date: 2026-04-27
 pubDate: "2026/04/27"

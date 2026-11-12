@@ -2,6 +2,7 @@
 layout: layouts/paper.njk
 title: "Cognitio Emergens"
 paperTitle: "Cognitio Emergens: Agency, Dimensions, and Dynamics in Human-AI Knowledge Co-Creation"
+indexReference: 'Lin, X. (2025). <em>arXiv:2505.03105</em>.'
 description: "Lin (2025), arXiv:2505.03105. A framework for the co-evolutionary nature of human–AI epistemic partnerships — agency configurations, epistemic dimensions, partnership dynamics."
 date: 2025-05-06
 pubDate: "2025/05/06"

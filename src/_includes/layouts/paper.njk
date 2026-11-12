@@ -25,10 +25,10 @@ marker: "papers"
     .paper-bibtex pre { background: var(--paper-dark); padding: 1rem; border-radius: 2px; margin-top: .6rem; overflow-x: auto; }
     .paper-bibtex code { font-family: 'IBM Plex Mono', monospace; font-size: var(--size-label); line-height: 1.6; white-space: pre; }
     .paper-license { margin-top: 1.5rem; font-size: var(--size-note); color: var(--ink-light); }
-    @media (max-width: 768px) { .paper { margin: 3rem auto 4rem; padding: 0 1.5rem; } }
+    @media (max-width: 768px) { .paper { margin: 8rem auto 4rem; padding: 0 1.5rem; } }
 </style>
 <article class="paper" data-pagefind-body data-pagefind-filter="type:paper">
-    <div class="paper-venue">{{ venue }}{% if venueType == 'journal' %} · Article{% elif venueType == 'preprint' %} · Preprint{% endif %}{% if year %} · <span class="accident">{{ year }}</span>{% endif %}</div>
+    <div class="paper-venue">{{ venue }}{% if venueType == 'journal' %} · Article{% elif venueType == 'preprint' %} · Preprint{% endif %}{% if year %} · {{ year }}{% endif %}</div>
     <h1>{{ paperTitle | default(title) }}</h1>
     <div class="paper-authors">{% for a in authors %}{{ a.name }}{% if not loop.last %}, {% endif %}{% endfor %}</div>
     <div class="paper-meta">

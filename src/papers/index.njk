@@ -14,19 +14,17 @@ description: "Peer-reviewed papers and preprints by Xule Lin, with self-hosted f
     .papers-index li a { font-style: italic; font-size: var(--size-entry); text-decoration: none; border-bottom: 1px solid var(--ink-ghost); transition: color 0.2s ease, border-color 0.2s ease; }
     .papers-index li a:hover { border-color: var(--bloom); }
     .papers-index .ref { display: block; font-size: var(--size-quiet); color: var(--ink-light); margin-top: .2rem; }
-    @media (max-width: 768px) { .papers-index { margin: 3rem auto 4rem; padding: 0 1.5rem; } }
+    @media (max-width: 768px) { .papers-index { margin: 8rem auto 4rem; padding: 0 1.5rem; } }
 </style>
 <section class="papers-index">
     <h1 class="page-title">papers</h1>
     <p class="lede">Formal research outputs with <span class="accident">stable identifiers</span>. Full academic record on the <a href="/cv/">CV</a>.</p>
     <ul>
+        {%- for paper in collections.papers %}
         <li>
-            <a href="/papers/interpretive-orchestration/">Interpretive Orchestration</a>
-            <span class="ref">Lin, X., &amp; Corley, K. G. (2026). <em>Strategic Organization</em>. CC BY 4.0.</span>
+            <a href="{{ paper.url }}">{{ paper.data.title }}</a>
+            <span class="ref">{{ paper.data.indexReference | safe }}</span>
         </li>
-        <li>
-            <a href="/papers/cognitio-emergens/">Cognitio Emergens</a>
-            <span class="ref">Lin, X. (2025). <em>arXiv:2505.03105</em>.</span>
-        </li>
+        {%- endfor %}
     </ul>
 </section>

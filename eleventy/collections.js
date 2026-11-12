@@ -96,8 +96,8 @@ export default function(eleventyConfig) {
   });
 
   // Papers collection - formal research outputs (Google Scholar landing pages),
-  // sorted newest first. The hand-authored src/papers/index.njk isn't .md, so
-  // the glob already excludes the index page.
+  // sorted newest first. src/papers/index.njk isn't .md, so the glob already
+  // excludes the index page.
   eleventyConfig.addCollection("papers", function(collectionApi) {
     return collectionApi.getFilteredByGlob("src/papers/**/*.md").sort((a, b) => {
       return b.date - a.date;
