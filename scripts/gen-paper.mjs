@@ -26,21 +26,28 @@ export const AVIF = { quality: 90, effort: 6, chromaSubsampling: "4:4:4" };
 
 // Art direction carried over from the in-browser generator (paper.js, retired
 // 2026-11-12). Grain and fibre scales are in CSS px, as they were there.
+//
+// `soften` is a Gaussian sigma in CSS px applied to the finished sheet. The old
+// generator drew at 1x and the browser enlarged it, which blurred the grain; a
+// sheet drawn at 2x is crisper than the stock was designed to be. Workshop is
+// the only stock that sits under running text (Thinking, Concepts) with grain
+// near x-height, so it gets that softness back: 0.45 px brings the grain's
+// contrast to 0.94 of the 2x render, where production's measured 0.93.
 export const STOCKS = {
   title: {
     grainScale: 0.035, grainOctaves: 4, grainIntensity: 0.07,
     fiberDensity: 0.35, fiberDirection: 10, fiberSpread: 25, fiberLength: 0.6,
-    warmth: 0.65, toneVariation: 0.025, roughness: 0.035, opacity: 0.35,
+    warmth: 0.65, toneVariation: 0.025, roughness: 0.035, opacity: 0.35, soften: 0,
   },
   body: {
     grainScale: 0.04, grainOctaves: 4, grainIntensity: 0.03,
     fiberDensity: 0.15, fiberDirection: 15, fiberSpread: 30, fiberLength: 0.4,
-    warmth: 0.5, toneVariation: 0.01, roughness: 0.015, opacity: 0.25,
+    warmth: 0.5, toneVariation: 0.01, roughness: 0.015, opacity: 0.25, soften: 0,
   },
   workshop: {
     grainScale: 0.05, grainOctaves: 5, grainIntensity: 0.065,
     fiberDensity: 0.4, fiberDirection: -5, fiberSpread: 35, fiberLength: 0.55,
-    warmth: 0.35, toneVariation: 0.02, roughness: 0.04, opacity: 0.35,
+    warmth: 0.35, toneVariation: 0.02, roughness: 0.04, opacity: 0.35, soften: 0.45,
   },
 };
 
@@ -183,14 +190,40 @@ export function renderStock(name, seed, T = TILE) {
     stroke(rgb, size, fx * SCALE, fy * SCALE, Math.cos(angle), Math.sin(angle), len, width, alpha, fibre);
   }
 
+  const sheet = params.soften > 0 ? soften(rgb, size, params.soften * SCALE) : rgb;
+
   // Bake: the old layer sat over --paper at the stock's opacity.
   const data = Buffer.alloc(size * size * 3);
   const op = params.opacity;
-  for (let i = 0; i < rgb.length; i++) {
-    const v = PAPER[i % 3] * (1 - op) + rgb[i] * 255 * op;
+  for (let i = 0; i < sheet.length; i++) {
+    const v = PAPER[i % 3] * (1 - op) + sheet[i] * 255 * op;
     data[i] = Math.max(0, Math.min(255, Math.round(v)));
   }
   return { data, size };
+}
+
+// Separable Gaussian with toroidal wrap, so a softened sheet still tiles.
+function soften(rgb, size, sigma) {
+  const radius = Math.ceil(sigma * 3);
+  const kernel = [];
+  let sum = 0;
+  for (let i = -radius; i <= radius; i++) { const w = Math.exp(-(i * i) / (2 * sigma * sigma)); kernel.push(w); sum += w; }
+  for (let i = 0; i < kernel.length; i++) kernel[i] /= sum;
+  const pass = (src, stepX, stepY) => {
+    const out = new Float32Array(src.length);
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const o = (y * size + x) * 3;
+        for (let i = -radius; i <= radius; i++) {
+          const sx = (x + i * stepX + size) % size, sy = (y + i * stepY + size) % size;
+          const s = (sy * size + sx) * 3, w = kernel[i + radius];
+          out[o] += src[s] * w; out[o + 1] += src[s + 1] * w; out[o + 2] += src[s + 2] * w;
+        }
+      }
+    }
+    return out;
+  };
+  return pass(pass(rgb, 1, 0), 0, 1);
 }
 
 // A butt-capped segment, box-filtered coverage, multiply blend, toroidal wrap.
