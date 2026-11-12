@@ -62,11 +62,17 @@ seoH1: "Xule Lin — organization scholar, AI researcher, and open-source builde
         height: 70vh;
     }
     
+    /* Five authored lines, stepped. The block is as wide as its longest line
+       (the fourth: three steps plus "organizational life"), so no line wraps;
+       a fixed 400px cap broke the third and fourth lines once the type passed
+       28px, and the turnovers fell back to the left edge. */
     .core-question {
+        --step: 2em;
         font-size: clamp(1.4rem, 2.5vw, 2.2rem);
         font-weight: 300;
         line-height: 1.8;
-        max-width: 400px;
+        width: max-content;
+        max-width: 100%;
         margin-left: auto;
     }
     
@@ -74,10 +80,15 @@ seoH1: "Xule Lin — organization scholar, AI researcher, and open-source builde
         display: block;
     }
     
-    .core-question .line:nth-child(2) { text-indent: 2em; }
-    .core-question .line:nth-child(3) { text-indent: 4em; }
-    .core-question .line:nth-child(4) { text-indent: 6em; }
+    .core-question .line:nth-child(2) { text-indent: var(--step); }
+    .core-question .line:nth-child(3) { text-indent: calc(var(--step) * 2); }
+    .core-question .line:nth-child(4) { text-indent: calc(var(--step) * 3); }
     .core-question .line:nth-child(5) { text-indent: 0; }
+
+    /* The narrowest phones: a shallower step keeps the fourth line whole. */
+    @media (max-width: 340px) {
+        .core-question { --step: 1.5em; }
+    }
     
     .core-question:hover .line {
         color: var(--ink-light);

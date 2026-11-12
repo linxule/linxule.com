@@ -96,3 +96,31 @@ test("a title's lines are balanced", async ({ page }) => {
   test.skip(lines.length < 2, "the title fits on one line at this width");
   expect(Math.min(...lines) / Math.max(...lines), `title line widths ${lines.map(Math.round).join(", ")}`).toBeGreaterThan(0.5);
 });
+
+// The home page opens on five authored lines that step to the right. Until
+// 2026-11-12 a 400px cap on the block wrapped the third and fourth lines once
+// the type passed 28px (every desktop from about 1100px up), and each
+// turnover fell back to the left edge: seven lines, the stair broken.
+test("the home opening keeps its five lines", async ({ page }) => {
+  for (const width of [360, 393, 768, 1024, 1280, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    const opening = await page.evaluate(() => {
+      const block = document.querySelector(".core-question");
+      const range = document.createRange();
+      const lines = [...block.querySelectorAll(".line")].map(line => {
+        range.selectNodeContents(line);
+        const tops = new Set([...range.getClientRects()].map(r => Math.round(r.top)));
+        return { rows: tops.size, left: Math.round(range.getBoundingClientRect().left) };
+      });
+      return { lines, right: block.getBoundingClientRect().right, field: block.parentElement.getBoundingClientRect().right };
+    });
+    expect(opening.lines, `${width}px: five authored lines`).toHaveLength(5);
+    expect(opening.lines.map(l => l.rows), `${width}px: each authored line is one rendered line`).toEqual([1, 1, 1, 1, 1]);
+    const [a, b, c, d, e] = opening.lines.map(l => l.left);
+    expect(a < b && b < c && c < d, `${width}px: lines two to four step right (${a}, ${b}, ${c}, ${d})`).toBe(true);
+    expect(e, `${width}px: the last line returns to the first line's edge`).toBe(a);
+    expect(opening.right, `${width}px: the block stays inside its field`).toBeLessThanOrEqual(opening.field + 0.5);
+  }
+});
