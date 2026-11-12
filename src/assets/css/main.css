@@ -28,8 +28,11 @@
     --bloom: #8b7089;
     --bloom-glow: rgba(139, 112, 137, 0.15);
 
-    /* Measure */
-    --measure: 38rem;
+    /* Measure: the running-text column, about 70 characters a line at the
+       18px body size (38rem gave 81–87). Figures keep the old column plus its
+       2rem bleeds, so diagrams did not shrink when the text narrowed. */
+    --measure: 32rem;
+    --measure-figure: 42rem;
 
     /* Voices - the typefaces are named here and nowhere else. Every rule and
        template sets font-family: var(--font-*) (scripts/check-tokens.mjs T6
@@ -513,8 +516,9 @@ a:focus-visible .accident {
 
     .margin-note {
         position: absolute;
-        /* 2.5rem clears the 2rem figure bleed (.article-body img / figure) */
-        left: calc(100% + 2.5rem);
+        /* Clears the figure bleed by 0.5rem, so notes stay where they were
+           before the text narrowed and never run under a figure */
+        left: calc(100% + var(--bleed) + 0.5rem);
         /* Grows with the empty margin, capped near 66 characters at the note size */
         width: clamp(180px, 20vw, 23.5em);
         opacity: 0;
@@ -592,6 +596,9 @@ a:focus-visible .accident {
 
 .article-body {
     position: relative;
+    /* How far a figure reaches past each side of the text: out to the figure
+       measure, centred on the column. Phones keep 2rem (below). */
+    --bleed: calc((var(--measure-figure) - var(--measure)) / 2);
 }
 
 .article-body h1 {
@@ -740,8 +747,8 @@ a:focus-visible .accident {
 }
 
 .article-body img {
-    max-width: calc(100% + 4rem);
-    margin: 3rem -2rem;
+    max-width: calc(100% + 2 * var(--bleed));
+    margin: 3rem calc(-1 * var(--bleed));
     height: auto;
     border: 1px solid var(--ink-ghost);
     background: var(--paper-dark);
@@ -766,8 +773,8 @@ a:focus-visible .accident {
 }
 
 .article-body figure {
-    margin: 3rem -2rem;
-    max-width: calc(100% + 4rem);
+    margin: 3rem calc(-1 * var(--bleed));
+    max-width: calc(100% + 2 * var(--bleed));
 }
 
 .article-body figure img {
@@ -1132,6 +1139,11 @@ a:focus-visible {
 }
 
 @media (max-width: 768px) {
+    /* The column is the screen here, not the measure */
+    .article-body {
+        --bleed: 2rem;
+    }
+
     .spine {
         padding: 1.5rem 2rem;
     }

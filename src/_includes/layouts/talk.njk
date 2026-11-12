@@ -56,8 +56,10 @@ marker: "talks"
     }
 
     /* Media figure (wraps a video or slide-deck embed with caption + actions) */
+    /* A deck or video reaches out to the figure measure, centred on the text
+       column, as essay figures do; the text keeps the reading measure */
     .talk-media {
-        margin: 3rem 0;
+        margin: 3rem calc((var(--measure) - var(--measure-figure)) / 2);
     }
 
     .talk-media .media-container {
@@ -285,6 +287,10 @@ marker: "talks"
 
         .talk-content {
             grid-column: 1;
+        }
+
+        .talk-media {
+            margin-inline: 0;
         }
     }
 

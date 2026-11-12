@@ -64,6 +64,8 @@ export function createWritingImageTransform(processImage = Image, keepLossless =
       if (metadata) {
         result += imageHTML(metadata, {
           alt: "",
+          // 42rem is --measure-figure in main.css: figures keep that width
+          // above 768px whatever the text measure is.
           sizes: "(max-width: 768px) 100vw, 42rem",
           loading: "lazy",
           decoding: "async",
