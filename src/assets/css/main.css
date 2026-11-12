@@ -500,6 +500,11 @@ a:focus-visible .accident {
     line-height: 1.6;
     font-style: italic;
     transition: opacity 0.3s ease;
+    /* A note's place beside its reference matters more than an even rag.
+       Inherited from the body, WebKit's pretty wrapping made 14 of 25 notes
+       on seam-02 a line or two taller, and placement spread them 15-30%
+       further from their references. */
+    text-wrap: wrap;
 }
 
 /* Margin mode: the exact complement of the endnote query (max-width: 1100px),
