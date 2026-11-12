@@ -176,11 +176,18 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     z-index: 100;
+    /* A veil of the paper's own colour. The tail eases out: a straight ramp to
+       zero ends in a visible edge where a grained stock begins. Browsers
+       without color-mix() (before 2023) get a plain strip of paper. */
+    background: var(--paper);
     background: linear-gradient(
         to bottom,
-        rgba(244, 241, 235, 0.95) 0%,
-        rgba(244, 241, 235, 0.85) 40%,
-        rgba(244, 241, 235, 0.6) 70%,
+        color-mix(in srgb, var(--paper) 95%, transparent) 0%,
+        color-mix(in srgb, var(--paper) 85%, transparent) 40%,
+        color-mix(in srgb, var(--paper) 60%, transparent) 70%,
+        color-mix(in srgb, var(--paper) 38%, transparent) 80%,
+        color-mix(in srgb, var(--paper) 20%, transparent) 88%,
+        color-mix(in srgb, var(--paper) 8%, transparent) 94%,
         transparent 100%
     );
 }
