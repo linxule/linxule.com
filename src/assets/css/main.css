@@ -306,6 +306,11 @@
        2rem bleeds, so diagrams did not shrink when the text narrowed. */
     --measure: 32rem;
     --measure-figure: 42rem;
+    /* The same column for text set smaller than the body: em, so it is read
+       against the size of the element that uses it and stays near 70
+       characters. A rem width fits one size only (32rem of 14.4px italic
+       ran to 93 characters). */
+    --measure-own: 28em;
 
     /* Voices - the typefaces are named here and nowhere else. Every rule and
        template sets font-family: var(--font-*) (scripts/check-tokens.mjs T6
