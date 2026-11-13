@@ -1,6 +1,34 @@
-import { defineConfig } from "@playwright/test";
+import { existsSync, readdirSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
+import { chromium, defineConfig } from "@playwright/test";
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:4173";
+
+// The browser cache is shared across this machine, and its daily upgrade
+// keeps only the build the newest Playwright uses. On 2026-11-13 that removed
+// the build this repo's Playwright expected and no suite could start. When the
+// expected build is missing, run on the newest headless shell that is
+// installed instead; when it is present (CI installs it), change nothing.
+function installedChromium() {
+  try {
+    if (existsSync(chromium.executablePath())) return undefined;
+    const cache = process.env.PLAYWRIGHT_BROWSERS_PATH
+      || [join(homedir(), "Library/Caches/ms-playwright"), join(homedir(), ".cache/ms-playwright")].find(existsSync);
+    const build = name => Number(name.split("-").pop());
+    const builds = readdirSync(cache).filter(name => /^chromium_headless_shell-\d+$/.test(name)).sort((x, y) => build(y) - build(x));
+    for (const name of builds) {
+      for (const dir of readdirSync(join(cache, name))) {
+        const exe = join(cache, name, dir, "chrome-headless-shell");
+        if (existsSync(exe)) return exe;
+      }
+    }
+  } catch {
+    // No cache to read: let Playwright report the missing browser itself.
+  }
+  return undefined;
+}
+const fallbackChromium = installedChromium();
 const viewports = [
   ["phone", 390, 844],
   ["phone-narrow", 320, 740],
@@ -31,6 +59,7 @@ export default defineConfig({
     baseURL,
     browserName: "chromium",
     trace: "retain-on-failure",
+    ...(fallbackChromium ? { launchOptions: { executablePath: fallbackChromium } } : {}),
   },
   projects: viewports.map(([name, width, height]) => ({
     name,
