@@ -2,25 +2,39 @@
 permalink: /making.md
 eleventyExcludeFromCollections: true
 ---
+{%- for page in collections.all -%}
+{%- if page.url == "/making/" or page.url == "/making" -%}
 # Making
 
-Portraits and artifacts.
+{{ page.data.thesis | safe }}
+{% for line in page.data.thesis_continued %}
+{{ (line.text | default(line)) | safe }}{% if line.accident %} *(accident)*{% endif %}
+{%- endfor %}
+{%- endif -%}
+{%- endfor %}
+
+## Portraits
 
 > Prompts as poems.
 > Midjourney as collaborator.
 > Self-representation
 > through machine rendering. *(accident)*
 
-## Portraits
-
 {% for portrait in collections.portraits %}- [{{ portrait.data.title | safe }}](https://linxule.com{{ portrait.url | replace(r/\/$/, "") }}.md) — {{ portrait.date | readableDate }}{% if portrait.data.generator %} · Generator: {{ portrait.data.generator }}{% endif %}{% if portrait.data.prompter %} · Prompter: {{ portrait.data.prompter }}{% endif %}
 {% endfor %}
 
 ## Artifacts
 
+> The thing, not the prompt.
+> SVG, code, drawing—
+> made directly in conversation,
+> not rendered elsewhere. *(accident)*
+
 {% for artifact in collections.artifacts %}- [{{ artifact.data.title | safe }}](https://linxule.com{{ artifact.url | replace(r/\/$/, "") }}.md) — {{ artifact.date | readableDate }}{% if artifact.data.creator %} · Creator: {{ artifact.data.creator }}{% endif %}{% if artifact.data.medium %} · Medium: {{ artifact.data.medium }}{% endif %}
 {% endfor %}
 
 ---
+
+The tools and open-source builds that once closed this book have a shelf of their own now. [Builds →](https://linxule.com/builds.md) *(accident)*
 
 *This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/making/*

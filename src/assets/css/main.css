@@ -88,7 +88,7 @@
    GUARDS: a family with only an italic face would set UPRIGHT text in that italic (font matching falls back from
    normal to italic), and a <strong> in a note would match the 400 and lose its weight (no synthesis). So the family
    also declares upright 400, upright 500 and italic 500 faces whose source never resolves: those requests skip the
-   family and fall through to the text face (.group-note, .paper-license, the witness <cite> and .tool-description
+   family and fall through to the text face (.group-note, .paper-license and the witness <cite>
    are upright: EB Garamond roman; a strong in a note: EB Garamond italic 500). Proved in Chromium, WebKit and
    Firefox (the font proofs, guard-proof6.mjs). To set the upright small rows in the 8-point roman as well, replace
    the upright 400 guard with its face (eb-garamond-08-roman-latin, 17 kB, built beside the others). To drop the cut,

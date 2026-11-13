@@ -258,12 +258,12 @@ test("semantic targets survive same-mode reload and are discarded across modes",
   await page.reload();
   await expect(artifact).toBeInViewport();
 
-  await page.locator("#book-nav").getByRole("button", { name: "Tools" }).click();
+  await page.locator("#book-nav").getByRole("button", { name: "End" }).click();
   await expect
     .poll(() => page.evaluate(() => sessionStorage.getItem("making-scroll-target")))
-    .toBe("tools");
+    .toBe("end");
   await page.reload();
-  await expect(page.locator("#tools")).toBeInViewport();
+  await expect(page.locator("#end")).toBeInViewport();
 
   await page.setViewportSize({ width: 900, height: 900 });
   await page.reload();
@@ -273,13 +273,13 @@ test("semantic targets survive same-mode reload and are discarded across modes",
 
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.reload();
-  await expect(page.locator("#portraits")).toBeInViewport();
+  await expect(page.locator("#opening")).toBeInViewport();
   expect(
     await page.evaluate(() => sessionStorage.getItem("making-scroll-target")),
   ).toBeNull();
 });
 
-test("section dots, hint, Tools/footer reachability, and Tools restoration work", async ({
+test("section dots, hint, last-page/footer reachability, and last-page restoration work", async ({
   page,
 }, testInfo) => {
   const { width, height } = testInfo.project.use.viewport;
@@ -288,6 +288,14 @@ test("section dots, hint, Tools/footer reachability, and Tools restoration work"
   const book = page.locator("#making-book");
   const hint = page.locator("#scroll-hint");
   await expect(hint).not.toHaveClass(/hidden/);
+  // The opening is its own part: its dot is lit, and no chapter's is.
+  const dot = (name) => page.locator("#book-nav").getByRole("button", { name });
+  await expect(dot("Contents")).toHaveClass(/active/);
+  await expect(page.locator("#book-nav .book-nav-dot.active")).toHaveCount(1);
+
+  await dot("Portraits").click();
+  await expect(dot("Portraits")).toHaveClass(/active/);
+  await expect(page.locator("#portraits")).toBeInViewport();
 
   await page.locator("#book-nav").getByRole("button", { name: "Artifacts" }).click();
   const artifactsOffset = await page
@@ -301,16 +309,19 @@ test("section dots, hint, Tools/footer reachability, and Tools restoration work"
   ).toHaveClass(/active/);
   await expect(hint).toHaveClass(/hidden/);
 
-  await page.locator("#book-nav").getByRole("button", { name: "Tools" }).click();
-  await expect(
-    page.locator("#book-nav").getByRole("button", { name: "Tools" }),
-  ).toHaveClass(/active/);
-  await expect(page.locator("#tools")).toBeInViewport();
+  await dot("End").click();
+  await expect(dot("End")).toHaveClass(/active/);
+  await expect(page.locator("#end")).toBeInViewport();
   await expect(page.locator(".page-footer")).toBeInViewport();
+  await expect(page.locator("#end").getByRole("link", { name: "Builds" })).toBeInViewport();
 
   await page.reload();
-  await expect(page.locator("#tools")).toBeInViewport();
+  await expect(page.locator("#end")).toBeInViewport();
   expect(await page.evaluate(() => document.scrollingElement.scrollTop)).toBe(0);
+
+  await dot("Contents").click();
+  await expect(dot("Contents")).toHaveClass(/active/);
+  await expect(page.locator("#opening .book-contents")).toBeInViewport();
 });
 
 test("normal flow ignores a saved desktop target", async ({ page }, testInfo) => {

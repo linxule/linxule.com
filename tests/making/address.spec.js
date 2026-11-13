@@ -65,7 +65,7 @@ test("a deep link wins over the saved place; a reload keeps the newer place", as
     document.querySelectorAll('#making-book > section[id^="portrait:"]')[5].id,
     document.querySelectorAll('#making-book > section[id^="artifact:"]')[3].id,
   ]);
-  await page.evaluate(key => sessionStorage.setItem(key, "tools"), STORAGE_KEY);
+  await page.evaluate(key => sessionStorage.setItem(key, "end"), STORAGE_KEY);
 
   await arrive(page, `/making/#${portrait}`);
   await expectBookAt(page, portrait);
@@ -151,12 +151,17 @@ test("a deep link on a phone lands on its spread", async ({ browser, baseURL }, 
   await context.close();
 });
 
-test("the opening spread lists the book's parts", async ({ page }, testInfo) => {
+// The book opens on what it is and what is in it. Until 2026-11-13 it opened
+// on the Portraits chapter, with the contents beside that chapter's poem and a
+// third part, Tools, that held only a pointer to /builds/.
+test("the opening spread says what the book is and lists its parts", async ({ page }, testInfo) => {
   await page.goto("/making/");
-  const contents = page.locator("#portraits .book-contents");
+  const contents = page.locator("#opening .book-contents");
   await expect(contents).toBeVisible();
+  await expect(page.locator("#opening .thesis-statement")).toBeVisible();
+  expect(await page.evaluate(() => document.querySelector("#making-book > section").id)).toBe("opening");
   const report = await page.evaluate(() => {
-    const nav = document.querySelector("#portraits .book-contents");
+    const nav = document.querySelector("#opening .book-contents");
     const links = [...nav.querySelectorAll("a")].map(a => a.getAttribute("href"));
     const counts = [...nav.querySelectorAll(".c-count")].map(c => c.textContent.trim());
     const book = document.getElementById("making-book");
@@ -166,20 +171,18 @@ test("the opening spread lists the book's parts", async ({ page }, testInfo) => 
       unresolved: links.filter(h => h.startsWith("#") && !document.getElementById(h.slice(1))),
       // A link to the spread the reader is already on does nothing in book mode.
       toItsOwnSpread: links.filter(h => h.startsWith("#") && document.getElementById(h.slice(1)) === home),
-      firstPortrait: book.querySelector(':scope > section[id^="portrait:"]').id,
+      parts: [...nav.querySelectorAll("a.c-part")].map(a => `${a.textContent.trim()} ${a.getAttribute("href")}`),
       counts,
       portraits: book.querySelectorAll(':scope > section[id^="portrait:"]').length,
       artifacts: book.querySelectorAll(':scope > section[id^="artifact:"]').length,
     };
   });
   expect(report.toItsOwnSpread).toEqual([]);
-  expect(report.links[0]).toBe(`#${report.firstPortrait}`);
-  expect(report.links).toContain("#artifacts");
-  expect(report.links).toContain("#tools");
+  expect(report.parts).toEqual(["Portraits #portraits", "Artifacts #artifacts"]);
   expect(report.unresolved).toEqual([]);
-  expect(report.counts.slice(0, 2)).toEqual([String(report.portraits), String(report.artifacts)]);
+  expect(report.counts).toEqual([String(report.portraits), String(report.artifacts)]);
 
-  const box = name => page.locator(`#portraits ${name}`).first().boundingBox();
+  const box = name => page.locator(`#opening ${name}`).first().boundingBox();
   const own = await contents.boundingBox();
   const viewport = testInfo.project.use.viewport;
   expect(own.x).toBeGreaterThanOrEqual(0);
@@ -188,18 +191,24 @@ test("the opening spread lists the book's parts", async ({ page }, testInfo) => 
 
   if (isBookMode(viewport)) {
     const overlaps = (a, b) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
-    for (const other of [".page-title", ".poem-shape", ".filter-chips", ".header-links", ".section-label"]) {
+    for (const other of [".page-title", ".thesis-statement", ".thesis-continued", ".header-links", ".scroll-hint"]) {
       expect(overlaps(own, await box(other)), `contents overlaps ${other}`).toBe(false);
     }
     expect(own.y).toBeGreaterThanOrEqual(0);
     expect(own.y + own.height).toBeLessThanOrEqual(viewport.height);
-    // The two tracked mono labels, PORTRAITS and CONTENTS, sit level.
-    const [left, right] = await Promise.all([box(".section-label"), box(".contents-label")]);
-    expect(Math.abs(left.y - right.y), "CONTENTS level with PORTRAITS").toBeLessThanOrEqual(1);
-    expect(Math.abs(left.height - right.height)).toBeLessThanOrEqual(1);
+    // The contents stands beside the statement: its label falls within the
+    // statement's first line, whatever the height of the window.
+    const [label, statement, title] = await Promise.all([box(".contents-label"), box(".thesis-statement"), box(".page-title")]);
+    const firstLine = await page.locator("#opening .thesis-statement").evaluate(e => parseFloat(getComputedStyle(e).lineHeight));
+    expect(label.y, "CONTENTS not above the statement").toBeGreaterThanOrEqual(statement.y);
+    expect(label.y + label.height, "CONTENTS within the statement's first line").toBeLessThanOrEqual(statement.y + firstLine + 1);
+    // Title, statement and lines stay one block: no stray row gap between them.
+    expect(statement.y - (title.y + title.height), "title to statement").toBeLessThanOrEqual(64);
   } else {
-    expect(own.y, "contents sits under the poem").toBeGreaterThanOrEqual((await box(".poem-shape")).y + (await box(".poem-shape")).height);
-    expect(own.y + own.height, "and above the chips").toBeLessThanOrEqual((await box(".filter-chips")).y);
+    const lines = await box(".thesis-continued");
+    expect(own.y, "contents sits under the opening lines").toBeGreaterThanOrEqual(lines.y + lines.height);
+    const portraits = await page.locator("#portraits").boundingBox();
+    expect(own.y + own.height, "and before the Portraits chapter").toBeLessThanOrEqual(portraits.y);
   }
 
   // Keyboard focus gets the site's own ring, the same as a filter chip's.
@@ -209,7 +218,18 @@ test("the opening spread lists the book's parts", async ({ page }, testInfo) => 
     await page.keyboard.press("Shift");
     return link.evaluate(e => { const s = getComputedStyle(e); return `${s.outlineStyle} ${s.outlineWidth} ${s.outlineOffset}`; });
   };
-  expect(await ring("#portraits .book-contents a.c-part")).toBe(await ring("#portraits .filter-chip"));
+  expect(await ring("#opening .book-contents a.c-part")).toBe(await ring("#portraits .filter-chip"));
+});
+
+// /making#tools named the third part until the builds moved out. The name is
+// kept on the line that says where they went, so an old link opens that page.
+test("an old #tools link opens the last page", async ({ page }, testInfo) => {
+  await arrive(page, "/making/#tools");
+  const note = page.locator("#end #tools");
+  await expect(note.getByRole("link", { name: "Builds" })).toHaveAttribute("href", "/builds/");
+  await expect(note.locator("a.accident")).toHaveCount(1);
+  if (isBookMode(testInfo.project.use.viewport)) await expectBookAt(page, "end");
+  await expect(note).toBeInViewport();
 });
 
 test("the contents works without scripts", async ({ browser, baseURL }, testInfo) => {
@@ -219,7 +239,7 @@ test("the contents works without scripts", async ({ browser, baseURL }, testInfo
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
   await page.goto("/making/");
-  await page.locator("#portraits .book-contents a.c-part", { hasText: "Artifacts" }).click();
+  await page.locator("#opening .book-contents a.c-part", { hasText: "Artifacts" }).click();
   await expect.poll(() => page.evaluate(() => Math.abs(document.getElementById("artifacts").getBoundingClientRect().top))).toBeLessThanOrEqual(2);
   await context.close();
 });
