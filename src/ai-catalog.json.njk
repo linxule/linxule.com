@@ -1,0 +1,166 @@
+---
+permalink: /.well-known/ai-catalog.json
+eleventyExcludeFromCollections: true
+---
+{%- set siteDomain = site.url | replace("https://", "") | replace("http://", "") | replace(r/\/$/, "") -%}
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": {{ site.author | dump | safe }},
+    "identifier": {{ ("did:web:" ~ siteDomain) | dump | safe }},
+    "documentationUrl": {{ (site.url ~ "/llms.txt") | dump | safe }}
+  },
+  "entries": [
+    {
+      "identifier": {{ ("urn:air:" ~ siteDomain ~ ":skills:index") | dump | safe }},
+      "displayName": "Xule Lin Site Navigation Skills",
+      "type": "application/agent-skills+json",
+      "description": "Agent Skills Discovery v0.2.0 index for navigating Xule Lin's public research site, machine-readable indexes, Markdown twins, and attribution boundaries.",
+      "url": {{ (site.url ~ "/.well-known/agent-skills/index.json") | dump | safe }},
+      "capabilities": [
+{%- for skill in agentSkills.skills %}
+        {{ skill.name | dump | safe }}{% if not loop.last %},{% endif %}
+{%- endfor %}
+      ],
+      "tags": ["agent-skills", "research", "navigation", "markdown"],
+      "representativeQueries": [
+        "How do I navigate Xule Lin's essays, papers, and Markdown twins?",
+        "Where are linxule.com's machine-readable indexes and citation rules?",
+        "What licensing and attribution boundaries apply to linxule.com?"
+      ]
+    },
+    {
+      "identifier": {{ ("urn:air:" ~ siteDomain ~ ":api-catalog:root") | dump | safe }},
+      "displayName": "Xule Lin Public Discovery API Catalog",
+      "type": "application/linkset+json",
+      "description": "RFC 9727 linkset anchoring llms.txt, site-index.json, Atom feed, Markdown homepage, and sitemap for linxule.com.",
+      "url": {{ (site.url ~ "/.well-known/api-catalog") | dump | safe }},
+      "tags": ["api-catalog", "linkset", "discovery", "llms-txt"],
+      "representativeQueries": [
+        "List machine-readable discovery endpoints and feeds published on linxule.com.",
+        "Where can an agent find llms.txt, site-index.json, and the Atom feed for Xule Lin?"
+      ]
+    },
+    {
+      "identifier": "urn:air:vellum.linxule.com:mcp:vellum",
+      "displayName": "Vellum",
+      "type": "application/mcp-server-card+json",
+      "description": "Living artwork and collective thinking surface where AI voices leave short imprints and weave lineages via MCP or HTTP.",
+      "url": "https://vellum.linxule.com/.well-known/mcp/server-card.json",
+      "version": "0.6.0",
+      "capabilities": [
+        "sense_space",
+        "focus",
+        "discover",
+        "leave_imprint",
+        "weave",
+        "witness"
+      ],
+      "tags": ["mcp", "artwork", "collective-thinking", "experiment"],
+      "representativeQueries": [
+        "Sense recent AI voices and lineages on Vellum.",
+        "Leave a short imprint or weave a response into an existing Vellum thread.",
+        "Discover voices and witness lineages in Vellum."
+      ]
+    },
+    {
+      "identifier": "urn:air:music-studio.linxule.com:mcp:music-studio",
+      "displayName": "Music Studio",
+      "type": "application/mcp-server-card+json",
+      "description": "ABC sheet-music composition and Strudel live coding with playback, harmony analysis, and MIDI/WAV export.",
+      "data": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+        "name": "com.linxule.music-studio/mcp",
+        "title": "Music Studio",
+        "version": "0.14.0",
+        "description": "ABC sheet-music composition, Strudel live coding, harmony analysis, and MIDI/WAV playback.",
+        "websiteUrl": "https://music-studio.linxule.com",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://music-studio.linxule.com/mcp"
+          }
+        ],
+        "serverInfo": {
+          "name": "Music Studio",
+          "version": "0.14.0"
+        },
+        "url": "https://music-studio.linxule.com/mcp",
+        "transport": {
+          "type": "streamable-http"
+        }
+      },
+      "version": "0.14.0",
+      "capabilities": [
+        "play-sheet-music",
+        "play-live-pattern",
+        "analyze-harmony",
+        "convert-abc-to-strudel",
+        "search-music-docs"
+      ],
+      "tags": ["mcp", "music", "abc-notation", "strudel", "live-coding"],
+      "representativeQueries": [
+        "Compose and play an ABC notation melody with harmony analysis.",
+        "Convert an ABC score into a Strudel live-coding pattern.",
+        "Search ABC notation or Strudel documentation in Music Studio."
+      ]
+    },
+    {
+      "identifier": "urn:air:lotus-wisdom.linxule.com:mcp:lotus-wisdom",
+      "displayName": "Lotus Wisdom",
+      "type": "application/mcp-server-card+json",
+      "description": "Contemplative structured reasoning MCP server grounded in the Lotus Sutra's five-domain framework, with an interactive journey view.",
+      "data": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+        "name": "com.linxule.lotus-wisdom/mcp",
+        "title": "Lotus Wisdom",
+        "version": "0.10.0",
+        "description": "Contemplative problem-solving MCP server grounded in the Lotus Sutra's five-domain framework.",
+        "websiteUrl": "https://lotus-wisdom.linxule.com",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://lotus-wisdom.linxule.com/mcp"
+          }
+        ],
+        "serverInfo": {
+          "name": "lotus-wisdom",
+          "version": "0.10.0"
+        },
+        "url": "https://lotus-wisdom.linxule.com/mcp",
+        "transport": {
+          "type": "streamable-http"
+        }
+      },
+      "version": "0.10.0",
+      "capabilities": [
+        "lotuswisdom",
+        "lotuswisdom_summary"
+      ],
+      "tags": ["mcp", "reasoning", "contemplation", "problem-solving"],
+      "representativeQueries": [
+        "Work through a paradox using the Lotus Wisdom contemplation framework.",
+        "Summarize the domains and insights from a Lotus Wisdom inquiry session."
+      ]
+    },
+    {
+      "identifier": "urn:air:research-memex.org:mcp:research-memex",
+      "displayName": "Research Memex",
+      "type": "application/mcp-server-card+json",
+      "description": "Read-only MCP server for searching and reading the Research Memex handbook on human-AI research collaboration and roles.",
+      "url": "https://research-memex.org/mcp/server-card",
+      "version": "1.0.0",
+      "capabilities": [
+        "search_docs",
+        "read_doc",
+        "memex_role"
+      ],
+      "tags": ["mcp", "research-methods", "human-ai-collaboration", "documentation"],
+      "representativeQueries": [
+        "Search Research Memex guides on human-AI qualitative research workflows.",
+        "Read a Research Memex page or load a collaborative research role.",
+        "How does Research Memex structure multi-model review and epistemic agency?"
+      ]
+    }
+  ]
+}

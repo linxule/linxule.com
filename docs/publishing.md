@@ -117,6 +117,13 @@ does not change image quality or either site's production domains.
    if the deployment succeeded. If an explicitly approved preview must remain,
    record the exception and its size; do not report a two-deployment result.
 
+   For post-release and monthly live-surface verification across both
+   `linxule.com` and `research-memex.org` (origin Markdown negotiation,
+   `/.well-known/*`, `isitagentready.com` via `bun run seo:agentready` in
+   Research Memex, Cloudflare zone hardening checks, IndexNow, and Google Search
+   Console via `scripts/gsc/query.py --site ...`), follow
+   `~/Documents/GitHub/research-memex/handbook/procedures/release-and-surface-audit.md`.
+
 ## Storage budget and recovery
 
 **How Vercel meters it (verified on the usage page, 2026-09-16).** Deployment
