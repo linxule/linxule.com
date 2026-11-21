@@ -72,3 +72,27 @@ docs-only commit immediately afterward):
 - Re-checked live `https://linxule.com/` (`200`) and `/.build-manifest.json`
   after deletion.
 - Deleted `.deploy-worktree/.vercel/output`.
+
+## Same-evening `/retrace` polish (`04324fa`)
+
+Authorized by Xule ("all now. lets goooooo") after a 3-lane `/retrace` audit:
+
+- **Commit `04324fa`**: tightened `linxule-mcp` (`400` on unsupported
+  `MCP-Protocol-Version` header, strict JSON-RPC `id`/`params` validation,
+  `Mcp-Method`/`Mcp-Name` CORS headers, and `search_site` `section` handling),
+  added RFC 9110 `Accept` quality-weight (`q=`) precedence in `middleware.ts`,
+  updated Vellum (`0.7.1`) and Music Studio (10 tools) in `ai-catalog.json.njk`,
+  hardened `scripts/check-built-json.mjs` (`api-catalog`, `agent-skills` digest,
+  and 14 static Markdown twins), and aligned `Person` JSON-LD (`Assistant Professor`,
+  `[SKEMA, Imperial]`), `llms.txt`, `index.md`, and `SKILL.md`.
+- **Deployed**: Vercel `dpl_4coMXruinjTPkE3VMXqzPycwkupu` (detached at
+  `04324faaffb332e686afe0ad7dbf07c1d32dfbde`, fingerprint
+  `efa767c7211e141e7b9e2f4e66ed8ffe6510cd4e6e62a4baac9ba7bf5755426b`, `1.5 GB`
+  output, `16 MB` delta) + Cloudflare `linxule-mcp` Version ID
+  `952b3537-4d88-43f8-a6a4-e1d21972c4da`.
+- **Verified & cleaned up**: live `/.build-manifest.json` matches `04324fa`,
+  `Accept: text/html;q=1.0, text/markdown;q=0.1` returns `text/html`, unknown
+  `MCP-Protocol-Version` returns `400`, retention pruned
+  `dpl_4yBRX333ZvrowdLxDjCfwxx5DcSh` keeping `dpl_4coMXruinjTPkE3VMXqzPycwkupu`
+  (current) and `dpl_3V7aUiWHi3P756PbCgPHecjMG6yH` (rollback), and
+  `.deploy-worktree/.vercel/output` was deleted.
