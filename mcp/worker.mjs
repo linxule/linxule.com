@@ -35,11 +35,26 @@ const BASE_CORS_HEADERS = Object.freeze({
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers":
-    "Content-Type, Accept, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID, If-None-Match",
+    "Content-Type, Accept, MCP-Protocol-Version, Mcp-Session-Id, Mcp-Method, Mcp-Name, Last-Event-ID, If-None-Match",
   "Access-Control-Expose-Headers": "MCP-Protocol-Version, X-Linxule-Mcp-Version",
   "Access-Control-Max-Age": "86400",
   "X-Linxule-Mcp-Version": MCP_SERVER_INFO.version,
 });
+
+function isValidRpcId(id) {
+  return (
+    id === null ||
+    typeof id === "string" ||
+    (typeof id === "number" && Number.isFinite(id))
+  );
+}
+
+function requireObjectParams(rawParams) {
+  if (rawParams !== undefined && !isPlainObject(rawParams)) {
+    throw new JsonRpcError(-32602, "Invalid params: params must be an object");
+  }
+  return rawParams ?? {};
+}
 
 class JsonRpcError extends Error {
   constructor(code, message) {
@@ -405,7 +420,7 @@ export function createWorker({
       }
     }
 
-    if (!section && (kind === "all" || kind === "concepts")) {
+    if (kind === "concepts" || (kind === "all" && !section)) {
       for (const concept of index.concepts || []) {
         const secondary = [concept.definition, concept.canonicalEssay, ...asStringArray(concept.authors)]
           .filter(Boolean)
@@ -429,7 +444,7 @@ export function createWorker({
       }
     }
 
-    if (!section && (kind === "all" || kind === "publications")) {
+    if (kind === "publications" || (kind === "all" && !section)) {
       for (const pub of index.publications || []) {
         const secondary = [
           pub.venue,
@@ -461,7 +476,7 @@ export function createWorker({
       }
     }
 
-    if (!section && (kind === "all" || kind === "projects")) {
+    if (kind === "projects" || (kind === "all" && !section)) {
       for (const proj of index.projects || []) {
         const secondary = [proj.description, proj.note, proj.group, proj.license]
           .filter(Boolean)
@@ -485,12 +500,13 @@ export function createWorker({
     }
 
     scored.sort((a, b) => b.score - a.score);
+    const appliedSection = section && (kind === "all" || kind === "pages") ? section : undefined;
     return {
       ok: true,
       index_version: index.version ?? "unknown",
       query: args.query.trim(),
       kind,
-      ...(section ? { section } : {}),
+      ...(appliedSection ? { section: appliedSection } : {}),
       matches: scored.slice(0, limit).map((entry) => entry.item),
     };
   }
@@ -733,7 +749,7 @@ export function createWorker({
     if (!isPlainObject(params) || typeof params.name !== "string") {
       throw new JsonRpcError(-32602, "prompts/get requires a prompt `name`");
     }
-    if (params.arguments && (!isPlainObject(params.arguments) || Object.keys(params.arguments).length > 0)) {
+    if (params.arguments !== undefined && (!isPlainObject(params.arguments) || Object.keys(params.arguments).length > 0)) {
       throw new JsonRpcError(-32602, "This prompt takes no arguments");
     }
     const promptMeta = MCP_PROMPTS.find((entry) => entry.name === params.name);
@@ -767,12 +783,25 @@ export function createWorker({
     if (!isPlainObject(msg) || msg.jsonrpc !== "2.0") {
       return {
         jsonrpc: "2.0",
-        id: isPlainObject(msg) && ("id" in msg) ? msg.id : null,
+        id:
+          isPlainObject(msg) &&
+          Object.prototype.hasOwnProperty.call(msg, "id") &&
+          isValidRpcId(msg.id)
+            ? msg.id
+            : null,
         error: { code: -32600, message: "Invalid Request" },
       };
     }
 
     const hasId = Object.prototype.hasOwnProperty.call(msg, "id");
+    if (hasId && !isValidRpcId(msg.id)) {
+      return {
+        jsonrpc: "2.0",
+        id: null,
+        error: { code: -32600, message: "Invalid Request: id must be string, number, or null" },
+      };
+    }
+
     // JSON-RPC notifications or client responses carry no request execution obligation.
     if (!hasId) {
       if (typeof msg.method !== "string") {
@@ -788,18 +817,18 @@ export function createWorker({
     if (typeof msg.method !== "string") {
       return {
         jsonrpc: "2.0",
-        id: msg.id ?? null,
+        id: msg.id,
         error: { code: -32600, message: "Invalid Request: missing method" },
       };
     }
 
     const id = msg.id;
-    const params = msg.params ?? {};
 
     try {
       switch (msg.method) {
         case "initialize": {
-          const requestedVersion = isPlainObject(params) ? params.protocolVersion : undefined;
+          const params = requireObjectParams(msg.params);
+          const requestedVersion = params.protocolVersion;
           const negotiated = MCP_SUPPORTED_PROTOCOLS.includes(requestedVersion)
             ? requestedVersion
             : DEFAULT_PROTOCOL;
@@ -824,9 +853,11 @@ export function createWorker({
         }
 
         case "ping":
+          requireObjectParams(msg.params);
           return { jsonrpc: "2.0", id, result: {} };
 
         case "tools/list":
+          requireObjectParams(msg.params);
           return {
             jsonrpc: "2.0",
             id,
@@ -842,10 +873,11 @@ export function createWorker({
           };
 
         case "tools/call": {
-          if (!isPlainObject(params) || typeof params.name !== "string") {
+          const params = requireObjectParams(msg.params);
+          if (typeof params.name !== "string") {
             throw new JsonRpcError(-32602, "tools/call requires `name`");
           }
-          const toolArgs = params.arguments ?? {};
+          const toolArgs = params.arguments === undefined ? {} : params.arguments;
           let payload;
           if (params.name === "search_site") {
             payload = await runSearchSite(toolArgs, siteOrigin);
@@ -868,6 +900,7 @@ export function createWorker({
         }
 
         case "resources/list":
+          requireObjectParams(msg.params);
           return {
             jsonrpc: "2.0",
             id,
@@ -877,6 +910,7 @@ export function createWorker({
           };
 
         case "resources/templates/list":
+          requireObjectParams(msg.params);
           return {
             jsonrpc: "2.0",
             id,
@@ -886,7 +920,8 @@ export function createWorker({
           };
 
         case "resources/read": {
-          if (!isPlainObject(params) || typeof params.uri !== "string") {
+          const params = requireObjectParams(msg.params);
+          if (typeof params.uri !== "string") {
             throw new JsonRpcError(-32602, "resources/read requires `uri`");
           }
           const result = await runReadResource(params.uri, siteOrigin);
@@ -894,6 +929,7 @@ export function createWorker({
         }
 
         case "prompts/list":
+          requireObjectParams(msg.params);
           return {
             jsonrpc: "2.0",
             id,
@@ -903,6 +939,7 @@ export function createWorker({
           };
 
         case "prompts/get": {
+          const params = requireObjectParams(msg.params);
           const result = await runGetPrompt(params, siteOrigin);
           return { jsonrpc: "2.0", id, result };
         }
@@ -1018,9 +1055,10 @@ export function createWorker({
       }
 
       const headerVersion = request.headers.get("mcp-protocol-version");
-      const activeProtocol = MCP_SUPPORTED_PROTOCOLS.includes(headerVersion)
-        ? headerVersion
-        : DEFAULT_PROTOCOL;
+      if (headerVersion !== null && !MCP_SUPPORTED_PROTOCOLS.includes(headerVersion)) {
+        return plainError(400, "Unsupported MCP-Protocol-Version");
+      }
+      const activeProtocol = headerVersion ?? DEFAULT_PROTOCOL;
 
       if (Array.isArray(parsed)) {
         if (parsed.length === 0 || parsed.length > 20) {

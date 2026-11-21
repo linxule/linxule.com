@@ -6,9 +6,10 @@
  * structured data. It also checks that the projects discovery surface and its
  * Markdown twin agree on names and URLs.
  */
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
-import { buildMcpServerCard } from "../mcp/metadata.mjs";
+import { STATIC_MARKDOWN_TWINS, buildMcpServerCard } from "../mcp/metadata.mjs";
 
 const SITE = "_site";
 const problems = [];
@@ -249,6 +250,18 @@ if (siteIndex) {
                 problems.push(`${label}.data.serverInfo.name is missing`);
               }
             }
+            if (entry.version !== undefined) {
+              if (typeof entry.version !== "string" || !entry.version.trim()) {
+                problems.push(`${label}.version must be a non-empty string`);
+              } else if (
+                entry.version !== entry.data?.version ||
+                entry.version !== entry.data?.serverInfo?.version
+              ) {
+                problems.push(
+                  `${label}.version ("${entry.version}") must match data.version ("${entry.data?.version}") and data.serverInfo.version ("${entry.data?.serverInfo?.version}")`,
+                );
+              }
+            }
           }
           if (!Array.isArray(entry.tags) || entry.tags.length === 0 || entry.tags.some((t) => typeof t !== "string" || !t.trim())) {
             problems.push(`${label}.tags must be a non-empty array of strings`);
@@ -311,6 +324,109 @@ if (siteIndex) {
       problems.push("index.html is missing <link rel=\"ai-catalog\">");
     }
   }
+
+  // Validate RFC 9727 /.well-known/api-catalog linkset.
+  const apiCatalogPath = path.join(SITE, ".well-known", "api-catalog");
+  if (!existsSync(apiCatalogPath)) {
+    problems.push(".well-known/api-catalog is missing");
+  } else {
+    try {
+      const apiCatalog = JSON.parse(readFileSync(apiCatalogPath, "utf8"));
+      if (
+        !apiCatalog ||
+        typeof apiCatalog !== "object" ||
+        Array.isArray(apiCatalog) ||
+        !Array.isArray(apiCatalog.linkset) ||
+        apiCatalog.linkset.length === 0
+      ) {
+        problems.push(".well-known/api-catalog must contain a non-empty linkset array");
+      } else {
+        for (const [idx, item] of apiCatalog.linkset.entries()) {
+          const label = `api-catalog.linkset[${idx}]`;
+          if (!item || typeof item !== "object" || Array.isArray(item)) {
+            problems.push(`${label} must be an object`);
+            continue;
+          }
+          if (typeof item.anchor !== "string") {
+            problems.push(`${label}.anchor is missing`);
+          } else {
+            try {
+              const anchorUrl = new URL(item.anchor);
+              if (anchorUrl.protocol !== "https:") {
+                problems.push(`${label}.anchor must use https://`);
+              }
+            } catch {
+              problems.push(`${label}.anchor ("${item.anchor}") is not a valid URL`);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      problems.push(`.well-known/api-catalog is invalid JSON: ${error.message}`);
+    }
+  }
+
+  // Validate Agent Skills Discovery v0.2.0 index and SHA-256 parity with built artifacts.
+  const agentSkillsIndexPath = path.join(SITE, ".well-known", "agent-skills", "index.json");
+  if (!existsSync(agentSkillsIndexPath)) {
+    problems.push(".well-known/agent-skills/index.json is missing");
+  } else {
+    try {
+      const skillsIndex = JSON.parse(readFileSync(agentSkillsIndexPath, "utf8"));
+      if (!skillsIndex || typeof skillsIndex !== "object" || Array.isArray(skillsIndex)) {
+        problems.push(".well-known/agent-skills/index.json root must be an object");
+      } else {
+        if (skillsIndex.$schema !== "https://schemas.agentskills.io/discovery/0.2.0/schema.json") {
+          problems.push(".well-known/agent-skills/index.json $schema must be the v0.2.0 discovery schema URL");
+        }
+        if (!Array.isArray(skillsIndex.skills) || skillsIndex.skills.length === 0) {
+          problems.push(".well-known/agent-skills/index.json skills must be a non-empty array");
+        } else {
+          for (const [idx, skill] of skillsIndex.skills.entries()) {
+            const label = `agent-skills.skills[${idx}]`;
+            if (!skill || typeof skill !== "object" || Array.isArray(skill)) {
+              problems.push(`${label} must be an object`);
+              continue;
+            }
+            for (const field of ["name", "type", "description", "url", "digest"]) {
+              if (typeof skill[field] !== "string" || !skill[field].trim()) {
+                problems.push(`${label}.${field} is missing`);
+              }
+            }
+            if (typeof skill.url === "string" && typeof skill.digest === "string") {
+              if (!skill.url.startsWith("/") || skill.url.includes("..")) {
+                problems.push(`${label}.url ("${skill.url}") must be a root-relative path`);
+              } else if (!/^sha256:[0-9a-f]{64}$/.test(skill.digest)) {
+                problems.push(`${label}.digest ("${skill.digest}") must be sha256:<64 lowercase hex>`);
+              } else {
+                const builtSkillPath = path.join(SITE, skill.url.replace(/^\//, ""));
+                if (!existsSync(builtSkillPath)) {
+                  problems.push(`${label} target file is missing in _site: ${skill.url}`);
+                } else {
+                  const actualDigest = `sha256:${createHash("sha256").update(readFileSync(builtSkillPath)).digest("hex")}`;
+                  if (skill.digest !== actualDigest) {
+                    problems.push(`${label}.digest (${skill.digest}) does not match built ${skill.url} (${actualDigest})`);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      problems.push(`.well-known/agent-skills/index.json is invalid JSON: ${error.message}`);
+    }
+  }
+
+  // Verify every static Markdown twin declared in mcp/metadata.mjs exists in _site/.
+  for (const [canonicalPath, entry] of Object.entries(STATIC_MARKDOWN_TWINS)) {
+    const builtMdPath = path.join(SITE, entry.mdPath.replace(/^\//, ""));
+    if (!existsSync(builtMdPath)) {
+      problems.push(`STATIC_MARKDOWN_TWINS["${canonicalPath}"] missing built file _site${entry.mdPath}`);
+    } else if (statSync(builtMdPath).size === 0) {
+      problems.push(`STATIC_MARKDOWN_TWINS["${canonicalPath}"] built file _site${entry.mdPath} is empty`);
+    }
+  }
 }
 
 if (problems.length) {
@@ -322,5 +438,5 @@ if (problems.length) {
 }
 
 console.log(
-  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), ${videos} VideoObject(s), site-index.json, builds.md, .well-known/mcp/server-card.json, and .well-known/ai-catalog.json parsed/agree`,
+  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), ${videos} VideoObject(s), site-index.json, builds.md, .well-known/mcp/server-card.json, .well-known/ai-catalog.json, .well-known/api-catalog, .well-known/agent-skills/index.json, and ${Object.keys(STATIC_MARKDOWN_TWINS).length} static Markdown twins parsed/agree`,
 );

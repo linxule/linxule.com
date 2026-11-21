@@ -18,13 +18,26 @@ describe('Markdown content negotiation', () => {
     'Text/Markdown',
     'TEXT/MARKDOWN; charset=utf-8',
     'text/html, text/markdown',
-    'text/html;q=1, text/markdown;q=0.1',
+    'text/html;q=0.5, text/markdown;q=0.9',
+    'text/html;q=0.8, text/markdown;q=0.8',
+    'text/html;q=0.4, */*;q=0.9, text/markdown;q=0.6',
   ])('keeps explicit Markdown opt-in for %s', accept => {
     const response = negotiate('/writing/example/?source=agent&view=full', accept);
     expect(response.headers.get('x-middleware-rewrite')).toBe(
       'https://linxule.com/writing/example.md?source=agent&view=full',
     );
     expect(response.headers.get('x-middleware-next')).toBeNull();
+  });
+
+  it.each([
+    'text/html;q=1.0, text/markdown;q=0.1',
+    'text/html;q=1, text/markdown;q=0.1',
+    'text/html, text/markdown;q=0.5',
+    'text/html, text/markdown;q=0.8',
+    'text/*, text/markdown;q=0.5',
+    '*/*, text/markdown;q=0.5',
+  ])('serves HTML when HTML or wildcard quality strictly exceeds Markdown in %s', accept => {
+    expectPassThrough(negotiate('/writing/example', accept));
   });
 
   it.each([

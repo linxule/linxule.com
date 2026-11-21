@@ -17,7 +17,7 @@ Use this skill when helping a reader understand, cite, or navigate Xule Lin's pu
 
 ## Navigation Rules
 
-- Treat the website as a research and writing archive, not as an interactive agent service.
+- Treat the website as a public research and writing archive (with a strictly read-only MCP endpoint at /mcp), not as an interactive or stateful agent service.
 - Distinguish content sections: writing and concepts are prose; papers are formal publications; talks are presentation records; portraits and artifacts include AI-generated media with per-page provenance.
 - When citing a claim, use the most specific page URL available and include the title, author name, year if available, and canonical URL.
 - For formal publications, prefer the DOI, arXiv page, or paper landing page metadata over an essay that discusses the work.

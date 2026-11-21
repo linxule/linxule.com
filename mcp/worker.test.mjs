@@ -1,6 +1,13 @@
 import { createHash } from "node:crypto";
+import { existsSync, statSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "bun:test";
-import { MCP_CARD_DESCRIPTION, buildMcpServerCard } from "./metadata.mjs";
+import {
+  MCP_CARD_DESCRIPTION,
+  STATIC_MARKDOWN_TWINS,
+  buildMcpServerCard,
+} from "./metadata.mjs";
 import { allowedHost, createWorker, normalizeCandidatePath } from "./worker.mjs";
 
 const ORIGIN = "https://linxule.com";
@@ -417,5 +424,180 @@ describe("linxule-mcp Streamable HTTP JSON-RPC 2.0 protocol", () => {
     expect(batchRes.status).toBe(200);
     const batchBody = await batchRes.json();
     expect(batchBody).toEqual([{ jsonrpc: "2.0", id: 11, result: {} }]);
+  });
+
+  test("strictly validates MCP-Protocol-Version header and CORS preflight headers", async () => {
+    const { worker, env } = makeFixtureWorker();
+
+    // Preflight on /mcp includes Mcp-Method and Mcp-Name for 2026-07-28 browser clients
+    const optionsRes = await worker.fetch(
+      new Request("https://linxule.com/mcp", { method: "OPTIONS" }),
+      env,
+    );
+    expect(optionsRes.status).toBe(204);
+    const allowHeaders = optionsRes.headers.get("access-control-allow-headers") || "";
+    expect(allowHeaders).toContain("Mcp-Method");
+    expect(allowHeaders).toContain("Mcp-Name");
+    expect(allowHeaders).toContain("MCP-Protocol-Version");
+
+    // Absent header defaults to 2025-11-25
+    const defaultProtoRes = await postRpc(worker, env, {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "ping",
+    });
+    expect(defaultProtoRes.status).toBe(200);
+    expect(defaultProtoRes.headers.get("mcp-protocol-version")).toBe("2025-11-25");
+
+    // Supported versions echo back cleanly
+    for (const supported of ["2026-07-28", "2025-11-25", "2025-03-26"]) {
+      const okRes = await postRpc(
+        worker,
+        env,
+        { jsonrpc: "2.0", id: 1, method: "ping" },
+        { "MCP-Protocol-Version": supported },
+      );
+      expect(okRes.status).toBe(200);
+      expect(okRes.headers.get("mcp-protocol-version")).toBe(supported);
+    }
+
+    // Unknown protocol header returns HTTP 400 Bad Request
+    const badProtoRes = await postRpc(
+      worker,
+      env,
+      { jsonrpc: "2.0", id: 1, method: "ping" },
+      { "MCP-Protocol-Version": "1999-01-01" },
+    );
+    expect(badProtoRes.status).toBe(400);
+    expect(await badProtoRes.text()).toContain("Unsupported MCP-Protocol-Version");
+  });
+
+  test("strictly validates JSON-RPC 2.0 id types and object params across all MCP methods", async () => {
+    const { worker, env } = makeFixtureWorker();
+
+    for (const badId of [true, false, {}, [1]]) {
+      const res = await postRpc(worker, env, {
+        jsonrpc: "2.0",
+        id: badId,
+        method: "ping",
+      });
+      expect(res.status).toBe(200);
+      expect(await res.json()).toEqual({
+        jsonrpc: "2.0",
+        id: null,
+        error: {
+          code: -32600,
+          message: "Invalid Request: id must be string, number, or null",
+        },
+      });
+    }
+
+    for (const goodId of [null, "req-42", 0, 42]) {
+      const res = await postRpc(worker, env, {
+        jsonrpc: "2.0",
+        id: goodId,
+        method: "ping",
+      });
+      expect(res.status).toBe(200);
+      expect(await res.json()).toEqual({ jsonrpc: "2.0", id: goodId, result: {} });
+    }
+
+    const mcpMethods = [
+      "initialize",
+      "ping",
+      "tools/list",
+      "tools/call",
+      "resources/list",
+      "resources/templates/list",
+      "resources/read",
+      "prompts/list",
+      "prompts/get",
+    ];
+    for (const method of mcpMethods) {
+      for (const badParams of [[], "invalid", 123, null, true]) {
+        const res = await postRpc(worker, env, {
+          jsonrpc: "2.0",
+          id: `bad-${method}`,
+          method,
+          params: badParams,
+        });
+        expect(res.status).toBe(200);
+        const body = await res.json();
+        expect(body).toEqual({
+          jsonrpc: "2.0",
+          id: `bad-${method}`,
+          error: {
+            code: -32602,
+            message: "Invalid params: params must be an object",
+          },
+        });
+      }
+    }
+  });
+
+  test("search_site filters pages on section when kind=all/pages, and ignores section on explicit non-page kinds", async () => {
+    const { worker, env } = makeFixtureWorker();
+
+    // kind=all + section=writing filters to pages in `writing` (excludes concepts)
+    const allWithSection = await postRpc(worker, env, {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "tools/call",
+      params: {
+        name: "search_site",
+        arguments: { query: "Completion Authority", kind: "all", section: "writing" },
+      },
+    });
+    const allWithSectionBody = await allWithSection.json();
+    expect(allWithSectionBody.result.structuredContent.section).toBe("writing");
+    expect(allWithSectionBody.result.structuredContent.matches.map((m) => m.kind)).toEqual(["page"]);
+
+    // Explicit non-page kinds ignore `section` rather than returning []
+    const conceptsWithSection = await postRpc(worker, env, {
+      jsonrpc: "2.0",
+      id: 2,
+      method: "tools/call",
+      params: {
+        name: "search_site",
+        arguments: { query: "Completion Authority", kind: "concepts", section: "writing" },
+      },
+    });
+    const conceptsMatches = (await conceptsWithSection.json()).result.structuredContent.matches;
+    expect(conceptsMatches.map((m) => m.kind)).toEqual(["concept"]);
+
+    const pubsWithSection = await postRpc(worker, env, {
+      jsonrpc: "2.0",
+      id: 3,
+      method: "tools/call",
+      params: {
+        name: "search_site",
+        arguments: { query: "Interpretive Orchestration", kind: "publications", section: "writing" },
+      },
+    });
+    const pubsMatches = (await pubsWithSection.json()).result.structuredContent.matches;
+    expect(pubsMatches.map((m) => m.kind)).toEqual(["publication"]);
+
+    const projectsWithSection = await postRpc(worker, env, {
+      jsonrpc: "2.0",
+      id: 4,
+      method: "tools/call",
+      params: {
+        name: "search_site",
+        arguments: { query: "Research Memex", kind: "projects", section: "writing" },
+      },
+    });
+    const projectsMatches = (await projectsWithSection.json()).result.structuredContent.matches;
+    expect(projectsMatches.map((m) => m.kind)).toEqual(["project"]);
+  });
+
+  test("every STATIC_MARKDOWN_TWINS mdPath exists as a non-empty file in _site when built", () => {
+    const siteDir = fileURLToPath(new URL("../_site", import.meta.url));
+    if (!existsSync(siteDir)) return;
+
+    for (const [canonicalPath, entry] of Object.entries(STATIC_MARKDOWN_TWINS)) {
+      const diskPath = path.join(siteDir, entry.mdPath.replace(/^\//, ""));
+      expect(existsSync(diskPath), `${canonicalPath} -> ${diskPath} missing`).toBe(true);
+      expect(statSync(diskPath).size).toBeGreaterThan(0);
+    }
   });
 });

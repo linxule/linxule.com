@@ -8,18 +8,58 @@ import { rewrite, next } from '@vercel/functions';
 // single-line regex literal ending in `;` with NO trailing comment.
 const MD_PATHS = /^\/(writing\/[^/]+|making\/portraits\/[^/]+|making\/artifacts\/[^/]+|talks\/[^/]+|papers\/[^/]+|cv|cv-zh|thinking|teaching|concepts|builds|builds\/vellum|writing|making|talks|papers)\/?$/;
 
+function parseQuality(parameters: string[]): number {
+  for (const parameter of parameters) {
+    const match = parameter.match(/^q\s*=\s*(?:"([^"]*)"|(\S+))$/i);
+    if (!match) continue;
+    const raw = (match[1] ?? match[2]).trim();
+    if (!/^(?:0(?:\.\d+)?|1(?:\.0*)?)$/.test(raw)) return 0;
+    return Number(raw);
+  }
+  return 1;
+}
+
+function prefersMarkdown(accept: string): boolean {
+  let markdownQ = -1;
+  let explicitHtmlQ = -1;
+  let textWildcardQ = -1;
+  let anyWildcardQ = -1;
+
+  for (const part of accept.split(',')) {
+    const [rawMediaType, ...parameters] = part.split(';').map(value => value.trim());
+    const mediaType = rawMediaType.toLowerCase();
+    if (!mediaType) continue;
+
+    const q = parseQuality(parameters);
+    if (mediaType === 'text/markdown') {
+      markdownQ = Math.max(markdownQ, q);
+    } else if (mediaType === 'text/html') {
+      explicitHtmlQ = Math.max(explicitHtmlQ, q);
+    } else if (mediaType === 'text/*') {
+      textWildcardQ = Math.max(textWildcardQ, q);
+    } else if (mediaType === '*/*') {
+      anyWildcardQ = Math.max(anyWildcardQ, q);
+    }
+  }
+
+  if (markdownQ <= 0) return false;
+
+  const htmlQ =
+    explicitHtmlQ >= 0
+      ? explicitHtmlQ
+      : textWildcardQ >= 0
+        ? textWildcardQ
+        : anyWildcardQ >= 0
+          ? anyWildcardQ
+          : 0;
+
+  // Explicit text/markdown wins ties against HTML; strictly higher HTML q serves HTML.
+  return markdownQ >= htmlQ;
+}
+
 export default function middleware(request: Request) {
   const accept = request.headers.get('accept') || '';
-  const wantsMarkdown = accept.split(',')
-    .some(part => {
-      const [mediaType, ...parameters] = part.split(';').map(value => value.trim());
-      if (mediaType.toLowerCase() !== 'text/markdown') return false;
-
-      // Keep explicit Markdown opt-in, including ties with HTML, but respect
-      // q=0: the client has explicitly marked this representation unacceptable.
-      return !parameters.some(parameter => /^q\s*=\s*(?:0(?:\.0*)?|"0(?:\.0*)?")$/i.test(parameter));
-    });
-  if (!wantsMarkdown) {
+  if (!prefersMarkdown(accept)) {
     return next();
   }
 

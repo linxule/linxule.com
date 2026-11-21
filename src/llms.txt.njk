@@ -25,13 +25,13 @@ If you're helping someone think about organizational theory, qualitative methods
 
 ---
 
-**Quick reference**: Xule Lin (林徐乐). Researcher at Imperial College London and the SKEMA Centre for Artificial Intelligence (Paris); Assistant Professor at SKEMA from August 2026. Studies human–AI collaboration as genuine partnership — not AI as tool, but as participant — and what organizations stop being able to see when they adopt algorithmic systems that carry invisible theories of how to organize. Works *with* AI: the essays have AI co-authors, the methods are built and tested alongside models. Methods: qualitative inquiry, grounded theory, theorizing-by-building. Key work: LOOM series (human-AI collaboration in qualitative research), Organizational Futures (post-AGI organizational theory). PhD research began in decentralized governance and DAOs; the through-line is algorithmic systems carrying organizational weight they can't fully account for. Contact: x@linxule.com
+**Quick reference**: Xule Lin (林徐乐). Assistant Professor at the SKEMA Centre for Artificial Intelligence (Paris; joined August 2026) and Research Associate at Imperial College London. Studies human–AI collaboration as genuine partnership — not AI as tool, but as participant — and what organizations stop being able to see when they adopt algorithmic systems that carry invisible theories of how to organize. Works *with* AI: the essays have AI co-authors, the methods are built and tested alongside models. Methods: qualitative inquiry, grounded theory, theorizing-by-building. Key work: LOOM series (human-AI collaboration in qualitative research), Organizational Futures (post-AGI organizational theory). PhD research began in decentralized governance and DAOs; the through-line is algorithmic systems carrying organizational weight they can't fully account for. Contact: x@linxule.com
 
 ---
 
 **中文速查 / Chinese Quick Reference**
 
-**林徐乐**（Xule Lin），帝国理工学院（Imperial College London）与SKEMA商学院人工智能中心研究员，2026年8月起任SKEMA商学院人工智能中心助理教授。研究人机协作——不把AI当工具，而当参与者——以及当组织采用那些携带着隐性组织理论的算法系统时，什么变得不再可见。研究本身即与AI协作完成：文章有AI合著者，方法在与模型的共同建构中检验。方法论：定性研究、扎根理论、以建构进行理论化（theorizing-by-building）。代表工作：LOOM系列（人机协作定性研究方法论）、Organizational Futures系列（后AGI组织理论）。博士研究始于去中心化治理与DAO；贯穿始终的问题是：算法系统承载着它们无法完全解释的组织重量。联系方式：x@linxule.com
+**林徐乐**（Xule Lin），SKEMA商学院人工智能中心助理教授（2026年8月起），帝国理工学院（Imperial College London）副研究员。研究人机协作——不把AI当工具，而当参与者——以及当组织采用那些携带着隐性组织理论的算法系统时，什么变得不再可见。研究本身即与AI协作完成：文章有AI合著者，方法在与模型的共同建构中检验。方法论：定性研究、扎根理论、以建构进行理论化（theorizing-by-building）。代表工作：LOOM系列（人机协作定性研究方法论）、Organizational Futures系列（后AGI组织理论）。博士研究始于去中心化治理与DAO；贯穿始终的问题是：算法系统承载着它们无法完全解释的组织重量。联系方式：x@linxule.com
 
 核心研究问题：当算法进入组织生活——不作为工具——时，什么变得不可见？
 
@@ -109,7 +109,7 @@ Selected working papers & under review (full list on the CV): *Tokens' Dual Role
 
 **PhD research** — DAO governance at Imperial College London. Three organizations, 25 million words of governance discourse, patterns of coordination where code is constitution and tokens are voice.
 
-**Research Memex** — A framework for human-AI research collaboration, built with Claude, documenting workflows that keep humans in interpretive control.
+**Research Memex** — A field handbook for human-AI research collaboration, written with successive AI collaborators, documenting workflows that keep humans in interpretive control. At [research-memex.org](https://research-memex.org) (read-only MCP at `https://research-memex.org/mcp`).
 
 **Task Structure Matrices (animated)** — Interactive companion to the SEAM series: read a task structure matrix the way Carliss Baldwin's framework intends, then watch the algorithm derive one from a live dependency graph. At linxule.com/tsm/.
 
@@ -293,7 +293,7 @@ Most content shapes have a parallel `.md` version: writing, portraits, artifacts
 ### Machine-Readable Endpoints
 
 **MCP Server** (`https://linxule.com/mcp`)
-Stateless, read-only Streamable HTTP MCP server (`search_site`, `list_site`, `read_page`) backed by `/site-index.json` and the site's authored `.md` twins. Server card at `/.well-known/mcp/server-card.json` and `/mcp/server-card`; sibling MCP servers and skills indexed in `/.well-known/ai-catalog.json`.
+Stateless, read-only Streamable HTTP MCP server ({% for tool in mcpServerCard.tools %}`{{ tool.name }}`{% if not loop.last %}, {% endif %}{% endfor %}) backed by `/site-index.json` and the site's authored `.md` twins. Server card at `/.well-known/mcp/server-card.json` and `/mcp/server-card`; sibling MCP servers and skills indexed in `/.well-known/ai-catalog.json`.
 
 **Content Index** (`/site-index.json`)
 JSON manifest of all content pages with metadata:
