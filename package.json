@@ -51,7 +51,8 @@
     "nunjucks": "3.2.4",
     "pagefind": "^1.5.2",
     "path-to-regexp": "^6.3.0",
-    "sharp": "^0.35.4"
+    "sharp": "^0.35.4",
+    "typescript": "^5"
   },
   "packageManager": "bun@1.4.2",
   "engines": {
