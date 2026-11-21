@@ -31,6 +31,6 @@ What the room actually asked about was none of the mechanics. It asked what this
 
 Companion material:
 
-- [Composing an Agentic Research System](https://research-memex.org/docs/advanced-topics/composing-agentic-research-systems) — the seven distinctions and five questions, in page form
+- [Composing an Agentic Research System](https://research-memex.org/docs/craft/composing-agentic-research-systems) — the seven distinctions and five questions, in page form
 - [Research Memex](https://research-memex.org) — the setup the talk drew on, documented for people and for their agents
 - [Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration_. _Strategic Organization_.](https://doi.org/10.1177/14761270261448645)

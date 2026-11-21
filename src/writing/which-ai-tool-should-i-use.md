@@ -91,7 +91,7 @@ If you're comfortable getting API keys and using tools like [**Cherry Studio**](
 
 This is the "model-agnostic" workflow: use Claude for deep analysis, Gemini for large context windows, and Kimi for speed (and costs)—whatever fits the subtask. Optionally, the client also handles the memory management.
 
-> **Try it out**: Follow the [instructions here at Research Memex](https://research-memex.org/implementation/agentic-ai-tools/cherry-studio-setup-guide) to set up Cherry Studio with [your own API keys](https://research-memex.org/implementation/ai-environment-setup/api-keys-setup-guide)
+> **Try it out**: Follow the [instructions here at Research Memex](https://research-memex.org/docs/implementation/agentic-ai-tools/cherry-studio-setup-guide) to set up Cherry Studio with [your own API keys](https://research-memex.org/docs/implementation/ai-environment-setup/api-keys-setup-guide)
 
 ------
 
