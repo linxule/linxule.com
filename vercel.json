@@ -10,7 +10,7 @@
       "headers": [
         {
           "key": "Link",
-          "value": "</llms.txt>; rel=\"service-doc\"; type=\"text/plain\", </.well-known/api-catalog>; rel=\"api-catalog\", </site-index.json>; rel=\"describedby\"; type=\"application/json\", </sitemap.xml>; rel=\"sitemap\"; type=\"application/xml\", </llms.txt>; rel=\"llms-txt\", </.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\", </.well-known/ai-catalog.json>; rel=\"ai-catalog\"; type=\"application/json\""
+          "value": "</llms.txt>; rel=\"service-doc\"; type=\"text/plain\", </.well-known/api-catalog>; rel=\"api-catalog\", </site-index.json>; rel=\"describedby\"; type=\"application/json\", </sitemap.xml>; rel=\"sitemap\"; type=\"application/xml\", </llms.txt>; rel=\"llms-txt\", </.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\", </.well-known/ai-catalog.json>; rel=\"ai-catalog\"; type=\"application/json\", </.well-known/mcp/server-card.json>; rel=\"service-desc\"; type=\"application/json\""
         }
       ]
     },
@@ -43,6 +43,19 @@
     },
     {
       "source": "/.well-known/ai-catalog.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json; charset=utf-8"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/.well-known/mcp/server-card.json",
       "headers": [
         {
           "key": "Content-Type",

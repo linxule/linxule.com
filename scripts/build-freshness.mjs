@@ -24,6 +24,7 @@ const ROOTS = [
   "src",
   "eleventy",
   "agent-skills",
+  "mcp",
   "scripts/lib",
   "scripts/og-fonts",
 ];
@@ -38,7 +39,7 @@ const FILES = [
   "scripts/gen-paper.mjs",
   "vercel.json",
 ];
-const EXCLUDED_PREFIXES = ["src/tsm/"];
+const EXCLUDED_PREFIXES = ["src/tsm/", "mcp/.wrangler/"];
 
 function normalized(relativePath) {
   return relativePath.split(path.sep).join("/");

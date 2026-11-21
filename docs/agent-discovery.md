@@ -1,18 +1,20 @@
 # Agent Discovery
 
-This site publishes honest agent-discovery metadata for a content-only apex research site (`linxule.com`) and a portfolio directory pointing at public, general-audience sibling MCP servers. Apex `linxule.com` does not expose an MCP server, A2A endpoint, OAuth server, or protected API — do **not** publish `/.well-known/mcp/server-card.json` or `_mcp._agents.linxule.com` at the apex.
+This site publishes honest agent-discovery metadata for Xule Lin's public research archive (`linxule.com`), its stateless read-only MCP Worker (`https://linxule.com/mcp`, `mcp/`), and its portfolio directory of public, general-audience sibling MCP servers. `linxule.com` does not expose an A2A endpoint, OAuth server, or protected write API — do **not** publish A2A cards, OAuth metadata, or Poppy stubs.
 
 ## Public Surfaces
 
-- `/.well-known/ai-catalog.json` is the ARD v1.0 AI Resource Directory (`src/ai-catalog.json.njk`, served with `Content-Type: application/json; charset=utf-8` and `Access-Control-Allow-Origin: *`). It indexes `linxule.com`'s Agent Skills index and API Catalog alongside public, general-audience MCP servers (`vellum.linxule.com`, `music-studio.linxule.com`, `lotus-wisdom.linxule.com`, and `research-memex.org`) while deliberately excluding course-scoped, staging, and asset hosts (`a4b.linxule.com`, `pmux.research-memex.org`, `open-interview-staging.linxule.com`, `media.linxule.com`).
+- `https://linxule.com/mcp` is a stateless, zero-dependency, read-only Cloudflare Worker (`mcp/worker.mjs`, `mcp/wrangler.jsonc`) implementing Streamable HTTP MCP (`search_site`, `list_site`, `read_page`, curated `linxule://` resources, and the `xule-research-navigation` prompt) backed strictly by `/site-index.json`, `/llms.txt`, and the site's authored `.md` twins.
+- `/.well-known/mcp/server-card.json` (`src/mcp-server-card.json.njk`, `Content-Type: application/json; charset=utf-8` + `Access-Control-Allow-Origin: *`) and Worker `GET /mcp/server-card` (`Content-Type: application/mcp-server-card+json; charset=utf-8` + `Access-Control-Allow-Origin: *`) publish the exact same dual SEP-2127 / SEP-1649 Server Card derived from `mcp/metadata.mjs`.
+- `/.well-known/ai-catalog.json` is the ARD v1.0 AI Resource Directory (`src/ai-catalog.json.njk`, served with `Content-Type: application/json; charset=utf-8` and `Access-Control-Allow-Origin: *`). It indexes `linxule.com`'s own MCP server (`urn:air:linxule.com:mcp:linxule`), Agent Skills index, and API Catalog alongside public, general-audience sibling MCP servers (`vellum.linxule.com`, `music-studio.linxule.com`, `lotus-wisdom.linxule.com`, and `research-memex.org`) while deliberately excluding course-scoped, staging, and asset hosts (`a4b.linxule.com`, `pmux.research-memex.org`, `open-interview-staging.linxule.com`, `media.linxule.com`).
 - `/.well-known/agent-skills/index.json` is the Agent Skills Discovery v0.2.0 index.
 - `/.well-known/agent-skills/xule-research-navigation/SKILL.md` is the only advertised skill artifact.
-- `/llms.txt` explains the site for AI readers (including pointers to `music-studio.linxule.com/mcp`, `lotus-wisdom.linxule.com/mcp`, and `vellum.linxule.com`).
+- `/llms.txt` explains the site for AI readers (including pointers to `linxule.com/mcp`, `music-studio.linxule.com/mcp`, `lotus-wisdom.linxule.com/mcp`, and `vellum.linxule.com`).
 - `/site-index.json` provides a machine-readable content index.
-- `/.well-known/api-catalog` is the RFC 9727 linkset for the public discovery surface.
+- `/.well-known/api-catalog` is the RFC 9727 linkset anchoring both `https://linxule.com/` and `https://linxule.com/mcp`.
 - HTML `<head>` (`src/_includes/layouts/base.njk`) publishes `<link rel="ai-catalog" type="application/json" href="/.well-known/ai-catalog.json">` and `<link rel="llms-txt" href="/llms.txt" type="text/plain">`.
 - `robots.txt` declares `Content-Signal: ai-train=yes, search=yes, ai-input=yes`, `Sitemap: https://linxule.com/sitemap.xml`, and `Agentmap: https://linxule.com/.well-known/ai-catalog.json`.
-- Global `Link` response headers (`vercel.json`) advertise `service-doc`, `api-catalog`, `describedby`, `sitemap`, `llms-txt`, `agent-skills`, and `ai-catalog`.
+- Global `Link` response headers (`vercel.json`) advertise `service-doc`, `api-catalog`, `describedby`, `sitemap`, `llms-txt`, `agent-skills`, `ai-catalog`, and `service-desc` (`/.well-known/mcp/server-card.json`).
 - Direct markdown variants and `Accept: text/markdown` negotiation expose readable page versions. Direct `.md` requests must pass through unchanged; middleware should only rewrite unsuffixed content URLs to their `.md` counterpart.
 
 `sitemap.xml` lists canonical human-facing URLs, not `.md` alternates. Keep Markdown discovery in `/llms.txt`, `/site-index.json`, HTTP `Link` headers, HTML alternate links, and content negotiation so crawlers see one canonical URL per page while AI readers still get clean Markdown.
@@ -40,7 +42,7 @@ Cloudflare DNS has exactly one DNS-AID record:
 _index._agents.linxule.com. SVCB 1 linxule.com. alpn="h2,h3" port="443" mandatory="alpn,port"
 ```
 
-Do not add `_a2a._agents.linxule.com` or `_mcp._agents.linxule.com` at the apex unless apex `linxule.com` itself exposes a real A2A or MCP service.
+Keep `_index._agents.linxule.com` as the single apex DNS-AID index pointer (matching `research-memex.org`); MCP discovery runs through `/.well-known/mcp/server-card.json`, `/.well-known/ai-catalog.json`, and `/.well-known/api-catalog`. Do not add `_a2a._agents.linxule.com` unless `linxule.com` hosts a real A2A service.
 
 ## DNSSEC
 
@@ -56,10 +58,11 @@ linxule.com. IN DS 2371 13 2 53C7180AD9C8299A8E6B8F093CD1B9586982378CD83100F66AF
 
 For the full cross-domain post-release and monthly audit (origin surfaces, `isitagentready.com` via `bun run seo:agentready` in Research Memex, Cloudflare zone settings, IndexNow, and GSC), follow `~/Documents/GitHub/research-memex/handbook/procedures/release-and-surface-audit.md`.
 
-Build and local artifact checks (`bun run build` runs `scripts/check-built-json.mjs`, which validates ARD v1.0 schema rules on `ai-catalog.json`, excluded hosts, absence of apex `mcp/server-card.json`, `robots.txt` `Agentmap:`, and `<link rel="ai-catalog">`):
+Build and local artifact checks (`bun run build` runs `scripts/check-built-json.mjs`, which validates ARD v1.0 schema rules on `ai-catalog.json`, excluded hosts, SEP-2127 / SEP-1649 parity of `.well-known/mcp/server-card.json` with `mcp/metadata.mjs`, `robots.txt` `Agentmap:`, and `<link rel="ai-catalog">`, plus `mcp/worker.test.mjs`):
 
 ```bash
 bun run build
+test -f _site/.well-known/mcp/server-card.json
 test -f _site/.well-known/ai-catalog.json
 test -f _site/.well-known/agent-skills/index.json
 test -f _site/.well-known/agent-skills/xule-research-navigation/SKILL.md
@@ -68,6 +71,8 @@ test -f _site/.well-known/agent-skills/xule-research-navigation/SKILL.md
 Live HTTP checks:
 
 ```bash
+curl -i https://linxule.com/.well-known/mcp/server-card.json
+curl -i https://linxule.com/mcp/server-card
 curl -i https://linxule.com/.well-known/ai-catalog.json
 curl -i https://linxule.com/.well-known/agent-skills/index.json
 curl -i https://linxule.com/.well-known/agent-skills/xule-research-navigation/SKILL.md
@@ -83,5 +88,5 @@ dig @1.1.1.1 +adflag +dnssec TYPE64 _index._agents.linxule.com
 
 Expected scanner state (`isitagentready.com`, L4 "Agent-Integrated"):
 
-- Pass: `robotsTxt`, `sitemap`, `linkHeaders`, `dnsAid`, `robotsTxtAiRules`, `contentSignals`, `markdownNegotiation`, `apiCatalog`, `agentSkills`, `ard`, `webMcp`.
-- Intentional N/A / absent at apex: `mcpServerCard` (no `/mcp` at apex `linxule.com`; subdomain MCPs are indexed in `ai-catalog.json`), `a2aAgentCard`, `oauthDiscovery`, `oauthProtectedResource`, `authMd`, `webBotAuth`, `personalAgentProtocol`.
+- Pass: `robotsTxt`, `sitemap`, `linkHeaders`, `dnsAid`, `robotsTxtAiRules`, `contentSignals`, `markdownNegotiation`, `apiCatalog`, `agentSkills`, `mcpServerCard`, `ard`, `webMcp`.
+- Intentional N/A / neutral: `a2aAgentCard`, `oauthDiscovery`, `oauthProtectedResource`, `authMd`, `webBotAuth`, `personalAgentProtocol`, commerce checks (`x402`, `mpp`, `ucp`, `acp`, `ap2`).

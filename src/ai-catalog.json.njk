@@ -12,6 +12,25 @@ eleventyExcludeFromCollections: true
   },
   "entries": [
     {
+      "identifier": {{ ("urn:air:" ~ siteDomain ~ ":mcp:linxule") | dump | safe }},
+      "displayName": "Xule Lin Research Archive MCP",
+      "type": "application/mcp-server-card+json",
+      "description": "Read-only MCP server for searching and reading Xule Lin's essays, formal publications, signature concepts, talks, portraits, artifacts, and open-source builds on linxule.com.",
+      "url": {{ (site.url ~ "/mcp/server-card") | dump | safe }},
+      "version": {{ mcpServerCard.version | dump | safe }},
+      "capabilities": [
+{%- for tool in mcpServerCard.tools %}
+        {{ tool.name | dump | safe }}{% if not loop.last %},{% endif %}
+{%- endfor %}
+      ],
+      "tags": ["mcp", "research", "organization-studies", "human-ai-collaboration", "markdown"],
+      "representativeQueries": [
+        "Search Xule Lin's essays and papers on human-AI collaboration and organizational theory.",
+        "Read an essay, concept definition, or paper landing page in Markdown from linxule.com.",
+        "List Xule Lin's signature concepts, formal publications, and open-source research builds."
+      ]
+    },
+    {
       "identifier": {{ ("urn:air:" ~ siteDomain ~ ":skills:index") | dump | safe }},
       "displayName": "Xule Lin Site Navigation Skills",
       "type": "application/agent-skills+json",

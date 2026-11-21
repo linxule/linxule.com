@@ -18,6 +18,8 @@ LOCAL_MANUAL.md
 
 # Vercel local config
 .vercel/
+.wrangler/
+mcp/.wrangler/
 
 # Secrets and credentials
 .env*

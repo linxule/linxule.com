@@ -33,6 +33,7 @@ path = [
   "**/*.njk",
   "**/*.css",
   "eleventy.config.js",
+  "mcp/wrangler.jsonc",
   "vercel.json",
   "package.json",
 ]

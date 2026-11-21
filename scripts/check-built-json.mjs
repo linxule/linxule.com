@@ -8,6 +8,7 @@
  */
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { buildMcpServerCard } from "../mcp/metadata.mjs";
 
 const SITE = "_site";
 const problems = [];
@@ -267,9 +268,29 @@ if (siteIndex) {
     }
   }
 
-  // Apex linxule.com must NOT advertise an apex MCP Server Card (honesty boundary).
-  if (existsSync(path.join(SITE, ".well-known", "mcp", "server-card.json"))) {
-    problems.push(".well-known/mcp/server-card.json must not exist at linxule.com apex");
+  // Validate apex SEP-2127 / SEP-1649 MCP Server Card parity with Worker metadata.
+  const serverCardPath = path.join(SITE, ".well-known", "mcp", "server-card.json");
+  if (!existsSync(serverCardPath)) {
+    problems.push(".well-known/mcp/server-card.json is missing");
+  } else {
+    try {
+      const card = JSON.parse(readFileSync(serverCardPath, "utf8"));
+      const expected = buildMcpServerCard("https://linxule.com");
+      if (JSON.stringify(card) !== JSON.stringify(expected)) {
+        problems.push(".well-known/mcp/server-card.json drifted from mcp/metadata.mjs");
+      }
+      if (typeof card.description !== "string" || card.description.length === 0 || card.description.length > 100) {
+        problems.push(".well-known/mcp/server-card.json description must be 1..100 chars");
+      }
+      if (!Array.isArray(card.remotes) || card.remotes[0]?.url !== "https://linxule.com/mcp") {
+        problems.push(".well-known/mcp/server-card.json must point remotes[0].url at https://linxule.com/mcp");
+      }
+      if (card.url !== "https://linxule.com/mcp" || card.serverInfo?.name !== "linxule") {
+        problems.push(".well-known/mcp/server-card.json is missing SEP-1649 url or serverInfo.name");
+      }
+    } catch (error) {
+      problems.push(`.well-known/mcp/server-card.json is invalid JSON: ${error.message}`);
+    }
   }
 
   // Verify discovery pointers in built robots.txt and homepage HTML.
@@ -301,5 +322,5 @@ if (problems.length) {
 }
 
 console.log(
-  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), ${videos} VideoObject(s), site-index.json, builds.md, and .well-known/ai-catalog.json parsed/agree`,
+  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), ${videos} VideoObject(s), site-index.json, builds.md, .well-known/mcp/server-card.json, and .well-known/ai-catalog.json parsed/agree`,
 );

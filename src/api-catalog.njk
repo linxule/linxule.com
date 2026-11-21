@@ -40,6 +40,28 @@ eleventyAllowMissingExtension: true
           "title": "Sitemap"
         }
       ]
+    },
+    {
+      "anchor": "{{ site.url }}/mcp",
+      "service-desc": [
+        {
+          "href": "{{ site.url }}/.well-known/mcp/server-card.json",
+          "type": "application/json",
+          "title": "MCP Server Card (SEP-1649 / SEP-2127)"
+        },
+        {
+          "href": "{{ site.url }}/mcp/server-card",
+          "type": "application/mcp-server-card+json",
+          "title": "MCP Server Card (Worker endpoint)"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "{{ site.url }}/llms.txt",
+          "type": "text/plain",
+          "title": "Site overview and attribution rules for AI systems"
+        }
+      ]
     }
   ]
 }

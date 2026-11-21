@@ -292,6 +292,9 @@ Most content shapes have a parallel `.md` version: writing, portraits, artifacts
 
 ### Machine-Readable Endpoints
 
+**MCP Server** (`https://linxule.com/mcp`)
+Stateless, read-only Streamable HTTP MCP server (`search_site`, `list_site`, `read_page`) backed by `/site-index.json` and the site's authored `.md` twins. Server card at `/.well-known/mcp/server-card.json` and `/mcp/server-card`; sibling MCP servers and skills indexed in `/.well-known/ai-catalog.json`.
+
 **Content Index** (`/site-index.json`)
 JSON manifest of all content pages with metadata:
 - URL (HTML and markdown versions)
