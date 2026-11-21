@@ -69,6 +69,17 @@ does not change image quality or either site's production domains.
    bunx vercel@58.8.0 deploy --prebuilt --prod --scope linxules-projects
    ```
 
+   Ordinary content, essay, and template publishes do **not** require redeploying
+   the `linxule-mcp` Cloudflare Worker (`https://linxule.com/mcp`), because the
+   Worker reads `/site-index.json` and `.md` twins from `https://linxule.com`
+   with a 5-minute TTL. Only when `mcp/` (`mcp/metadata.mjs`, `mcp/worker.mjs`,
+   or `mcp/wrangler.jsonc`) changes, promote the Worker *after* the Vercel
+   deployment is `READY` and verified:
+
+   ```bash
+   (cd ~/Documents/GitHub/research-memex && bunx wrangler deploy --config ~/Documents/Apps/personal-website/xule-site/mcp/wrangler.jsonc --env "")
+   ```
+
 4. **Verify before deleting anything.** Require Vercel `READY`, canonical domain
    aliases pointing to the new deployment, and live checks of the homepage,
    Writing, Making, and changed content. Compare the deployed

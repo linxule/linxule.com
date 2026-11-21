@@ -154,9 +154,9 @@ The site uses [Pagefind](https://pagefind.app/) for client-side search:
 
 ## Agent Discovery
 
-The site publishes content-only AI and agent discovery metadata: `/llms.txt`, `/site-index.json`, `/.well-known/api-catalog`, markdown page variants, and one Agent Skills Discovery index at `/.well-known/agent-skills/index.json`. The sitemap stays canonical HTML pages only; `.md` alternates are discovered through the AI surfaces and content negotiation, not submitted as duplicate sitemap URLs.
+The site publishes honest AI and agent discovery surfaces: `/llms.txt`, `/site-index.json`, a stateless read-only Streamable HTTP MCP Worker at `https://linxule.com/mcp` (`mcp/`), dual SEP-2127/1649 Server Cards at `/.well-known/mcp/server-card.json` and `/mcp/server-card`, an ARD v1.0 AI Resource Directory at `/.well-known/ai-catalog.json` (indexing `linxule.com/mcp`, skills, API catalog, and public sibling MCP servers), `/.well-known/api-catalog`, Markdown page twins, and one Agent Skills Discovery v0.2.0 index at `/.well-known/agent-skills/index.json`. The sitemap stays canonical HTML pages only; `.md` alternates are discovered through the AI surfaces and content negotiation, not submitted as duplicate sitemap URLs.
 
-DNS-AID is limited to `_index._agents.linxule.com` and should not advertise A2A or MCP unless those real services exist. Operational notes are in [`docs/agent-discovery.md`](./docs/agent-discovery.md).
+DNS-AID uses `_index._agents.linxule.com` as the single apex discovery pointer (matching `research-memex.org`); do not advertise A2A, OAuth, or Poppy stubs unless those real services exist. Operational notes are in [`docs/agent-discovery.md`](./docs/agent-discovery.md).
 
 ## Deployment
 
