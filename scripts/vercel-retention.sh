@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Weekly retention: current production plus one rollback per project.
+# Weekly retention for active Vercel-hosted projects (linxule-com migrated to Cloudflare Workers 2026-11-22).
 # The helper refuses extra READY previews and protects aliased deployments.
 # Provider expiry has a ten-deployment floor and protected-release exceptions.
 # Deleted deployments remain metered during the 30-day recovery hold.
@@ -12,7 +12,7 @@ retention_failed=0
 {
   echo "=== $(date '+%Y-%m-%d %H:%M:%S')"
   cd "$SITE" || { echo "site checkout missing"; exit 1; }
-  for project in research-memex linxule-com; do
+  for project in research-memex; do
     echo "--- $project"
     if bun scripts/deployment-retention.mjs --project "$project" --auto --apply 2>&1; then
       echo "--- $project: success"
