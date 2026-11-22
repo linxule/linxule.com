@@ -67,10 +67,10 @@ eleventy/
 ├── og-card-paths.js       # Social-card path & alt resolution
 └── rendering-fidelity.js  # Feed and rendering helpers
 
-worker.ts                  # Cloudflare Worker (redirects, trailing-slash, Accept: text/markdown, headers)
-wrangler.jsonc             # Cloudflare Workers + Static Assets config (prod & preview)
-src/_headers               # Static asset Cache-Control and CORS rules (copied to _site/_headers)
-mcp/                       # Stateless read-only linxule-mcp Cloudflare Worker
+worker.ts                  # Cloudflare Worker (redirects, trailing-slash, Accept: text/markdown + x-markdown-tokens, 206 media ranges, security & discovery headers)
+wrangler.jsonc             # Cloudflare Workers + Static Assets config (prod & preview, observability, source maps)
+src/_headers               # Direct Static Assets Cache-Control, CORS, and security headers (copied to _site/_headers)
+mcp/                       # Stateless read-only linxule-mcp Cloudflare Worker (env.SITE Service Binding + observability)
 agent-skills/              # Public Agent Skills artifacts
 ```
 
@@ -179,7 +179,7 @@ The site uses [Pagefind](https://pagefind.app/) for client-side search:
 
 ## Agent Discovery
 
-The site publishes honest AI and agent discovery surfaces: `/llms.txt`, `/connect.md`, `/site-index.json` (pages, all 14 concepts, publications, all 20 builds, and human–AI collaborator lineages), a stateless read-only Streamable HTTP MCP Worker v2 at `https://linxule.com/mcp` (`mcp/`, with `search_site`, `list_site`, `read_page`, `xule-research-navigation`, and `enter-the-work`), dual SEP-2127/1649 Server Cards at `/.well-known/mcp/server-card.json` and `/mcp/server-card` (`GET` and `HEAD`), an ARD v1.0 AI Resource Directory at `/.well-known/ai-catalog.json` (indexing `linxule.com/mcp`, skills, API catalog, and public sibling MCP servers), `/.well-known/api-catalog`, Markdown page twins, and one Agent Skills Discovery v0.2.0 index at `/.well-known/agent-skills/index.json`. The sitemap stays canonical HTML pages only; `.md` alternates are discovered through the AI surfaces and content negotiation, not submitted as duplicate sitemap URLs.
+The site publishes honest AI and agent discovery surfaces: `/llms.txt`, `/connect.md`, `/site-index.json` (pages, all 14 concepts, publications, all 20 builds, and human–AI collaborator lineages), a stateless read-only Streamable HTTP MCP Worker v2 at `https://linxule.com/mcp` (`mcp/`, backed by a zero-latency `env.SITE` Cloudflare Service Binding to `linxule-com`, with `search_site`, `list_site`, `read_page`, `xule-research-navigation`, and `enter-the-work`), dual SEP-2127/1649 Server Cards at `/.well-known/mcp/server-card.json` and `/mcp/server-card` (`GET` and `HEAD`), an ARD v1.0 AI Resource Directory at `/.well-known/ai-catalog.json` (indexing `linxule.com/mcp`, skills, API catalog, and public sibling MCP servers), `/.well-known/api-catalog`, Markdown page twins with `Accept: text/markdown` negotiation and `x-markdown-tokens` headers, and one Agent Skills Discovery v0.2.0 index at `/.well-known/agent-skills/index.json`. The sitemap stays canonical HTML pages only; `.md` alternates are discovered through the AI surfaces and content negotiation, not submitted as duplicate sitemap URLs.
 
 DNS-AID uses `_index._agents.linxule.com` as the single apex discovery pointer (matching `research-memex.org`); do not advertise A2A, OAuth, or Poppy stubs unless those real services exist. Operational notes are in [`docs/agent-discovery.md`](./docs/agent-discovery.md).
 
@@ -199,11 +199,12 @@ BASE_URL=https://linxule.com bun run verify:live # Verify live production contra
   `INDEXNOW_KEY="$(tail -n 1 src/indexnow-key.njk)" INDEXNOW_FORCE=1 bun run publish:indexnow`.
   The key is the public verification token rendered by `src/indexnow-key.njk`,
   not a secret.
-- **Cloudflare Workers + Static Assets**: Production runs directly on Cloudflare Workers + Static Assets (`wrangler.jsonc`, `worker.ts`, `eleventy/redirects.mjs`, `src/_headers`, with the explicit Cloudflare Web Analytics beacon in `src/_includes/layouts/base.njk`), while `mcp/` deploys separately as the `linxule-mcp` Cloudflare Worker only when Worker code changes. Git auto-deployment is not used — pushes trigger nothing, the Verify workflow is on-demand (`gh workflow run verify.yml`) and runs on pull requests, and production is built and deployed from a detached worktree (`.deploy-worktree`).
+- **Cloudflare Workers + Static Assets**: Production runs directly on Cloudflare Workers + Static Assets (`wrangler.jsonc`, `worker.ts`, `eleventy/redirects.mjs`, `src/_headers`, with `upload_source_maps: true`, `206 Partial Content` byte-range streaming for `/assets/artifacts/*` media, `x-markdown-tokens`, `HSTS` + `nosniff` security headers parity, and a single manual Cloudflare Web Analytics beacon in `src/_includes/layouts/base.njk` with RUM `auto_install: false`, `lite: false`), while `mcp/` deploys separately as the `linxule-mcp` Cloudflare Worker (bound via `env.SITE` → `linxule-com`) only when Worker code changes. Git auto-deployment is not used — `git push origin main` deploys nothing, the Verify workflow is on-demand (`gh workflow run verify.yml`) and runs on pull requests, and production is built and deployed from a detached worktree (`.deploy-worktree`).
   Follow [Publishing and rollback](./docs/publishing.md) for the detached-worktree
   checklist, live verification, instant `wrangler rollback --env ""`, and the
-  7–14 day warm Vercel fallback window (`scripts/deployment-retention.mjs` also
-  manages `research-memex` on Vercel).
+  7–14 day warm Vercel fallback window (`commandForIgnoringBuildStep: "exit 0"`
+  on Vercel `linxule-com`; `scripts/vercel-retention.sh` is already scoped
+  exclusively to `research-memex`).
 
 ## Verification and maintenance
 

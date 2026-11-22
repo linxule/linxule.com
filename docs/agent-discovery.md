@@ -4,7 +4,7 @@ This site publishes honest agent-discovery metadata for Xule Lin's public resear
 
 ## Public Surfaces
 
-- `https://linxule.com/mcp` is a stateless, zero-dependency, read-only Cloudflare Worker v2 (`mcp/worker.mjs`, `mcp/wrangler.jsonc`) implementing Streamable HTTP MCP (`search_site` with word-boundary/stem/CJK matching and `collaborator` filtering, `list_site` including `collaborators`, `read_page` with `#fragment`/`?query` stripping and SHA-256 verification, curated `linxule://` resources with optional `.md` suffix, and two prompts: `xule-research-navigation` and `enter-the-work`). It is backed strictly by `/site-index.json`, `/.build-manifest.json`, `/llms.txt`, and the site's authored `.md` twins, emitting `X-Linxule-Build` and `_meta: { sha256, canonical_url, build_head }` across resources and tool responses.
+- `https://linxule.com/mcp` is a stateless, zero-dependency, read-only Cloudflare Worker v2 (`mcp/worker.mjs`, `mcp/wrangler.jsonc`) implementing Streamable HTTP MCP (`search_site` with word-boundary/stem/CJK matching and `collaborator` filtering, `list_site` including `collaborators`, `read_page` with `#fragment`/`?query` stripping and SHA-256 verification, curated `linxule://` resources with optional `.md` suffix, and two prompts: `xule-research-navigation` and `enter-the-work`). It is backed strictly by `/site-index.json`, `/.build-manifest.json`, `/llms.txt`, and the site's authored `.md` twins via a zero-latency Cloudflare Service Binding (`env.SITE` → `linxule-com`, with `fetch` fallback locally), enables Workers `observability`, `traces`, and `upload_source_maps`, and emits `X-Linxule-Build` and `_meta: { sha256, canonical_url, build_head }` across resources and tool responses.
 - `/.well-known/mcp/server-card.json` (`src/mcp-server-card.json.njk`, `Content-Type: application/json; charset=utf-8` + `Access-Control-Allow-Origin: *`) and Worker `GET` / `HEAD /mcp/server-card` (`Content-Type: application/mcp-server-card+json; charset=utf-8` + `Allow: GET, HEAD, OPTIONS` + route-accurate CORS) publish the exact same dual SEP-2127 / SEP-1649 Server Card derived from `mcp/metadata.mjs`.
 - `/connect` (`src/connect.njk`) and `/connect.md` (`src/md-outputs/connect.md.njk`) provide reference-not-instructions MCP connection recipes (Claude Code, Claude apps, Cursor, Codex CLI, Gemini CLI / Antigravity) for `https://linxule.com/mcp` and scope notes for the four sibling public MCP servers.
 - `/.well-known/ai-catalog.json` is the ARD v1.0 AI Resource Directory (`src/ai-catalog.json.njk`, served with `Content-Type: application/json; charset=utf-8` and `Access-Control-Allow-Origin: *`). It indexes `linxule.com`'s own MCP server (`urn:air:linxule.com:mcp:linxule`), Agent Skills index, and API Catalog alongside public, general-audience sibling MCP servers (`vellum.linxule.com`, `music-studio.linxule.com`, `lotus-wisdom.linxule.com`, and `research-memex.org`) while deliberately excluding course-scoped, staging, and asset hosts (`a4b.linxule.com`, `pmux.research-memex.org`, `open-interview-staging.linxule.com`, `media.linxule.com`).
@@ -16,7 +16,7 @@ This site publishes honest agent-discovery metadata for Xule Lin's public resear
 - HTML `<head>` (`src/_includes/layouts/base.njk`) publishes `<link rel="ai-catalog" type="application/json" href="/.well-known/ai-catalog.json">` and `<link rel="llms-txt" href="/llms.txt" type="text/plain">`.
 - `robots.txt` declares `Allow: /` and `Content-Signal: ai-train=yes, search=yes, ai-input=yes` across `*` and explicit named AI crawler groups, plus `Sitemap: https://linxule.com/sitemap.xml` and `Agentmap: https://linxule.com/.well-known/ai-catalog.json`.
 - Scoped `Link` response headers (emitted by `worker.ts` from `DISCOVERY_LINK_HEADER` in `eleventy/redirects.mjs`) advertise `service-doc` (`/llms.txt`, `/connect.md`), `api-catalog`, `describedby`, `sitemap`, `llms-txt`, `agent-skills`, `ai-catalog`, and `service-desc` (`/.well-known/mcp/server-card.json`) on content routes while staying off static asset trees (`/assets/*`, `/writing/attachments/*`, `/pagefind/*`).
-- Direct markdown variants and `Accept: text/markdown` negotiation expose readable page versions. Direct `.md` requests pass through unchanged; `worker.ts` internally rewrites unsuffixed content URLs matching `MD_PATHS` (plus `/` → `/index.md`) to their `.md` asset via `env.ASSETS.fetch`, returning a direct `HTTP 200` `text/markdown; charset=utf-8` response with `Vary: Accept` and no redirect hop.
+- Direct markdown variants and `Accept: text/markdown` negotiation expose readable page versions. Direct `.md` requests pass through unchanged; `worker.ts` internally rewrites unsuffixed content URLs matching `MD_PATHS` (plus `/` → `/index.md`) to their `.md` asset via `env.ASSETS.fetch`, returning a direct `HTTP 200` `text/markdown; charset=utf-8` response with `Vary: Accept` and no redirect hop. Both negotiated pages and direct `/*.md` twins emit `x-markdown-tokens` (estimated `ceil(bytes / 4)`) and `Access-Control-Expose-Headers: x-markdown-tokens, Link`, matching `research-memex.org`.
 
 `sitemap.xml` lists canonical human-facing URLs, not `.md` alternates. Keep Markdown discovery in `/llms.txt`, `/site-index.json`, HTTP `Link` headers, HTML alternate links, and content negotiation so crawlers see one canonical URL per page while AI readers still get clean Markdown.
 
@@ -32,8 +32,9 @@ The Agent Skills index is generated from `src/_data/agentSkills.js`. The SHA-256
 ## Cloudflare Edge Posture (hardened 2026-11-22)
 
 - `ssl: strict`, `min_tls_version: 1.2`, `speed_brain: off`, `hotlink_protection: off`, `rocket_loader: off`, `fonts: off`, `browser_check: off`.
+- Security headers parity: both `worker.ts` and `src/_headers` emit `Strict-Transport-Security: max-age=63072000` and `X-Content-Type-Options: nosniff` across Worker responses and direct Static Assets.
 - Edge response header rules add `X-Robots-Tag: noindex, nofollow` on `open-interview-staging.linxule.com` and `a4b.linxule.com`.
-- Keep Cloudflare's edge "Markdown for Agents" (`content_converter`) **OFF** — the built `.md` twins and `worker.ts` negotiation (via `env.ASSETS.fetch`) are authoritative and preserve curated structure and exact headers.
+- Keep Cloudflare's edge "Markdown for Agents" (`content_converter`) **OFF** — the built `.md` twins and `worker.ts` negotiation (via `env.ASSETS.fetch`, emitting `x-markdown-tokens`) are authoritative and preserve curated structure and exact headers.
 
 ## DNS-AID
 
@@ -69,7 +70,7 @@ test -f _site/.well-known/agent-skills/index.json
 test -f _site/.well-known/agent-skills/xule-research-navigation/SKILL.md
 ```
 
-Live HTTP checks (`BASE_URL=https://linxule.com bun run verify:live` runs the full `scripts/verify-cloudflare-migration.sh` contract across all redirects, `Accept: text/markdown` negotiation, static/discovery `Content-Type` and `Link` headers, and preview/prod `X-Robots-Tag` guards; targeted probes below):
+Live HTTP checks (`BASE_URL=https://linxule.com bun run verify:live` runs the full `scripts/verify-cloudflare-migration.sh` contract across all redirects, `Accept: text/markdown` negotiation + `x-markdown-tokens`, `206 Partial Content` artifact media byte ranges, security headers parity, static/discovery `Content-Type` and `Link` headers, and preview/prod `X-Robots-Tag` guards; targeted probes below):
 
 ```bash
 curl -i https://linxule.com/.well-known/mcp/server-card.json

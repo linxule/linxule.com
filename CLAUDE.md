@@ -24,7 +24,7 @@ A "book in the algorithmic age": paper and ink, marginalia, a spine, bloom on ho
 
 Eleventy 3 + Nunjucks + Pagefind, vanilla CSS and JS, ESM throughout. Inline `<style>` per page is intentional; global styles are in `src/assets/css/main.css`.
 
-Public MCP & agent discovery: `mcp/` holds the `linxule-mcp` stateless Streamable HTTP Cloudflare Worker serving `https://linxule.com/mcp` and `/mcp/server-card` (`mcp/metadata.mjs`, `mcp/worker.mjs`, `mcp/worker.test.mjs`, `mcp/wrangler.jsonc`). Eleventy imports `mcp/metadata.mjs` via `src/_data/mcpServerCard.js` so the static discovery templates (`src/mcp-server-card.json.njk`, `src/ai-catalog.json.njk`, `src/api-catalog.njk`) stay in sync with the Worker.
+Public hosting, MCP & agent discovery: `linxule.com` and `www.linxule.com` run directly on Cloudflare Workers + Static Assets (`wrangler.jsonc`, `worker.ts`, `eleventy/redirects.mjs`, `src/_headers`). `mcp/` holds the `linxule-mcp` stateless Streamable HTTP Cloudflare Worker serving `https://linxule.com/mcp` and `/mcp/server-card` (`mcp/metadata.mjs`, `mcp/worker.mjs`, `mcp/worker.test.mjs`, `mcp/wrangler.jsonc`, bound to `linxule-com` via `env.SITE`). Eleventy imports `mcp/metadata.mjs` via `src/_data/mcpServerCard.js` so the static discovery templates (`src/mcp-server-card.json.njk`, `src/ai-catalog.json.njk`, `src/api-catalog.njk`) stay in sync with the Worker.
 
 ## Know before you touch anything
 
@@ -33,7 +33,7 @@ Public MCP & agent discovery: `mcp/` holds the `linxule-mcp` stateless Streamabl
 3. **Build output and git metadata are kept out of iCloud.** `_site`, `.cache` and `node_modules/.cache` are symlinks to `*.nosync` directories, and `.git` is a one-line pointer to `.git.nosync`. Never recreate any of them as real directories, and never `rm -rf _site` (use `scripts/clean-output.mjs`). Gotcha #57.
 4. **A command sitting at 0% CPU is stuck, not slow.** iCloud empties files it has already uploaded, and reading one blocks. Find them with `find <dir> -flags +dataless`. Gotcha #61.
 5. **A pre-commit secret scanner runs from `.git.nosync/hooks`** (local-only). On a false positive, confirm there is no real key, then `--no-verify`. Gotcha #59.
-6. **`git push` deploys nothing.** Production is a prebuilt deploy from a detached worktree (`.deploy-worktree`) at a committed SHA. Follow `docs/publishing.md` step by step, and batch changes: every deploy stays on the storage meter for 30 days, even after it is deleted.
+6. **`git push` deploys nothing.** Production builds and deploys from the detached worktree (`.deploy-worktree`) at a committed SHA (`bun run build && bun run deploy:prod`). Follow `docs/publishing.md` step by step.
 
 ## Commands
 
@@ -41,6 +41,7 @@ Public MCP & agent discovery: `mcp/` holds the `linxule-mcp` stateless Streamabl
 bun run start      # dev server
 bun run build      # build:site + verify (lints, built-json:lint, and unit tests including mcp/worker.test.mjs)
 bun run verify     # lints + regression tests against existing _site/
-bun test mcp/worker.test.mjs scripts/middleware.test.mjs   # targeted MCP Worker + markdown-negotiation tests
-bun run test:making | test:runtime | test:ui   # Playwright; needs free port 4173, run outside the sandbox
+bun test mcp/worker.test.mjs scripts/worker.test.mjs   # targeted MCP Worker + site Worker routing/negotiation tests
+bun run verify:live                                    # live HTTP verification (redirects, negotiation, Range, headers)
+bun run test:making | test:runtime | test:ui           # Playwright; needs free port 4173, run outside the sandbox
 ```

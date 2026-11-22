@@ -28,9 +28,10 @@ const result = await syncImageCache(
 );
 
 if (result.copied + result.skipped === 0) {
-  if (restoring && process.env.VERCEL === "1") {
+  if (restoring && (process.env.WORKERS_CI === "1" || process.env.VERCEL === "1")) {
+    const ciName = process.env.WORKERS_CI === "1" ? "Cloudflare Workers CI" : "Vercel";
     console.warn(
-      "\n[image-cache] WARNING: Vercel restored an empty responsive-image cache. " +
+      `\n[image-cache] WARNING: ${ciName} restored an empty responsive-image cache. ` +
       "This is a cold image build and may take about 40 minutes.\n",
     );
   } else {

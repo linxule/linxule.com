@@ -158,7 +158,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 # 教学经历
 
 - 信息系统管理 (Information Systems Management)，SKEMA商学院，2027
-	- 授课教师 (与课程负责人 Michael Lee 共同授课)；入门课程，巴黎与里尔校区
+	- 授课教师 (与课程负责人 Michael Lee 共同授课)；入门课程，巴黎
 	- 涵盖业务流程、企业软件 (ERP/CRM/SaaS/IaaS)、人工智能与硬件；课程材料将从零设计，并以课堂流程图绘制和商业智能 (BI) 仪表盘为考核内容
 - 人工智能商业应用 (AI for Business)，SKEMA商学院，2026
 	- 与 Margherita Pagani (SKEMA人工智能中心主任) 共同授课；MS Chef de Projet IA，巴黎

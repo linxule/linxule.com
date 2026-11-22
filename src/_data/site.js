@@ -4,7 +4,11 @@ let hash;
 try {
     hash = execSync('git rev-parse --short HEAD').toString().trim();
 } catch {
-    hash = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || Date.now().toString(36);
+    hash =
+        process.env.WORKERS_CI_COMMIT_SHA?.slice(0, 7) ||
+        process.env.CF_PAGES_COMMIT_SHA?.slice(0, 7) ||
+        process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ||
+        Date.now().toString(36);
 }
 
 export default {

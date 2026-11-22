@@ -157,7 +157,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 # Teaching
 
 - Information Systems Management, SKEMA Business School, 2027
-	- Instructor (with course lead Michael Lee); intro course, Paris and Lille campuses
+	- Instructor (with course lead Michael Lee); intro course, Paris
 	- Covers business processes, enterprise software (ERP/CRM/SaaS/IaaS), AI, and hardware; materials to be designed from scratch, with in-class flowcharting and BI-dashboard assessments
 - AI for Business, SKEMA Business School, 2026
 	- Co-instructor with Margherita Pagani (Director, SKEMA Centre for Artificial Intelligence); MS Chef de Projet IA, Paris

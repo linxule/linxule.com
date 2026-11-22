@@ -330,7 +330,53 @@ for rel in llms-txt service-doc api-catalog sitemap describedby agent-skills ai-
 done
 
 echo
-echo "--- [17] Preview vs. production X-Robots-Tag guard ---"
+echo "--- [17] Media Range (206 Partial Content) on well_of_echoes.mp4 ---"
+range_headers=$(fetch_headers GET /assets/artifacts/well-of-echoes/well_of_echoes.mp4 -H "Range: bytes=0-1023")
+range_status=$(parse_status "$range_headers")
+range_cr=$(parse_header "$range_headers" "Content-Range")
+range_ar=$(parse_header "$range_headers" "Accept-Ranges")
+if [[ "$range_status" == "206" && "$range_cr" == "bytes 0-1023/"* && "$range_ar" == "bytes" ]]; then
+  pass "media range /assets/artifacts/well-of-echoes/well_of_echoes.mp4 (206, Content-Range: $range_cr, Accept-Ranges: $range_ar)"
+else
+  fail "media range /assets/artifacts/well-of-echoes/well_of_echoes.mp4: status='${range_status}' content-range='${range_cr}' accept-ranges='${range_ar}' (want 206, 'bytes 0-1023/*', 'bytes')"
+fi
+
+echo
+echo "--- [18] x-markdown-tokens on negotiated GET /cv and direct HEAD /cv.md ---"
+cv_neg_headers=$(fetch_headers GET /cv -H "Accept: text/markdown")
+cv_neg_status=$(parse_status "$cv_neg_headers")
+cv_neg_tokens=$(parse_header "$cv_neg_headers" "x-markdown-tokens")
+if [[ "$cv_neg_status" == "200" && "$cv_neg_tokens" =~ ^[1-9][0-9]*$ ]]; then
+  pass "x-markdown-tokens GET /cv [Accept: text/markdown] (200, x-markdown-tokens: $cv_neg_tokens)"
+else
+  fail "x-markdown-tokens GET /cv [Accept: text/markdown]: status='${cv_neg_status}' x-markdown-tokens='${cv_neg_tokens}' (want 200 with positive integer)"
+fi
+
+cv_md_head_headers=$(fetch_headers HEAD /cv.md)
+cv_md_head_status=$(parse_status "$cv_md_head_headers")
+cv_md_head_tokens=$(parse_header "$cv_md_head_headers" "x-markdown-tokens")
+if [[ "$cv_md_head_status" == "200" && "$cv_md_head_tokens" =~ ^[1-9][0-9]*$ ]]; then
+  pass "x-markdown-tokens HEAD /cv.md (200, x-markdown-tokens: $cv_md_head_tokens)"
+else
+  fail "x-markdown-tokens HEAD /cv.md: status='${cv_md_head_status}' x-markdown-tokens='${cv_md_head_tokens}' (want 200 with positive integer)"
+fi
+
+echo
+echo "--- [19] Security headers (HSTS & X-Content-Type-Options) on /cv and /assets/favicon-32.png ---"
+for sec_path in /cv /assets/favicon-32.png; do
+  sec_headers=$(fetch_headers HEAD "$sec_path")
+  sec_status=$(parse_status "$sec_headers")
+  sec_hsts=$(parse_header "$sec_headers" "Strict-Transport-Security")
+  sec_nosniff=$(parse_header "$sec_headers" "X-Content-Type-Options")
+  if [[ "$sec_status" == "200" && "$sec_hsts" == *"max-age="* && "$sec_nosniff" == "nosniff" ]]; then
+    pass "security headers ${sec_path} (200, HSTS='${sec_hsts}', X-Content-Type-Options='${sec_nosniff}')"
+  else
+    fail "security headers ${sec_path}: status='${sec_status}' hsts='${sec_hsts}' nosniff='${sec_nosniff}' (want 200 with Strict-Transport-Security and nosniff)"
+  fi
+done
+
+echo
+echo "--- [20] Preview vs. production X-Robots-Tag guard ---"
 root_headers=$(fetch_headers HEAD /)
 root_robots=$(parse_header "$root_headers" "X-Robots-Tag")
 root_robots_lower=$(printf '%s' "$root_robots" | tr '[:upper:]' '[:lower:]')

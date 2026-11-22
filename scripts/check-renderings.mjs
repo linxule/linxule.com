@@ -123,7 +123,18 @@ if (!existsSync("worker.ts")) {
   }
 }
 
-const STATIC_ASSET_EXCLUSIONS = ["!/assets/*", "!/writing/attachments/*", "!/pagefind/*"];
+const STATIC_ASSET_EXCLUSIONS = [
+  "!/assets/css/*",
+  "!/assets/fonts/*",
+  "!/assets/images/*",
+  "!/assets/js/*",
+  "!/assets/og-cards/*",
+  "!/assets/paper/*",
+  "!/assets/slides/*",
+  "!/assets/textures/*",
+  "!/writing/attachments/*",
+  "!/pagefind/*",
+];
 let positiveWorkerMatchers = [];
 let negativeWorkerMatchers = STATIC_ASSET_EXCLUSIONS.map((pattern) => ({
   pattern,

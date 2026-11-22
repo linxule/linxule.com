@@ -3,6 +3,7 @@
   "name": "linxule-com",
   "main": "worker.ts",
   "compatibility_date": "2026-11-22",
+  "upload_source_maps": true,
   "workers_dev": false,
   "preview_urls": false,
   "observability": {
@@ -16,7 +17,14 @@
     "not_found_handling": "404-page",
     "run_worker_first": [
       "/*",
-      "!/assets/*",
+      "!/assets/css/*",
+      "!/assets/fonts/*",
+      "!/assets/images/*",
+      "!/assets/js/*",
+      "!/assets/og-cards/*",
+      "!/assets/paper/*",
+      "!/assets/slides/*",
+      "!/assets/textures/*",
       "!/writing/attachments/*",
       "!/pagefind/*"
     ]

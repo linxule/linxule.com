@@ -847,18 +847,31 @@ export function createWorker({
     }
   }
 
-  async function fetchOriginBytes(siteOrigin, relativePath, acceptHeader) {
+  async function fetchOriginBytes(siteOrigin, relativePath, acceptHeader, env = {}) {
     const targetUrl = `${siteOrigin}${relativePath}`;
-    const response = await fetchImpl(targetUrl, {
-      method: "GET",
-      redirect: "manual",
-      headers: {
-        Accept: acceptHeader,
-        "User-Agent": `linxule-mcp/${MCP_SERVER_INFO.version}`,
-      },
-      cf: { cacheTtl: 300, cacheEverything: true },
-      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
-    });
+    const headers = {
+      Accept: acceptHeader,
+      "User-Agent": `linxule-mcp/${MCP_SERVER_INFO.version}`,
+    };
+    const useServiceBinding =
+      siteOrigin === "https://linxule.com" &&
+      Boolean(env?.SITE) &&
+      typeof env.SITE.fetch === "function";
+
+    const response = useServiceBinding
+      ? await env.SITE.fetch(
+          new Request(targetUrl, {
+            method: "GET",
+            headers,
+          }),
+        )
+      : await fetchImpl(targetUrl, {
+          method: "GET",
+          redirect: "manual",
+          headers,
+          cf: { cacheTtl: 300, cacheEverything: true },
+          signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+        });
 
     if (response.status >= 300 && response.status < 400) {
       throw new Error(`UPSTREAM_REDIRECT:${response.status}`);
@@ -873,7 +886,7 @@ export function createWorker({
     return readBoundedResponse(response, PAGE_LIMIT_BYTES);
   }
 
-  async function fetchCachedOriginText(siteOrigin, relativePath, acceptHeader) {
+  async function fetchCachedOriginText(siteOrigin, relativePath, acceptHeader, env = {}) {
     const key = `${siteOrigin}${relativePath}`;
     const now = Date.now();
     const cached = hotFileCache.get(key);
@@ -886,7 +899,7 @@ export function createWorker({
     }
 
     const promise = (async () => {
-      const upstream = await fetchOriginBytes(siteOrigin, relativePath, acceptHeader);
+      const upstream = await fetchOriginBytes(siteOrigin, relativePath, acceptHeader, env);
       if (upstream.status !== 200) {
         return { status: upstream.status };
       }
@@ -911,7 +924,7 @@ export function createWorker({
     }
   }
 
-  async function loadManifestBuildHead(siteOrigin) {
+  async function loadManifestBuildHead(siteOrigin, env = {}) {
     const key = `${siteOrigin}${BUILD_MANIFEST_PATH}`;
     const now = Date.now();
     const cached = hotFileCache.get(key);
@@ -924,7 +937,7 @@ export function createWorker({
 
     const promise = (async () => {
       try {
-        const res = await fetchOriginBytes(siteOrigin, BUILD_MANIFEST_PATH, "application/json");
+        const res = await fetchOriginBytes(siteOrigin, BUILD_MANIFEST_PATH, "application/json", env);
         if (res.status !== 200) {
           setHotCache(key, null, Date.now() + cacheTtlMs);
           return null;
@@ -947,7 +960,7 @@ export function createWorker({
     }
   }
 
-  async function loadSiteIndex(siteOrigin) {
+  async function loadSiteIndex(siteOrigin, env = {}) {
     const now = Date.now();
     const cached = indexCache.get(siteOrigin);
     if (cached && cached.expiresAt > now) {
@@ -959,7 +972,7 @@ export function createWorker({
     }
 
     const promise = (async () => {
-      const result = await fetchOriginBytes(siteOrigin, "/site-index.json", "application/json");
+      const result = await fetchOriginBytes(siteOrigin, "/site-index.json", "application/json", env);
       if (result.status !== 200) {
         throw new Error("SITE_INDEX_UNAVAILABLE");
       }
@@ -986,7 +999,7 @@ export function createWorker({
           ? parsed.build_head.trim()
           : null;
       if (!buildHead) {
-        buildHead = await loadManifestBuildHead(siteOrigin);
+        buildHead = await loadManifestBuildHead(siteOrigin, env);
       }
       if (!buildHead) {
         buildHead =
@@ -1024,10 +1037,10 @@ export function createWorker({
     if (cached && cached.expiresAt > Date.now() && cached.data.buildHead) {
       return cached.data.buildHead;
     }
-    return loadManifestBuildHead(siteOrigin);
+    return loadManifestBuildHead(siteOrigin, env);
   }
 
-  async function resolveAllowlistedTarget(rawInput, siteOrigin) {
+  async function resolveAllowlistedTarget(rawInput, siteOrigin, env = {}) {
     const normalized = normalizeCandidatePath(rawInput, siteOrigin);
     if (!normalized) return null;
 
@@ -1040,7 +1053,7 @@ export function createWorker({
     }
 
     // 2. Check dynamic `site-index.json` pages allowlist.
-    const { byCanonical, byMd } = await loadSiteIndex(siteOrigin);
+    const { byCanonical, byMd } = await loadSiteIndex(siteOrigin, env);
     const page = byCanonical.get(normalized) ?? byMd.get(normalized);
     if (!page) return null;
 
@@ -1055,7 +1068,7 @@ export function createWorker({
     };
   }
 
-  async function runSearchSite(args, siteOrigin) {
+  async function runSearchSite(args, siteOrigin, env = {}) {
     assertAllowedKeys(
       args,
       new Set(["query", "kind", "section", "collaborator", "limit"]),
@@ -1084,7 +1097,7 @@ export function createWorker({
       throw new JsonRpcError(-32602, "search_site: `limit` must be an integer between 1 and 25");
     }
 
-    const { index, buildHead } = await loadSiteIndex(siteOrigin);
+    const { index, buildHead } = await loadSiteIndex(siteOrigin, env);
     const queryInfo = tokenizeQuery(args.query);
     const scored = [];
 
@@ -1313,7 +1326,7 @@ export function createWorker({
     };
   }
 
-  async function runListSite(args, siteOrigin) {
+  async function runListSite(args, siteOrigin, env = {}) {
     assertAllowedKeys(
       args,
       new Set(["kind", "section", "collaborator", "limit", "offset"]),
@@ -1343,7 +1356,7 @@ export function createWorker({
       throw new JsonRpcError(-32602, "list_site: `offset` must be an integer >= 0");
     }
 
-    const { index, buildHead } = await loadSiteIndex(siteOrigin);
+    const { index, buildHead } = await loadSiteIndex(siteOrigin, env);
     const pages = Array.isArray(index.pages) ? index.pages : [];
     const concepts = Array.isArray(index.concepts) ? index.concepts : [];
     const publications = Array.isArray(index.publications) ? index.publications : [];
@@ -1511,7 +1524,7 @@ export function createWorker({
     };
   }
 
-  async function runReadPage(args, siteOrigin) {
+  async function runReadPage(args, siteOrigin, env = {}) {
     assertAllowedKeys(args, new Set(["path", "expected_sha256"]), "read_page");
     if (typeof args.path !== "string" || args.path.trim().length < 1 || args.path.length > 200) {
       throw new JsonRpcError(-32602, "read_page: `path` must be a non-empty string up to 200 chars");
@@ -1522,7 +1535,7 @@ export function createWorker({
       }
     }
 
-    const resolved = await resolveAllowlistedTarget(args.path, siteOrigin);
+    const resolved = await resolveAllowlistedTarget(args.path, siteOrigin, env);
     const cachedIndex = indexCache.get(siteOrigin);
     let buildHead =
       cachedIndex && cachedIndex.expiresAt > Date.now()
@@ -1543,8 +1556,8 @@ export function createWorker({
     }
 
     if (!buildHead) {
-      const indexRecord = await loadSiteIndex(siteOrigin).catch(() => null);
-      buildHead = indexRecord?.buildHead ?? (await loadManifestBuildHead(siteOrigin)) ?? "unknown";
+      const indexRecord = await loadSiteIndex(siteOrigin, env).catch(() => null);
+      buildHead = indexRecord?.buildHead ?? (await loadManifestBuildHead(siteOrigin, env)) ?? "unknown";
     }
 
     const acceptHeader =
@@ -1554,9 +1567,9 @@ export function createWorker({
 
     let fetched;
     if (HOT_STATIC_PATHS.has(resolved.mdPath)) {
-      fetched = await fetchCachedOriginText(siteOrigin, resolved.mdPath, acceptHeader);
+      fetched = await fetchCachedOriginText(siteOrigin, resolved.mdPath, acceptHeader, env);
     } else {
-      const upstream = await fetchOriginBytes(siteOrigin, resolved.mdPath, acceptHeader);
+      const upstream = await fetchOriginBytes(siteOrigin, resolved.mdPath, acceptHeader, env);
       if (upstream.status !== 200) {
         fetched = { status: upstream.status };
       } else {
@@ -1628,13 +1641,13 @@ export function createWorker({
     };
   }
 
-  async function runReadResource(uri, siteOrigin) {
+  async function runReadResource(uri, siteOrigin, env = {}) {
     if (typeof uri !== "string" || !uri.startsWith("linxule://") || uri.length > 240) {
       throw new JsonRpcError(-32602, "Invalid resource URI");
     }
 
     if (uri === "linxule://site-index") {
-      const { rawText, sha256, buildHead } = await loadSiteIndex(siteOrigin);
+      const { rawText, sha256, buildHead } = await loadSiteIndex(siteOrigin, env);
       return {
         result: {
           contents: [
@@ -1655,7 +1668,7 @@ export function createWorker({
     }
 
     if (uri === "linxule://llms.txt") {
-      const { payload: page, buildHead } = await runReadPage({ path: "/llms.txt" }, siteOrigin);
+      const { payload: page, buildHead } = await runReadPage({ path: "/llms.txt" }, siteOrigin, env);
       if (!page.ok) throw new JsonRpcError(-32002, page.message || "Resource not found");
       return {
         result: {
@@ -1685,7 +1698,7 @@ export function createWorker({
         throw new JsonRpcError(-32602, "Invalid page resource URI");
       }
       const lookupPath = slug === "index" ? "/" : `/${slug}`;
-      const { payload: page, buildHead } = await runReadPage({ path: lookupPath }, siteOrigin);
+      const { payload: page, buildHead } = await runReadPage({ path: lookupPath }, siteOrigin, env);
       if (!page.ok) throw new JsonRpcError(-32002, page.message || "Resource not found");
       return {
         result: {
@@ -1709,7 +1722,7 @@ export function createWorker({
     throw new JsonRpcError(-32602, `Unknown resource URI "${uri}"`);
   }
 
-  async function runGetPrompt(params, siteOrigin) {
+  async function runGetPrompt(params, siteOrigin, env = {}) {
     if (!isPlainObject(params) || typeof params.name !== "string") {
       throw new JsonRpcError(-32602, "prompts/get requires a prompt `name`");
     }
@@ -1725,7 +1738,7 @@ export function createWorker({
     }
 
     if (params.name === "enter-the-work") {
-      const { index, buildHead } = await loadSiteIndex(siteOrigin);
+      const { index, buildHead } = await loadSiteIndex(siteOrigin, env);
       const text = buildEnterTheWorkPrompt(index, siteOrigin);
       const sha256 = await sha256Hex(TEXT_ENCODER.encode(text));
       return {
@@ -1750,7 +1763,7 @@ export function createWorker({
       };
     }
 
-    const { payload: skillPage, buildHead } = await runReadPage({ path: SKILL_PATH }, siteOrigin);
+    const { payload: skillPage, buildHead } = await runReadPage({ path: SKILL_PATH }, siteOrigin, env);
     if (!skillPage.ok) {
       throw new Error("SKILL_UNAVAILABLE");
     }
@@ -1776,7 +1789,7 @@ export function createWorker({
     };
   }
 
-  async function dispatchRpcMessage(msg, siteOrigin) {
+  async function dispatchRpcMessage(msg, siteOrigin, env = {}) {
     if (!isPlainObject(msg) || msg.jsonrpc !== "2.0") {
       return {
         response: {
@@ -1889,11 +1902,11 @@ export function createWorker({
           const toolArgs = params.arguments === undefined ? {} : params.arguments;
           let outcome;
           if (params.name === "search_site") {
-            outcome = await runSearchSite(toolArgs, siteOrigin);
+            outcome = await runSearchSite(toolArgs, siteOrigin, env);
           } else if (params.name === "list_site") {
-            outcome = await runListSite(toolArgs, siteOrigin);
+            outcome = await runListSite(toolArgs, siteOrigin, env);
           } else if (params.name === "read_page") {
-            outcome = await runReadPage(toolArgs, siteOrigin);
+            outcome = await runReadPage(toolArgs, siteOrigin, env);
           } else {
             throw new JsonRpcError(-32602, `Unknown tool "${params.name}"`);
           }
@@ -1947,7 +1960,7 @@ export function createWorker({
           if (typeof params.uri !== "string") {
             throw new JsonRpcError(-32602, "resources/read requires `uri`");
           }
-          const { result, buildHead } = await runReadResource(params.uri, siteOrigin);
+          const { result, buildHead } = await runReadResource(params.uri, siteOrigin, env);
           return { buildHead, response: { jsonrpc: "2.0", id, result } };
         }
 
@@ -1965,7 +1978,7 @@ export function createWorker({
 
         case "prompts/get": {
           const params = requireObjectParams(msg.params);
-          const { result, buildHead } = await runGetPrompt(params, siteOrigin);
+          const { result, buildHead } = await runGetPrompt(params, siteOrigin, env);
           return { buildHead, response: { jsonrpc: "2.0", id, result } };
         }
 
@@ -2120,7 +2133,7 @@ export function createWorker({
             mcpMethods,
           );
         }
-        const outcomes = await Promise.all(parsed.map((item) => dispatchRpcMessage(item, siteOrigin)));
+        const outcomes = await Promise.all(parsed.map((item) => dispatchRpcMessage(item, siteOrigin, env)));
         const results = outcomes.map((o) => o.response).filter((item) => item !== null);
         const batchBuildHead =
           outcomes.find((o) => o.buildHead)?.buildHead ||
@@ -2143,7 +2156,7 @@ export function createWorker({
         });
       }
 
-      const outcome = await dispatchRpcMessage(parsed, siteOrigin);
+      const outcome = await dispatchRpcMessage(parsed, siteOrigin, env);
       const buildHead =
         outcome.buildHead ||
         (typeof env.BUILD_HEAD === "string" && env.BUILD_HEAD.trim() ? env.BUILD_HEAD.trim() : null);

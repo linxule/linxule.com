@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { existsSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "bun:test";
@@ -1439,5 +1439,137 @@ describe("linxule-mcp Streamable HTTP JSON-RPC 2.0 protocol & retrieval", () => 
       expect(existsSync(diskPath), `${canonicalPath} -> ${diskPath} missing`).toBe(true);
       expect(statSync(diskPath).size).toBeGreaterThan(0);
     }
+  });
+
+  test("prefers env.SITE service binding for https://linxule.com and falls back to fetchImpl when unbound or custom SITE_ORIGIN", async () => {
+    const siteBindingRequests = [];
+    const siteBinding = {
+      async fetch(req) {
+        const url = new URL(req.url);
+        siteBindingRequests.push({
+          method: req.method,
+          url: url.toString(),
+          accept: req.headers.get("accept"),
+          userAgent: req.headers.get("user-agent"),
+        });
+        const body = FIXTURE_BODIES.get(url.pathname);
+        if (body === undefined) return new Response("Not found", { status: 404 });
+        return new Response(body, {
+          status: 200,
+          headers: {
+            "Content-Type": url.pathname.endsWith(".json")
+              ? "application/json; charset=utf-8"
+              : "text/markdown; charset=utf-8",
+          },
+        });
+      },
+    };
+
+    // 1. When env.SITE is bound and SITE_ORIGIN === "https://linxule.com", fetchImpl is NOT called
+    const externalCallsWhenBound = [];
+    const boundWorker = createWorker({
+      fetchImpl: async (input) => {
+        externalCallsWhenBound.push(String(input));
+        throw new Error(`fetchImpl should not be called when env.SITE is bound (got ${String(input)})`);
+      },
+    });
+    const boundEnv = {
+      ALLOWED_HOSTS: "linxule.com",
+      SITE_ORIGIN: ORIGIN,
+      MCP_ENABLED: "1",
+      SITE: siteBinding,
+    };
+
+    const cardRes = await boundWorker.fetch(
+      new Request("https://linxule.com/mcp/server-card", { method: "GET" }),
+      boundEnv,
+    );
+    expect(cardRes.status).toBe(200);
+    expect(cardRes.headers.get("x-linxule-build")).toBe(FIXTURE_BUILD_HEAD);
+
+    const searchRes = await postRpc(boundWorker, boundEnv, {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "tools/call",
+      params: { name: "search_site", arguments: { query: "Polanyi Inversion" } },
+    });
+    const searchBody = await searchRes.json();
+    expect(searchBody.result.structuredContent.ok).toBe(true);
+    expect(searchBody.result.structuredContent.matches.length).toBeGreaterThan(0);
+
+    const readRes = await postRpc(boundWorker, boundEnv, {
+      jsonrpc: "2.0",
+      id: 2,
+      method: "tools/call",
+      params: { name: "read_page", arguments: { path: "/cv" } },
+    });
+    const readBody = await readRes.json();
+    expect(readBody.result.structuredContent.ok).toBe(true);
+    expect(readBody.result.structuredContent.markdown).toBe(FIXTURE_BODIES.get("/cv.md"));
+
+    expect(externalCallsWhenBound).toHaveLength(0);
+    expect(siteBindingRequests.map((r) => new URL(r.url).pathname)).toEqual([
+      "/.build-manifest.json",
+      "/site-index.json",
+      "/cv.md",
+    ]);
+    expect(siteBindingRequests.every((r) => r.method === "GET")).toBe(true);
+    expect(siteBindingRequests.every((r) => r.userAgent?.startsWith("linxule-mcp/"))).toBe(true);
+
+    // 2. When env.SITE is absent, fetchImpl is used as before
+    const unbound = makeFixtureWorker();
+    const unboundRes = await postRpc(unbound.worker, unbound.env, {
+      jsonrpc: "2.0",
+      id: 3,
+      method: "tools/call",
+      params: { name: "read_page", arguments: { path: "/cv" } },
+    });
+    expect((await unboundRes.json()).result.structuredContent.ok).toBe(true);
+    expect(unbound.seenUrls).toContain("https://linxule.com/cv.md");
+
+    // 3. When SITE_ORIGIN is overridden to a non-production origin, fetchImpl is used even if env.SITE is present
+    const customOrigin = "https://linxule-com-preview.linxule.workers.dev";
+    const customExternalUrls = [];
+    let bindingCalledForCustom = false;
+    const customWorker = createWorker({
+      fetchImpl: async (input) => {
+        const url = new URL(typeof input === "string" ? input : input.url);
+        customExternalUrls.push(url.toString());
+        const body = FIXTURE_BODIES.get(url.pathname);
+        if (body === undefined) return new Response("Not found", { status: 404 });
+        return new Response(body, { status: 200 });
+      },
+    });
+    const customEnv = {
+      ALLOWED_HOSTS: "linxule.com",
+      SITE_ORIGIN: customOrigin,
+      MCP_ENABLED: "1",
+      SITE: {
+        async fetch() {
+          bindingCalledForCustom = true;
+          throw new Error("SITE binding must not be used for custom SITE_ORIGIN");
+        },
+      },
+    };
+    const customRes = await postRpc(customWorker, customEnv, {
+      jsonrpc: "2.0",
+      id: 4,
+      method: "tools/call",
+      params: { name: "read_page", arguments: { path: "/cv" } },
+    });
+    expect((await customRes.json()).result.structuredContent.ok).toBe(true);
+    expect(bindingCalledForCustom).toBe(false);
+    expect(customExternalUrls).toContain(`${customOrigin}/cv.md`);
+
+    // 4. mcp/wrangler.jsonc declares SITE service binding, observability, source maps, and empty local services
+    const mcpWranglerRaw = readFileSync(new URL("./wrangler.jsonc", import.meta.url), "utf8")
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/^\s*\/\/.*$/gm, "");
+    const mcpWrangler = JSON.parse(mcpWranglerRaw);
+    expect(mcpWrangler.compatibility_date).toBe("2026-11-22");
+    expect(mcpWrangler.upload_source_maps).toBe(true);
+    expect(mcpWrangler.observability).toEqual({ enabled: true, traces: { enabled: true } });
+    expect(mcpWrangler.services).toEqual([{ binding: "SITE", service: "linxule-com" }]);
+    expect(mcpWrangler.env.local.services).toEqual([]);
   });
 });

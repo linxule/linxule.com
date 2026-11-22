@@ -53,6 +53,18 @@ function createMockAssets(routes = {}) {
       contentType: 'image/png',
       headers: { 'Cache-Control': 'public, max-age=31536000, immutable' },
     },
+    '/assets/artifacts/well-of-echoes/well_of_echoes.mp4': {
+      status: 200,
+      body: '0123456789abcdef',
+      contentType: 'video/mp4',
+      headers: { ETag: '"mp4-etag-1"' },
+    },
+    '/assets/artifacts/if-we-all-had-heads/music.mp3': {
+      status: 200,
+      body: 'abcdefghij',
+      contentType: 'audio/mpeg',
+      headers: { ETag: '"mp3-etag-1"' },
+    },
     '/pagefind/pagefind.js': { status: 200, body: 'export {};', contentType: 'text/javascript' },
     '/cdn-cgi/rum': { status: 204, body: null, contentType: null },
     ...routes,
@@ -568,17 +580,193 @@ describe('shapes.mjs & wrangler.jsonc structural parity', () => {
       .replace(/^\s*\/\/.*$/gm, '');
     const config = JSON.parse(raw);
     expect(config.main).toBe('worker.ts');
+    expect(config.upload_source_maps).toBe(true);
     expect(config.assets.directory).toBe('./_site');
     expect(config.assets.binding).toBe('ASSETS');
     expect(config.assets.html_handling).toBe('drop-trailing-slash');
     expect(config.assets.not_found_handling).toBe('404-page');
     expect(config.assets.run_worker_first).toEqual([
       '/*',
-      '!/assets/*',
+      '!/assets/css/*',
+      '!/assets/fonts/*',
+      '!/assets/images/*',
+      '!/assets/js/*',
+      '!/assets/og-cards/*',
+      '!/assets/paper/*',
+      '!/assets/slides/*',
+      '!/assets/textures/*',
       '!/writing/attachments/*',
       '!/pagefind/*',
     ]);
     expect(config.workers_dev).toBe(false);
     expect(config.env.preview.workers_dev).toBe(true);
+  });
+});
+
+describe('worker.ts — RFC 9110 media Range (206/416), x-markdown-tokens, and security headers', () => {
+  const MP4_PATH = '/assets/artifacts/well-of-echoes/well_of_echoes.mp4';
+  const MP3_PATH = '/assets/artifacts/if-we-all-had-heads/music.mp3';
+
+  it('serves Accept-Ranges: bytes and immutable asset headers on 200 MP4/MP3 without page Link/Vary', async () => {
+    const mp4 = await runWorker(MP4_PATH);
+    expect(mp4.response.status).toBe(200);
+    expect(mp4.response.headers.get('accept-ranges')).toBe('bytes');
+    expect(mp4.response.headers.get('content-type')).toBe('video/mp4');
+    expect(mp4.response.headers.get('cache-control')).toBe('public, max-age=31536000, immutable');
+    expect(mp4.response.headers.get('strict-transport-security')).toBe('max-age=63072000');
+    expect(mp4.response.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(mp4.response.headers.get('access-control-allow-origin')).toBeNull();
+    expect(mp4.response.headers.get('link')).toBeNull();
+    expect(mp4.response.headers.get('vary')).toBeNull();
+    expect(await mp4.response.text()).toBe('0123456789abcdef');
+
+    const mp3 = await runWorker(MP3_PATH);
+    expect(mp3.response.status).toBe(200);
+    expect(mp3.response.headers.get('accept-ranges')).toBe('bytes');
+    expect(mp3.response.headers.get('content-type')).toBe('audio/mpeg');
+    expect(mp3.response.headers.get('cache-control')).toBe('public, max-age=31536000, immutable');
+    expect(mp3.response.headers.get('access-control-allow-origin')).toBe('*');
+    expect(mp3.response.headers.get('strict-transport-security')).toBe('max-age=63072000');
+    expect(mp3.response.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(mp3.response.headers.get('link')).toBeNull();
+  });
+
+  it('serves 206 Partial Content for bytes=0-3, bytes=4-, bytes=-4, clamped end, and HEAD with Range', async () => {
+    const first4 = await runWorker(MP4_PATH, { headers: { Range: 'bytes=0-3' } });
+    expect(first4.response.status).toBe(206);
+    expect(first4.response.headers.get('content-range')).toBe('bytes 0-3/16');
+    expect(first4.response.headers.get('content-length')).toBe('4');
+    expect(first4.response.headers.get('accept-ranges')).toBe('bytes');
+    expect(first4.response.headers.get('content-type')).toBe('video/mp4');
+    expect(first4.response.headers.get('etag')).toBe('"mp4-etag-1"');
+    expect(first4.response.headers.get('cache-control')).toBe('public, max-age=31536000, immutable');
+    expect(first4.response.headers.get('strict-transport-security')).toBe('max-age=63072000');
+    expect(first4.response.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(first4.response.headers.get('access-control-allow-origin')).toBeNull();
+    expect(await first4.response.text()).toBe('0123');
+
+    const openEnded = await runWorker(MP4_PATH, { headers: { Range: 'bytes=4-' } });
+    expect(openEnded.response.status).toBe(206);
+    expect(openEnded.response.headers.get('content-range')).toBe('bytes 4-15/16');
+    expect(openEnded.response.headers.get('content-length')).toBe('12');
+    expect(await openEnded.response.text()).toBe('456789abcdef');
+
+    const suffix = await runWorker(MP4_PATH, { headers: { Range: 'bytes=-4' } });
+    expect(suffix.response.status).toBe(206);
+    expect(suffix.response.headers.get('content-range')).toBe('bytes 12-15/16');
+    expect(suffix.response.headers.get('content-length')).toBe('4');
+    expect(await suffix.response.text()).toBe('cdef');
+
+    const clamped = await runWorker(MP3_PATH, { headers: { Range: 'bytes=6-999' } });
+    expect(clamped.response.status).toBe(206);
+    expect(clamped.response.headers.get('content-range')).toBe('bytes 6-9/10');
+    expect(clamped.response.headers.get('content-length')).toBe('4');
+    expect(clamped.response.headers.get('access-control-allow-origin')).toBe('*');
+    expect(await clamped.response.text()).toBe('ghij');
+
+    const headRange = await runWorker(MP4_PATH, {
+      method: 'HEAD',
+      headers: { Range: 'bytes=0-3' },
+    });
+    expect(headRange.response.status).toBe(206);
+    expect(headRange.response.headers.get('content-range')).toBe('bytes 0-3/16');
+    expect(headRange.response.headers.get('content-length')).toBe('4');
+    expect(headRange.response.headers.get('accept-ranges')).toBe('bytes');
+    expect(headRange.response.headers.get('etag')).toBe('"mp4-etag-1"');
+    expect(await headRange.response.text()).toBe('');
+  });
+
+  it('returns 416 for unsatisfiable single ranges, ignores multi-range to serve full 200, and guards preview/404', async () => {
+    for (const badRange of ['bytes=16-20', 'bytes=100-', 'bytes=5-2', 'bytes=-0', 'bytes=-']) {
+      const res = await runWorker(MP4_PATH, { headers: { Range: badRange } });
+      expect(res.response.status, badRange).toBe(416);
+      expect(res.response.headers.get('content-range'), badRange).toBe('bytes */16');
+      expect(res.response.headers.get('accept-ranges'), badRange).toBe('bytes');
+      expect(res.response.headers.get('strict-transport-security'), badRange).toBe('max-age=63072000');
+      expect(res.response.headers.get('x-content-type-options'), badRange).toBe('nosniff');
+      expect(await res.response.text()).toBe('');
+    }
+
+    const multi = await runWorker(MP4_PATH, { headers: { Range: 'bytes=0-3, 6-9' } });
+    expect(multi.response.status).toBe(200);
+    expect(multi.response.headers.get('accept-ranges')).toBe('bytes');
+    expect(await multi.response.text()).toBe('0123456789abcdef');
+
+    const preview206 = await runWorker(
+      `https://linxule-com-preview.linxule.workers.dev${MP4_PATH}`,
+      { headers: { Range: 'bytes=0-1' } },
+    );
+    expect(preview206.response.status).toBe(206);
+    expect(preview206.response.headers.get('x-robots-tag')).toBe('noindex, nofollow');
+
+    const missingMp4 = await runWorker('/assets/artifacts/missing/clip.mp4', {
+      headers: { Range: 'bytes=0-3' },
+    });
+    expect(missingMp4.response.status).toBe(404);
+    expect(missingMp4.response.headers.get('cache-control')).toBeNull();
+    expect(missingMp4.response.headers.get('strict-transport-security')).toBe('max-age=63072000');
+  });
+
+  it('attaches x-markdown-tokens, Content-Length, and Access-Control-Expose-Headers on negotiated and direct .md (GET & HEAD)', async () => {
+    // '/cv.md' fixture body is '# CV\n' (5 bytes -> ceil(5/4) = 2 tokens)
+    const negGet = await runWorker('/cv', { accept: 'text/markdown' });
+    expect(negGet.response.status).toBe(200);
+    expect(negGet.response.headers.get('x-markdown-tokens')).toBe('2');
+    expect(negGet.response.headers.get('content-length')).toBe('5');
+    expect(negGet.response.headers.get('access-control-expose-headers')).toBe('x-markdown-tokens, Link');
+    expect(await negGet.response.text()).toBe('# CV\n');
+
+    const negHead = await runWorker('/cv', { method: 'HEAD', accept: 'text/markdown' });
+    expect(negHead.response.status).toBe(200);
+    expect(negHead.response.headers.get('x-markdown-tokens')).toBe('2');
+    expect(negHead.response.headers.get('content-length')).toBe('5');
+    expect(negHead.response.headers.get('access-control-expose-headers')).toBe('x-markdown-tokens, Link');
+    expect(await negHead.response.text()).toBe('');
+
+    const directGet = await runWorker('/cv.md');
+    expect(directGet.response.status).toBe(200);
+    expect(directGet.response.headers.get('content-type')).toBe('text/markdown; charset=utf-8');
+    expect(directGet.response.headers.get('x-markdown-tokens')).toBe('2');
+    expect(directGet.response.headers.get('content-length')).toBe('5');
+    expect(directGet.response.headers.get('access-control-expose-headers')).toBe('x-markdown-tokens, Link');
+    expect(await directGet.response.text()).toBe('# CV\n');
+
+    const directHead = await runWorker('/cv.md', { method: 'HEAD' });
+    expect(directHead.response.status).toBe(200);
+    expect(directHead.response.headers.get('content-type')).toBe('text/markdown; charset=utf-8');
+    expect(directHead.response.headers.get('x-markdown-tokens')).toBe('2');
+    expect(directHead.response.headers.get('content-length')).toBe('5');
+    expect(directHead.response.headers.get('access-control-expose-headers')).toBe('x-markdown-tokens, Link');
+    expect(await directHead.response.text()).toBe('');
+
+    // Missing .md should return 404 without x-markdown-tokens
+    const missingHead = await runWorker('/writing/missing.md', { method: 'HEAD' });
+    expect(missingHead.response.status).toBe(404);
+    expect(missingHead.response.headers.get('x-markdown-tokens')).toBeNull();
+    expect(await missingHead.response.text()).toBe('');
+  });
+
+  it('attaches Strict-Transport-Security and X-Content-Type-Options: nosniff across redirects, pages, assets, and 404s', async () => {
+    const cases = [
+      await runWorker('https://www.linxule.com/cv'),
+      await runWorker('/CV'),
+      await runWorker('/cv/'),
+      await runWorker('/cv'),
+      await runWorker('/cv', { accept: 'text/markdown' }),
+      await runWorker('/cv.md'),
+      await runWorker('/assets/favicon-32.png'),
+      await runWorker('/no-such-page'),
+      await runWorker('/play', {
+        routes: { '/play': { status: 307, body: null, headers: { Location: '/play/' } } },
+      }),
+    ];
+    for (const { response } of cases) {
+      expect(response.headers.get('strict-transport-security')).toBe('max-age=63072000');
+      expect(response.headers.get('x-content-type-options')).toBe('nosniff');
+    }
+
+    const headersFile = readFileSync(new URL('../src/_headers', import.meta.url), 'utf8');
+    expect(headersFile).toContain('Strict-Transport-Security: max-age=63072000');
+    expect(headersFile).toContain('X-Content-Type-Options: nosniff');
   });
 });
