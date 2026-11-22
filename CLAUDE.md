@@ -15,7 +15,7 @@ Knowledge about one kind of work lives next to that work: tracked `docs/`, path 
 | writing or porting an essay | `.claude/rules/writing-links.md`, `seo.md`, `concept-propagation.md` |
 | setting frontmatter for a content type | `.claude/docs/content-patterns.md` |
 | making a design or voice decision | `.claude/docs/design.md`, `design-system.md` |
-| working on AI discoverability, licensing, llms.txt | `.claude/docs/ai-discoverability.md` · `docs/agent-discovery.md` |
+| working on AI discoverability, MCP (`mcp/`), licensing, llms.txt | **`docs/agent-discovery.md`** · `.claude/docs/ai-discoverability.md` |
 | bitten by a build quirk | `.claude/docs/gotchas.md` (numbered, searchable) |
 
 ## What this is
@@ -23,6 +23,8 @@ Knowledge about one kind of work lives next to that work: tracked `docs/`, path 
 A "book in the algorithmic age": paper and ink, marginalia, a spine, bloom on hover, and one cyan "accident" per work. Human and AI authors are listed together, as arrays.
 
 Eleventy 3 + Nunjucks + Pagefind, vanilla CSS and JS, ESM throughout. Inline `<style>` per page is intentional; global styles are in `src/assets/css/main.css`.
+
+Public MCP & agent discovery: `mcp/` holds the `linxule-mcp` stateless Streamable HTTP Cloudflare Worker serving `https://linxule.com/mcp` and `/mcp/server-card` (`mcp/metadata.mjs`, `mcp/worker.mjs`, `mcp/worker.test.mjs`, `mcp/wrangler.jsonc`). Eleventy imports `mcp/metadata.mjs` via `src/_data/mcpServerCard.js` so the static discovery templates (`src/mcp-server-card.json.njk`, `src/ai-catalog.json.njk`, `src/api-catalog.njk`) stay in sync with the Worker.
 
 ## Know before you touch anything
 
@@ -37,6 +39,8 @@ Eleventy 3 + Nunjucks + Pagefind, vanilla CSS and JS, ESM throughout. Inline `<s
 
 ```bash
 bun run start      # dev server
-bun run build      # build:site + verify (lints + regression tests)
+bun run build      # build:site + verify (lints, built-json:lint, and unit tests including mcp/worker.test.mjs)
+bun run verify     # lints + regression tests against existing _site/
+bun test mcp/worker.test.mjs scripts/middleware.test.mjs   # targeted MCP Worker + markdown-negotiation tests
 bun run test:making | test:runtime | test:ui   # Playwright; needs free port 4173, run outside the sandbox
 ```

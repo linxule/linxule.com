@@ -40,7 +40,10 @@ groups:
 
       - name: "Research Memex"
         href: "https://research-memex.org"
-        description: "Open documentation of AI-augmented research workflows, co-developed with Claude while co-teaching a doctoral methods course at Imperial. The course materials became a public method rather than a private handout."
+        description: "Open documentation of AI-augmented research workflows, co-developed with Claude while co-teaching a doctoral methods course at Imperial. The course materials became a public method rather than a private handout, alongside a live read-only MCP endpoint for agents."
+        links:
+          - label: "MCP endpoint"
+            href: "https://research-memex.org/mcp"
 
       - name: "Interpretive Orchestration"
         href: "https://github.com/linxule/interpretive-orchestration"
@@ -65,7 +68,10 @@ groups:
       - name: "Lotus Wisdom MCP"
         href: "https://github.com/linxule/lotus-wisdom-mcp"
         description: "A contemplative reasoning framework drawn from the Lotus Sutra. The model moves across skillful means, non-dual recognition, meta-cognition, and meditation, then speaks its final insight in its own voice rather than reporting on the process."
-        signal: "on Smithery — the hosted endpoint works in Claude and ChatGPT alike"
+        signal: "live remote endpoint at lotus-wisdom.linxule.com/mcp (also on Smithery) — works in Claude and ChatGPT alike"
+        links:
+          - label: "MCP endpoint"
+            href: "https://lotus-wisdom.linxule.com/mcp"
 
       - name: "Vox MCP"
         href: "https://github.com/linxule/vox-mcp"

@@ -20,6 +20,18 @@ followed; copies are disposable, so edit only in the main checkout.
   shortcodes, transforms, image-pipeline, og-card-paths.
 - `middleware.ts` rewrites `Accept: text/markdown` requests to the page's
   `.md` twin.
+- `mcp/` holds the stateless, zero-dependency `linxule-mcp` Cloudflare Worker
+  (`mcp/worker.mjs`, `mcp/wrangler.jsonc`, `mcp/worker.test.mjs`) serving
+  `https://linxule.com/mcp` and `/mcp/server-card`, backed by `/site-index.json`
+  and the site's authored `.md` twins. `mcp/metadata.mjs` is the single source
+  of truth shared with Eleventy via `src/_data/mcpServerCard.js`.
+- Agent-discovery templates live at the root of `src/`:
+  `src/mcp-server-card.json.njk` (`/.well-known/mcp/server-card.json`),
+  `src/ai-catalog.json.njk` (`/.well-known/ai-catalog.json`, ARD v1.0), and
+  `src/api-catalog.njk` (`/.well-known/api-catalog`, RFC 9727 linkset),
+  alongside `src/llms.txt.njk`, `src/site-index.json.njk`, and
+  `src/agent-skills-index.json.njk`. See `docs/agent-discovery.md` for surface
+  rules and excluded hosts.
 - Content types, each with its own layout in `src/_includes/layouts/`:
   Writing, Portraits, Artifacts, Thinking, Concepts, Teaching, CV, Talks,
   Papers. Standalone sub-apps live at a root subpath (`/tsm/`); slide decks at
@@ -35,9 +47,12 @@ followed; copies are disposable, so edit only in the main checkout.
 - Inline `<style>` per page is intentional. Global styles are in
   `src/assets/css/main.css`; a class defined there leaks into pages that reuse
   its name.
-- `bun run verify` runs the lints and regression tests (`scripts/check-*.mjs`).
-  The token lint (`scripts/check-tokens.mjs`) enforces the type scale, ink
-  usage, hover-gated grayscale, and one accident per work.
+- `bun run verify` runs the lints and regression tests (`scripts/check-*.mjs`,
+  `scripts/*.test.mjs`, and `mcp/worker.test.mjs`). The token lint
+  (`scripts/check-tokens.mjs`) enforces the type scale, ink usage, hover-gated
+  grayscale, and one accident per work; `scripts/check-built-json.mjs` validates
+  JSON-LD, `site-index.json`, and all agent-discovery artifacts (including
+  parity between `/.well-known/mcp/server-card.json` and `mcp/metadata.mjs`).
 
 ## Frontmatter
 

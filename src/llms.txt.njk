@@ -282,6 +282,7 @@ Most content shapes have a parallel `.md` version: writing, portraits, artifacts
 
 #### Static Pages
 
+- [Homepage](https://linxule.com/index.md): Compact Markdown overview of research positioning, orientation paths, and agent surfaces
 - [Thinking](https://linxule.com/thinking.md): Research framework — thesis, observations, orientations
 - [Concepts](https://linxule.com/concepts.md): Signature concepts by territory with definitions and open questions
 - [Builds](https://linxule.com/builds.md): Open-source tools, public experiments, and research infrastructure with repository links
@@ -294,6 +295,12 @@ Most content shapes have a parallel `.md` version: writing, portraits, artifacts
 
 **MCP Server** (`https://linxule.com/mcp`)
 Stateless, read-only Streamable HTTP MCP server ({% for tool in mcpServerCard.tools %}`{{ tool.name }}`{% if not loop.last %}, {% endif %}{% endfor %}) backed by `/site-index.json` and the site's authored `.md` twins. Server card at `/.well-known/mcp/server-card.json` and `/mcp/server-card`; sibling MCP servers and skills indexed in `/.well-known/ai-catalog.json`.
+
+**API Catalog** (`/.well-known/api-catalog`)
+RFC 9727 linkset (`application/linkset+json`) anchoring both `https://linxule.com/` (`/llms.txt`, `/site-index.json`, `/feed.xml`, `/index.md`, `/sitemap.xml`) and `https://linxule.com/mcp` (both Server Card URLs and `/llms.txt`).
+
+**Agent Skills Index** (`/.well-known/agent-skills/index.json`)
+Agent Skills Discovery v0.2.0 index publishing SHA-256-verified skill artifacts ({% for skill in agentSkills.skills %}`{{ skill.name }}` at `{{ skill.url }}`{% if not loop.last %}, {% endif %}{% endfor %}).
 
 **Content Index** (`/site-index.json`)
 JSON manifest of all content pages with metadata:
