@@ -11,7 +11,7 @@ const STILL = "html{scroll-behavior:auto !important} *{animation:none !important
 test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
-  await page.route("**/_vercel/insights/**", route => route.abort());
+  await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
 });
 
 async function settle(page, path) {
@@ -145,7 +145,7 @@ test("on a touch screen the glow stays away and plate numbers are shown", async 
   const page = await context.newPage();
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
-  await page.route("**/_vercel/insights/**", route => route.abort());
+  await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
 
   await settle(page, "/thinking/");
   await page.evaluate(() => document.addEventListener("click", event => event.preventDefault(), true));

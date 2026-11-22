@@ -15,8 +15,8 @@ This site publishes honest agent-discovery metadata for Xule Lin's public resear
 - `/.well-known/api-catalog` is the RFC 9727 linkset anchoring both `https://linxule.com/` (`/llms.txt`, `/connect.md`, `/site-index.json`, `/.well-known/ai-catalog.json`, `/.well-known/agent-skills/index.json`, `/license.xml`, `/feed.xml`, `/index.md`, `/sitemap.xml`) and `https://linxule.com/mcp`.
 - HTML `<head>` (`src/_includes/layouts/base.njk`) publishes `<link rel="ai-catalog" type="application/json" href="/.well-known/ai-catalog.json">` and `<link rel="llms-txt" href="/llms.txt" type="text/plain">`.
 - `robots.txt` declares `Allow: /` and `Content-Signal: ai-train=yes, search=yes, ai-input=yes` across `*` and explicit named AI crawler groups, plus `Sitemap: https://linxule.com/sitemap.xml` and `Agentmap: https://linxule.com/.well-known/ai-catalog.json`.
-- Scoped `Link` response headers (`vercel.json`) advertise `service-doc` (`/llms.txt`, `/connect.md`), `api-catalog`, `describedby`, `sitemap`, `llms-txt`, `agent-skills`, `ai-catalog`, and `service-desc` (`/.well-known/mcp/server-card.json`) on content routes while staying off static asset trees.
-- Direct markdown variants and `Accept: text/markdown` negotiation expose readable page versions. Direct `.md` requests must pass through unchanged; middleware should only rewrite unsuffixed content URLs to their `.md` counterpart.
+- Scoped `Link` response headers (emitted by `worker.ts` from `DISCOVERY_LINK_HEADER` in `eleventy/redirects.mjs`) advertise `service-doc` (`/llms.txt`, `/connect.md`), `api-catalog`, `describedby`, `sitemap`, `llms-txt`, `agent-skills`, `ai-catalog`, and `service-desc` (`/.well-known/mcp/server-card.json`) on content routes while staying off static asset trees (`/assets/*`, `/writing/attachments/*`, `/pagefind/*`).
+- Direct markdown variants and `Accept: text/markdown` negotiation expose readable page versions. Direct `.md` requests pass through unchanged; `worker.ts` internally rewrites unsuffixed content URLs matching `MD_PATHS` (plus `/` → `/index.md`) to their `.md` asset via `env.ASSETS.fetch`, returning a direct `HTTP 200` `text/markdown; charset=utf-8` response with `Vary: Accept` and no redirect hop.
 
 `sitemap.xml` lists canonical human-facing URLs, not `.md` alternates. Keep Markdown discovery in `/llms.txt`, `/site-index.json`, HTTP `Link` headers, HTML alternate links, and content negotiation so crawlers see one canonical URL per page while AI readers still get clean Markdown.
 
@@ -33,7 +33,7 @@ The Agent Skills index is generated from `src/_data/agentSkills.js`. The SHA-256
 
 - `ssl: strict`, `min_tls_version: 1.2`, `speed_brain: off`, `hotlink_protection: off`, `rocket_loader: off`, `fonts: off`, `browser_check: off`.
 - Edge response header rules add `X-Robots-Tag: noindex, nofollow` on `open-interview-staging.linxule.com` and `a4b.linxule.com`.
-- Keep Cloudflare's edge "Markdown for Agents" (`content_converter`) **OFF** — origin `.md` twins and `middleware.ts` negotiation are authoritative and preserve curated structure and exact headers.
+- Keep Cloudflare's edge "Markdown for Agents" (`content_converter`) **OFF** — the built `.md` twins and `worker.ts` negotiation (via `env.ASSETS.fetch`) are authoritative and preserve curated structure and exact headers.
 
 ## DNS-AID
 
@@ -59,7 +59,7 @@ linxule.com. IN DS 2371 13 2 53C7180AD9C8299A8E6B8F093CD1B9586982378CD83100F66AF
 
 For the full cross-domain post-release and monthly audit (origin surfaces, `isitagentready.com` via `bun run seo:agentready` in Research Memex, Cloudflare zone settings, IndexNow, and GSC), follow `~/Documents/GitHub/research-memex/handbook/procedures/release-and-surface-audit.md`.
 
-Build and local artifact checks (`bun run build` runs `scripts/check-built-json.mjs`, which validates ARD v1.0 schema rules on `ai-catalog.json`, excluded hosts, SEP-2127 / SEP-1649 parity of `.well-known/mcp/server-card.json` with `mcp/metadata.mjs`, `robots.txt` `Agentmap:`, and `<link rel="ai-catalog">`, plus `mcp/worker.test.mjs`):
+Build and local artifact checks (`bun run build` runs `scripts/check-built-json.mjs`, which validates ARD v1.0 schema rules on `ai-catalog.json`, excluded hosts, SEP-2127 / SEP-1649 parity of `.well-known/mcp/server-card.json` with `mcp/metadata.mjs`, `robots.txt` `Agentmap:`, and `<link rel="ai-catalog">`, plus `scripts/check-renderings.mjs` verifying `worker.ts` / `wrangler.jsonc` / `_site/_headers` parity, `scripts/worker.test.mjs`, and `mcp/worker.test.mjs`):
 
 ```bash
 bun run build
@@ -69,7 +69,7 @@ test -f _site/.well-known/agent-skills/index.json
 test -f _site/.well-known/agent-skills/xule-research-navigation/SKILL.md
 ```
 
-Live HTTP checks:
+Live HTTP checks (`BASE_URL=https://linxule.com bun run verify:live` runs the full `scripts/verify-cloudflare-migration.sh` contract across all redirects, `Accept: text/markdown` negotiation, static/discovery `Content-Type` and `Link` headers, and preview/prod `X-Robots-Tag` guards; targeted probes below):
 
 ```bash
 curl -i https://linxule.com/.well-known/mcp/server-card.json

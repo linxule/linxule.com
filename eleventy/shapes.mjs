@@ -1,8 +1,8 @@
 /**
  * Shared content-shape & Markdown-twin registry for linxule.com.
  *
- * Pure ESM with ZERO Node.js or Eleventy imports so Vercel Edge Middleware
- * (`middleware.ts`), the Cloudflare Worker (`mcp/metadata.mjs`), Eleventy
+ * Pure ESM with ZERO Node.js or Eleventy imports so the Cloudflare Worker
+ * (`worker.ts`), the MCP Worker (`mcp/metadata.mjs`), Eleventy
  * (`eleventy/filters.js`), and post-build verification (`scripts/check-renderings.mjs`)
  * all derive from a single source of truth.
  */
@@ -197,15 +197,14 @@ export const STATIC_TWINS = Object.freeze([
 /**
  * Matches every negotiable unsuffixed content path (excluding direct `.md` URLs,
  * `/writing/attachments/*`, `/writing/series/*`, filter books, `/search`, and `/404.html`).
- * Root (`/`) negotiates via a dedicated branch in `middleware.ts` and `/index` matches here too.
+ * Root (`/`) negotiates via a dedicated branch in `worker.ts` and `/index` matches here too.
  */
 export const MD_PATHS =
   /^\/(?!.*\.md\/?$)(index|writing|making|talks|papers|thinking|concepts|teaching|builds|cv|cv-zh|connect|builds\/[^/]+|writing\/(?!attachments(?:\/|$)|series(?:\/|$))[^/]+|making\/(?:portraits|artifacts)\/[^/]+|talks\/[^/]+|papers\/[^/]+)\/?$/;
 
 /**
- * Exact Vercel Edge Middleware matcher list (kept in sync with the static literal
- * `export const config = { matcher: [...] }` in `middleware.ts`, verified by
- * `scripts/check-renderings.mjs` and `scripts/middleware.test.mjs`).
+ * Canonical negotiable route-pattern list (verified by `scripts/worker.test.mjs`
+ * against `MD_PATHS` and `STATIC_TWINS`; kept exported for compatibility).
  */
 export const MIDDLEWARE_MATCHERS = Object.freeze([
   "/",

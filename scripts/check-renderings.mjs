@@ -6,10 +6,13 @@
  *   - a markdown twin exists (`_site/<path>.md`, root -> `_site/index.md`)
  *   - the HTML `<head>` carries `<link rel="alternate" type="text/markdown">`
  *     pointing at exactly that twin
- *   - `middleware.ts` imports `MD_PATHS` from `./eleventy/shapes.mjs`, keeps a
- *     static literal `config.matcher` in parity with `MIDDLEWARE_MATCHERS`, and
- *     BOTH `MD_PATHS` and `config.matcher` (via `path-to-regexp`) match every
- *     shape's representative URL
+ *   - `worker.ts` imports `MD_PATHS` from `./eleventy/shapes.mjs` and
+ *     `prefersMarkdown` + `matchRedirect` from `./eleventy/redirects.mjs`, and
+ *     keeps an explicit `pathname === '/'` -> `/index.md` rewrite branch
+ *   - `wrangler.jsonc` configures `assets.directory` -> `_site`,
+ *     `assets.binding === "ASSETS"`, and `assets.run_worker_first` includes
+ *     `"/*"` covering every shape's representative URL without excluding it
+ *   - `_site/_headers` exists on disk
  *   - every Pagefind-indexed shape carries `data-pagefind-body`
  *   - `_site/feed.xml` has an `<entry>` for at least one URL from each dated shape
  *   - every spread of a scroll book has an id equal to its `data-book-target`,
@@ -19,11 +22,9 @@
  */
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
-import { match } from "path-to-regexp";
 import {
   COLLECTION_TWINS,
   MD_PATHS,
-  MIDDLEWARE_MATCHERS,
   STATIC_TWINS,
 } from "../eleventy/shapes.mjs";
 import { checkSpreadIds, checkUniqueIds, isBookPage, isSitePage } from "./lib/spread-ids.mjs";
@@ -81,47 +82,95 @@ function twinFor(relHtmlPath) {
   return cp === "" ? "index.md" : `${cp}.md`;
 }
 
-// ── middleware.ts parity (imports MD_PATHS + static literal config.matcher) ─
-const middlewareSrc = readFileSync("middleware.ts", "utf8");
-
-if (!/import\s*\{[^}]*\bMD_PATHS\b[^}]*\}\s*from\s*['"]\.\/eleventy\/shapes\.mjs['"]/.test(middlewareSrc)) {
-  problems.push("[middleware] middleware.ts must import MD_PATHS from './eleventy/shapes.mjs'");
+// ── worker.ts + wrangler.jsonc + _site/_headers parity ───────────────────
+function stripJsoncComments(raw) {
+  return raw.replace(
+    /"(?:\\.|[^"\\])*"|\/\/[^\r\n]*|\/\*[\s\S]*?\*\//g,
+    (token) => (token.startsWith('"') ? token : ""),
+  );
 }
 
-const hasRootBranch = /pathname === ['"]\/['"][\s\S]{0,300}\/index\.md/.test(middlewareSrc);
-if (!hasRootBranch) {
-  problems.push("[root] middleware.ts has no pathname === '/' -> /index.md rewrite branch — fix: middleware.ts");
+function globToRegExp(pattern) {
+  const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
+  return new RegExp(`^${escaped}$`);
 }
 
-const matcherBlock = middlewareSrc.match(
-  /export\s+const\s+config\s*=\s*\{\s*matcher\s*:\s*\[([\s\S]*?)\]\s*,?\s*\}\s*;/,
-);
-const extractedMatchers = [];
-if (!matcherBlock) {
-  problems.push("[middleware] could not parse static literal `export const config = { matcher: [...] };` in middleware.ts");
+if (!existsSync("worker.ts")) {
+  problems.push("[worker] worker.ts not found — fix: add Cloudflare Worker entrypoint at worker.ts");
 } else {
-  const strippedBlock = matcherBlock[1].replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
-  for (const m of strippedBlock.matchAll(/['"]([^'"]+)['"]/g)) {
-    extractedMatchers.push(m[1]);
+  const workerSrc = readFileSync("worker.ts", "utf8");
+
+  const shapesImports = [...workerSrc.matchAll(
+    /import\s*\{([^}]*)\}\s*from\s*['"]\.\/eleventy\/shapes\.mjs['"]/g,
+  )].map((m) => m[1]).join(",");
+  if (!/\bMD_PATHS\b/.test(shapesImports)) {
+    problems.push("[worker] worker.ts must import MD_PATHS from './eleventy/shapes.mjs'");
   }
-  const expectedSet = new Set(MIDDLEWARE_MATCHERS);
-  const actualSet = new Set(extractedMatchers);
-  for (const expected of MIDDLEWARE_MATCHERS) {
-    if (!actualSet.has(expected)) {
-      problems.push(`[middleware] config.matcher is missing "${expected}" from MIDDLEWARE_MATCHERS — fix: middleware.ts`);
+
+  const redirectsImports = [...workerSrc.matchAll(
+    /import\s*\{([^}]*)\}\s*from\s*['"]\.\/eleventy\/redirects\.mjs['"]/g,
+  )].map((m) => m[1]).join(",");
+  if (!/\bprefersMarkdown\b/.test(redirectsImports)) {
+    problems.push("[worker] worker.ts must import prefersMarkdown from './eleventy/redirects.mjs'");
+  }
+  if (!/\bmatchRedirect\b/.test(redirectsImports)) {
+    problems.push("[worker] worker.ts must import matchRedirect from './eleventy/redirects.mjs'");
+  }
+
+  const hasRootBranch = /pathname\s*===\s*['"]\/['"][\s\S]{0,300}\/index\.md/.test(workerSrc);
+  if (!hasRootBranch) {
+    problems.push("[root] worker.ts has no pathname === '/' -> /index.md rewrite branch — fix: worker.ts");
+  }
+}
+
+const STATIC_ASSET_EXCLUSIONS = ["!/assets/*", "!/writing/attachments/*", "!/pagefind/*"];
+let positiveWorkerMatchers = [];
+let negativeWorkerMatchers = STATIC_ASSET_EXCLUSIONS.map((pattern) => ({
+  pattern,
+  re: globToRegExp(pattern.slice(1)),
+}));
+let hasRunWorkerFirst = false;
+
+if (!existsSync("wrangler.jsonc")) {
+  problems.push("[wrangler] wrangler.jsonc not found — fix: add Cloudflare Worker config at wrangler.jsonc");
+} else {
+  let wranglerConfig = null;
+  try {
+    wranglerConfig = JSON.parse(stripJsoncComments(readFileSync("wrangler.jsonc", "utf8")));
+  } catch (error) {
+    problems.push(`[wrangler] could not parse wrangler.jsonc: ${error.message}`);
+  }
+  if (wranglerConfig && typeof wranglerConfig === "object") {
+    const assets = wranglerConfig.assets ?? {};
+    if (typeof assets.directory !== "string" || path.resolve(assets.directory) !== path.resolve(SITE)) {
+      problems.push(`[wrangler] wrangler.jsonc assets.directory must resolve to ${SITE} (got ${JSON.stringify(assets.directory)}) — fix: wrangler.jsonc`);
     }
-  }
-  for (const actual of extractedMatchers) {
-    if (!expectedSet.has(actual)) {
-      problems.push(`[middleware] config.matcher has unexpected "${actual}" absent from MIDDLEWARE_MATCHERS — fix: eleventy/shapes.mjs or middleware.ts`);
+    if (assets.binding !== "ASSETS") {
+      problems.push(`[wrangler] wrangler.jsonc assets.binding must be "ASSETS" (got ${JSON.stringify(assets.binding)}) — fix: wrangler.jsonc`);
+    }
+    const runWorkerFirst = assets.run_worker_first;
+    if (!Array.isArray(runWorkerFirst) || !runWorkerFirst.includes("/*")) {
+      problems.push('[wrangler] wrangler.jsonc assets.run_worker_first must be an array including "/*" — fix: wrangler.jsonc');
+    } else {
+      hasRunWorkerFirst = true;
+      positiveWorkerMatchers = runWorkerFirst
+        .filter((p) => typeof p === "string" && !p.startsWith("!"))
+        .map((pattern) => ({ pattern, re: globToRegExp(pattern) }));
+      const negPatterns = new Set([
+        ...STATIC_ASSET_EXCLUSIONS,
+        ...runWorkerFirst.filter((p) => typeof p === "string" && p.startsWith("!")),
+      ]);
+      negativeWorkerMatchers = [...negPatterns].map((pattern) => ({
+        pattern,
+        re: globToRegExp(pattern.slice(1)),
+      }));
     }
   }
 }
 
-const compiledMatchers = extractedMatchers.map((pattern) => ({
-  pattern,
-  test: match(pattern, { sensitive: true, end: true, decode: decodeURIComponent }),
-}));
+if (!existsSync(path.join(SITE, "_headers"))) {
+  problems.push("[headers] _site/_headers not found — fix: eleventy.config.js passthrough copy for src/_headers");
+}
 
 // ── feed.xml ─────────────────────────────────────────────────────────────
 const feedPath = path.join(SITE, "feed.xml");
@@ -155,13 +204,17 @@ for (const shape of SHAPES) {
     }
   }
 
-  // Content negotiation — BOTH MD_PATHS AND middleware config.matcher must match representative URL
+  // Content negotiation — BOTH MD_PATHS AND wrangler.jsonc assets.run_worker_first must cover representative URL
   const repUrl = shape.name === "root" ? "/" : "/" + contentPathOf(pages[0]);
   if (shape.name !== "root" && !MD_PATHS.test(repUrl)) {
     problems.push(`[${shape.name}] MD_PATHS does not match representative URL ${repUrl} (surface: Content negotiation) — fix: eleventy/shapes.mjs MD_PATHS`);
   }
-  if (compiledMatchers.length && !compiledMatchers.some(({ test }) => test(repUrl) !== false)) {
-    problems.push(`[${shape.name}] middleware.ts config.matcher does not match representative URL ${repUrl} — fix: middleware.ts config.matcher`);
+  if (hasRunWorkerFirst && !positiveWorkerMatchers.some(({ re }) => re.test(repUrl))) {
+    problems.push(`[${shape.name}] wrangler.jsonc assets.run_worker_first does not match representative URL ${repUrl} — fix: wrangler.jsonc`);
+  }
+  const excludedBy = negativeWorkerMatchers.find(({ re }) => re.test(repUrl));
+  if (excludedBy) {
+    problems.push(`[${shape.name}] representative URL ${repUrl} is excluded by static asset bypass "${excludedBy.pattern}" — fix: wrangler.jsonc`);
   }
 
   // Pagefind — data-pagefind-body on the shape's layout or source template
@@ -263,5 +316,5 @@ if (problems.length) {
 }
 
 console.log(
-  `[renderings-lint] OK — ${SHAPES.length} shapes, ${pagesChecked} page(s) checked, ${alternatesChecked} alternate link(s) verified, ${mdTwinsChecked} markdown twin(s) clean, ${bookPages} book page(s) with addressable spreads, ${idPages} page(s) with unique ids, middleware matcher parity verified.`,
+  `[renderings-lint] OK — ${SHAPES.length} shapes, ${pagesChecked} page(s) checked, ${alternatesChecked} alternate link(s) verified, ${mdTwinsChecked} markdown twin(s) clean, ${bookPages} book page(s) with addressable spreads, ${idPages} page(s) with unique ids, worker + wrangler.jsonc + _headers parity verified.`,
 );

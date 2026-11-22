@@ -31,15 +31,15 @@ const ROOTS = [
 const FILES = [
   ".eleventyignore",
   "eleventy.config.js",
-  "middleware.ts",
   "package.json",
   "bun.lock",
   "scripts/build-freshness.mjs",
   "scripts/gen-og-cards.mjs",
   "scripts/gen-paper.mjs",
-  "vercel.json",
+  "worker.ts",
+  "wrangler.jsonc",
 ];
-const EXCLUDED_PREFIXES = ["src/tsm/", "mcp/.wrangler/"];
+const EXCLUDED_PREFIXES = [".wrangler/", "src/tsm/", "mcp/.wrangler/"];
 const BINARY_EXTENSIONS = new Set([
   ".png",
   ".jpg",
@@ -100,7 +100,10 @@ function head() {
       stdio: ["ignore", "pipe", "ignore"],
     }).trim();
   } catch (error) {
-    const deploymentHead = process.env.VERCEL_GIT_COMMIT_SHA?.trim();
+    const deploymentHead =
+      process.env.WORKERS_CI_COMMIT_SHA?.trim() ||
+      process.env.CF_PAGES_COMMIT_SHA?.trim() ||
+      process.env.VERCEL_GIT_COMMIT_SHA?.trim();
     if (deploymentHead) return deploymentHead;
     throw error;
   }

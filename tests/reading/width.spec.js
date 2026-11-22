@@ -14,13 +14,16 @@ const PAGES = [
 test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
-  await page.route("**/_vercel/insights/**", route => route.abort());
+  await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
 });
 
 for (const width of [360, 390]) {
   test(`no page is wider than a ${width}px phone`, async ({ browser, baseURL }) => {
     const context = await browser.newContext({ baseURL, viewport: { width, height: 844 }, hasTouch: true, isMobile: true });
     const page = await context.newPage();
+    await page.route("https://fonts.googleapis.com/**", route => route.abort());
+    await page.route("https://fonts.gstatic.com/**", route => route.abort());
+    await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
     const wide = [];
     for (const url of PAGES) {
       const response = await page.goto(url);

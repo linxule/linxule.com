@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "faces do not depend on viewport");
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
-  await page.route("**/_vercel/insights/**", route => route.abort());
+  await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
 });
 
 async function open(page, url) {

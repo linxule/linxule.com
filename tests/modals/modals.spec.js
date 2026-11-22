@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await page.route('https://fonts.gstatic.com/**', route => route.abort());
   await page.route('https://media.linxule.com/**', route => route.abort());
   await page.route('https://www.youtube.com/**', route => route.abort());
-  await page.route('**/_vercel/insights/**', route => route.abort());
+  await page.route('https://static.cloudflareinsights.com/**', route => route.abort());
 });
 
 async function expectTabReturnsToClose(page, close, key = 'Tab') {

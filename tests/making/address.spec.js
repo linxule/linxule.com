@@ -11,7 +11,7 @@ const STORAGE_KEY = "making-scroll-target";
 test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
-  await page.route("**/_vercel/insights/**", route => route.abort());
+  await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
 });
 
 const isBookMode = ({ width, height }) => width >= 901 && height >= 700;
@@ -144,7 +144,7 @@ test("a deep link on a phone lands on its spread", async ({ browser, baseURL }, 
   const page = await context.newPage();
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
-  await page.route("**/_vercel/insights/**", route => route.abort());
+  await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
   await page.goto("/making/");
   const deep = await page.evaluate(() => document.querySelectorAll('#making-book > section[id^="artifact:"]')[10].id);
   await expectLandsOn(page, ["artifacts", deep]);

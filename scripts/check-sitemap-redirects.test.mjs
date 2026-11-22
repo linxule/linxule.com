@@ -175,7 +175,7 @@ describe('source hygiene guard', () => {
 });
 
 describe('built HTML redirect collision, fragment target, and optimized image guards', () => {
-  it('flags built HTML routes (including /tag/*) shadowed by vercel.json redirects', async () => {
+  it('flags built HTML routes (including /tag/*) shadowed by eleventy/redirects.mjs redirects', async () => {
     const dir = await makeTemp('xule-html-redir-');
     await mkdir(path.join(dir, 'tag/research-methods'), { recursive: true });
     await mkdir(path.join(dir, 'tag/research-methodology'), { recursive: true });

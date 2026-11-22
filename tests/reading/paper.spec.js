@@ -22,7 +22,7 @@ const NO_PAPER = ":root{--paper-sheet:none !important} body::before,body::after{
 test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
-  await page.route("**/_vercel/insights/**", route => route.abort());
+  await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
 });
 
 // The first visible, unclipped text of each ink, below the spine.

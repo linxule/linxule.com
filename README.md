@@ -28,7 +28,7 @@ bun run build  # Production build + search index
 ```
 src/
 ├── _includes/layouts/     # Page templates
-│   ├── base.njk           # Root template (spine, bloom cursor, JSON-LD)
+│   ├── base.njk           # Root template (spine, bloom cursor, JSON-LD, CF Web Analytics)
 │   ├── writing.njk        # Articles with marginalia
 │   ├── portrait.njk       # AI-generated image pages
 │   ├── artifact.njk       # Artifacts made directly by AI collaborators
@@ -57,6 +57,7 @@ src/
 
 eleventy/
 ├── shapes.mjs             # Single source of truth for twinned content shapes
+├── redirects.mjs          # Canonical 57-rule redirect table, Link header, and Accept negotiation
 ├── strings.js             # Shared slugify and collaborator credit parsing
 ├── collections.js         # Content collections
 ├── filters.js             # Template filters (including htmlToMarkdown, markdownBody)
@@ -66,9 +67,11 @@ eleventy/
 ├── og-card-paths.js       # Social-card path & alt resolution
 └── rendering-fidelity.js  # Feed and rendering helpers
 
+worker.ts                  # Cloudflare Worker (redirects, trailing-slash, Accept: text/markdown, headers)
+wrangler.jsonc             # Cloudflare Workers + Static Assets config (prod & preview)
+src/_headers               # Static asset Cache-Control and CORS rules (copied to _site/_headers)
 mcp/                       # Stateless read-only linxule-mcp Cloudflare Worker
 agent-skills/              # Public Agent Skills artifacts
-middleware.ts              # Vercel Edge Middleware for Accept: text/markdown
 ```
 
 ## Design Tokens
@@ -183,18 +186,24 @@ DNS-AID uses `_index._agents.linxule.com` as the single apex discovery pointer (
 ## Deployment
 
 ```bash
-bun run build   # Outputs to _site/
+bun run build                                    # Build to _site/ + run full verify suite
+bun run deploy:preview                           # Optional preview → linxule-com-preview.linxule.workers.dev
+bun run verify:live                              # Run scripts/verify-cloudflare-migration.sh against preview
+bun run deploy:prod                              # Deploy production Worker + Static Assets (wrangler deploy --env "")
+BASE_URL=https://linxule.com bun run verify:live # Verify live production contracts
 ```
 
-- `bun run publish:indexnow` submits the current fresh build only on Vercel
-  Production. For an intentional manual submission, use
+- `bun run publish:indexnow` uses a fail-closed production allowlist (`VERCEL_ENV=production`,
+  `WORKERS_CI=1` + `WORKERS_CI_BRANCH=main`, or `CF_PAGES_BRANCH=main`). For an
+  intentional manual submission after production verification, run
   `INDEXNOW_KEY="$(tail -n 1 src/indexnow-key.njk)" INDEXNOW_FORCE=1 bun run publish:indexnow`.
   The key is the public verification token rendered by `src/indexnow-key.njk`,
-  not a secret; Vercel Production supplies the same value as `INDEXNOW_KEY`.
-- **Vercel + Cloudflare**: Production runs on Vercel (`vercel.json` headers/redirects + Edge `middleware.ts` Markdown negotiation) behind Cloudflare DNS/proxy, with `mcp/` deployed separately as the `linxule-mcp` Cloudflare Worker when Worker code changes. Git auto-deployment is disabled — pushes trigger nothing, the Verify workflow is on-demand (`gh workflow run verify.yml`) and runs on pull requests, and production uses a separate prebuilt deployment from a detached worktree.
-  Follow [Publishing and deployment retention](./docs/publishing.md): keep current
-  production plus the production deployment recorded before publishing, and prune
-  older versions only after the new release passes live verification.
+  not a secret.
+- **Cloudflare Workers + Static Assets**: Production runs directly on Cloudflare Workers + Static Assets (`wrangler.jsonc`, `worker.ts`, `eleventy/redirects.mjs`, `src/_headers`, with the explicit Cloudflare Web Analytics beacon in `src/_includes/layouts/base.njk`), while `mcp/` deploys separately as the `linxule-mcp` Cloudflare Worker only when Worker code changes. Git auto-deployment is not used — pushes trigger nothing, the Verify workflow is on-demand (`gh workflow run verify.yml`) and runs on pull requests, and production is built and deployed from a detached worktree (`.deploy-worktree`).
+  Follow [Publishing and rollback](./docs/publishing.md) for the detached-worktree
+  checklist, live verification, instant `wrangler rollback --env ""`, and the
+  7–14 day warm Vercel fallback window (`scripts/deployment-retention.mjs` also
+  manages `research-memex` on Vercel).
 
 ## Verification and maintenance
 
@@ -219,7 +228,7 @@ reuse files produced by the previous encoder.
 
 Dependabot checks the native Bun lockfile and GitHub Actions weekly, grouping
 minor/patch updates and security fixes. Keep `path-to-regexp` on its audited v6
-line while the sitemap checker reads Vercel's `:path*` and `:path+` route syntax;
+line while `eleventy/redirects.mjs` and the sitemap checker use `:path*` and `:path+` route syntax;
 v8 rejects those patterns. Markdown's bare-domain link setting is explicit so
 parser upgrades preserve existing article links.
 Only this parser's non-security major version updates are ignored; its security,

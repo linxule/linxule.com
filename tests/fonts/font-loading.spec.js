@@ -19,7 +19,7 @@ async function pauseClockBeforeNavigation(page) {
 
 test.beforeEach(async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "font loading is independent of viewport");
-  await page.route("**/_vercel/insights/**", route => route.abort());
+  await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
   // Google Fonts now carries only the upright Chinese serif, which /writing/ does not set.
   await page.route("https://fonts.googleapis.com/**", route => route.fulfill({ contentType: "text/css", body: "" }));
 });

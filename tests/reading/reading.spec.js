@@ -50,7 +50,7 @@ async function expectProseWithinViewport(page, selector = ".article-body > p") {
 test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
   await page.route("https://fonts.gstatic.com/**", route => route.abort());
-  await page.route("**/_vercel/insights/**", route => route.abort());
+  await page.route("https://static.cloudflareinsights.com/**", route => route.abort());
 });
 
 test("bare domains and email addresses retain their existing links", () => {

@@ -51,7 +51,7 @@
     <link rel="alternate" hreflang="x-default" href="{{ site.url }}/cv">
     {%- endif %}
 
-    {# Canonical URL — strip trailing slash to match vercel.json trailingSlash: false #}
+    {# Canonical URL — strip trailing slash to match canonical slashless URLs #}
     {%- set canonicalPath = '' if page.url == '/' else (page.url | stripTrailingSlash) %}
     <link rel="canonical" href="{{ site.url }}{{ canonicalPath }}">
 
@@ -188,11 +188,8 @@
     <link rel="license" href="https://creativecommons.org/licenses/by/4.0/">
     {%- endif %}
 
-    {# Vercel Analytics #}
-    <script>
-        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
+    {# Cloudflare Web Analytics #}
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "96154bbaeaf34818a4a431b20138b9cc"}'></script>
 
     {# JSON-LD Structured Data #}
     {% if page.url == '/' %}

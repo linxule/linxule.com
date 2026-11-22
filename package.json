@@ -13,6 +13,9 @@
     "test:making": "bun run freshness:check && playwright test tests/making",
     "serve:built": "bun scripts/serve-built-site.mjs",
     "workspace:link": "bun scripts/link-workspace.mjs",
+    "deploy:preview": "bun run freshness:check && bunx wrangler deploy --env preview",
+    "deploy:prod": "bun run freshness:check && bunx wrangler deploy --env \"\"",
+    "verify:live": "bash scripts/verify-cloudflare-migration.sh",
     "publish:indexnow": "bun run freshness:check && bash scripts/indexnow-submit.sh",
     "publish:retention": "bun scripts/deployment-retention.mjs",
     "retention:test": "bun test scripts/deployment-retention.test.mjs scripts/deployment-retention-wrapper.test.mjs",
@@ -32,7 +35,7 @@
     "sitemap:test": "bun test scripts/check-sitemap-redirects.test.mjs",
     "artifact:test": "bun test scripts/check-artifact-pipeline.test.mjs",
     "play:test": "bun test scripts/check-play-integration.test.mjs",
-    "pipeline:test": "bun test scripts/image-cache.test.mjs scripts/image-pipeline*.test.mjs scripts/middleware.test.mjs scripts/image-aspect.test.mjs",
+    "pipeline:test": "bun test scripts/image-cache.test.mjs scripts/image-pipeline*.test.mjs scripts/worker.test.mjs scripts/image-aspect.test.mjs",
     "test:runtime": "bun run freshness:check && playwright test tests/runtime --project=desktop --project=mobile-boundary",
     "surface:test": "bun test scripts/social-cards.test.mjs scripts/rendering-fidelity.test.mjs scripts/spread-ids.test.mjs scripts/registries.test.mjs mcp/worker.test.mjs",
     "test:ui": "bun run freshness:check && playwright test tests/reading tests/fonts --project=desktop && playwright test tests/modals --project=desktop --project=phone --project=phone-narrow && playwright test tests/discovery --project=phone --project=desktop"
@@ -47,14 +50,14 @@
   "devDependencies": {
     "@playwright/test": "^1.65.0",
     "@resvg/resvg-js": "^2.6.2",
-    "@vercel/functions": "^3.9.7",
     "gray-matter": "4.0.3",
     "js-yaml": "^5.4.2",
     "nunjucks": "3.2.4",
     "pagefind": "^1.5.2",
     "path-to-regexp": "^6.3.0",
     "sharp": "^0.35.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "4.157.0"
   },
   "packageManager": "bun@1.4.2",
   "engines": {

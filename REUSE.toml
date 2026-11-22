@@ -34,7 +34,9 @@ path = [
   "**/*.css",
   "eleventy.config.js",
   "mcp/wrangler.jsonc",
-  "vercel.json",
+  "wrangler.jsonc",
+  "worker.ts",
+  "src/_headers",
   "package.json",
 ]
 SPDX-FileCopyrightText = "Xule Lin <x@linxule.com>"

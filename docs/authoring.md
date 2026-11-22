@@ -16,8 +16,8 @@ followed; copies are disposable, so edit only in the main checkout.
 
 ## Code map
 
-- `eleventy.config.js` imports from `eleventy/`: `shapes.mjs` (canonical twinned-shape registry), `strings.js`, `collections.js`, `filters.js`, `shortcodes.js`, `transforms.js`, `image-pipeline.js`, `og-card-paths.js`, `rendering-fidelity.js`. Global data catalogs live in `src/_data/` (`site.js`, `seriesCatalog.js`, `conceptsCatalog.js`, `collaboratorsCatalog.js`, `mcpServerCard.js`, `agentSkills.js`).
-- `middleware.ts` imports `MD_PATHS` from `eleventy/shapes.mjs` and rewrites `Accept: text/markdown` requests to the page's `.md` twin.
+- `eleventy.config.js` imports from `eleventy/`: `shapes.mjs` (canonical twinned-shape registry), `redirects.mjs` (pure ESM single source of truth for all 57 redirect rules, `DISCOVERY_LINK_HEADER`, `matchRedirect`, and RFC 9110 `prefersMarkdown`), `strings.js`, `collections.js`, `filters.js`, `shortcodes.js`, `transforms.js`, `image-pipeline.js`, `og-card-paths.js`, `rendering-fidelity.js`. Global data catalogs live in `src/_data/` (`site.js`, `seriesCatalog.js`, `conceptsCatalog.js`, `collaboratorsCatalog.js`, `mcpServerCard.js`, `agentSkills.js`).
+- `worker.ts` (configured by `wrangler.jsonc`) serves the site on Cloudflare Workers + Static Assets (`./_site`). It imports `MD_PATHS` from `eleventy/shapes.mjs` and `DISCOVERY_LINK_HEADER`, `matchRedirect`, and `prefersMarkdown` from `eleventy/redirects.mjs` to handle `www` → apex redirects, all 57 legacy redirects, trailing-slash `308` stripping, direct `200` `Accept: text/markdown` negotiation via `env.ASSETS.fetch`, deterministic content/discovery headers, and automatic `X-Robots-Tag: noindex, nofollow` on `*.workers.dev` previews. Static asset cache and CORS headers live in `src/_headers` (passthrough-copied to `_site/_headers`). `src/_includes/layouts/base.njk` loads the explicit Cloudflare Web Analytics beacon (`static.cloudflareinsights.com/beacon.min.js`).
 - `mcp/` holds the stateless, zero-dependency `linxule-mcp` Cloudflare Worker (`mcp/worker.mjs`, `mcp/wrangler.jsonc`, `mcp/worker.test.mjs`) serving `https://linxule.com/mcp` and `GET`/`HEAD` `/mcp/server-card`, backed by `/site-index.json`, `/.build-manifest.json`, and the site's authored `.md` twins. `mcp/metadata.mjs` is the single source of truth shared with Eleventy via `src/_data/mcpServerCard.js`.
 - Agent-discovery templates live at the root of `src/`: `src/mcp-server-card.json.njk` (`/.well-known/mcp/server-card.json`), `src/ai-catalog.json.njk` (`/.well-known/ai-catalog.json`, ARD v1.0), `src/api-catalog.njk` (`/.well-known/api-catalog`, RFC 9727 linkset), `src/connect.njk` + `src/md-outputs/connect.md.njk` (`/connect` & `/connect.md`), alongside `src/llms.txt.njk`, `src/site-index.json.njk`, and `src/agent-skills-index.json.njk`. See `docs/agent-discovery.md` for surface rules and excluded hosts.
 - Content types, each with its own layout in `src/_includes/layouts/` (or root template): Writing, Portraits, Artifacts, Thinking, Concepts, Teaching, Builds, Vellum, Connect, CV (en/zh), Talks, Papers. Standalone sub-apps live at root subpaths (`/tsm/`, `/play/`); slide decks at `/assets/slides/`.
@@ -35,9 +35,14 @@ followed; copies are disposable, so edit only in the main checkout.
 - `bun run verify` runs the lints and regression tests (`scripts/check-*.mjs`,
   `scripts/*.test.mjs`, and `mcp/worker.test.mjs`). The token lint
   (`scripts/check-tokens.mjs`) enforces the type scale, ink usage, hover-gated
-  grayscale, and one accident per work; `scripts/check-built-json.mjs` validates
-  JSON-LD, `site-index.json`, and all agent-discovery artifacts (including
-  parity between `/.well-known/mcp/server-card.json` and `mcp/metadata.mjs`).
+  grayscale, and one accident per work; `scripts/check-renderings.mjs` verifies
+  `worker.ts`, `wrangler.jsonc`, and `_site/_headers` parity alongside every
+  twinned shape; `scripts/check-sitemap-redirects.mjs` checks all redirect rules
+  in `eleventy/redirects.mjs` against `sitemap.xml`; `scripts/worker.test.mjs`
+  exercises the Cloudflare Worker handler; and `scripts/check-built-json.mjs`
+  validates JSON-LD, `site-index.json`, and all agent-discovery artifacts
+  (including parity between `/.well-known/mcp/server-card.json` and
+  `mcp/metadata.mjs`).
 
 ## Frontmatter
 

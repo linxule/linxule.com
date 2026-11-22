@@ -2,8 +2,8 @@
  * Sitemap, URL-canonicalization, heading-hierarchy, and source-hygiene verification gate.
  *
  * Checks:
- *   1. No sitemap URL or built HTML route (including `/tag/*`) collides with a Vercel redirect rule.
- *   2. Every internal `vercel.json` redirect `#fragment` target exists in the destination HTML page.
+ *   1. No sitemap URL or built HTML route (including `/tag/*`) collides with a redirect rule (`eleventy/redirects.mjs`).
+ *   2. Every internal `eleventy/redirects.mjs` redirect `#fragment` target exists in the destination HTML page.
  *   3. Sitemap contains 0 `/assets/` URLs and all 9 `/writing/series/<slug>` URLs.
  *   4. Zero internal trailing-slash links in HTML, `feed.xml`, JSON-LD, and `.md` twins
  *      (excluding `/`, `/play/`, `/tsm/`, `/assets/slides/<slug>/`, and `/assets/<path>`).
@@ -19,6 +19,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { match } from "path-to-regexp";
 import seriesCatalog from "../src/_data/seriesCatalog.js";
+import { REDIRECTS } from "../eleventy/redirects.mjs";
 
 const FENCE = /^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/gm;
 const CODE_SPAN = /(`+)(?!`)[^\n]*?(?<!`)\1(?!`)/g;
@@ -403,8 +404,7 @@ export function checkSourceHygiene(srcDir = "src") {
 }
 
 if (import.meta.main) {
-  const config = JSON.parse(readFileSync("vercel.json", "utf8"));
-  const redirects = config.redirects ?? [];
+  const redirects = REDIRECTS;
   const sitemap = readFileSync("_site/sitemap.xml", "utf8");
   const { collisions, redirectCount, sitemapCount } = findRedirectCollisions(sitemap, redirects);
   const { collisions: htmlCollisions, htmlCount } = findBuiltHtmlRedirectCollisions("_site", redirects);

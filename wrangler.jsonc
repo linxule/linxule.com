@@ -1,0 +1,35 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "linxule-com",
+  "main": "worker.ts",
+  "compatibility_date": "2026-11-22",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "traces": { "enabled": true }
+  },
+  "assets": {
+    "directory": "./_site",
+    "binding": "ASSETS",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/*",
+      "!/assets/*",
+      "!/writing/attachments/*",
+      "!/pagefind/*"
+    ]
+  },
+  "routes": [
+    { "pattern": "linxule.com", "custom_domain": true },
+    { "pattern": "www.linxule.com", "custom_domain": true }
+  ],
+  "env": {
+    "preview": {
+      "name": "linxule-com-preview",
+      "workers_dev": true,
+      "routes": []
+    }
+  }
+}

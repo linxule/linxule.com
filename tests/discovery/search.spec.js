@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test.beforeEach(async ({ page }) => {
   await page.route('https://fonts.googleapis.com/**', route => route.abort());
   await page.route('https://fonts.gstatic.com/**', route => route.abort());
-  await page.route('**/_vercel/insights/**', route => route.abort());
+  await page.route('https://static.cloudflareinsights.com/**', route => route.abort());
 });
 
 test('a filtered search survives a result round trip and a reload', async ({ page }) => {

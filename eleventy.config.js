@@ -77,6 +77,8 @@ export default function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/papers/**/*.pdf");
   // Agent Skills Discovery — raw skill artifacts served from the well-known path
   eleventyConfig.addPassthroughCopy({ "agent-skills": ".well-known/agent-skills" });
+  // Cloudflare Static Assets headers for direct asset paths
+  eleventyConfig.addPassthroughCopy({ "src/_headers": "_headers" });
 
   // Register modular configuration
   collections(eleventyConfig);
