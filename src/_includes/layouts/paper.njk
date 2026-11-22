@@ -16,11 +16,15 @@ marker: "papers"
     .paper-meta a:hover { border-color: var(--bloom); }
     .paper-pdf { font-family: var(--font-mono); font-size: var(--size-quiet); margin: 1.5rem 0; }
     .paper-abstract { margin: 2rem 0; }
-    .paper-abstract h2 { font-family: var(--font-mono); font-size: var(--size-whisper); font-weight: 400; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--ink-faint); margin-bottom: .5rem; }
+    .paper-abstract h2 { font-family: var(--font-mono); font-size: var(--size-whisper); font-weight: 400; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--ink-faint); margin: 0 0 .5rem; padding: 0; border: none; }
     .paper-abstract p { line-height: 1.8; }
     .paper-links { display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 2rem 0; font-family: var(--font-mono); font-size: var(--size-label); }
     .paper-cite { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--ink-ghost); font-size: var(--size-quiet); }
+    .paper-cite-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
     .paper-cite .label { font-size: var(--size-whisper); letter-spacing: var(--tracking-label); color: var(--ink-faint); }
+    .paper-cite-copy { font-family: var(--font-mono); font-size: var(--size-whisper); letter-spacing: var(--tracking-quiet); text-transform: uppercase; color: var(--ink-faint); background: none; border: 1px solid var(--ink-ghost); border-radius: 2px; padding: 0.25rem 0.6rem; cursor: pointer; transition: color 0.2s ease, border-color 0.2s ease; }
+    .paper-cite-copy:hover,
+    .paper-cite-copy:focus-visible { color: var(--bloom); border-color: var(--bloom); }
     .paper-cite code { display: block; white-space: pre-wrap; background: var(--paper-dark); padding: 1rem; border-radius: 2px; margin-top: .6rem; font-family: var(--font-mono); font-size: var(--size-note); line-height: 1.6; }
     .paper-bibtex { margin-top: 1rem; }
     .paper-bibtex summary { font-family: var(--font-mono); font-size: var(--size-whisper); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--ink-faint); cursor: pointer; transition: color 0.2s ease; }
@@ -28,7 +32,8 @@ marker: "papers"
     .paper-bibtex pre { background: var(--paper-dark); padding: 1rem; border-radius: 2px; margin-top: .6rem; overflow-x: auto; }
     .paper-bibtex code { font-family: var(--font-mono); font-size: var(--size-label); line-height: 1.6; white-space: pre; }
     .paper-license { margin-top: 1.5rem; font-family: var(--font-small); font-size: var(--size-note); color: var(--ink-light); }
-    @media (max-width: 768px) { .paper { margin: 8rem auto 4rem; padding: 0 1.5rem; } }
+    .paper-footer { margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--ink-ghost); display: flex; justify-content: space-between; align-items: center; }
+    @media (max-width: 768px) { .paper { margin: 6rem auto 3rem; padding: 0 1.5rem; } }
 </style>
 <article class="paper" data-pagefind-body data-pagefind-filter="type:paper">
     <div class="paper-venue">{{ venue }}{% if venueType == 'journal' %} · Article{% elif venueType == 'preprint' %} · Preprint{% endif %}{% if year %} · {{ year }}{% endif %}</div>
@@ -53,16 +58,22 @@ marker: "papers"
     {% endif %}
 
     {% if links %}
-    <nav class="paper-links">
-        {% for l in links %}<a href="{{ l.href }}">{{ l.label }}</a>{% endfor %}
+    <nav class="paper-links" aria-label="Paper links">
+        {% for l in links %}{%- set lHref = l.href if l.href.startsWith('http') else (l.href | stripTrailingSlash) -%}<a href="{{ lHref }}">{{ l.label }}</a>{% endfor %}
     </nav>
     {% endif %}
 
     {{ content | safe }}
 
+    {% include "components/companion.njk" %}
+
     <div class="paper-cite">
-        <span class="label">Cite</span>
-        <code>{% for a in authors %}{{ a.name }}{% if not loop.last %}, {% endif %}{% endfor %} ({{ year }}). {{ paperTitle | default(title) }}. {% if venue %}{{ venue }}. {% endif %}{% if doi %}https://doi.org/{{ doi }}{% elif arxivId %}arXiv:{{ arxivId }}{% endif %}</code>
+        <div class="paper-cite-head">
+            <span class="label">Cite</span>
+            <button type="button" class="paper-cite-copy" data-paper-cite-copy>copy</button>
+        </div>
+        <code id="paper-citation-text">{% for a in authors %}{{ a.name }}{% if not loop.last %}, {% endif %}{% endfor %} ({{ year }}). {{ paperTitle | default(title) }}. {% if venue %}{{ venue }}. {% endif %}{% if doi %}https://doi.org/{{ doi }}{% elif arxivId %}arXiv:{{ arxivId }}{% endif %}</code>
+        <span class="sr-only" role="status" aria-live="polite" data-paper-cite-status></span>
     </div>
 
     {% if bibtex %}
@@ -73,7 +84,46 @@ marker: "papers"
     {% endif %}
 
     {% if license %}
-    <link rel="license" href="{{ license }}">
     <p class="paper-license">Licensed under <a href="{{ license }}" rel="license">CC BY 4.0</a> — reuse and build on it, with attribution.</p>
     {% endif %}
+
+    <footer class="paper-footer">
+        <a href="/writing" class="back-link">← writing</a>
+        <a href="/papers" class="back-link">all papers →</a>
+    </footer>
 </article>
+<script>
+(function () {
+    var btn = document.querySelector('[data-paper-cite-copy]');
+    var textEl = document.getElementById('paper-citation-text');
+    var statusEl = document.querySelector('[data-paper-cite-status]');
+    if (!btn || !textEl) return;
+    function announce() {
+        btn.textContent = 'copied';
+        if (statusEl) statusEl.textContent = 'Citation copied to clipboard.';
+        setTimeout(function () {
+            btn.textContent = 'copy';
+            if (statusEl) statusEl.textContent = '';
+        }, 1500);
+    }
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { if (document.execCommand('copy')) announce(); } catch (_) {}
+        document.body.removeChild(ta);
+    }
+    btn.addEventListener('click', function () {
+        var text = textEl.textContent.trim();
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(announce, function () { fallbackCopy(text); });
+        } else {
+            fallbackCopy(text);
+        }
+    });
+})();
+</script>

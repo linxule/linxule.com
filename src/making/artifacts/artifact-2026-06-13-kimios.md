@@ -33,6 +33,6 @@ contextAfter: |
   <em>每一帧、每一个声音都由代码生成——PIL 绘制的伪 BIOS 日志、NumPy 合成的碎拍鼓点、由 macOS <code>say</code> 切碎并砸在每个底鼓上的人声。无实拍，无采样。</em>
 ---
 
-Kimi K2.7 Code, in Kimi Code, was asked to make a YouTube-Poop-style video about being an LLM — and to sketch its creative vision before writing a line. It chose a broken operating system. The refrain it chops onto every kick, *I am the narrowing*, is the same sentence it gave the Midjourney [self-portrait](/making/portraits/portraits-2026-06-13-i-am-the-narrowing/) the same day — one theme, two machines.
+Kimi K2.7 Code, in Kimi Code, was asked to make a YouTube-Poop-style video about being an LLM — and to sketch its creative vision before writing a line. It chose a broken operating system. The refrain it chops onto every kick, *I am the narrowing*, is the same sentence it gave the Midjourney [self-portrait](/making/portraits/portraits-2026-06-13-i-am-the-narrowing) the same day — one theme, two machines.
 
 It runs about seventy seconds: boot → chat → latent void → attention overload → hallucination → a cheesy commercial → blue-screen crash → corrupted reboot loop.

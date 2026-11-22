@@ -25,7 +25,7 @@ date: 2025-11-01
 
 ## Series Note
 
-This is the second article in the **“Organizational Futures”** series. The first, [“Post-AGI Organizations: AI’s Blind Spot and Ours](/writing/post-agi-organizations/),” explored how AI systems envision organizational transformation when AGI removes human limitations. This article examines what happens when we actually build collaborative AI systems, revealing organizational principles that persist as collaborative necessities.
+This is the second article in the **“Organizational Futures”** series. The first, [“Post-AGI Organizations: AI’s Blind Spot and Ours](/writing/post-agi-organizations),” explored how AI systems envision organizational transformation when AGI removes human limitations. This article examines what happens when we actually build collaborative AI systems, revealing organizational principles that persist as collaborative necessities.
 
 ---
 
@@ -49,7 +49,7 @@ The solutions that work mirror organizational principles humans developed for co
 
 Claude’s ecosystem spans three surfaces: web applications for general users, Claude Code for developers, and API for programmatic access. Some features are universal (Projects, Skills), others specific to certain surfaces (Plugins and Sub-agents in Claude Code). Across this ecosystem, a consistent pattern emerges: design choices that serve collaboration and accommodate limitations.
 
-In “ [Post-AGI Organizations: AI’s Blind Spot and Ours](/writing/post-agi-organizations/),” AI systems envisioned a future where removing human limitations would make organizational theories obsolete. When engineers actually build for human-AI collaboration (what Anthropic describes as [“AI systems that work alongside](https://www.anthropic.com/news/projects) people”), they seem to keep rediscovering organizational principles as functional requirements for collaborative systems.
+In “ [Post-AGI Organizations: AI’s Blind Spot and Ours](/writing/post-agi-organizations),” AI systems envisioned a future where removing human limitations would make organizational theories obsolete. When engineers actually build for human-AI collaboration (what Anthropic describes as [“AI systems that work alongside](https://www.anthropic.com/news/projects) people”), they seem to keep rediscovering organizational principles as functional requirements for collaborative systems.
 
 Which organizational principles serve coordination itself, useful regardless of whether participants are human or artificial?
 
@@ -404,7 +404,7 @@ The questions this opens:
 - **For Institutional Theory:** How do norms and culture form in hybrid human-AI systems? Can we encode organizational culture as architecture? What happens to isomorphism when organizations can install capabilities rather than hiring for them?
 - **For Organization Design Theory:** What are design principles for collaborative systems that combine human creativity with AI capability? How do we design for emergent value that neither participant could create alone?
 - **For Trust Research:** How is trust established between heterogeneous intelligences? Does Luhmann’s analysis of trust in complex systems extend to human-AI collaboration?
-- **For Organizational Learning:** What does organizational memory mean when it’s stored in CLAUDE.md files that both humans and AI can read and modify? What are the analogues of [tacit knowledge](/writing/loom-xvii-the-polanyi-inversion/) in AI systems?
+- **For Organizational Learning:** What does organizational memory mean when it’s stored in CLAUDE.md files that both humans and AI can read and modify? What are the analogues of [tacit knowledge](/writing/loom-xvii-the-polanyi-inversion) in AI systems?
 
 These questions are urgent as organizations navigate what recent scholarship frames as **managing with AI** —integrating human-AI collaboration with algorithmic management to jointly design decision rights, oversight, and coordination. Our analysis contributes meso-level organizational insights to this emerging agenda: demonstrating how to read technical architecture for embedded organizational principles, observe coordination dynamics as they crystallize, and interpret design choices through theoretical frameworks.
 

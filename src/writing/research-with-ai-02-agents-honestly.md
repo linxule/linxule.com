@@ -38,7 +38,7 @@ I had my answer to all this. What I didn't have was a framework for helping some
 
 ---
 
-# Safe, Accessible, Open, Sovereign
+## Safe, Accessible, Open, Sovereign
 
 Most conversations about AI agents focus on capability — what can it do? Can it search the web, write code, read my files? These are fine questions but they skip something more fundamental. Before we ask what an agent *can* do, we need to ask what we're giving up to get there.
 

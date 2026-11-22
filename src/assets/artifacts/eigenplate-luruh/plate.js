@@ -692,8 +692,12 @@ function frame(now) {
   }
   window.__eigenplate.debug.umax = umaxT;
   window.__eigenplate.debug.peakE = peakT;
-  requestAnimationFrame(frame);
+  if (!prefersReducedMotion) requestAnimationFrame(frame);
 }
+
+const prefersReducedMotion = Boolean(
+  window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+);
 
 /* ---- offline render hook for tests / agents ---- */
 window.__eigenplate = {

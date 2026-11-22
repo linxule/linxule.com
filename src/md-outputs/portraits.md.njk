@@ -14,6 +14,7 @@ eleventyExcludeFromCollections: true
 {% endif %}{% if portrait.data.prompter %}**Prompter**: {{ portrait.data.prompter | safe }}
 {% endif %}
 {% if portrait.data.orientation %}**Orientation**: {{ portrait.data.orientation | safe }}
+{% endif %}{% if portrait.data.keywords %}**Keywords**: {{ portrait.data.keywords | join(", ") | safe }}
 {% endif %}
 
 {% if portrait.data.prompt %}
@@ -39,7 +40,30 @@ eleventyExcludeFromCollections: true
 
 {{ portrait.rawInput | markdownBody | safe }}
 {% endif %}
+{%- if portrait.data.companions %}
 
 ---
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ portrait.url }}*
+## Companions{% if portrait.data.companions.intro %} — {{ portrait.data.companions.intro | safe }}{% endif %}
+
+{% for c in portrait.data.companions.items %}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ c.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{% endfor %}
+{%- if portrait.data.companions.note %}
+{{ portrait.data.companions.note | safe }}
+{%- endif %}
+{%- elif portrait.data.companion %}
+
+---
+
+## Companion{% if portrait.data.companion.relation %} — {{ portrait.data.companion.relation | safe }}{% endif %}
+
+- [{{ portrait.data.companion.title | safe }}]({{ portrait.data.companion.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{%- if portrait.data.companion.note %}
+
+{{ portrait.data.companion.note | safe }}
+{%- endif %}
+{%- endif %}
+
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ portrait.url | stripTrailingSlash }}*

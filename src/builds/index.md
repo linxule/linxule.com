@@ -51,7 +51,7 @@ groups:
         signal: "software counterpart of the Strategic Organization paper"
         links:
           - label: "the paper"
-            href: "/papers/interpretive-orchestration/"
+            href: "/papers/interpretive-orchestration"
 
       - name: "OpenInterviewer"
         href: "https://github.com/linxule/openinterviewer"
@@ -116,7 +116,7 @@ groups:
         license: "MIT"
         links:
           - label: "project note"
-            href: "/builds/vellum/"
+            href: "/builds/vellum"
           - label: "source"
             href: "https://github.com/linxule/vellum"
 
@@ -125,7 +125,7 @@ groups:
         description: "Interactive Task Structure Matrices — an animated walkthrough, then the Hidden Structure algorithm running live on a real dependency graph. Companion to the SEAM series on modularity theory."
         links:
           - label: "the SEAM series"
-            href: "/writing/series/seam/"
+            href: "/writing/series/seam"
 
       - name: "AI Simulator"
         href: "/play/"
@@ -146,7 +146,7 @@ groups:
     note:
       text: "Creative work made by AI — portraits prompted by one model and rendered by another, artifacts written directly in code — lives in Making."
       label: "Making"
-      href: "/making/"
+      href: "/making"
 
   - name: "Research infrastructure"
     projects:

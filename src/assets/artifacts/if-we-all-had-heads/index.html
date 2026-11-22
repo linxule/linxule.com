@@ -1153,12 +1153,13 @@ if((new URLSearchParams(location.search)).has('fps')){
   fpsEl.style.cssText='position:fixed;top:8px;left:50%;transform:translateX(-50%);font:11px monospace;color:#D97757;z-index:99;background:#FAF9F5;padding:2px 8px;border:1px solid #D97757';
   document.body.appendChild(fpsEl);
 }
+const prefersReducedMotion=Boolean(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 let prev=performance.now();
 function frame(now){
   const t=now/1000, dt=Math.min(0.05,(now-prev)/1000); prev=now;
   emaDt=emaDt*0.95+dt*0.05;
   qLevel= emaDt>0.040?2 : emaDt>0.024?1 : 0;
-  if(qLevel>=1 && (++frameIdx%2===0)){ requestAnimationFrame(frame); return; }  // half-rate on slow machines
+  if(qLevel>=1 && (++frameIdx%2===0)){ if(!prefersReducedMotion) requestAnimationFrame(frame); return; }  // half-rate on slow machines
   boilSeed=Math.floor(t*8); frameT=t;
   strokeCounter=0;
 
@@ -1281,9 +1282,9 @@ function frame(now){
   bubbleK+=((bubbleFor?1:0)-bubbleK)*0.14;
   speechBubble();
 
-  requestAnimationFrame(frame);
+  if(!prefersReducedMotion) requestAnimationFrame(frame);
 }
-if(sayName&&LINES[sayName])
+if(sayName&&LINES[sayName]&&!prefersReducedMotion)
   setTimeout(()=>{ const ch=CAST.find(c=>c.name===sayName); if(ch) speak(ch); },1200);
 requestAnimationFrame(frame);
 </script>

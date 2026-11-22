@@ -2,7 +2,12 @@ import markdownIt from "markdown-it";
 import markdownItFootnote from "markdown-it-footnote";
 import path from "node:path";
 import { syncImageCache } from "./scripts/lib/image-cache.mjs";
-import { IMAGE_CACHE_DIR, IMAGE_URL_PATH } from "./eleventy/image-pipeline.js";
+import {
+  IMAGE_CACHE_DIR,
+  IMAGE_URL_PATH,
+  getActiveOptimizedFiles,
+  resetActiveOptimizedFiles,
+} from "./eleventy/image-pipeline.js";
 
 import collections from './eleventy/collections.js';
 import filters from './eleventy/filters.js';
@@ -61,7 +66,10 @@ export default function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/assets");
   // The paper tiles are made per commit by scripts/gen-paper.mjs, outside src and git.
   eleventyConfig.addPassthroughCopy({ ".cache/paper/*.avif": "assets/paper" });
-  eleventyConfig.addPassthroughCopy("src/writing/attachments");
+  // Writing attachment originals are encoded into responsive variants in
+  // `/assets/images/optimized/`; only pre-generated social cards (`*-og.jpg`)
+  // need passthrough under `/writing/attachments/`.
+  eleventyConfig.addPassthroughCopy("src/writing/attachments/*-og.jpg");
   // TSM demo — self-contained static sub-app, copied verbatim, served at /tsm/
   eleventyConfig.addPassthroughCopy("src/tsm");
   // Papers — self-hosted PDFs co-located with each paper's landing page (Google Scholar)
@@ -76,10 +84,18 @@ export default function(eleventyConfig) {
   shortcodes(eleventyConfig);
   transforms(eleventyConfig);
 
-  // Use the same incremental copy policy as persisted-cache synchronization.
-  // Respect --output and programmatic builds instead of always writing _site.
+  // Track only optimized filenames emitted in this build so retired cache orphans
+  // never copy to `_site`. Respect --output and programmatic builds.
+  eleventyConfig.on("eleventy.before", () => {
+    resetActiveOptimizedFiles();
+  });
   eleventyConfig.on("eleventy.after", async ({ dir }) => {
-    await syncImageCache(IMAGE_CACHE_DIR, path.join(dir.output, IMAGE_URL_PATH));
+    const active = getActiveOptimizedFiles();
+    await syncImageCache(
+      IMAGE_CACHE_DIR,
+      path.join(dir.output, IMAGE_URL_PATH),
+      active.size > 0 ? { allowlist: active } : {},
+    );
   });
 
   return {

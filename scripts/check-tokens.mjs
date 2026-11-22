@@ -1,13 +1,15 @@
 /**
- * check-tokens.mjs — build-failing lint for the type/ink design tokens and the
- * "one accident per work" rule. Reads source files only (never _site).
+ * check-tokens.mjs — build-failing lint for the type/ink design tokens,
+ * YAML shaped-array integrity (Gotcha #55), and the "one accident per work" rule.
+ * Reads source files only (never _site).
  *
- * Token rules (CSS in main.css, <style> blocks, style="" attributes, JS strings):
- *   T1 size     font-size with a rem literal below 1 (also inside clamp()/calc()).
- *               em, px, %, 0 and ≥1rem pass; sub-1rem sizes are var(--size-*).
+ * Token rules (CSS in main.css, <style> blocks, style="" attributes, JS files & strings):
+ *   T1 size     font-size (and CSS font shorthand, including multiline clamp()/calc())
+ *               with a rem literal below 1. em, px, %, 0 and >=1rem pass; sub-1rem
+ *               sizes are var(--size-*).
  *   T2 tracking letter-spacing must be var(--tracking-*), 0, normal, a negative
  *               value, or a CSS-wide keyword.
- *   T3 defined  var(--size-*|--tracking-*|--ink*|--paper*|--bloom*|--accident*|--measure*)
+ *   T3 defined  var(--font-*|--size-*|--tracking-*|--ink*|--paper*|--bloom*|--accident*|--measure*)
  *               must be defined in main.css :root, or as a custom property in the
  *               same file (a template's own local token).
  *   T4 ghost    `color: var(--ink-ghost)` (the color property itself) needs
@@ -18,26 +20,16 @@
  *               'Cormorant Garamond', 'IBM Plex Mono', 'Noto Serif SC', 'LXGW WenKai', or the
  *               system CJK sans faces the mono voice names) in font-family, the font
  *               shorthand, a custom property or a JS fontFamily: use var(--font-serif),
- *               var(--font-display), var(--font-small) or var(--font-mono). The faces are
- *               named only in main.css's --font-* tokens (any --font-* declared there, so a
- *               new voice needs no change here) and inside @font-face rules. Strings that
- *               are not declarations, such as document.fonts.load('400 1em "Cormorant
- *               Garamond"'), are not checked.
+ *               var(--font-display), var(--font-small) or var(--font-mono).
  *   T7 display  no rule block sets var(--font-display) together with font-style: italic
  *               (or the font shorthand with italic): the display face ships roman only,
  *               and font-synthesis: none would set the "italic" upright.
- * Content rule:
- *   A1 accident a work's source file authors at most one DISTINCT accident. Marks are
- *               truthy `accident:` keys anywhere in its front matter and
- *               class="accident" elements in body or front-matter strings. Marks
- *               whose normalised text matches (case, whitespace, quotes, trailing
- *               punctuation, entities) are one accident quoted twice — an echo,
- *               allowed. A mark with no recoverable text (title-level
- *               `accident: true`) is its own accident, keyed by location.
- *
- * Deliberate limits: values built by Nunjucks ({{ }}) are not evaluated; JS that
- * sets `style.color`/`style.filter` is not checked (T4/T5 read CSS only); one
- * ornament comment covers every ghost declaration on its line.
+ * Content rules:
+ *   A1 accident a work's source file authors at most one DISTINCT accident (fenced code
+ *               blocks and inline code spans in the body are ignored).
+ *   Y1 yaml     shaped-text arrays (prompt, contextExcerpt, opening, thesis_continued,
+ *               problem, orientations, fragments) contain only strings or `{ text: string }`
+ *               objects — catches Gotcha #55 unquoted `: ` colon-space mappings.
  */
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
@@ -48,6 +40,7 @@ import matter from "gray-matter";
 // Explicit directories only: src/assets/images holds iCloud placeholders whose
 // reads can hang, and src/tsm / src/md-outputs are other renderings' sources.
 const MAIN_CSS = "src/assets/css/main.css";
+const JS_DIRS = ["src/assets/js"];
 const TEMPLATE_DIRS_RECURSIVE = ["src/_includes"];
 const TEMPLATE_DIRS_ROOT_ONLY = ["src"];
 const SECTION_DIRS = [
@@ -56,14 +49,25 @@ const SECTION_DIRS = [
 ].map((d) => `src/${d}`);
 const SECTION_DEPTH = 2; // the section dir itself plus two levels of subdirectories
 
-// Works whose source files author accidents (A1).
+// Works whose source files author accidents (A1) and shaped-text YAML (Y1).
 const WORK_DIRS = SECTION_DIRS;
 
-const TOKEN_PREFIX = /^(size-|tracking-|ink|paper|bloom|accident|measure)/;
+const TOKEN_PREFIX = /^(font-|size-|tracking-|ink|paper|bloom|accident|measure)/;
 const WEB_FACE = /(["']?)(EB Garamond|Cormorant Garamond|IBM Plex Mono|Noto Serif SC|LXGW WenKai|PingFang SC|Microsoft YaHei|Noto Sans CJK SC)\1/i;
 const tokenFor = (face) => /Plex|PingFang|YaHei|Sans CJK/i.test(face) ? "var(--font-mono)" : /Cormorant/i.test(face) ? "var(--font-display)" : "var(--font-serif)";
 const FONT_TOKEN = /^--font-[\w-]+$/i;
 const CSS_WIDE = new Set(["inherit", "initial", "unset", "revert", "revert-layer"]);
+const SHAPED_ARRAY_KEYS = new Set([
+  "prompt",
+  "contextExcerpt",
+  "opening",
+  "thesis_continued",
+  "problem",
+  "orientations",
+  "fragments",
+]);
+const FENCE = /^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/gm;
+const CODE_SPAN = /(`+)(?!`)[^\n]*?(?<!`)\1(?!`)/g;
 
 // ── text helpers ────────────────────────────────────────────────────────────
 const blank = (s) => s.replace(/[^\n]/g, " ");
@@ -133,6 +137,12 @@ function subRemLiterals(value) {
   return hits;
 }
 
+function fontShorthandSubRemLiterals(value) {
+  // Strip optional `/<line-height>` so only the font-size component is checked.
+  const withoutLineHeight = value.replace(/\/\s*\d*\.?\d+\s*(?:rem|em|px|%|ch|ex|lh)?\b/gi, " ");
+  return subRemLiterals(withoutLineHeight);
+}
+
 function trackingOk(raw) {
   const value = raw.replace(/!important/i, "").trim().toLowerCase();
   if (value === "" || value === "normal" || CSS_WIDE.has(value)) return true;
@@ -196,10 +206,6 @@ export function rootTokens(css) {
 /**
  * T5 scanner: walk one CSS region with at-rule nesting and report grayscale
  * filters that are not under @media (hover: hover).
- * @param {string} clean neutralised text of the whole file
- * @param {number} start
- * @param {number} end
- * @returns {{index: number, value: string}[]}
  */
 function ungatedGrayscale(clean, start, end) {
   const region = clean.slice(start, end);
@@ -246,20 +252,73 @@ export function lintSource(text, file, { defined } = {}) {
   const noComments = stripComments(raw);
   const push = (index, rule, message) => problems.push({ file, line: lineAt(raw, index), rule, message });
 
-  // T1 / T2 — CSS declarations anywhere (style blocks, style="", JS cssText strings)
-  for (const m of noComments.matchAll(/(?<![\w-])(font-size|letter-spacing)\s*:\s*([^;"'`}<>\n]*)/gi)) {
-    checked++;
-    const [, prop, value] = m;
-    if (value.includes("{{")) continue;
-    if (prop.toLowerCase() === "font-size") {
-      const hits = subRemLiterals(value);
-      if (hits.length) push(m.index, "T1", `font-size: ${value.trim()} — sub-1rem literal ${hits.join(", ")}; use var(--size-whisper|label|note|quiet)`);
-    } else if (!trackingOk(value)) {
-      push(m.index, "T2", `letter-spacing: ${value.trim()} — use var(--tracking-whisper|quiet|label|marker|spine), 0, normal or a negative value`);
+  const regions = isCss ? [{ start: 0, end: raw.length }] : styleRanges(raw);
+  const inRegion = (i) => regions.some((r) => i >= r.start && i < r.end);
+
+  // T1 / T2 — CSS declarations inside stylesheets & <style> blocks (supports multiline clamp()/calc() and font: shorthand)
+  for (const { start, end } of regions) {
+    const slice = noComments.slice(start, end);
+    for (const m of slice.matchAll(/(?<![\w-])(font-size|letter-spacing|font)\s*:\s*([^;{}]*)/gi)) {
+      checked++;
+      const [, prop, value] = m;
+      if (value.includes("{{")) continue;
+      const absIndex = start + m.index;
+      const lowerProp = prop.toLowerCase();
+      if (lowerProp === "font-size") {
+        const hits = subRemLiterals(value);
+        if (hits.length) {
+          push(absIndex, "T1", `font-size: ${value.trim().replace(/\s+/g, " ")} — sub-1rem literal ${hits.join(", ")}; use var(--size-whisper|label|note|quiet)`);
+        }
+      } else if (lowerProp === "font") {
+        const hits = fontShorthandSubRemLiterals(value);
+        if (hits.length) {
+          push(absIndex, "T1", `font: ${value.trim().replace(/\s+/g, " ")} — sub-1rem literal ${hits.join(", ")}; use var(--size-whisper|label|note|quiet)`);
+        }
+      } else if (!trackingOk(value)) {
+        push(absIndex, "T2", `letter-spacing: ${value.trim().replace(/\s+/g, " ")} — use var(--tracking-whisper|quiet|label|marker|spine), 0, normal or a negative value`);
+      }
     }
   }
-  // T1 / T2 — JS property assignments: el.style.fontSize = "0.8rem", { letterSpacing: "0.1em" }
+
+  // T1 / T2 — inline style="" attributes & JS cssText strings outside <style> blocks
   if (!isCss) {
+    const seenInline = new Set();
+    for (const m of noComments.matchAll(/\bstyle\s*=\s*(["'])([^"']*)\1/gi)) {
+      if (inRegion(m.index)) continue;
+      const attrValOffset = m.index + m[0].indexOf(m[1]) + 1;
+      for (const d of m[2].matchAll(/(?<![\w-])(font-size|letter-spacing|font)\s*:\s*([^;{}]*)/gi)) {
+        checked++;
+        const absIndex = attrValOffset + d.index;
+        seenInline.add(absIndex);
+        const [, prop, value] = d;
+        if (value.includes("{{")) continue;
+        const lowerProp = prop.toLowerCase();
+        if (lowerProp === "font-size") {
+          const hits = subRemLiterals(value);
+          if (hits.length) push(absIndex, "T1", `font-size: ${value.trim()} — sub-1rem literal ${hits.join(", ")}; use var(--size-whisper|label|note|quiet)`);
+        } else if (lowerProp === "font") {
+          const hits = fontShorthandSubRemLiterals(value);
+          if (hits.length) push(absIndex, "T1", `font: ${value.trim()} — sub-1rem literal ${hits.join(", ")}; use var(--size-whisper|label|note|quiet)`);
+        } else if (!trackingOk(value)) {
+          push(absIndex, "T2", `letter-spacing: ${value.trim()} — use var(--tracking-whisper|quiet|label|marker|spine), 0, normal or a negative value`);
+        }
+      }
+    }
+
+    for (const m of noComments.matchAll(/(?<![\w-])(font-size|letter-spacing)\s*:\s*([^;"'`}<>\n]*)/gi)) {
+      if (inRegion(m.index) || seenInline.has(m.index)) continue;
+      checked++;
+      const [, prop, value] = m;
+      if (value.includes("{{")) continue;
+      if (prop.toLowerCase() === "font-size") {
+        const hits = subRemLiterals(value);
+        if (hits.length) push(m.index, "T1", `font-size: ${value.trim()} — sub-1rem literal ${hits.join(", ")}; use var(--size-whisper|label|note|quiet)`);
+      } else if (!trackingOk(value)) {
+        push(m.index, "T2", `letter-spacing: ${value.trim()} — use var(--tracking-whisper|quiet|label|marker|spine), 0, normal or a negative value`);
+      }
+    }
+
+    // T1 / T2 — JS property assignments: el.style.fontSize = "0.8rem", { letterSpacing: "0.1em" }
     for (const m of noComments.matchAll(/\b(fontSize|letterSpacing)\s*[:=]\s*(["'`])([^"'`\n]*)\2/g)) {
       checked++;
       const [, prop, , value] = m;
@@ -296,7 +355,6 @@ export function lintSource(text, file, { defined } = {}) {
   }
 
   // T5 — grayscale is earned by hover only where hover exists
-  const regions = isCss ? [{ start: 0, end: raw.length }] : styleRanges(raw);
   const cssText = neutraliseCss(raw);
   for (const { start, end } of regions) {
     for (const hit of ungatedGrayscale(cssText, start, end)) {
@@ -380,14 +438,8 @@ export function accidentKey(text) {
 const ACCIDENT_SPAN = /<(\w+)\b[^>]*?\bclass\s*=\s*["'][^"']*\baccident\b[^"']*["'][^>]*>([\s\S]*?)<\/\1\s*>/g;
 
 /**
- * The accidents a work's source authors. Marks are truthy `accident` keys anywhere
- * in its front matter (text = sibling `text`, or the value when it is a string) and
- * class="accident" elements in the body or inside front-matter strings (text = the
- * element's inner text). Marks with the same normalised text are one accident
- * quoted in several places (an echo); a mark with no recoverable text (title-level
- * `accident: true`) is its own accident, keyed by its location.
- * @param {string} text markdown source with front matter
- * @returns {{count: number, where: string[], accidents: {text: string|null, where: string[]}[], echoed: boolean}}
+ * The accidents a work's source authors. Fenced code blocks and inline code
+ * spans in the body are ignored so documentation examples do not trip A1.
  */
 export function accidentsIn(text) {
   const { data, content } = matter(text, { cache: false });
@@ -409,7 +461,8 @@ export function accidentsIn(text) {
   };
   walk(data, "");
   const bodyOffset = text.length - content.length;
-  for (const m of content.matchAll(ACCIDENT_SPAN)) {
+  const scanContent = content.replace(FENCE, blank).replace(CODE_SPAN, blank);
+  for (const m of scanContent.matchAll(ACCIDENT_SPAN)) {
     marks.push({ text: m[2], where: `body line ${lineAt(text, bodyOffset + m.index)}` });
   }
 
@@ -429,6 +482,45 @@ export function accidentsIn(text) {
   };
 }
 
+// ── Y1 — Gotcha #55 shaped-array YAML check ─────────────────────────────────
+/**
+ * Check shaped-text frontmatter arrays (`prompt`, `contextExcerpt`, `opening`,
+ * `thesis_continued`, `problem`, `orientations`, `fragments`) for unquoted `: `
+ * YAML mapping items lacking a `text` string key, which render as `[object Object]`.
+ */
+export function checkShapedArrays(text) {
+  const { data } = matter(text, { cache: false });
+  const issues = [];
+
+  const inspect = (node, at) => {
+    if (Array.isArray(node)) {
+      node.forEach((v, i) => inspect(v, `${at}[${i}]`));
+      return;
+    }
+    if (!node || typeof node !== "object" || node instanceof Date) return;
+
+    for (const [key, value] of Object.entries(node)) {
+      const p = at ? `${at}.${key}` : key;
+      if (SHAPED_ARRAY_KEYS.has(key) && Array.isArray(value)) {
+        value.forEach((entry, idx) => {
+          if (typeof entry === "string") return;
+          if (entry && typeof entry === "object" && !Array.isArray(entry) && typeof entry.text === "string") return;
+          const keys = entry && typeof entry === "object" ? Object.keys(entry).join(", ") : String(entry);
+          issues.push({
+            path: `${p}[${idx}]`,
+            message: `Gotcha #55: ${p}[${idx}] parsed as non-text YAML item (${keys}) — quote any list item containing ': '`,
+          });
+        });
+      } else {
+        inspect(value, p);
+      }
+    }
+  };
+
+  inspect(data, "");
+  return issues;
+}
+
 // ── file discovery (CLI) ────────────────────────────────────────────────────
 function listFiles(dir, ext, depth) {
   if (!existsSync(dir)) return [];
@@ -445,6 +537,7 @@ function listFiles(dir, ext, depth) {
 export function tokenScope(root = ".") {
   const r = (p) => path.join(root, p);
   const files = [r(MAIN_CSS)];
+  for (const d of JS_DIRS) files.push(...listFiles(r(d), ".js", 0));
   for (const d of TEMPLATE_DIRS_RECURSIVE) files.push(...listFiles(r(d), ".njk", Infinity));
   for (const d of TEMPLATE_DIRS_ROOT_ONLY) files.push(...listFiles(r(d), ".njk", 0));
   for (const d of SECTION_DIRS) files.push(...listFiles(r(d), ".njk", SECTION_DEPTH));
@@ -469,9 +562,10 @@ function main() {
   const works = workScope();
   let echoes = 0;
   for (const file of works) {
+    const source = readFileSync(file, "utf8");
     let res;
     try {
-      res = accidentsIn(readFileSync(file, "utf8"));
+      res = accidentsIn(source);
     } catch (err) {
       problems.push({ file, line: 1, rule: "A1", message: `front matter did not parse: ${err.message}` });
       continue;
@@ -482,6 +576,9 @@ function main() {
         .map((a) => `${a.text == null ? "(untexted)" : `"${a.text}"`} at ${a.where.join(", ")}`)
         .join("; ");
       problems.push({ file, line: 1, rule: "A1", message: `${res.count} distinct accidents in one work (one is the rule): ${list}` });
+    }
+    for (const issue of checkShapedArrays(source)) {
+      problems.push({ file, line: 1, rule: "Y1", message: issue.message });
     }
   }
 
@@ -499,7 +596,7 @@ function main() {
   }
   console.log(
     `[tokens-lint] OK — ${files.length} file(s) scanned, ${checked} declaration(s) checked against ${defined.size} :root tokens; ` +
-    `${works.length} work(s) hold at most one accident, ${echoes} with an echoed accident.`,
+    `${works.length} work(s) hold at most one accident (${echoes} echoed) and valid shaped-text YAML.`,
   );
 }
 

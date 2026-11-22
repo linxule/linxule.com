@@ -12,6 +12,7 @@ venueType: preprint
 arxivId: "2505.03105"
 doi: "10.48550/arXiv.2505.03105"
 creativeWorkStatus: "Preprint"
+onSite: "/papers/cognitio-emergens"
 bibtex: |
   @misc{lin2025cognitio,
     author        = {Lin, Xule},

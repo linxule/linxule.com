@@ -29,7 +29,30 @@ eleventyExcludeFromCollections: true
 
 *Originally published at [{{ post.data.link | safe }}]({{ post.data.link | safe }})*
 {% endif %}
+{%- if post.data.companions %}
 
 ---
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ post.url }}*
+## Companions{% if post.data.companions.intro %} — {{ post.data.companions.intro | safe }}{% endif %}
+
+{% for c in post.data.companions.items %}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ c.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{% endfor %}
+{%- if post.data.companions.note %}
+{{ post.data.companions.note | safe }}
+{%- endif %}
+{%- elif post.data.companion %}
+
+---
+
+## Companion{% if post.data.companion.relation %} — {{ post.data.companion.relation | safe }}{% endif %}
+
+- [{{ post.data.companion.title | safe }}]({{ post.data.companion.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{%- if post.data.companion.note %}
+
+{{ post.data.companion.note | safe }}
+{%- endif %}
+{%- endif %}
+
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ post.url | stripTrailingSlash }}*

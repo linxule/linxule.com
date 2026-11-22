@@ -160,7 +160,7 @@ We do not have answers. What we have is a hardbound book from 1912, a set of obs
 
 ---
 
-*This is the first essay in [SEAM: Structures Emerging from Asynchronous Mirroring](/writing/series/seam/), a series about how AI is reorganizing work — and what a century of organizational theory reveals that the builders can't see from inside.*
+*This is the first essay in [SEAM: Structures Emerging from Asynchronous Mirroring](/writing/series/seam), a series about how AI is reorganizing work — and what a century of organizational theory reveals that the builders can't see from inside.*
 
 *The series has an interactive companion — [Task Structure Matrices, animated](/tsm/): read a TSM the way Baldwin's framework intends, then watch the algorithm derive one from a live dependency graph.*
 
@@ -198,7 +198,7 @@ Our AI collaborator is Claude Opus 4.6 (Anthropic), with Opus 4.7 picking up the
 
 [^9]: Microsoft and LinkedIn, *2024 Work Trend Index Annual Report: AI at Work Is Here. Now Comes the Hard Part*, May 8, 2024, https://www.microsoft.com/en-us/worklab/work-trend-index/ai-at-work-is-here-now-comes-the-hard-part. The 78 percent figure ("78% of AI users are bringing their own AI to work") appears under Finding 1; survey conducted by Edelman Data & Intelligence with 31,000 full-time knowledge workers across 31 markets, February–March 2024.
 
-[^10]: Xule Lin, ["Post-AGI Organizations IV: Frozen Moments,"](/writing/post-agi-organizations-iv-frozen-moments/) *Thread Counts*, March 30, 2026.
+[^10]: Xule Lin, ["Post-AGI Organizations IV: Frozen Moments,"](/writing/post-agi-organizations-iv-frozen-moments) *Thread Counts*, March 30, 2026.
 
 [^11]: Kendall, 124–25.
 

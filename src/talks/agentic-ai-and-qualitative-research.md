@@ -21,7 +21,7 @@ keywords:
   - LTAC 2026
 ---
 
-A ninety-minute session for about thirty researchers, most of whom had not yet worked with an agent. It opens with the automation frontier from [LOOM XVIII](/writing/loom-xviii-the-end-of-positivism/): what can be checked cheaply automates first, and the border runs between deductive and inductive work, not between quantitative and qualitative. Below the line agents still help; what changes is who checks.
+A ninety-minute session for about thirty researchers, most of whom had not yet worked with an agent. It opens with the automation frontier from [LOOM XVIII](/writing/loom-xviii-the-end-of-positivism): what can be checked cheaply automates first, and the border runs between deductive and inductive work, not between quantitative and qualitative. Below the line agents still help; what changes is who checks.
 
 From there, five arrangements (conversation, tool-using assistant, continuing project agent, differentiated team, shared project across hosts), three control modes, and five questions that locate any of them: the job, who does it, what it can reach, what survives, who can stop it. Then one live moment: from a single Claude Code session, the same small request goes to Codex and to Kimi, and the room watches two other models enter the work. The point is not the answers; it is that <span class="accident">a session can have more than one reader</span>.
 

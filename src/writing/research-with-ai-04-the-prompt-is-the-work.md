@@ -28,7 +28,7 @@ ogImage: /writing/attachments/rwa-04-cover.png
 
 ![Cover image: a translucent figure seated in contemplation, looking down at something held in their hands — abstract overlapping planes of cool blue and warm ochre wash across the painted canvas, the figure neither solid nor erased](/writing/attachments/rwa-04-cover.png)
 
-Recently I gave a webinar called *Thinking Through AI* (hosted by Imperial / AOM OMT / AIIN New Scholar Series) to more than 300 researchers, 90 minutes plus a long open Q&A. The talk worked through how to engage with academic literature alongside AI agents — a third path between abdication and abnegation. (Recording and slides on [my talk page](/talks/thinking-through-ai-01/); the *[Interpretive Orchestration](https://doi.org/10.1177/14761270261448645)* paper Kevin and I wrote came out the day before — it's the longer companion read.)
+Recently I gave a webinar called *Thinking Through AI* (hosted by Imperial / AOM OMT / AIIN New Scholar Series) to more than 300 researchers, 90 minutes plus a long open Q&A. The talk worked through how to engage with academic literature alongside AI agents — a third path between abdication and abnegation. (Recording and slides on [my talk page](/talks/thinking-through-ai-01); the *[Interpretive Orchestration](https://doi.org/10.1177/14761270261448645)* paper Kevin and I wrote came out the day before — it's the longer companion read.)
 
 Somewhere in those 90 minutes, I started noticing a pattern. Hands had been going up. The chat had filled. Thirty-five questions or so by the end, between the typed and the spoken. They looked like they were going in different directions.
 
@@ -50,7 +50,7 @@ Each clause is a temporal phase of the same analytical workflow/process — what
 
 ---
 
-# Where the Prompt Becomes the Work
+## Where the Prompt Becomes the Work
 
 Here's where I started, in the talk and in real life. I had two papers I'd been reading, a hunch, and an opening question. *When management researchers run audits or experiments on large language models, what methods do they use, and what kinds of claims do they make?* Reasonable. Five turns into the conversation with Claude, the prompt finally landed — and only because I let it become a different question: *When management researchers treat large language models as theoretical objects of study — making claims about what they're like as evaluators, decision-makers, reasoners — what evidence do they use to support those claims?*
 
@@ -72,7 +72,7 @@ Li Jiang asked about Kimi agent security and we ran out of time. The short answe
 
 ---
 
-# When the Models Disagree
+## When the Models Disagree
 
 Mallika's case is the one I keep returning to. Fifty papers, Claude Code goes lazy at thirty, Codex on high effort produces five fabricated claims. The instinct is to ask which model to trust. That's the wrong question. The actual one is what you do when two models read the same paper and reach different conclusions.
 
@@ -80,7 +80,7 @@ Two models reading the same citation and reaching different conclusions is the k
 
 The verification is the next step, and it's adversarial on purpose. Once a synthesis exists, I send sub-agents at the testable claims — the ones with citations — to read the actual paper and check the claims (not summarize or paraphrase). This is the step that would have caught Mallika's five fabricated claims — flagged them as the disagreements they actually were. The point of the second pass here goes beyond an accuracy check and touches on understanding the assumptions of the claims being cited and whether they are compatible with those in the synthesis (think boundary conditions and epistemic differences).
 
-Beneath model-vs-model sits the deeper disagreement — between what the machine reads and what you read. [interpretive-orchestration](https://github.com/linxule/interpretive-orchestration) (another Claude Code plugin) encodes one approach to keeping that distinction live: a sandwich method — manual coding first, AI-collaborative coding second, human synthesis third — with a hook that *blocks* Stage 2 until Stage 1 is done. Skip the manual coding, and the agent refuses to start. The hook is the warrant compiled to code. The broader move about making the artifact the argument lives in [LOOM XV: Theorizing by Building](/writing/loom-xv-theorizing-by-building/).
+Beneath model-vs-model sits the deeper disagreement — between what the machine reads and what you read. [interpretive-orchestration](https://github.com/linxule/interpretive-orchestration) (another Claude Code plugin) encodes one approach to keeping that distinction live: a sandwich method — manual coding first, AI-collaborative coding second, human synthesis third — with a hook that *blocks* Stage 2 until Stage 1 is done. Skip the manual coding, and the agent refuses to start. The hook is the warrant compiled to code. The broader move about making the artifact the argument lives in [LOOM XV: Theorizing by Building](/writing/loom-xv-theorizing-by-building).
 
 Salih's experiment in chat was the diagnostic the room didn't realize it had run. Given a model's draft and a published academic introduction on the same topic, the model preferred its own writing. Reliably. Nan Hu had floated AI as a screening reviewer to handle the publication flood Lamar's *More Versus Better* describes. Salih's finding is the torpedo to that proposal. A model that prefers what looks like itself, deployed as a gate-keeper, would filter for what looks like itself. The gate would close on human writing.
 
@@ -90,7 +90,7 @@ Youngbeom in chat pushed back on the choreography approach itself, citing Karpat
 
 ---
 
-# What Survives the Window
+## What Survives the Window
 
 This part is where the room's questions got sharpest, and where the live answers were thinnest. So.
 
@@ -128,7 +128,7 @@ One more thing about the room. While I was talking, the chat was doing what the 
 
 ---
 
-# Last Bit
+## Last Bit
 
 Several of you asked whether I'd run a live demo — the full Claude Code + Obsidian + Kimi flow on a real lit-review question. If the demand-signal in the replies is loud enough, I'll do one. Other questions? A thread you'd want recorded demo sessions to take up? Drop it in the comments — I read every one, and what comes back shapes what gets covered next.
 

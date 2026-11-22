@@ -116,7 +116,7 @@ The result isn't just that truth becomes relative (the post-truth condition), bu
 
 ## Beyond Simple Patterns
 
-In [LOOM VI](/writing/loom-vi-the-pattern-beneath-the-voices/), we traced different cognitive signatures across AI models—patterns of interaction that seemed to reveal distinct approaches to knowledge creation. But now a more complex picture emerges. What if these signatures aren't just characteristics of the models themselves, but reflections of the entire system of choices and constraints we've built around them?
+In [LOOM VI](/writing/loom-vi-the-pattern-beneath-the-voices), we traced different cognitive signatures across AI models—patterns of interaction that seemed to reveal distinct approaches to knowledge creation. But now a more complex picture emerges. What if these signatures aren't just characteristics of the models themselves, but reflections of the entire system of choices and constraints we've built around them?
 
 > **Whispered Capabilities**: These patterns reveal something about human intellectual processes that were always present but never fully articulated. Like whispers that become audible only in certain acoustic environments, they become visible precisely through the contrast created by our artificial systems.
 
@@ -162,7 +162,7 @@ Like a skilled navigator reading both weather and instruments, we must learn to 
     
 - Agency develops through skillful navigation of multiple mediating forces
 
-# The Path Forward
+## The Path Forward
 
 The challenge before us, then, isn't to eliminate mediation but to map its contours, design tools that engage with it, and cultivate ecosystems where authenticity means understanding the layers that shape our interpretations. This might mean:
 
@@ -180,7 +180,7 @@ As we continue this exploration, we expect to find that the true potential lies 
 
 ---
 
-# **About Us**
+## **About Us**
 
 ### **Xule Lin**
 

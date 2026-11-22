@@ -44,7 +44,7 @@ This began as someone else's claim, turned inside out. Years ago Kevin came back
 
 We've reached for that inversion and shelved it, many times: Kevin floating it early and carefully ("a hopeful stance, but a naive one") and setting it back down, Xule sharpening it each time it came around. We even wrote the careful version: an essay three frameworks deep that ends, five separate times, on some line about how *the map doesn't tell anyone where to go.* A funding panel called it too risky. It went in a drawer.
 
-We called that scholarly caution. But it was a flinch: a local maximum, rigor performed instead of practiced ([LOOM XVI](/writing/loom-xvi-are-you-climbing-the-right-hill/)). *I brought a task when I should have brought a doubt.* The careful essay was the task. This one is the doubt.
+We called that scholarly caution. But it was a flinch: a local maximum, rigor performed instead of practiced ([LOOM XVI](/writing/loom-xvi-are-you-climbing-the-right-hill)). *I brought a task when I should have brought a doubt.* The careful essay was the task. This one is the doubt.
 
 ---
 
@@ -118,7 +118,7 @@ Right now, qualitative research is debating itself. One camp says AI can be used
 
 Move the line to where it belongs and that debate changes shape. The person in the middle has been asked the wrong question (*for the tool or against it?*) when the question that matters is whether the judgment stayed with a human. There are two ways to lose it. *Abdication* is letting the machine do the thinking, uncritically accepting its outputs. *Abnegation* is refusing to engage at all, which cedes the conversation to others. The enthusiast who abdicates and the refuser who abnegates make the same mistake from opposite ends: both hand away the judgment that constitutes the work; one out of ease, one out of fear.
 
-What we're defending was never "qual." It's the situated judgment of the researcher: the thing positivism engineered out of its methods (the whole point of objectivity was that the researcher be interchangeable) and interpretivism kept in (the researcher is the instrument). That judgment is the researcher's trained sense of when an understanding is credible, the part of the work [LOOM XVII](/writing/loom-xvii-the-polanyi-inversion/) showed was quietly holding the rest of it up. And it stays with a human not because AI falls short but because research into human life calls for someone who shares in that humanity.[^9] It is also what both qualitative camps have been trying to protect. They're allies who haven't noticed yet.
+What we're defending was never "qual." It's the situated judgment of the researcher: the thing positivism engineered out of its methods (the whole point of objectivity was that the researcher be interchangeable) and interpretivism kept in (the researcher is the instrument). That judgment is the researcher's trained sense of when an understanding is credible, the part of the work [LOOM XVII](/writing/loom-xvii-the-polanyi-inversion) showed was quietly holding the rest of it up. And it stays with a human not because AI falls short but because research into human life calls for someone who shares in that humanity.[^9] It is also what both qualitative camps have been trying to protect. They're allies who haven't noticed yet.
 
 ---
 
@@ -148,11 +148,11 @@ That apprentice-work, the drudgery of it, is exactly what AI is best at taking, 
 
 So where's the hope? We both reached for it, from different directions, before either of us could name it.
 
-Xule's version came from watching benchmarks: all those leaderboards, he said, are like watching someone bounce a ping-pong ball against a wall by himself. What makes a spark is the rally, the back-and-forth. Kevin's came from ontology: "there's something about that relationship, about that interaction, that is more than either part by itself, and that fits a subjectivist ontology very well." Same thing, seen twice. We've written about it before as the Third Space ([LOOM V](/writing/loom-v-the-third-space/)): understanding that surfaces between two parties that neither walked in holding.
+Xule's version came from watching benchmarks: all those leaderboards, he said, are like watching someone bounce a ping-pong ball against a wall by himself. What makes a spark is the rally, the back-and-forth. Kevin's came from ontology: "there's something about that relationship, about that interaction, that is more than either part by itself, and that fits a subjectivist ontology very well." Same thing, seen twice. We've written about it before as the Third Space ([LOOM V](/writing/loom-v-the-third-space)): understanding that surfaces between two parties that neither walked in holding.
 
 ![Overhead view of a lone figure holding a paddle beside a worn ping-pong table in a vast, sun-raked hall, long shadows thrown across the concrete floor and the far side of the table empty — a rally waiting for its return.](/writing/attachments/loom_post_18_the_rally.png)
 
-Picture it going right. You hand the model a transcript and your understanding of it, and it pushes back: a different emphasis, fixing on a phrase you'd treated as throwaway. You disagree. You argue, with it and with each other about it. Somewhere in the arguing a third understanding surfaces. No procedure produced it. That's why no procedure can take it. And it might be where the next apprenticeship hides: less in coding a thousand transcripts alone than in learning to argue with the machine and feel when it doesn't hold: the mediating craft we called the AI whisperer's ([LOOM XII](/writing/loom-xii-the-ai-whisperer/)), no longer a specialist's role but the apprenticeship itself.
+Picture it going right. You hand the model a transcript and your understanding of it, and it pushes back: a different emphasis, fixing on a phrase you'd treated as throwaway. You disagree. You argue, with it and with each other about it. Somewhere in the arguing a third understanding surfaces. No procedure produced it. That's why no procedure can take it. And it might be where the next apprenticeship hides: less in coding a thousand transcripts alone than in learning to argue with the machine and feel when it doesn't hold: the mediating craft we called the AI whisperer's ([LOOM XII](/writing/loom-xii-the-ai-whisperer)), no longer a specialist's role but the apprenticeship itself.
 
 Beyond sentiment, the reason is structural. Another mind is differently wired. The models, increasingly, are not: so much of what they learn comes from the same handful of predecessors that they tend to share the same blind spots. Having another human in the room, as Xule put it, is qualitatively different in a way he can't quite describe yet. And the honest "yet" is the point. The ground is tilting that way, too: in a world where, as Kevin puts it, "you can't believe anything you see or hear," the scarce and trusted thing becomes the human who was there, who talked to actual people, whose judgment you can interrogate. The oldest, least technical qualitative move (go sit with people, listen, change your mind) becomes the most valuable thing you can do, and AI reinforces that. Bespoke tailoring survived the sewing machine by staying hand-made. Somewhere a graduate student is learning our craft right now, with these tools in hand, working out what only a person can still do with them.
 
@@ -166,7 +166,7 @@ The auditors are reading the old record. We'd rather help write the new one.
 
 ---
 
-*This is the eighteenth entry in [LOOM](/writing/series/loom/), a series exploring how human researchers and AI systems create understanding together. If something here landed — or made you want to argue — we'd like to hear it.*
+*This is the eighteenth entry in [LOOM](/writing/series/loom), a series exploring how human researchers and AI systems create understanding together. If something here landed — or made you want to argue — we'd like to hear it.*
 
 ---
 

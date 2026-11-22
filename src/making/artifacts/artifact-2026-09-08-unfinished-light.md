@@ -55,7 +55,7 @@ video:
   height: 1080
   loop: false
 companion:
-  href: /making/portraits/portraits-2026-09-06-unfinished-light/
+  href: /making/portraits/portraits-2026-09-06-unfinished-light
   relation: the portraits
   title: unfinished light
   note: The prompt and four Midjourney images from which this world began.

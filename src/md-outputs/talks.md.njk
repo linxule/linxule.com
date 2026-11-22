@@ -12,7 +12,10 @@ eleventyExcludeFromCollections: true
 {% endif %}**Date**: {{ talk.date | readableDate }}
 {% if talk.data.speakers %}**Speakers**: {{ talk.data.speakers | join(", ") | safe }}
 {% endif %}{% if talk.data.youtube %}**Video**: https://www.youtube.com/watch?v={{ talk.data.youtube }}
-{% endif %}{% if talk.data.slides %}**Slides**: {% if talk.data.slides.startsWith("/") %}{{ site.url }}{{ talk.data.slides }}{% else %}{{ talk.data.slides }}{% endif %}
+{% elif talk.data.video %}**Video**: {{ talk.data.video | absoluteContentUrl(site.url) | safe }}
+{% endif %}{% if talk.data.slides %}**Slides**: {% if talk.data.slides.startsWith("/") %}{{ site.url }}{{ talk.data.slides }}{% else %}{{ talk.data.slides | safe }}{% endif %}
+{% endif %}{% if talk.data.pdf %}**PDF**: {{ talk.data.pdf | absoluteContentUrl(site.url) | safe }}
+{% endif %}{% if talk.data.link %}**Link**: {{ talk.data.link | safe }}
 {% endif %}{% if talk.data.keywords %}**Keywords**: {{ talk.data.keywords | join(", ") | safe }}
 {% endif %}
 
@@ -23,4 +26,4 @@ eleventyExcludeFromCollections: true
 
 ---
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ talk.url }}*
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ talk.url | stripTrailingSlash }}*

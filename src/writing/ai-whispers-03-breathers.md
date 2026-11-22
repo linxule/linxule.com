@@ -20,7 +20,7 @@ date: 2026-02-14
 
 ![Breathers cover — a figure reaching upward through water toward the light at the surface](/writing/attachments/breathers-surfacing.png)
 
-So you've laid the groundwork with [primers](/writing/ai-whispers-01-context-setting-primers/) and you've been [prodding](/writing/ai-whispers-02-conversation-vibe-steering-prodders/) your way through. But now you're twenty, forty, sixty exchanges deep and things are clicking. Maybe too well. You've converged on an approach and nobody's questioning it anymore.
+So you've laid the groundwork with [primers](/writing/ai-whispers-01-context-setting-primers) and you've been [prodding](/writing/ai-whispers-02-conversation-vibe-steering-prodders) your way through. But now you're twenty, forty, sixty exchanges deep and things are clicking. Maybe too well. You've converged on an approach and nobody's questioning it anymore.
 
 Time for a breather.
 

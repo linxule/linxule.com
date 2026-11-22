@@ -137,12 +137,12 @@ seoDescription: "Conference presentations and invited lectures on human–AI col
     /* Visually hidden but accessible to screen readers and LLMs */
     .entry-description {
         position: absolute;
+        left: -9999px;
         width: 1px;
         height: 1px;
         padding: 0;
         margin: -1px;
         overflow: hidden;
-        clip: rect(0, 0, 0, 0);
         white-space: nowrap;
         border: 0;
     }
@@ -178,6 +178,16 @@ seoDescription: "Conference presentations and invited lectures on human–AI col
             padding-left: 0;
         }
     }
+
+    @media (max-width: 768px) {
+        main {
+            padding: 6rem 1.5rem 3rem;
+        }
+
+        .page-header {
+            margin-bottom: 4rem;
+        }
+    }
 </style>
 
 <header class="page-header">
@@ -186,7 +196,7 @@ seoDescription: "Conference presentations and invited lectures on human–AI col
         Conference presentations, invited talks, and public lectures.
     </p>
     <div class="header-links">
-        <a href="/search/" class="search-link">search</a>
+        <a href="/search" class="search-link">search</a>
         <span class="page-marker">005</span>
     </div>
 </header>
@@ -194,7 +204,7 @@ seoDescription: "Conference presentations and invited lectures on human–AI col
 <div class="entries">
     {%- for talk in collections.talks -%}
     <div class="entry">
-        <a href="{{ talk.url }}" class="entry-link">
+        <a href="{{ talk.url | stripTrailingSlash }}" class="entry-link">
             {%- if talk.data.type and talk.data.type != "talk" -%}
             <span class="entry-type">{{ talk.data.type }}</span>
             {%- endif -%}

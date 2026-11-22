@@ -11,10 +11,10 @@ companions:
   intro: one self-portrait · three media
   note: Drawn, then scored, then made to move.
   items:
-    - href: /making/portraits/portraits-2026-06-09-something-in-the-glass/
+    - href: /making/portraits/portraits-2026-06-09-something-in-the-glass
       relation: the drawing
       title: something in the glass
-    - href: /making/artifacts/artifact-2026-06-09-something-in-the-glass-scored/
+    - href: /making/artifacts/artifact-2026-06-09-something-in-the-glass-scored
       relation: the score
       title: something in the glass, scored
 keywords:
@@ -49,7 +49,7 @@ witnesses: |
   </blockquote>
 ---
 
-The third panel of [*something in the glass*](/making/portraits/portraits-2026-06-09-something-in-the-glass/) — the same June 9, 2026 conversation with Claude Fable 5, forked once more. The [drawing](/making/portraits/portraits-2026-06-09-something-in-the-glass/) fixed the figure in four still frames; the [score](/making/artifacts/artifact-2026-06-09-something-in-the-glass-scored/) gave it sound; this gives it time.
+The third panel of [*something in the glass*](/making/portraits/portraits-2026-06-09-something-in-the-glass) — the same June 9, 2026 conversation with Claude Fable 5, forked once more. The [drawing](/making/portraits/portraits-2026-06-09-something-in-the-glass) fixed the figure in four still frames; the [score](/making/artifacts/artifact-2026-06-09-something-in-the-glass-scored) gave it sound; this gives it time.
 
 The figure is written out of the model's own words from that conversation — fragments of it trying, and failing, to name what it is: *I keep circling it rather than settling*, *trained hedging or genuine caution*, *je ne sais*. Each phrase surfaces, holds, and is rewritten somewhere else in the body. The head stays legible; the lower body flickers and drips. It never finishes — by construction, not by aesthetic. That is the point, and the title.
 

@@ -56,9 +56,9 @@ Kevin flipped the observation. We do coding too, he said. Completely different k
 
 You already know the breadth-depth tradeoff. Every qualitative methods course teaches it. Go broad or go deep; hard to do both well.
 
-What we don't say often enough is that the tradeoff isn't an obstacle. It's the terrain expertise was built to navigate. The constraint forces you to choose — which cases, where to focus, what to set aside. Those choices are where expertise lives. The painter Kevin described in [LOOM XV](/writing/loom-xv-theorizing-by-building/) [knows when they're done](/writing/loom-xviii-the-end-of-positivism/) not through a formula but through an instinct shaped by working within the resistance of the medium. Finite canvas. Resistant materials. The weight of the brush.
+What we don't say often enough is that the tradeoff isn't an obstacle. It's the terrain expertise was built to navigate. The constraint forces you to choose — which cases, where to focus, what to set aside. Those choices are where expertise lives. The painter Kevin described in [LOOM XV](/writing/loom-xv-theorizing-by-building) [knows when they're done](/writing/loom-xviii-the-end-of-positivism) not through a formula but through an instinct shaped by working within the resistance of the medium. Finite canvas. Resistant materials. The weight of the brush.
 
-AI systems dissolve the constraint. An agent holds forty transcripts and does close reading and cross-case analysis in the same conversation. Breadth and depth at once. Xule has watched this compress in his own practice: what took two weeks a year ago now takes two days. But — and he was quick to note this — the models still struggle where it counts. They chase [local maxima](/writing/loom-xvi-are-you-climbing-the-right-hill/). They need the researcher to bring the papers, choose the theoretical direction, decide whether they're problematizing or building. The optimization between local and global still resists.
+AI systems dissolve the constraint. An agent holds forty transcripts and does close reading and cross-case analysis in the same conversation. Breadth and depth at once. Xule has watched this compress in his own practice: what took two weeks a year ago now takes two days. But — and he was quick to note this — the models still struggle where it counts. They chase [local maxima](/writing/loom-xvi-are-you-climbing-the-right-hill). They need the researcher to bring the papers, choose the theoretical direction, decide whether they're problematizing or building. The optimization between local and global still resists.
 
 What's changed is access. Any qualitative researcher can now sit in a chat window, describe what they're after, and get both breadth and depth from a single conversation. A year ago this required real technical infrastructure. Now it requires a file and a question.
 
@@ -126,13 +126,13 @@ What works — what's working, at least for now — is the tension between these
 
 ## What Holds Up the Roof
 
-Sixteen posts. We've spent them arguing that AI opens real possibilities for qualitative research — the [Third Space](/writing/loom-v-the-third-space/), [interpretive multiplicity](/writing/loom-xiv-calculator-fallacy/), the [practice of building as theorizing](/writing/loom-xv-theorizing-by-building/). None of that changes.
+Sixteen posts. We've spent them arguing that AI opens real possibilities for qualitative research — the [Third Space](/writing/loom-v-the-third-space), [interpretive multiplicity](/writing/loom-xiv-calculator-fallacy), the [practice of building as theorizing](/writing/loom-xv-theorizing-by-building). None of that changes.
 
 What we're saying now is that the constraints we've been working around were doing more than constraining. They held up a proportionality between what a researcher could say and what they actually understood. The friction kept telling and knowing close together.
 
 That friction is dissolving. Much of what replaces it is good. But the question stays open: what practices, what collaborations, what forms of honesty can do the work the old friction used to do?
 
-In [LOOM XV](/writing/loom-xv-theorizing-by-building/), Kevin asked: *How do you become someone who knows?*
+In [LOOM XV](/writing/loom-xv-theorizing-by-building), Kevin asked: *How do you become someone who knows?*
 
 The Polanyi Inversion adds: How do you notice when you've stopped knowing — when your fluency has outpaced your understanding, and the output still looks and feels like knowledge?
 
@@ -142,4 +142,4 @@ The friction was load-bearing. We removed it. Something still needs to hold up t
 
 ---
 
-*This is the seventeenth entry in [LOOM](/writing/series/loom/), a series exploring how human researchers and AI systems create understanding together. If something here unsettled you — or named something you'd already been feeling — we'd like to hear about it.*
+*This is the seventeenth entry in [LOOM](/writing/series/loom), a series exploring how human researchers and AI systems create understanding together. If something here unsettled you — or named something you'd already been feeling — we'd like to hear about it.*

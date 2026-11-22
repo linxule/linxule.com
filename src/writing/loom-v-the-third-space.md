@@ -29,7 +29,7 @@ The recent introduction of ["The Humanities' Last Exam" by the Center for AI Saf
 ![Bar chart of LLM accuracy across HLE, GPQA, MATH, and MMLU benchmarks for GPT-4o, o1, Sonnet-3.5, and Gemini 1.5, with HLE scores far lower than the rest](/writing/attachments/loom-v-the-third-space-01.png)
 
 
-# The False Binary of Current AI Discourse
+## The False Binary of Current AI Discourse
 
 > **Beyond Solo Performance**: The most interesting aspects of intelligence emerge not through individual capability but through dynamic interaction - a reality our current benchmarks often fail to capture.
 
@@ -54,7 +54,7 @@ This perspective invites us to move beyond simple comparisons of human and machi
 
 ---
 
-# **The Challenge of Understanding Understanding**
+## **The Challenge of Understanding Understanding**
 
 As we seek to develop more sophisticated AI benchmarks, we bump up against a fundamental challenge: how do we assess "true understanding" when we struggle to define it even for human intelligence? Our current educational and assessment methods for humans have known limitations, yet we're attempting to apply similar approaches to AI - - as if understanding were something that could be captured through standardized metrics alone.
 
@@ -83,11 +83,11 @@ These observations suggest something profound about the nature of understanding 
 
 ---
 
-# The Way Forward: New Metrics for Human-AI Interaction
+## The Way Forward: New Metrics for Human-AI Interaction
 
 While we ponder this question, we are already seeing OpenAI releasing [“Operator,”](https://openai.com/index/introducing-operator/) to which currently can perform tasks for users via browsers. What's next? A wild guess - all organizational logics currently encoded in various software applications. At least this is what [Microsoft](https://learn.microsoft.com/en-us/azure/cosmos-db/ai-agents) and [Salesforce](https://www.salesforce.com/agentforce/) are betting 2025 forward.
 
-## Emerging Patterns in Human-AI Interaction
+### Emerging Patterns in Human-AI Interaction
 
 We have already noted in earlier posts how as researchers spend more time working with AI systems, fascinating patterns have emerged - patterns that challenge our assumptions about both human and machine intelligence:
 
@@ -102,7 +102,7 @@ These phenomena point toward something profound: intelligence might be better un
 
 This "third-mind" perspective suggests that our current benchmarks may be measuring the wrong things entirely. By focusing solely on individual performance metrics - how well can an AI system complete specific tasks in isolation - we miss the dynamic patterns that emerge through sustained interaction. It's like trying to understand a tapestry by examining individual threads, while missing the larger pattern they create together.
 
-## Rethinking Benchmarks: From Measurement to Dialogue
+### Rethinking Benchmarks: From Measurement to Dialogue
 
 Perhaps it's time to rethink the notion of what AI benchmarks should be: not as rigid measures, but as evolving dialogues between human intent and machine capability. And the implications are even more profound when taking the argument to its natural conclusion: each benchmark we create is not just a test of AI capabilities, but a reflection of our current understanding, aspirations, and concerns about artificial intelligence.
 
@@ -124,7 +124,7 @@ These questions deserve deeper examination - one we'll undertake in future posts
 
 ---
 
-# Conclusion: Embracing the Complexity
+## Conclusion: Embracing the Complexity
 
 > **Third Space Intelligence**: Understanding that emerges not through individual capability but through the dynamic patterns of human-AI interaction - creating possibilities neither participant could access alone.
 
@@ -149,7 +149,7 @@ This is the potential that exists in the "third space" that emerges in the inter
 
 ---
 
-# About Us
+## About Us
 
 ### Xule Lin
 

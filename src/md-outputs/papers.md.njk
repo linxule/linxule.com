@@ -13,7 +13,7 @@ eleventyExcludeFromCollections: true
 {% if paper.data.doi %}**DOI**: https://doi.org/{{ paper.data.doi }}
 {% endif %}{% if paper.data.arxivId %}**arXiv**: {{ paper.data.arxivId }}
 {% endif %}{% if paper.data.license %}**License**: {{ paper.data.license }}
-{% endif %}{% if paper.data.pdf %}**Full text**: [Download PDF (full text)]({{ site.url }}{{ paper.url }}{{ paper.data.pdf }})
+{% endif %}{% if paper.data.pdf %}**Full text**: [Download PDF (full text)]({{ site.url }}{{ paper.url | stripTrailingSlash }}/{{ paper.data.pdf }})
 {% endif %}
 {% if paper.data.abstract %}
 ## Abstract
@@ -39,7 +39,30 @@ eleventyExcludeFromCollections: true
 ---
 
 {{ paper.rawInput | markdownBody | safe }}
+{%- if paper.data.companions %}
 
 ---
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ paper.url | replace(r/\/$/, "") }}*
+## Companions{% if paper.data.companions.intro %} — {{ paper.data.companions.intro | safe }}{% endif %}
+
+{% for c in paper.data.companions.items %}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ c.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{% endfor %}
+{%- if paper.data.companions.note %}
+{{ paper.data.companions.note | safe }}
+{%- endif %}
+{%- elif paper.data.companion %}
+
+---
+
+## Companion{% if paper.data.companion.relation %} — {{ paper.data.companion.relation | safe }}{% endif %}
+
+- [{{ paper.data.companion.title | safe }}]({{ paper.data.companion.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{%- if paper.data.companion.note %}
+
+{{ paper.data.companion.note | safe }}
+{%- endif %}
+{%- endif %}
+
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ paper.url | stripTrailingSlash }}*

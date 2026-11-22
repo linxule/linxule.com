@@ -1,9 +1,20 @@
 import { describe, expect, test } from "bun:test";
-import { accidentsIn, lintSource, neutraliseCss, rootTokens, tokenScope } from "./check-tokens.mjs";
+import {
+  accidentsIn,
+  checkShapedArrays,
+  lintSource,
+  neutraliseCss,
+  rootTokens,
+  tokenScope,
+} from "./check-tokens.mjs";
 
 const ROOT = `:root {
   --paper: #f4f1eb; --ink: #1a1a1a; --ink-faint: #666; --ink-ghost: #c8c8c8;
   --accident: #4ee1d4; --bloom: #8b7089; --measure: 38rem;
+  --font-serif: 'EB Garamond', Georgia, serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-small: 'EB Garamond 08', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', monospace;
   --size-whisper: 0.6rem; --size-label: 0.7rem; --size-note: 0.8rem; --size-quiet: 0.9rem;
   --tracking-quiet: 0.1em; --tracking-label: 0.15em;
 }`;
@@ -15,6 +26,7 @@ const lines = (text, file = "t.njk") => lintSource(text, file, { defined }).prob
 describe("rootTokens", () => {
   test("reads :root custom properties", () => {
     expect(defined.has("size-note")).toBe(true);
+    expect(defined.has("font-serif")).toBe(true);
     expect(defined.has("size-glyph")).toBe(false);
   });
 });
@@ -25,9 +37,16 @@ describe("T1 size", () => {
     expect(rules('<span style="font-size: .75rem">x</span>')).toEqual(["T1"]);
     expect(rules(".a { font-size: 0.7rem !important; }", "main.css")).toEqual(["T1"]);
   });
-  test("clamp with a sub-1rem bound fails", () => {
+  test("clamp with a sub-1rem bound fails (single-line and multiline)", () => {
     expect(rules(style(".a { font-size: clamp(0.55rem, 1vw, 0.75rem); }"))).toEqual(["T1"]);
+    expect(rules(style(".a {\n  font-size: clamp(\n    0.65rem,\n    1vw,\n    1rem\n  );\n}"))).toEqual(["T1"]);
     expect(rules(style(".a { font-size: clamp(var(--size-whisper), 1vw, var(--size-label)); }"))).toEqual([]);
+  });
+  test("CSS font shorthand catches sub-1rem literals while allowing tokens and line-heights", () => {
+    expect(rules(style(".a { font: 400 0.75rem/1.4 var(--font-mono); }"))).toEqual(["T1"]);
+    expect(rules('<span style="font: 0.8rem var(--font-mono)">x</span>')).toEqual(["T1"]);
+    expect(rules(style(".a { font: var(--size-label) var(--font-mono); }"))).toEqual([]);
+    expect(rules(style(".a { font: 400 1rem/0.9rem var(--font-serif); }"))).toEqual([]);
   });
   test("em, px, %, tokens and ≥1rem pass", () => {
     expect(rules(style(".a { font-size: 0.85em; } .b { font-size: 12px; } .c { font-size: 90%; }"))).toEqual([]);
@@ -35,6 +54,7 @@ describe("T1 size", () => {
   });
   test("JS-set sizes", () => {
     expect(rules("<script>el.style.fontSize = '0.8rem';</script>")).toEqual(["T1"]);
+    expect(rules("el.style.fontSize = '0.8rem';", "src/assets/js/test.js")).toEqual(["T1"]);
     expect(rules("<script>el.style.fontSize = 'var(--size-note)';</script>")).toEqual([]);
   });
   test("commented-out values are ignored", () => {
@@ -53,9 +73,10 @@ describe("T2 tracking", () => {
 });
 
 describe("T3 defined", () => {
-  test("removed and misspelled tokens fail", () => {
+  test("removed and misspelled tokens fail (including --font-*)", () => {
     expect(rules(style(".a { font-size: var(--size-meta); }"))).toEqual(["T3"]);
     expect(rules(style(".a { color: var(--ink-fiant); }"))).toEqual(["T3"]);
+    expect(rules(style(".a { font-family: var(--font-srif); }"))).toEqual(["T3"]);
   });
   test("ungoverned prefixes are not checked", () => {
     expect(rules(style(".a { width: var(--card-w); }"))).toEqual([]);
@@ -152,11 +173,13 @@ describe("T6 typeface", () => {
   });
   test("JS fontFamily assignments", () => {
     expect(rules("<script>el.style.fontFamily = \"'IBM Plex Mono', monospace\";</script>")).toEqual(["T6"]);
+    expect(rules("el.style.fontFamily = \"'IBM Plex Mono', monospace\";", "src/assets/js/site.js")).toEqual(["T6"]);
     expect(rules("<script>el.style.fontFamily = 'var(--font-mono)';</script>")).toEqual([]);
   });
-  test("scope leaves slide decks and the TSM sub-app alone", () => {
+  test("scope scans src/assets/js/*.js and leaves slide decks and TSM alone", () => {
     const scope = tokenScope(".").map((f) => f.replace(/\\/g, "/"));
     expect(scope.length).toBeGreaterThan(0);
+    expect(scope.some((f) => f.startsWith("src/assets/js/") && f.endsWith(".js"))).toBe(true);
     expect(scope.filter((f) => f.includes("src/assets/slides/") || f.includes("src/tsm/"))).toEqual([]);
   });
 });
@@ -216,5 +239,59 @@ describe("A1 one accident per work", () => {
     const res = accidentsIn(md);
     expect(res.count).toBe(2);
     expect(res.accidents[0].text).toBe(null);
+  });
+  test("fenced code blocks and inline code spans in the body are ignored", () => {
+    const md = [
+      "---",
+      "title: Example",
+      "---",
+      'Real <span class="accident">one accident</span>.',
+      "",
+      "```html",
+      '<span class="accident">documented example</span>',
+      "```",
+      "",
+      'And inline `<span class="accident">inline example</span>`.',
+    ].join("\n");
+    const res = accidentsIn(md);
+    expect(res.count).toBe(1);
+    expect(res.accidents[0].text).toBe("one accident");
+  });
+});
+
+describe("Y1 shaped-array YAML integrity (Gotcha #55)", () => {
+  test("passes strings and { text, accident } entries across shaped arrays", () => {
+    const md = [
+      "---",
+      "prompt:",
+      '  - "behind it two masks, not touching: white porcelain"',
+      '  - text: "the glow"',
+      "    accident: true",
+      "observations:",
+      "  - title: Obs",
+      "    fragments:",
+      '      - "line one"',
+      '      - text: "line two"',
+      "        accident: true",
+      "---",
+    ].join("\n");
+    expect(checkShapedArrays(md)).toEqual([]);
+  });
+
+  test("flags unquoted colon-space mappings in prompt, contextExcerpt, opening, and fragments", () => {
+    const md = [
+      "---",
+      "prompt:",
+      "  - behind it two masks, not touching: white porcelain",
+      "observations:",
+      "  - title: Obs",
+      "    fragments:",
+      "      - unquoted: mapping",
+      "---",
+    ].join("\n");
+    const issues = checkShapedArrays(md);
+    expect(issues).toHaveLength(2);
+    expect(issues[0].path).toBe("prompt[0]");
+    expect(issues[1].path).toBe("observations[0].fragments[0]");
   });
 });

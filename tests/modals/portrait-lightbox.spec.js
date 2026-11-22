@@ -19,3 +19,36 @@ test('each stacked portrait opens its own image and keeps its download reachable
     await download.click({ trial: true });
   }
 });
+
+test('tablet (769–1000px) collapses layout-drift into a non-overlapping grid without desktop specificity leak', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Run once from desktop project at tablet width');
+  await page.setViewportSize({ width: 850, height: 900 });
+  await page.goto('/making/portraits/portraits-2026-06-09-something-in-the-glass/');
+
+  const layout = await page.evaluate(() => {
+    const field = document.querySelector('.specimens-field');
+    const specimens = [...document.querySelectorAll('.specimens-field .specimen')];
+    const rects = specimens.map(el => {
+      const r = el.getBoundingClientRect();
+      return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, position: getComputedStyle(el).position };
+    });
+    return {
+      fieldDisplay: getComputedStyle(field).display,
+      rects,
+    };
+  });
+
+  expect(layout.fieldDisplay).toBe('grid');
+  expect(layout.rects.length).toBeGreaterThanOrEqual(4);
+  for (const r of layout.rects) {
+    expect(r.position).toBe('relative');
+  }
+  for (let i = 0; i < layout.rects.length; i++) {
+    for (let j = i + 1; j < layout.rects.length; j++) {
+      const a = layout.rects[i];
+      const b = layout.rects[j];
+      const overlaps = a.left < b.right - 1 && a.right > b.left + 1 && a.top < b.bottom - 1 && a.bottom > b.top + 1;
+      expect(overlaps, `specimen ${i} overlaps specimen ${j} at 850px`).toBe(false);
+    }
+  }
+});

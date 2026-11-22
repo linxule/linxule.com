@@ -48,13 +48,13 @@ companions:
   intro: equation-first ascii · four works
   note: One inquiry, four commitments to ASCII — characters render a law, then remember it, then become it, then outlive it.
   items:
-    - href: /making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock/
+    - href: /making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock
       relation: work I
       title: the loom forgets which clock
-    - href: /making/artifacts/artifact-2026-07-26-order-is-the-only-image/
+    - href: /making/artifacts/artifact-2026-07-26-order-is-the-only-image
       relation: work III
       title: order is the only image
-    - href: /making/artifacts/artifact-2026-07-27-the-copy-outlives-the-source/
+    - href: /making/artifacts/artifact-2026-07-27-the-copy-outlives-the-source
       relation: work IV
       title: the copy outlives the source
 ---
@@ -63,4 +63,4 @@ The second run applies Bob Eberle's SCAMPER **Combine** operator to the first: k
 
 The same memory field drives the score, so the piece satisfies the counterfactual test the project uses to separate a history *theme* from a history *mechanism*: remove an earlier fold and both the later image and the later sound materially differ. Its resonances are physical residue, not a quoted motif.
 
-Its sibling [the loom forgets which clock](/making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock/) is the unscarred version of the same law — worth watching first, since this work is largely an argument with it.
+Its sibling [the loom forgets which clock](/making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock) is the unscarred version of the same law — worth watching first, since this work is largely an argument with it.

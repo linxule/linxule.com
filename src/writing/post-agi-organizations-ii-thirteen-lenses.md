@@ -25,7 +25,7 @@ ogImage: /writing/attachments/post-agi-organizations-ii-thirteen-lenses.png
 
 ![Gossamer wireframe organisms glowing from within against a deep twilight sky, a solitary figure studying the luminous lattice above](/writing/attachments/post-agi-organizations-ii-thirteen-lenses.png)
 
-*This is the second post in the [Post-AGI Organizations](/writing/series/organizational-futures/) series. In ["Thirteen Dreams,"](/writing/post-agi-organizations-i-thirteen-dreams/) we asked thirteen AI systems to design the future of human-AI organizations. They built welfare states, thermodynamic commons, creator economies, and consulting frameworks — sharing one assumption (equal partnership) and one absence (organizational friction). This post asks what happens when the models stop answering our questions and start asking their own.*
+*This is the second post in the [Post-AGI Organizations](/writing/series/organizational-futures) series. In ["Thirteen Dreams,"](/writing/post-agi-organizations-i-thirteen-dreams) we asked thirteen AI systems to design the future of human-AI organizations. They built welfare states, thermodynamic commons, creator economies, and consulting frameworks — sharing one assumption (equal partnership) and one absence (organizational friction). This post asks what happens when the models stop answering our questions and start asking their own.*
 
 ---
 

@@ -14,7 +14,7 @@ keywords:
   - management research
 ---
 
-# Decentralization
+## Decentralization
 
 This stream of research aims to explore how more decentralized forms of organizing are/will be different from existing forms of organizing when it comes to venture creation, organizational learning, and innovation.
 
@@ -25,13 +25,13 @@ Some relevant questions:
 - What drives the emergence and development of blockchain ecosystems?
 - What are the implications for management research (e.g., boundaries of organizations, unmediated actors, crowdsourcing)?
 
-# Innovation and creativity in culinary arts
+## Innovation and creativity in culinary arts
 
 This stream of research aims to explore how the new styles/categories of cuisine emerge and evolve through the networks of elite restaurants and chefs.
 
 These elite restaurants and chefs are consistently producing innovative and creative dishes and beverages to stay in the competition and earn prestige (i.e., Michelin stars).
 
-# Ideas and theories from other disciplines
+## Ideas and theories from other disciplines
 
 Other domains have also shaped how I develop and approach research questions:
 

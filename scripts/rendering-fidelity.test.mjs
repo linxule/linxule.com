@@ -75,7 +75,7 @@ describe("artifact Markdown catalogs", () => {
     expect(output).toContain(`**Video player**: [Open the embedded player](${site.url}${artifact.data.src})`);
     expect(output).toContain(artifact.data.video.contentUrl);
     expect(output).toContain(`**Poster**: [Open the poster](${site.url}${artifact.data.thumbnail})`);
-    const description = artifact.data.mediaDescription.replace(/<[^>]+>/g, "").trim();
+    const description = env.getFilter("htmlToMarkdown")(artifact.data.mediaDescription);
     expect(output).toContain(description);
     expect(output).not.toContain("## Exhibited Works");
   });
@@ -165,7 +165,7 @@ describe("text-surface repairs", () => {
     const index = nunjucks.compile(matter(read("src/papers/index.njk")).content, env)
       .render({ collections: { papers } });
     for (const paper of papers) {
-      expect(index).toContain(`<a href="${paper.url}">${paper.data.title}</a>`);
+      expect(index).toContain(`<a class="paper-entry-link" href="${paper.url.replace(/\/$/, "")}">${paper.data.paperTitle ?? paper.data.title}</a>`);
       expect(index).toContain(`<span class="ref">${paper.data.indexReference}</span>`);
     }
   });
@@ -182,7 +182,7 @@ describe("Atom fidelity", () => {
     const output = feedTemplate.render({ site, collections });
     expect(text(output.split("<entry>")[0], "name")).toEqual([site.author]);
     const entries = new Map(elements(output, "entry").map((entry) => [text(entry, "id")[0], entry]));
-    const entry = (item) => entries.get(site.url + item.url);
+    const entry = (item) => entries.get(site.url + item.url.replace(/\/$/, ""));
     const authorNames = (item) => elements(entry(item), "author").flatMap((author) => text(author, "name"));
     expect(authorNames(seam)).toEqual(seam.data.authors);
     expect(authorNames(paper)).toEqual(paper.data.authors.map((author) => author.name));
@@ -265,7 +265,10 @@ describe("JSON-LD decoded source fidelity", () => {
     expect(homepage.values[0].mainEntity.name).toBe(literal);
     expect(homepage.values[0].mainEntity.description).toBe(literal);
     expect(homepage.values[0].mainEntity.image.caption).toBe(`${literal} ${site.authorZh}`);
-    const concepts = parseStructured({}, "/concepts/", { collections: { concepts: [{ term: literal, definition: literal, url: "/writing/concept/", anchor: "concept" }] } });
+    const concepts = parseStructured({}, "/concepts/", {
+      collections: { concepts: [{ term: literal, definition: literal, url: "/writing/concept/", anchor: "concept" }] },
+      conceptsCatalog: { list: [{ term: literal, definition: literal, url: "/writing/concept#concept", anchorId: "concept" }] },
+    });
     expect(concepts.values[0].hasDefinedTerm[0].name).toBe(literal);
     expect(concepts.values[0].hasDefinedTerm[0].description).toBe(literal);
     const projects = parseStructured({}, "/builds/", { groups: [{ projects: [{ name: literal, description: literal, href: "https://github.com/example/work" }] }] });

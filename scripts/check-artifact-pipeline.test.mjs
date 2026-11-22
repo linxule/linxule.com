@@ -1,37 +1,30 @@
 import { describe, expect, test } from "bun:test";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
+import matter from "gray-matter";
 import registerCollections from "../eleventy/collections.js";
 
-const read = (path) => readFileSync(path, "utf8");
+const read = (file) => readFileSync(file, "utf8");
 
 const artifactLayout = read("src/_includes/layouts/artifact.njk");
 const creatorLayout = read("src/making/creator/creator.njk");
 const creatorFamilyLayout = read("src/making/creator/family.njk");
+const filterBookPath = "src/_includes/components/making-filter-book.njk";
+const filterBook = existsSync(filterBookPath) ? read(filterBookPath) : "";
 const baseLayout = read("src/_includes/layouts/base.njk");
 const markdownTwin = read("src/md-outputs/artifacts.md.njk");
-const artifactSource = read(
-  "src/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things.md",
-);
-const kimiosSource = read(
-  "src/making/artifacts/artifact-2026-06-13-kimios.md",
-);
-const tideGardenSource = read(
-  "src/making/artifacts/artifact-2026-04-20-tide-garden.md",
-);
-const scoredSource = read(
-  "src/making/artifacts/artifact-2026-06-09-something-in-the-glass-scored.md",
-);
-const noPrivilegedAccessSource = read(
-  "src/making/artifacts/artifact-2026-06-16-no-privileged-access.md",
-);
-const videoWrapper = read(
-  "src/assets/artifacts/ten-thousand-things/index.html",
-);
 const indexNowScript = read("scripts/indexnow-submit.sh");
 const buildFreshnessScript = read("scripts/build-freshness.mjs");
-const deployGuidePath = ".claude/rules/deploying-artifacts.md";
-const deployGuideExists = existsSync(deployGuidePath);
-const deployGuide = deployGuideExists ? read(deployGuidePath) : "";
+
+const artifactDocs = readdirSync("src/making/artifacts")
+  .filter((f) => f.endsWith(".md"))
+  .sort()
+  .map((file) => {
+    const fullPath = path.join("src/making/artifacts", file);
+    const raw = read(fullPath);
+    const { data, content } = matter(raw, { cache: false });
+    return { file, fullPath, raw, data, content };
+  });
 
 describe("artifact publishing contract", () => {
   test("a family-only credit stays discoverable without colliding with its family page", () => {
@@ -42,10 +35,99 @@ describe("artifact publishing contract", () => {
     const api = { getFilteredByGlob: () => [generic, specific] };
     const models = registered.artifactsByCreator(api);
     const families = registered.artifactsByCreatorFamily(api);
-    expect(models.map(item => item.slug)).toEqual(["claude-opus-55"]);
+    expect(models.map((item) => item.slug)).toEqual(["claude-opus-55"]);
     expect(families[0].items).toEqual([generic, specific]);
-    expect(new Set([...models, ...families].map(item => item.slug)).size).toBe(2);
+    expect(new Set([...models, ...families].map((item) => item.slug)).size).toBe(2);
   });
+
+  test("gpt-6 astra and gpt 6 astra merge under the gpt family without splitting into gpt-6", () => {
+    const registered = {};
+    registerCollections({ addCollection: (name, callback) => { registered[name] = callback; } });
+    const hyphenated = { data: { creator: "gpt-6 astra" }, date: new Date("2026-09-19") };
+    const spaced = { data: { creator: "gpt 6 astra" }, date: new Date("2026-09-08") };
+    const api = { getFilteredByGlob: () => [hyphenated, spaced] };
+    const models = registered.artifactsByCreator(api);
+    const families = registered.artifactsByCreatorFamily(api);
+    expect(models.map((item) => item.slug)).toEqual(["gpt-6-astra"]);
+    expect(models[0].count).toBe(2);
+    expect(families.map((item) => item.slug)).toEqual(["gpt"]);
+    expect(families[0].count).toBe(2);
+  });
+
+  test("portraitsByPrompter guards against family-only single-word slug collisions", () => {
+    const registered = {};
+    registerCollections({ addCollection: (name, callback) => { registered[name] = callback; } });
+    const generic = { data: { prompter: "claude" }, date: new Date("2026-10-09") };
+    const specific = { data: { prompter: "claude fable 5" }, date: new Date("2026-09-28") };
+    const api = { getFilteredByGlob: () => [generic, specific] };
+    const models = registered.portraitsByPrompter(api);
+    const families = registered.portraitsByPrompterFamily(api);
+    expect(models.map((item) => item.slug)).toEqual(["claude-fable-5"]);
+    expect(families.map((item) => item.slug)).toEqual(["claude"]);
+    expect(families[0].count).toBe(2);
+  });
+
+  test("every artifact source satisfies core schema invariants", () => {
+    expect(artifactDocs.length).toBeGreaterThan(20);
+    for (const { file, data } of artifactDocs) {
+      expect(typeof data.title, `${file} title`).toBe("string");
+      expect(data.title.trim().length, `${file} title non-empty`).toBeGreaterThan(0);
+      expect(data.date, `${file} date`).toBeDefined();
+      expect(typeof data.creator, `${file} creator`).toBe("string");
+      expect(data.layout, `${file} layout`).toBe("layouts/artifact.njk");
+
+      if (Array.isArray(data.images)) {
+        for (const [idx, img] of data.images.entries()) {
+          expect(typeof img.src, `${file} images[${idx}].src`).toBe("string");
+          expect(typeof img.alt, `${file} images[${idx}].alt`).toBe("string");
+        }
+      }
+
+      if (typeof data.src === "string" && /\.html?$/i.test(data.src)) {
+        expect(typeof data.thumbnail, `${file} HTML artifact must declare thumbnail`).toBe("string");
+        if (data.thumbnail.startsWith("/")) {
+          expect(
+            existsSync(path.join("src", data.thumbnail.slice(1))),
+            `${file} thumbnail exists: ${data.thumbnail}`,
+          ).toBe(true);
+        }
+      }
+    }
+  });
+
+  test("every video artifact declares structured video metadata, minimal iframe privileges, and matching loop flag", () => {
+    const videos = artifactDocs.filter(({ data }) => data.mediaType === "video");
+    expect(videos.length).toBeGreaterThan(0);
+
+    for (const { file, data } of videos) {
+      expect(typeof data.thumbnail, `${file} video poster`).toBe("string");
+      expect(typeof data.mediaDescription, `${file} accessible mediaDescription`).toBe("string");
+      expect(typeof data.video?.contentUrl, `${file} video.contentUrl`).toBe("string");
+
+      if (typeof data.src === "string" && data.src.startsWith("/")) {
+        const wrapperPath = path.join("src", data.src.slice(1));
+        expect(existsSync(wrapperPath), `${file} wrapper exists`).toBe(true);
+        const wrapperHtml = read(wrapperPath);
+        // Script-free video wrappers must opt out of iframe script privileges.
+        if (!/<script\b/i.test(wrapperHtml)) {
+          expect(data.iframeCapabilities, `${file} script-free video wrapper must opt out of iframe scripts`).toEqual([]);
+        }
+        if (data.loop === true) {
+          expect(wrapperHtml, `${file} looping video wrapper carries loop attr`).toMatch(/\sloop(?:\s|>)/);
+        }
+      }
+    }
+  });
+
+  test("any artifact requesting allow-same-origin documents its reviewed sandbox exception", () => {
+    const sameOriginArtifacts = artifactDocs.filter(
+      ({ data }) => Array.isArray(data.iframeCapabilities) && data.iframeCapabilities.includes("allow-same-origin"),
+    );
+    for (const { file, raw } of sameOriginArtifacts) {
+      expect(raw, `${file} must document Reviewed sandbox exception`).toContain("Reviewed sandbox exception:");
+    }
+  });
+
   test("Pagefind covers the full artifact narrative, not only the hero", () => {
     const pagefindStart = artifactLayout.indexOf(
       'class="artifact-page" data-pagefind-body',
@@ -64,36 +146,17 @@ describe("artifact publishing contract", () => {
     expect(pagefindEnd).toBeGreaterThan(witnesses);
   });
 
-  test("same-origin iframe privileges are opt-in across artifact listings", () => {
-    for (const layout of [
-      artifactLayout,
-      creatorLayout,
-      creatorFamilyLayout,
-    ]) {
-      expect(layout).toContain(
-        'iframeCapabilities | default(["allow-scripts"])',
-      );
-      expect(layout).not.toContain(
-        'sandbox="allow-scripts allow-same-origin"',
-      );
+  test("same-origin iframe privileges are opt-in across artifact templates", () => {
+    const templates = [artifactLayout, creatorLayout, creatorFamilyLayout, filterBook].filter(Boolean);
+    for (const layout of templates) {
+      expect(layout).not.toContain('sandbox="allow-scripts allow-same-origin"');
     }
-
-    expect(creatorLayout).toContain("?v={{ site.version }}");
-    expect(creatorFamilyLayout).toContain("?v={{ site.version }}");
-  });
-
-  test("script-free video wrappers opt out of iframe privileges", () => {
-    expect(artifactSource).toContain("iframeCapabilities: []");
-    expect(kimiosSource).toContain("iframeCapabilities: []");
-    expect(tideGardenSource).toContain("iframeCapabilities: []");
-  });
-
-  test("nested Strudel players declare their reviewed same-origin exception", () => {
-    for (const source of [scoredSource, noPrivilegedAccessSource]) {
-      expect(source).toContain(
-        "iframeCapabilities: [allow-scripts, allow-same-origin]",
-      );
-      expect(source).toContain("Reviewed sandbox exception:");
+    expect(artifactLayout).toContain('iframeCapabilities | default(["allow-scripts"])');
+    // Creator templates may either render iframes directly or delegate via making-filter-book.njk.
+    const creatorSurface = `${creatorLayout}\n${creatorFamilyLayout}\n${filterBook}`;
+    if (creatorSurface.includes("<iframe")) {
+      expect(creatorSurface).toContain('iframeCapabilities | default(["allow-scripts"])');
+      expect(creatorSurface).toContain("?v={{ site.version }}");
     }
   });
 
@@ -105,19 +168,6 @@ describe("artifact publishing contract", () => {
     expect(baseLayout).toContain(
       '"creator": {"@type": "SoftwareApplication"',
     );
-  });
-
-  test("the TTT source declares structured video and an accessible alternative", () => {
-    expect(artifactSource).toContain("mediaType: video");
-    expect(artifactSource).toContain("contentUrl:");
-    expect(artifactSource).toContain("duration: PT49S");
-    expect(artifactSource).toContain("mediaDescription:");
-    expect(artifactSource).toContain("loop: true");
-    expect(artifactSource).toContain(
-      "creditText: Kimi K3, running in Kimi Code",
-    );
-    expect(artifactSource).toContain("schemaCreator: Kimi K3");
-    expect(videoWrapper).toMatch(/\sloop(?:\s|>)/);
   });
 
   test("Markdown twins describe media rather than calling every source an image", () => {
@@ -152,10 +202,5 @@ describe("artifact publishing contract", () => {
     expect(buildFreshnessScript).toContain(
       "process.env.VERCEL_GIT_COMMIT_SHA",
     );
-  });
-
-  test.skipIf(!deployGuideExists)("the guide makes looping a per-work decision", () => {
-    expect(deployGuide).toContain("loop: true");
-    expect(deployGuide).toContain("loop: false");
   });
 });

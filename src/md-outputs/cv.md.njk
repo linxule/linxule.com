@@ -4,12 +4,12 @@ eleventyExcludeFromCollections: true
 ---
 {%- for page in collections.all -%}
 {%- if page.url == "/cv/" or page.url == "/cv" -%}
-# {{ page.data.title }}
+# {{ page.data.title | safe }}
 
-{{ page.rawInput | markdownBody | safe }}
+{{ page.rawInput | markdownBody | replace(r/^### /gm, "") | replace(r/^## ([^\r\n]+)/gm, "**$1**") | replace(r/^# /gm, "## ") | safe }}
 
 ---
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/cv/*
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/cv*
 {%- endif -%}
 {%- endfor -%}

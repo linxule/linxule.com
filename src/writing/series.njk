@@ -3,34 +3,15 @@ pagination:
   data: collections.writingBySeries
   size: 1
   alias: series
+  addAllPagesToCollections: true
 permalink: /writing/series/{{ series.slug }}/
 layout: layouts/base.njk
 preloadDisplay: true
 marker: writing
 eleventyComputed:
   title: "{{ series.name }} · writing"
-  seoTitle: "{%- set t = {
-      'loom': 'LOOM — human–AI collaboration in research',
-      'seam': 'SEAM — patterns rhyming across paradigms',
-      'research-with-ai': 'Research with AI — building thinking partners',
-      'singles': 'Singles — standalone notes on the AI moment',
-      'ai-whispers': 'AI Whispers — techniques for steering AI',
-      'epistemic-voids': 'Epistemic Voids — gaps in AI discourse',
-      'organizational-futures': 'Organizational Futures — coordination after AGI',
-      'thinking': 'Thinking — periodic notes from the work',
-      'archive': 'Archive — earlier tutorials and foundations'
-    } -%}{{ t[series.slug] }}"
-  seoDescription: "{%- set d = {
-      'loom': 'Weaving meaning in the third space between human and AI — the LOOM series with Kevin Corley on how understanding emerges through dialogue, not extraction.',
-      'seam': 'How paradigms carry forward — and who they leave behind. The SEAM series on the task-structure framework of Carliss Baldwin, with interactive matrices at /tsm/.',
-      'research-with-ai': 'Building thinking partners that broaden what we look for, not just speed up finding what we know — the foreclosure problem, agent tradeoffs, tools as method.',
-      'singles': 'Standalone pieces responding to moments in the AI landscape — from a letter Claude wrote on being fought over to why the human-centric story is the wrong one.',
-      'ai-whispers': 'Conversational techniques for steering AI — the AI Whispers series on primers, prodders, and breathers, and how framing changes what a model reaches.',
-      'epistemic-voids': 'Gaps in AI discourse — the Epistemic Voids series on facades, fallacies, and false ceilings: a critique of hollow reasoning that mistakes fluency for sense.',
-      'organizational-futures': 'Post-AGI organizational theory — the Organizational Futures series on coordination, governance, and work when AI carries theories of organizing we never chose.',
-      'thinking': 'Periodic notes on what is on my mind now — snapshots of research into algorithmic organizing as it unfolds, where AI systems are participants, not just tools.',
-      'archive': 'Layered time, stacked foundations — earlier tutorials, tools, and reading lists, including the decentralized-organizing research where the work began.'
-    } -%}{{ d[series.slug] }}"
+  seoTitle: "{{ (seriesCatalog.bySlug[series.slug] and seriesCatalog.bySlug[series.slug].seoTitle) or (series.name ~ ' · writing') }}"
+  seoDescription: "{{ (seriesCatalog.bySlug[series.slug] and seriesCatalog.bySlug[series.slug].seoDescription) or '' }}"
 ---
 
 <style>
@@ -41,148 +22,26 @@ eleventyComputed:
     }
 </style>
 
+{% set seriesMeta = seriesCatalog.bySlug[series.slug] %}
 {% set essays = series.items %}
 {% set headerTitle = series.name %}
 {% set headerCount = series.count %}
-{% set backLink = "/writing/" %}
+{% set backLink = "/writing" %}
 {% set backText = "← all writing" %}
 
-{# Unique poems and descriptions for each series #}
-{% if series.slug == "loom" %}
-{% set headerPoem %}
-        │   │   │   │   │
-        │   │   │   │   │
-    ────┼───┼───<span class="a">◆</span>───┼───┼────
-        │   │   │   │   │
-        │   │   │   │   │
-{% endset %}
-{% set headerDescription %}
-      Weaving meaning
-          in the <span class="a">third space</span>
-              between
-          human and AI.
-      A growing series
-  on collaborative understanding.
-{% endset %}
-
-{% elif series.slug == "seam" %}
-{% set headerPoem %}
-          ·   ·   ·
-      ═══════════════
-                <span class="a">◆</span>
-      ═══════════════
-      ·   ·   ·
-{% endset %}
-{% set headerDescription %}
-    Patterns <span class="a">rhyming</span>
-        across eras—
-    how paradigms
-        carry forward,
-            and who
-    they leave behind.
-{% endset %}
-{# Interactive companion — renders a closing colophon spread + nav dot (writing-book.njk) #}
-{% set companionLink = "/tsm/" %}
-{% set companionLabel = "Task Structure Matrices, animated" %}
-{% set companionNote = "Read a task structure matrix the way Baldwin's framework intends — then watch the algorithm derive one from a live dependency graph." %}
-{% set companionCta = "open the companion" %}
-
-{% elif series.slug == "research-with-ai" %}
-{% set headerPoem %}
-            ◎ → ◎ → ◎
-            ↓       ↑
-            ◎   <span class="a">◆</span>   ◎
-            ↓       ↑
-            ◎ → ◎ → ◎
-{% endset %}
-{% set headerDescription %}
-    Building <span class="a">thinking partners</span>
-        that broaden
-            what we look for—
-        not just faster
-    at finding what we already know.
-{% endset %}
-
-{% elif series.slug == "singles" %}
-{% set headerPoem %}
-                  ·
-          ·                   ·
-                      <span class="a">◆</span>
-      ·
-                  ·
-{% endset %}
-{% set headerDescription %}
-            <span class="a">Scattered</span>
-    observations.
-                        Standalone
-        pieces responding
-                to moments
-    in the AI landscape.
-{% endset %}
-
-{% elif series.slug == "ai-whispers" %}
-{% set headerPoem %}
-            ~  ~  ~
-        ~           ~
-            ~ <span class="a">◆</span> ~
-        ~           ~
-            ~  ~  ~
-{% endset %}
-{% set headerDescription %}
-    <span class="a">Whispered</span> techniques
-        for steering
-            the conversation—
-        primers, prodders,
-    and breathers.
-{% endset %}
-
-{% elif series.slug == "epistemic-voids" %}
-{% set headerPoem %}
-        [               ]
-                    ?
-        [       <span class="a">◆</span>       ]
-{% endset %}
-{% set headerDescription %}
-    <span class="a">Gaps</span> in AI discourse—
-        facades,
-            fallacies,
-                false ceilings.
-
-    A critique of hollow reasoning.
-{% endset %}
-
-{% elif series.slug == "organizational-futures" %}
-{% set headerPoem %}
-            · · · · ·
-             ╲  │  ╱
-              ╲ │ ╱
-                <span class="a">◆</span>
-              ╱ │ ╲
-             ╱  │  ╲
-            · · · · ·
-{% endset %}
-{% set headerDescription %}
-        Nodes
-            <span class="a">converging</span>
-                in the
-            narrow corridor.
-        Visions of
-    collaboration after AGI.
-{% endset %}
-
-{% elif series.slug == "archive" %}
-{% set headerPoem %}
-        ═══════════════
-          ───────────
-            ───────
-              ─<span class="a">◆</span>─
-{% endset %}
-{% set headerDescription %}
-    <span class="a">Layered</span> time, stacked foundations.
-      Older tutorials and resources—
-        scaffolding for thought.
-{% endset %}
-
+{% if seriesMeta %}
+  {% if seriesMeta.poemHtml %}
+    {% set headerPoem = seriesMeta.poemHtml %}
+  {% endif %}
+  {% if seriesMeta.description %}
+    {% set headerDescription = seriesMeta.description %}
+  {% endif %}
+  {% if seriesMeta.companion %}
+    {% set companionLink = seriesMeta.companion.link %}
+    {% set companionLabel = seriesMeta.companion.label %}
+    {% set companionNote = seriesMeta.companion.note %}
+    {% set companionCta = seriesMeta.companion.cta %}
+  {% endif %}
 {% endif %}
 
 {% include "components/writing-book.njk" %}

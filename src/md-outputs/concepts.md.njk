@@ -21,9 +21,9 @@ eleventyExcludeFromCollections: true
 
 > {{ c.definition | safe }}
 
-Source: [{{ c.title | safe }}]({{ site.url }}{{ c.url }}#{{ c.anchor }})
+Source: [{{ c.title | safe }}]({{ site.url }}{{ c.url | stripTrailingSlash }}#{{ c.anchor }})
 {% endif %}{% endfor %}{% if concept.essay %}
-Essay: {{ site.url }}{{ concept.essay }}
+Essay: {{ site.url }}{{ concept.essay | stripTrailingSlash }}
 {% endif %}
 
 {% endfor %}
@@ -36,5 +36,5 @@ Essay: {{ site.url }}{{ concept.essay }}
 
 ---
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/concepts/*
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/concepts*
 {% endif %}{% endfor %}

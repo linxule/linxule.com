@@ -78,16 +78,25 @@ marker: "concepts"
     .territory-name {
         font-family: var(--font-mono);
         font-size: var(--size-label);
+        font-weight: 400;
         letter-spacing: var(--tracking-label);
         color: var(--ink-faint);
         text-transform: uppercase;
-        padding-top: 0.5rem;
-        margin-bottom: 2.5rem;
+        margin: 0 0 2.5rem;
+        padding: 0.5rem 0 0;
+        border: none;
     }
 
     .concept-entry {
         padding: 1.2rem 0;
         margin-left: 2rem;
+        max-width: 44rem;
+        scroll-margin-top: 8rem;
+    }
+
+    .concept-entry:target {
+        padding-left: 1rem;
+        border-left: 2px solid var(--bloom);
     }
 
     .concept-entry:nth-child(2) { margin-left: 4.5rem; }
@@ -95,8 +104,16 @@ marker: "concepts"
     .concept-entry:nth-child(4) { margin-left: 5.5rem; }
     .concept-entry:nth-child(5) { margin-left: 1.5rem; }
 
+    .concept-entry-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.35rem 1.5rem;
+    }
+
     .concept-entry-name {
-        font-size: 1.1rem;
+        font-size: var(--size-entry);
         font-weight: 400;
         transition: color 0.3s ease;
         text-decoration: none;
@@ -107,8 +124,22 @@ marker: "concepts"
         color: var(--ink-faint);
     }
 
-    a.concept-entry-name:hover {
+    a.concept-entry-name:hover,
+    a.concept-entry-name:focus-visible {
         color: var(--bloom);
+    }
+
+    .concept-locator {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-quiet);
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .concept-locator.forming {
+        letter-spacing: var(--tracking-label);
     }
 
     .concept-oneliner {
@@ -118,6 +149,7 @@ marker: "concepts"
         line-height: 1.8;
         margin-top: 0.4rem;
         margin-left: 1rem;
+        max-width: var(--measure-own);
     }
 
     .territory-questions {
@@ -130,11 +162,6 @@ marker: "concepts"
         font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 1.8;
-        transition: color 0.3s ease;
-    }
-
-    .territory-question:hover {
-        color: var(--bloom);
     }
 
     .territory-question:nth-child(1) { margin-left: 0; }
@@ -167,6 +194,7 @@ marker: "concepts"
         .spread-opening {
             grid-template-columns: 1fr;
             gap: 2rem;
+            padding-bottom: 4rem;
         }
 
         .thesis-line:nth-child(n) {
@@ -181,8 +209,26 @@ marker: "concepts"
             margin-left: 0;
         }
 
+        .territory-questions {
+            padding-left: 0;
+        }
+
         .territory-question:nth-child(n) {
             margin-left: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        main {
+            padding: 6rem 1.5rem 3rem;
+        }
+
+        .horizon {
+            margin: 3rem 0;
+        }
+
+        .concept-locator {
+            white-space: normal;
         }
     }
 </style>
@@ -207,16 +253,20 @@ marker: "concepts"
 
 <div class="horizon"></div>
 
-{% for territory in territories %}
+{% for territory in conceptsCatalog.territories %}
 <section class="territory">
-    <div class="territory-name">{{ territory.name }}</div>
+    <h2 class="territory-name">{{ territory.name }}</h2>
     {% for concept in territory.concepts %}
-    <div class="concept-entry">
-        {% if concept.essay %}
-        <a class="concept-entry-name" href="{{ concept.essay }}#dfn-{{ concept.term | slugify }}">{{ concept.term }}</a>
-        {% else %}
-        <span class="concept-entry-name emerging">{{ concept.term }}</span>
-        {% endif %}
+    <div class="concept-entry" id="{{ concept.anchorId }}">
+        <div class="concept-entry-head">
+            {% if concept.status == "anchored" %}
+            <a class="concept-entry-name" href="{{ concept.url }}">{{ concept.term }}</a>
+            <span class="concept-locator">{{ concept.essaySeries or ((concept.essayTitle or 'Essay').split(' — ')[0].split(':')[0]) }}{% if concept.essayYear %} · {{ concept.essayYear }}{% endif %}</span>
+            {% else %}
+            <span class="concept-entry-name emerging">{{ concept.term }}</span>
+            <span class="concept-locator forming">forming</span>
+            {% endif %}
+        </div>
         <div class="concept-oneliner">{{ concept.oneliner }}</div>
     </div>
     {% endfor %}

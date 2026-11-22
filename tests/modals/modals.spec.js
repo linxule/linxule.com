@@ -51,16 +51,24 @@ test('slides open with focus, isolate the background, and retain deck keyboard c
   expect(await page.locator('[data-slides-figure]').evaluate(figure => Boolean(figure.closest('[inert]')))).toBe(false);
 });
 
-test('slide guest Tab traversal returns to close on repeated opens', async ({ page }) => {
+test('slide guest Tab traversal returns to close and preserves slide index on repeated opens', async ({ page }) => {
   await page.goto('/talks/thinking-through-ai-01/');
   const overlay = page.locator('#slides-lightbox');
   const close = overlay.getByRole('button', { name: 'Close slides' });
+  const deck = overlay.frameLocator('iframe').locator('deck-stage');
   for (let run = 0; run < 2; run++) {
     await page.locator('[data-slides-fullscreen]').click();
     await expect(close).toBeFocused();
-    await expect(overlay.frameLocator('iframe').locator('deck-stage')).toBeVisible();
+    await expect(deck).toBeVisible();
+    if (run === 1) {
+      expect(await deck.evaluate(stage => stage._index)).toBe(1);
+    }
     await page.keyboard.press('Tab');
     await expect(overlay.locator('iframe')).toBeFocused();
+    if (run === 0) {
+      await page.keyboard.press('ArrowRight');
+      await expect.poll(() => deck.evaluate(stage => stage._index)).toBe(1);
+    }
     await expectTabReturnsToClose(page, close);
     await close.press('Enter');
     await expect(overlay).toHaveAttribute('aria-hidden', 'true');

@@ -1,63 +1,55 @@
 /**
  * check-renderings.mjs — build-failing lint: every content shape has its full
- * rendering fabric. Generalizes the og-lint pattern (scripts/check-og-images.mjs)
- * to the whole "one source, many renderings" fabric described in
- * .claude/docs/design-system.md § Renderings.
+ * rendering fabric, derived from `eleventy/shapes.mjs`.
  *
- * SHAPES below is the registry — the source of truth for what shapes exist and
- * where their built HTML lives. For every page belonging to a twinned shape this
- * checks, against _site/:
- *   - a markdown twin exists (e.g. _site/papers/<slug>.md beside
- *     _site/papers/<slug>/index.html; root -> _site/index.md)
- *   - the HTML <head> carries a <link rel="alternate" type="text/markdown">
+ * For every page belonging to a twinned shape this checks, against `_site/`:
+ *   - a markdown twin exists (`_site/<path>.md`, root -> `_site/index.md`)
+ *   - the HTML `<head>` carries `<link rel="alternate" type="text/markdown">`
  *     pointing at exactly that twin
- *   - middleware.ts's MD_PATHS regex matches one representative URL per shape
- *     (root is checked separately — it negotiates via a dedicated branch, not
- *     MD_PATHS; tags/series/prompter are excluded by design, not checked here)
- *   - each Law-layout in LAYOUTS carries data-pagefind-body (source grep)
- *   - _site/feed.xml has an <entry> for at least one URL from each dated shape
- *   - every spread of a scroll book has an id equal to its data-book-target
- *   - no id repeats on a page the site's templates rendered; pages copied in
- *     whole (artifacts, decks, the TSM demo) are not checked
- *     (both in scripts/lib/spread-ids.mjs)
- *
- * Runs post-eleventy in `bun run build` (see package.json). Node/Bun-runnable,
- * no headless browser.
+ *   - `middleware.ts` imports `MD_PATHS` from `./eleventy/shapes.mjs`, keeps a
+ *     static literal `config.matcher` in parity with `MIDDLEWARE_MATCHERS`, and
+ *     BOTH `MD_PATHS` and `config.matcher` (via `path-to-regexp`) match every
+ *     shape's representative URL
+ *   - every Pagefind-indexed shape carries `data-pagefind-body`
+ *   - `_site/feed.xml` has an `<entry>` for at least one URL from each dated shape
+ *   - every spread of a scroll book has an id equal to its `data-book-target`,
+ *     and no id repeats on any site page (`scripts/lib/spread-ids.mjs`)
+ *   - zero `[object Object]`, raw `<script>`, or `&amp;` leaks in `.md` twins
+ *   - `_site/tsm/` is excluded (independently developed sub-app)
  */
-import { existsSync, readFileSync, readdirSync } from "fs";
-import path from "path";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
+import { match } from "path-to-regexp";
+import {
+  COLLECTION_TWINS,
+  MD_PATHS,
+  MIDDLEWARE_MATCHERS,
+  STATIC_TWINS,
+} from "../eleventy/shapes.mjs";
 import { checkSpreadIds, checkUniqueIds, isBookPage, isSitePage } from "./lib/spread-ids.mjs";
 
 const SITE = "_site";
+const FENCE = /^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/gm;
+const CODE_SPAN = /(`+)(?!`)[^\n]*?(?<!`)\1(?!`)/g;
 
-// ── SHAPES — the registry ───────────────────────────────────────────────────
-// kind "multi": scan _site/<dir>/*/index.html (one page per collection item).
-// kind "single": exactly one page at _site/<path>/index.html ("" = site root).
-// layout: source file in src/_includes/layouts/ that must carry data-pagefind-body
-//   (only set for the 9 Law-layouts named in the spec — indexes and root have none).
-// dated: must have at least one URL represented in _site/feed.xml.
 const SHAPES = [
-  // Collections — one HTML page per content item
-  { name: "writing",   kind: "multi",  dir: "writing",          layout: "writing.njk",  dated: true },
-  { name: "portraits", kind: "multi",  dir: "making/portraits", layout: "portrait.njk", dated: true },
-  { name: "artifacts", kind: "multi",  dir: "making/artifacts", layout: "artifact.njk", dated: true },
-  { name: "talks",     kind: "multi",  dir: "talks",            layout: "talk.njk",     dated: true },
-  { name: "papers",    kind: "multi",  dir: "papers",           layout: "paper.njk",    dated: true },
-  // Single content pages
-  { name: "thinking",  kind: "single", path: "thinking",  layout: "thinking.njk" },
-  { name: "concepts",  kind: "single", path: "concepts",  layout: "concepts.njk" },
-  { name: "teaching",  kind: "single", path: "teaching",  layout: "teaching.njk" },
-  { name: "cv",        kind: "single", path: "cv",        layout: "cv.njk" },
-  { name: "cv-zh",     kind: "single", path: "cv-zh",     layout: "cv.njk" },
-  { name: "builds",  kind: "single", path: "builds",  layout: "builds.njk" },
-  { name: "vellum",  kind: "single", path: "builds/vellum", layout: "vellum.njk" },
-  // Hand-maintained indexes — no layout/pagefind or feed requirement
-  { name: "writing-index", kind: "single", path: "writing" },
-  { name: "making-index",  kind: "single", path: "making" },
-  { name: "talks-index",   kind: "single", path: "talks" },
-  { name: "papers-index",  kind: "single", path: "papers" },
-  // Site root
-  { name: "root", kind: "single", path: "" },
+  ...COLLECTION_TWINS.map((c) => ({
+    name: c.id,
+    kind: "multi",
+    dir: c.dir,
+    layout: c.layout,
+    pagefind: true,
+    dated: c.inFeed,
+  })),
+  ...STATIC_TWINS.map((s) => ({
+    name: s.id,
+    kind: "single",
+    path: s.url === "/" ? "" : s.url.replace(/^\//, ""),
+    layout: s.layout || null,
+    sourceFile: s.sourceFile || null,
+    pagefind: Boolean(s.pagefind),
+    dated: false,
+  })),
 ];
 
 const problems = [];
@@ -80,34 +72,56 @@ function htmlPagesFor(shape) {
   return existsSync(path.join(SITE, rel)) ? [rel] : [];
 }
 
-// _site-relative html path -> its content path with no leading/trailing slash
-// ("" for root). "writing/foo/index.html" -> "writing/foo"; "index.html" -> "".
 function contentPathOf(relHtmlPath) {
   return relHtmlPath === "index.html" ? "" : relHtmlPath.replace(/\/index\.html$/, "");
 }
 
-// _site-relative twin path for a given html page. "" (root) -> "index.md".
 function twinFor(relHtmlPath) {
   const cp = contentPathOf(relHtmlPath);
   return cp === "" ? "index.md" : `${cp}.md`;
 }
 
-// ── middleware.ts MD_PATHS extraction ───────────────────────────────────────
+// ── middleware.ts parity (imports MD_PATHS + static literal config.matcher) ─
 const middlewareSrc = readFileSync("middleware.ts", "utf8");
-// Anchored to line start AND line end (`;\s*$`): a trailing comment or a
-// multiline rewrite makes this FAIL LOUDLY (null match -> problem pushed)
-// instead of silently extracting a wrong regex. Guard comment in middleware.ts.
-const mdPathsMatch = middlewareSrc.match(/^const MD_PATHS = \/(.+)\/([a-z]*);\s*$/m);
-if (!mdPathsMatch) {
-  problems.push("[middleware] could not find `const MD_PATHS = /.../;` in middleware.ts — fix: middleware.ts");
-}
-const mdPathsRegex = mdPathsMatch ? new RegExp(mdPathsMatch[1], mdPathsMatch[2]) : null;
 
-// Root negotiates via a dedicated branch (pathname === '/' -> /index.md), not MD_PATHS.
+if (!/import\s*\{[^}]*\bMD_PATHS\b[^}]*\}\s*from\s*['"]\.\/eleventy\/shapes\.mjs['"]/.test(middlewareSrc)) {
+  problems.push("[middleware] middleware.ts must import MD_PATHS from './eleventy/shapes.mjs'");
+}
+
 const hasRootBranch = /pathname === ['"]\/['"][\s\S]{0,300}\/index\.md/.test(middlewareSrc);
 if (!hasRootBranch) {
   problems.push("[root] middleware.ts has no pathname === '/' -> /index.md rewrite branch — fix: middleware.ts");
 }
+
+const matcherBlock = middlewareSrc.match(
+  /export\s+const\s+config\s*=\s*\{\s*matcher\s*:\s*\[([\s\S]*?)\]\s*,?\s*\}\s*;/,
+);
+const extractedMatchers = [];
+if (!matcherBlock) {
+  problems.push("[middleware] could not parse static literal `export const config = { matcher: [...] };` in middleware.ts");
+} else {
+  const strippedBlock = matcherBlock[1].replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
+  for (const m of strippedBlock.matchAll(/['"]([^'"]+)['"]/g)) {
+    extractedMatchers.push(m[1]);
+  }
+  const expectedSet = new Set(MIDDLEWARE_MATCHERS);
+  const actualSet = new Set(extractedMatchers);
+  for (const expected of MIDDLEWARE_MATCHERS) {
+    if (!actualSet.has(expected)) {
+      problems.push(`[middleware] config.matcher is missing "${expected}" from MIDDLEWARE_MATCHERS — fix: middleware.ts`);
+    }
+  }
+  for (const actual of extractedMatchers) {
+    if (!expectedSet.has(actual)) {
+      problems.push(`[middleware] config.matcher has unexpected "${actual}" absent from MIDDLEWARE_MATCHERS — fix: eleventy/shapes.mjs or middleware.ts`);
+    }
+  }
+}
+
+const compiledMatchers = extractedMatchers.map((pattern) => ({
+  pattern,
+  test: match(pattern, { sensitive: true, end: true, decode: decodeURIComponent }),
+}));
 
 // ── feed.xml ─────────────────────────────────────────────────────────────
 const feedPath = path.join(SITE, "feed.xml");
@@ -128,7 +142,7 @@ for (const shape of SHAPES) {
     const twinAbs = path.join(SITE, twinRel);
     if (!existsSync(twinAbs)) {
       problems.push(`[${shape.name}] missing markdown twin: _site/${twinRel} (surface: Markdown twin, for _site/${rel}) — fix: src/md-outputs/ template for this shape`);
-      continue; // no twin to point at — skip the alternate-link href check for this page
+      continue;
     }
 
     const html = readFileSync(path.join(SITE, rel), "utf8");
@@ -141,21 +155,28 @@ for (const shape of SHAPES) {
     }
   }
 
-  // Content negotiation — MD_PATHS regex, one representative URL (root excluded, checked above)
-  if (shape.name !== "root" && mdPathsRegex) {
-    const repUrl = "/" + contentPathOf(pages[0]);
-    if (!mdPathsRegex.test(repUrl)) {
-      problems.push(`[${shape.name}] MD_PATHS does not match representative URL ${repUrl} (surface: Content negotiation) — fix: middleware.ts MD_PATHS`);
-    }
+  // Content negotiation — BOTH MD_PATHS AND middleware config.matcher must match representative URL
+  const repUrl = shape.name === "root" ? "/" : "/" + contentPathOf(pages[0]);
+  if (shape.name !== "root" && !MD_PATHS.test(repUrl)) {
+    problems.push(`[${shape.name}] MD_PATHS does not match representative URL ${repUrl} (surface: Content negotiation) — fix: eleventy/shapes.mjs MD_PATHS`);
+  }
+  if (compiledMatchers.length && !compiledMatchers.some(({ test }) => test(repUrl) !== false)) {
+    problems.push(`[${shape.name}] middleware.ts config.matcher does not match representative URL ${repUrl} — fix: middleware.ts config.matcher`);
   }
 
-  // Pagefind — data-pagefind-body on the shape's Law-layout source
+  // Pagefind — data-pagefind-body on the shape's layout or source template
   if (shape.layout) {
     const layoutFile = `src/_includes/layouts/${shape.layout}`;
     if (!existsSync(layoutFile)) {
       problems.push(`[${shape.name}] layout file not found: ${layoutFile}`);
     } else if (!readFileSync(layoutFile, "utf8").includes("data-pagefind-body")) {
       problems.push(`[${shape.name}] layout missing data-pagefind-body (surface: Pagefind) — fix: ${layoutFile}`);
+    }
+  } else if (shape.pagefind && shape.sourceFile) {
+    if (!existsSync(shape.sourceFile)) {
+      problems.push(`[${shape.name}] source template not found: ${shape.sourceFile}`);
+    } else if (!readFileSync(shape.sourceFile, "utf8").includes("data-pagefind-body")) {
+      problems.push(`[${shape.name}] template missing data-pagefind-body (surface: Pagefind) — fix: ${shape.sourceFile}`);
     }
   }
 
@@ -168,55 +189,79 @@ for (const shape of SHAPES) {
   }
 }
 
-// ── phantom alternates — every advertised twin must exist ───────────────────
-// SHAPES checks the pages that SHOULD have twins; this walks ALL built HTML and
-// checks that no page — including ones the registry deliberately excludes
-// (tags, series, prompter/creator) — advertises a twin that 404s. Added from the
-// 2026-07-08 adversarial review (series pages had shipped phantom alternates).
-function walkHtml(dir) {
+// ── walk built HTML & Markdown twins (excluding _site/tsm/) ──────────────────
+function walkBuilt(dir, ext) {
   const out = [];
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, e.name);
-    if (e.isDirectory()) out.push(...walkHtml(p));
-    else if (e.name.endsWith(".html")) out.push(p);
+    const rel = path.relative(SITE, p).split(path.sep).join("/");
+    if (e.isDirectory()) {
+      if (rel === "tsm" || rel.startsWith("tsm/")) continue;
+      if (ext === ".md" && (rel === "assets" || rel.startsWith("assets/"))) continue;
+      out.push(...walkBuilt(p, ext));
+    } else if (e.name.endsWith(ext)) {
+      out.push(p);
+    }
   }
   return out;
 }
+
 let alternatesChecked = 0;
 let bookPages = 0;
 let idPages = 0;
-for (const abs of walkHtml(SITE)) {
+for (const abs of walkBuilt(SITE, ".html")) {
   const html = readFileSync(abs, "utf8");
+  const rel = path.relative(SITE, abs);
   if (isBookPage(html)) {
     bookPages++;
-    for (const p of checkSpreadIds(html, path.relative(SITE, abs))) problems.push(`${p} — fix: src/making/index.njk or src/_includes/components/writing-book.njk`);
+    for (const p of checkSpreadIds(html, rel)) problems.push(`${p} — fix: src/making/index.njk or src/_includes/components/writing-book.njk`);
     idPages++;
   } else if (isSitePage(html)) {
-    for (const p of checkUniqueIds(html, path.relative(SITE, abs))) problems.push(`${p} — fix: the template or transform that writes the id (definition callouts: addDefinitionIds in eleventy/transforms.js)`);
+    for (const p of checkUniqueIds(html, rel)) problems.push(`${p} — fix: the template or transform that writes the id (definition callouts: addDefinitionIds in eleventy/transforms.js)`);
     idPages++;
   }
   for (const m of html.matchAll(/<link rel="alternate" type="text\/markdown" href="([^"]+)"/g)) {
     const href = m[1];
-    if (!href.startsWith("/")) continue; // external alternates out of scope
+    if (!href.startsWith("/")) continue;
     alternatesChecked++;
     if (!existsSync(path.join(SITE, href.replace(/^\//, "")))) {
-      const page = path.relative(SITE, abs);
-      problems.push(`[phantom] ${page} advertises a markdown twin that does not exist: ${href} — fix: src/_includes/layouts/base.njk mdAlternate logic`);
+      problems.push(`[phantom] ${rel} advertises a markdown twin that does not exist: ${href} — fix: eleventy/shapes.mjs mdAlternateForUrl`);
     }
   }
 }
-// The id check finds the site's own pages by their stylesheet link. If that
-// link ever changes shape, say so, do not pass with nothing checked.
-if (!idPages) problems.push(`[unique-ids] no built page loads /assets/css/main.css, so none was checked for repeated ids — fix: isSitePage in scripts/lib/spread-ids.mjs`);
+if (!idPages) {
+  problems.push(`[unique-ids] no built page loads /assets/css/main.css, so none was checked for repeated ids — fix: isSitePage in scripts/lib/spread-ids.mjs`);
+}
+
+// ── Markdown twin hygiene: zero [object Object], raw <script>, or &amp; ─────
+let mdTwinsChecked = 0;
+for (const abs of walkBuilt(SITE, ".md")) {
+  const rel = path.relative(SITE, abs).split(path.sep).join("/");
+  if (rel.startsWith(".well-known/")) continue;
+  mdTwinsChecked++;
+  const raw = readFileSync(abs, "utf8");
+  if (raw.includes("[object Object]")) {
+    problems.push(`[md-hygiene] ${rel} contains literal "[object Object]" — check YAML shaped arrays (Gotcha #55)`);
+  }
+  const stripped = raw.replace(FENCE, "").replace(CODE_SPAN, "");
+  if (/<script\b/i.test(stripped)) {
+    problems.push(`[md-hygiene] ${rel} contains raw <script> tag outside code blocks — fix: eleventy/filters.js markdownBody or source .md`);
+  }
+  if (/&amp;/i.test(stripped)) {
+    problems.push(`[md-hygiene] ${rel} contains HTML-escaped "&amp;" outside code blocks — fix: add | safe or decode in src/md-outputs/`);
+  }
+}
 
 // ── report ───────────────────────────────────────────────────────────────
 if (problems.length) {
   console.error(
     `[renderings-lint] FAILED — ${problems.length} problem(s) across ${SHAPES.length} shape(s):\n` +
       problems.map((p) => "  - " + p).join("\n") +
-      `\nFix: see .claude/docs/design-system.md § Renderings and .claude/rules/papers.md`
+      `\nFix: see .claude/docs/design-system.md § Renderings and eleventy/shapes.mjs`,
   );
   process.exit(1);
 }
 
-console.log(`[renderings-lint] OK — ${SHAPES.length} shapes, ${pagesChecked} page(s) checked, ${alternatesChecked} alternate link(s) verified, ${bookPages} book page(s) with addressable spreads, ${idPages} page(s) with unique ids, all twinned/negotiated/indexed/fed.`);
+console.log(
+  `[renderings-lint] OK — ${SHAPES.length} shapes, ${pagesChecked} page(s) checked, ${alternatesChecked} alternate link(s) verified, ${mdTwinsChecked} markdown twin(s) clean, ${bookPages} book page(s) with addressable spreads, ${idPages} page(s) with unique ids, middleware matcher parity verified.`,
+);

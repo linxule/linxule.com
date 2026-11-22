@@ -9,6 +9,10 @@
 //       under an old name (an unfrozen EB Garamond, say) changes its hash and fails here, as well as in F4
 //   F6  the Kai `shared` face is declared after the `making` face: browsers try a family's faces last-declared first,
 //       so the other order sends a page that italicises one name to the 177 kB making file (kai-slice-proof.mjs)
+//   F7  upright Noto Serif SC: per weight (300/400/500), the broad CJK `local('xule-no-such-face')` guard is declared
+//       first, any `cv-zh` slice second, and the `shared` slice last (so non-/cv-zh/ pages fetch only `shared`, and
+//       any unlisted CJK char hits the guard instead of falling into italic Kai)
+//   F8  no external Google Fonts stylesheet or preconnect links remain in templates
 import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import path from "node:path";
@@ -31,10 +35,26 @@ for (const t of TEMPLATES) {
     if (!href || !used.has(href)) problems.push(`F3 ${t}: font preload ${href || m[0]} is not a url any @font-face uses`);
     if (!/\bcrossorigin\b/i.test(m[0])) problems.push(`F3 ${t}: font preload ${href} lacks crossorigin (the font would be fetched twice)`);
   }
+  if (/fonts\.googleapis\.com|fonts\.gstatic\.com/i.test(html)) {
+    problems.push(`F8 ${t}: external Google Fonts link found; all faces including upright Noto Serif SC are self-hosted`);
+  }
 }
 const kaiAt = (slice) => css.search(new RegExp(`@font-face\\s*\\{[^}]*lxgw-wenkai-italic-${slice}\\.`));
 if (kaiAt("shared") >= 0 && kaiAt("making") >= 0 && kaiAt("shared") < kaiAt("making"))
   problems.push(`F6 ${CSS}: the lxgw-wenkai-italic-shared @font-face must come after the -making one (last declared is tried first)`);
+for (const w of ["300", "400", "500"]) {
+  const guardAt = css.search(new RegExp(`@font-face\\s*\\{[^}]*font-family:\\s*['"]Noto Serif SC['"][^}]*font-style:\\s*normal[^}]*font-weight:\\s*${w}\\b[^}]*local\\(['"]xule-no-such-face['"]\\)`));
+  const cvZhAt = css.search(new RegExp(`@font-face\\s*\\{[^}]*noto-serif-sc-roman-${w}-cv-zh\\.`));
+  const sharedAt = css.search(new RegExp(`@font-face\\s*\\{[^}]*noto-serif-sc-roman-${w}-shared\\.`));
+  if (guardAt < 0) problems.push(`F7 ${CSS}: missing upright Noto Serif SC weight ${w} local('xule-no-such-face') guard face`);
+  if (sharedAt < 0) problems.push(`F7 ${CSS}: missing noto-serif-sc-roman-${w}-shared @font-face`);
+  if (guardAt >= 0 && cvZhAt >= 0 && cvZhAt < guardAt)
+    problems.push(`F7 ${CSS}: noto-serif-sc-roman-${w}-cv-zh must come after the weight ${w} guard face`);
+  if (guardAt >= 0 && sharedAt >= 0 && sharedAt < guardAt)
+    problems.push(`F7 ${CSS}: noto-serif-sc-roman-${w}-shared must come after the weight ${w} guard face`);
+  if (cvZhAt >= 0 && sharedAt >= 0 && sharedAt < cvZhAt)
+    problems.push(`F7 ${CSS}: noto-serif-sc-roman-${w}-shared must come after -cv-zh (last declared is tried first)`);
+}
 const manifest = path.join(FONTS, "MANIFEST.tsv");
 const rows = existsSync(manifest) ? new Map(readFileSync(manifest, "utf8").split("\n").filter((l) => l && !l.startsWith("#") && !l.startsWith("file\t")).map((l) => { const c = l.split("\t"); return [c[0], c[6]]; })) : new Map();
 for (const f of files) {
@@ -46,4 +66,4 @@ for (const f of files) {
   if (rows.get(f) !== sha) problems.push(`F4 ${manifest}: sha256 for ${f} does not match the file`);
 }
 if (problems.length) { console.error(`[fonts] ${problems.length} problem(s):\n  ${problems.join("\n  ")}`); process.exit(1); }
-console.log(`[fonts] OK: ${files.length} files, named by their hash, all used by main.css, all in MANIFEST.tsv; preloads match; Kai slices in order`);
+console.log(`[fonts] OK: ${files.length} files, named by their hash, all used by main.css, all in MANIFEST.tsv; preloads match; Kai and Noto Serif SC slices in order; no external Google Fonts`);

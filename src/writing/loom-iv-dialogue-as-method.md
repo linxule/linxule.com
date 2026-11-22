@@ -80,7 +80,7 @@ This experience crystallized for me the unique position we're in as organization
 ![A platypus swimming underwater past trailing bubbles above dark rounded stones, in moody black and white](/writing/attachments/loom-iv-dialogue-as-method-02.jpeg)
 
 
-# **A Letter to Social Scientists in the Age of AI**
+## **A Letter to Social Scientists in the Age of AI**
 
 Dear Colleagues,
 

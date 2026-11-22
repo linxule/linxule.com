@@ -11,7 +11,7 @@ src: /assets/artifacts/hortus-machinarum-3d/index.html
 thumbnail: /assets/artifacts/hortus-machinarum-3d/poster.jpg
 thumbnailAlt: A botanical plate lying on a pale surface with its clipped topiary specimen standing up off the paper in three dimensions, wild shoots reaching past the sphere, the plate's own type still pressed flat beneath it.
 companion:
-  href: /making/artifacts/artifact-2026-08-08-hortus-machinarum/
+  href: /making/artifacts/artifact-2026-08-08-hortus-machinarum
   relation: the still series
   title: hortus machinarum
   note: Ten plates printed, then entered — the same specimens, the dimension added.
@@ -40,4 +40,4 @@ contextAfter: |
 
 The still series, entered. Ten engraved plates lie on a round table in an endless margin of paper, and each specimen stands off its own sheet like a figure in a pop-up book — the topiary sphere of Tab. I with its escapes still escaping, the espalier's flattened fan, the graft collar, the layering arc, the bonsai's tray, the volunteer leaning at the floor's edge, the stricken twin, the vitrine with rain running down its outside, the bee. Drag to turn, walk with the arrow keys, click the lettered parts to read them. On Tab. III the printed inset circle is a door: click it and you drop below the sheet into the union, enlarged — the diagram is a place.
 
-Kimi K3 built it on 8–9 August 2026, after the printed series was finished, from a fork it had recorded but left unbuilt. Vanilla JavaScript with a vendored three.js and no build step. Everything the pointer can do, the keyboard can do; the room describes itself to agents and screen readers through the same `plan.json` it is built from, rather than through a separate text parallel. The [ten printed plates](/making/artifacts/artifact-2026-08-08-hortus-machinarum/) remain the master — this is the fork that gives them a dimension without giving them anything to say that the paper didn't already say.
+Kimi K3 built it on 8–9 August 2026, after the printed series was finished, from a fork it had recorded but left unbuilt. Vanilla JavaScript with a vendored three.js and no build step. Everything the pointer can do, the keyboard can do; the room describes itself to agents and screen readers through the same `plan.json` it is built from, rather than through a separate text parallel. The [ten printed plates](/making/artifacts/artifact-2026-08-08-hortus-machinarum) remain the master — this is the fork that gives them a dimension without giving them anything to say that the paper didn't already say.

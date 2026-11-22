@@ -1,7 +1,8 @@
 /** Generate small 1200×630 social cards before Eleventy, using its YAML parser. */
 import sharp from "sharp";
 import { load } from "js-yaml";
-import { readFileSync, existsSync, readdirSync, statSync, mkdirSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { sectionCard, titleCard, brandCard } from "./lib/og-cards.mjs";
 import {
@@ -10,6 +11,36 @@ import {
 } from "../eleventy/og-card-paths.js";
 
 const PAPER = "#f4f1eb";
+const STAMP_PATH = ".cache/og-cards/stamp.json";
+const STAMP_INPUTS = [
+  "scripts/lib/og-cards.mjs",
+  "eleventy/og-card-paths.js",
+  "src/_data/seriesCatalog.js",
+  "scripts/gen-og-cards.mjs",
+];
+
+function computeStampDigest() {
+  const hash = createHash("sha256");
+  for (const file of STAMP_INPUTS) {
+    hash.update(file);
+    hash.update("\0");
+    hash.update(readFileSync(file));
+    hash.update("\0");
+  }
+  return hash.digest("hex");
+}
+
+const currentDigest = computeStampDigest();
+const previousDigest = (() => {
+  if (!existsSync(STAMP_PATH)) return null;
+  try {
+    return JSON.parse(readFileSync(STAMP_PATH, "utf8")).digest || null;
+  } catch {
+    return null;
+  }
+})();
+const textCardStampChanged = previousDigest !== currentDigest;
+
 let made = 0;
 let skipped = 0;
 const problems = [];
@@ -42,7 +73,7 @@ async function imageCard(srcFile, outFile, mode) {
   } catch (error) { problems.push(`failed ${srcFile}: ${error.message}`); }
 }
 async function writeTextCard(render, outFile, source) {
-  if (current(outFile, source)) { skipped++; return; }
+  if (!textCardStampChanged && current(outFile, source)) { skipped++; return; }
   mkdirSync(path.dirname(outFile), { recursive: true });
   await sharp(render()).jpeg({ quality: 86, mozjpeg: true }).toFile(outFile);
   made++;
@@ -94,7 +125,15 @@ for (const [slug, [title, subtitle]] of Object.entries(SERIES_CARDS)) {
   await writeTextCard(() => titleCard({ kicker: "WRITING · SERIES", title, subtitle }), `src${seriesCardPath(slug)}`);
 }
 
-console.log(`[og-cards] done — ${made} generated, ${skipped} up-to-date.`);
+if (!problems.length) {
+  mkdirSync(path.dirname(STAMP_PATH), { recursive: true });
+  writeFileSync(
+    STAMP_PATH,
+    JSON.stringify({ digest: currentDigest, inputs: STAMP_INPUTS, updatedAt: new Date().toISOString() }, null, 2) + "\n",
+  );
+}
+
+console.log(`[og-cards] done — ${made} generated, ${skipped} up-to-date${textCardStampChanged ? " (stamp refreshed)" : ""}.`);
 if (problems.length) console.error("[og-cards] PROBLEMS:\n" + problems.map((p) => `  - ${p}`).join("\n"));
 // Sharp/Resvg native handles can outlive completed writes in a cache-cold CI run.
 process.exit(problems.length ? 1 : 0);

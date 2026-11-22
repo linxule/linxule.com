@@ -9,7 +9,7 @@ Book aesthetic, algorithmic age. Built with Eleventy.
 This site embodies a "book in the algorithmic age" metaphor:
 - Paper/ink color scheme inspired by physical books
 - Marginalia via footnotes (sidebar on desktop)
-- Each page has one "accident" - something intentionally wrong, in cyan
+- Each work has one "accident" - something intentionally wrong, in cyan
 - Human-AI collaboration is explicit (multiple authors)
 
 ## Quick Start
@@ -28,25 +28,47 @@ bun run build  # Production build + search index
 ```
 src/
 ├── _includes/layouts/     # Page templates
-│   ├── base.njk           # Root template (spine, bloom cursor)
+│   ├── base.njk           # Root template (spine, bloom cursor, JSON-LD)
 │   ├── writing.njk        # Articles with marginalia
 │   ├── portrait.njk       # AI-generated image pages
+│   ├── artifact.njk       # Artifacts made directly by AI collaborators
+│   ├── talk.njk           # Presentations and symposia
+│   ├── paper.njk          # Formal paper landing pages (Scholar metadata)
 │   ├── thinking.njk       # Research thesis page
-│   ├── teaching.njk       # Workshop materials
-│   └── cv.njk             # Curriculum vitae
-├── _data/site.js          # Global metadata
-├── assets/css/main.css    # Shared styles, design tokens
-├── writing/*.md           # Blog posts
+│   ├── concepts.njk       # Working vocabulary (14 anchored & forming concepts)
+│   ├── builds.njk         # Open-source tools and public infrastructure
+│   ├── vellum.njk         # Vellum project note
+│   ├── teaching.njk       # Courses and curriculum materials
+│   └── cv.njk             # Curriculum vitae (English and Chinese)
+├── _data/                 # Global data (site, catalogs, MCP server card, skills)
+├── assets/css/main.css    # Shared styles, self-hosted fonts, design tokens
+├── md-outputs/*.njk       # Markdown twin templates for every twinned shape
+├── writing/*.md           # Essays across 9 series
+├── papers/                # Formal publications and preprints
 ├── making/portraits/*.md  # AI portrait series
+├── making/artifacts/*.md  # Artifacts made directly by AI
 ├── talks/                 # Presentations and symposia
+├── builds/                # Open-source builds catalog & Vellum note
+├── concepts/              # Signature concepts by territory
 ├── thinking/              # Research manifesto
 ├── teaching/              # Teaching page
-└── cv/                    # CV page
+├── cv/ & cv-zh/           # Bilingual academic CV
+└── connect.njk            # MCP connection recipes & sibling server scopes
 
 eleventy/
+├── shapes.mjs             # Single source of truth for twinned content shapes
+├── strings.js             # Shared slugify and collaborator credit parsing
 ├── collections.js         # Content collections
-├── filters.js             # Template filters
-└── shortcodes.js          # Image optimization
+├── filters.js             # Template filters (including htmlToMarkdown, markdownBody)
+├── shortcodes.js          # Image optimization and slide outlines
+├── transforms.js          # Writing image optimization and anchor transforms
+├── image-pipeline.js      # AVIF/WebP/JPEG responsive image pipeline
+├── og-card-paths.js       # Social-card path & alt resolution
+└── rendering-fidelity.js  # Feed and rendering helpers
+
+mcp/                       # Stateless read-only linxule-mcp Cloudflare Worker
+agent-skills/              # Public Agent Skills artifacts
+middleware.ts              # Vercel Edge Middleware for Accept: text/markdown
 ```
 
 ## Design Tokens
@@ -138,7 +160,7 @@ Use `layout: layouts/artifact.njk` with fields such as `creator`, `medium`, `src
 
 ### The Accident
 
-Each page should have one "accident" - something intentionally wrong, rendered in cyan (`#4ee1d4`).
+Each work should have one "accident" - something intentionally wrong, rendered in cyan (`#4ee1d4`).
 
 **Usage:**
 - Writing: `accident: true` in frontmatter
@@ -149,12 +171,12 @@ Each page should have one "accident" - something intentionally wrong, rendered i
 
 The site uses [Pagefind](https://pagefind.app/) for client-side search:
 - Indexes at build time
-- Available at `/search/`
-- Searches writing, portraits, artifacts, talks, teaching, and CV
+- Available at `/search`
+- Searches writing, papers, portraits, artifacts, talks, thinking, concepts, teaching, builds (including Vellum), connect, and CV (English and Chinese)
 
 ## Agent Discovery
 
-The site publishes honest AI and agent discovery surfaces: `/llms.txt`, `/site-index.json`, a stateless read-only Streamable HTTP MCP Worker at `https://linxule.com/mcp` (`mcp/`), dual SEP-2127/1649 Server Cards at `/.well-known/mcp/server-card.json` and `/mcp/server-card`, an ARD v1.0 AI Resource Directory at `/.well-known/ai-catalog.json` (indexing `linxule.com/mcp`, skills, API catalog, and public sibling MCP servers), `/.well-known/api-catalog`, Markdown page twins, and one Agent Skills Discovery v0.2.0 index at `/.well-known/agent-skills/index.json`. The sitemap stays canonical HTML pages only; `.md` alternates are discovered through the AI surfaces and content negotiation, not submitted as duplicate sitemap URLs.
+The site publishes honest AI and agent discovery surfaces: `/llms.txt`, `/connect.md`, `/site-index.json` (pages, all 14 concepts, publications, all 20 builds, and human–AI collaborator lineages), a stateless read-only Streamable HTTP MCP Worker v2 at `https://linxule.com/mcp` (`mcp/`, with `search_site`, `list_site`, `read_page`, `xule-research-navigation`, and `enter-the-work`), dual SEP-2127/1649 Server Cards at `/.well-known/mcp/server-card.json` and `/mcp/server-card` (`GET` and `HEAD`), an ARD v1.0 AI Resource Directory at `/.well-known/ai-catalog.json` (indexing `linxule.com/mcp`, skills, API catalog, and public sibling MCP servers), `/.well-known/api-catalog`, Markdown page twins, and one Agent Skills Discovery v0.2.0 index at `/.well-known/agent-skills/index.json`. The sitemap stays canonical HTML pages only; `.md` alternates are discovered through the AI surfaces and content negotiation, not submitted as duplicate sitemap URLs.
 
 DNS-AID uses `_index._agents.linxule.com` as the single apex discovery pointer (matching `research-memex.org`); do not advertise A2A, OAuth, or Poppy stubs unless those real services exist. Operational notes are in [`docs/agent-discovery.md`](./docs/agent-discovery.md).
 
@@ -169,13 +191,10 @@ bun run build   # Outputs to _site/
   `INDEXNOW_KEY="$(tail -n 1 src/indexnow-key.njk)" INDEXNOW_FORCE=1 bun run publish:indexnow`.
   The key is the public verification token rendered by `src/indexnow-key.njk`,
   not a secret; Vercel Production supplies the same value as `INDEXNOW_KEY`.
-- **Vercel**: Git auto-deployment is disabled. Pushes trigger nothing — the Verify workflow is on-demand (`gh workflow run verify.yml`) and runs on pull requests;
-  production uses a separate prebuilt deployment from a detached worktree.
+- **Vercel + Cloudflare**: Production runs on Vercel (`vercel.json` headers/redirects + Edge `middleware.ts` Markdown negotiation) behind Cloudflare DNS/proxy, with `mcp/` deployed separately as the `linxule-mcp` Cloudflare Worker when Worker code changes. Git auto-deployment is disabled — pushes trigger nothing, the Verify workflow is on-demand (`gh workflow run verify.yml`) and runs on pull requests, and production uses a separate prebuilt deployment from a detached worktree.
   Follow [Publishing and deployment retention](./docs/publishing.md): keep current
   production plus the production deployment recorded before publishing, and prune
   older versions only after the new release passes live verification.
-- **Netlify**: Same, or drag `_site/` folder
-- **GitHub Pages**: Use GitHub Action
 
 ## Verification and maintenance
 

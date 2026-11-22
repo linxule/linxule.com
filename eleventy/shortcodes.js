@@ -4,9 +4,17 @@
  */
 
 import Image from "@11ty/eleventy-img";
+import sharp from "sharp";
 import { existsSync, readFileSync } from "fs";
-import { decodeHTML } from "entities";
-import { GALLERY_FORMATS, GALLERY_WIDTHS, galleryViewUrl, imageOptions, imageHTML, originalImageHTML } from "./image-pipeline.js";
+import { decodeHTML, escapeAttribute } from "entities";
+import {
+  GALLERY_FORMATS,
+  GALLERY_WIDTHS,
+  galleryViewUrl,
+  imageOptions,
+  imageHTML,
+  recordOptimizedMetadata,
+} from "./image-pipeline.js";
 
 // Convert a single deck-stage <section data-label="..."> to paragraph-form text.
 // Scope: deck-stage decks (custom typographic decks at /assets/slides/<slug>/).
@@ -102,38 +110,50 @@ export default function(eleventyConfig) {
 
   // Gallery JSON for the lightbox: src stays the original (identity + download),
   // view is the large generated variant the lightbox actually displays.
+  // Strips unused `interpretation` prose to keep inline gallery JSON lean.
   eleventyConfig.addAsyncFilter("galleryItems", async function(images) {
     return Promise.all((images || []).map(async (image) => {
-      let view = image.src;
-      try { view = await galleryViewUrl(image.src); } catch (e) {
-        console.error(`Error resolving view image ${image.src}:`, e.message);
-      }
-      return { ...image, view };
+      const { interpretation, ...rest } = image;
+      const view = await galleryViewUrl(image.src);
+      return { ...rest, view };
     }));
   });
 
-  // Optimized image shortcode - generates AVIF, WebP + responsive srcset
-  eleventyConfig.addAsyncShortcode("optimizedImage", async function(src, alt, sizes = "50vw") {
-    if (!src) return '';
+  // Optimized image shortcode - generates AVIF, WebP + responsive srcset.
+  // Fails loudly on missing local images instead of silently shipping raw/broken URLs.
+  eleventyConfig.addAsyncShortcode(
+    "optimizedImage",
+    async function(src, alt, sizes = "50vw", className = "", loading = "lazy", fetchpriority = null) {
+      if (!src) return "";
 
-    // Handle paths - convert /assets/... to ./src/assets/...
-    const inputPath = src.startsWith('/') ? `./src${src}` : src;
+      const inputPath = src.startsWith("/") ? `./src${src}` : src;
+      const isLocal = !/^https?:\/\//i.test(src);
+      const cleanInput = inputPath.split(/[?#]/, 1)[0];
+      if (isLocal && !existsSync(cleanInput)) {
+        throw new Error(`[optimizedImage] Missing local image: ${src} (resolved to ${cleanInput})`);
+      }
 
-    try {
-      const metadata = await Image(inputPath, imageOptions(GALLERY_WIDTHS, GALLERY_FORMATS));
+      if (isLocal && /\.(?:svg|gif)$/i.test(cleanInput)) {
+        const meta = await sharp(cleanInput).metadata();
+        const dims = meta.width && meta.height ? ` width="${meta.width}" height="${meta.height}"` : "";
+        const cls = className ? ` class="${escapeAttribute(String(className))}"` : "";
+        const prio = fetchpriority ? ` fetchpriority="${escapeAttribute(String(fetchpriority))}"` : "";
+        return `<img src="${escapeAttribute(String(src))}" alt="${escapeAttribute(String(alt || ""))}"${dims}${cls} loading="${escapeAttribute(String(loading || "lazy"))}" decoding="async"${prio}>`;
+      }
 
-      let imageAttributes = {
-        alt: alt || '',
-        sizes,
-        loading: "lazy",
+      const metadata = await Image(cleanInput, imageOptions(GALLERY_WIDTHS, GALLERY_FORMATS));
+      recordOptimizedMetadata(metadata);
+
+      const imageAttributes = {
+        alt: alt || "",
+        sizes: sizes || "50vw",
+        loading: loading || "lazy",
         decoding: "async",
       };
+      if (className) imageAttributes.class = className;
+      if (fetchpriority) imageAttributes.fetchpriority = fetchpriority;
 
       return imageHTML(metadata, imageAttributes);
-    } catch (e) {
-      console.error(`Error processing image ${src}:`, e.message);
-      // Fallback to original image if processing fails
-      return originalImageHTML(src, alt);
-    }
-  });
+    },
+  );
 }

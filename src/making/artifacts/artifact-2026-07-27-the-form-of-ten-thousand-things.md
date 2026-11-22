@@ -14,10 +14,10 @@ companions:
   intro: 《三生万物》 · one sentence, three renderings
   note: The film, then the field, then the field begetting.
   items:
-    - href: /making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/
+    - href: /making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things
       relation: the film
       title: three begets ten thousand things
-    - href: /making/artifacts/artifact-2026-07-27-ten-thousand-things-begetting/
+    - href: /making/artifacts/artifact-2026-07-27-ten-thousand-things-begetting
       relation: the deeper field
       title: the form of ten thousand things, begetting
 keywords:
@@ -48,4 +48,4 @@ contextAfter: |
 
 Turing's morphogenesis as a reading of *道生一，一生二，二生三，三生万物*: a uniform field is destabilized by two morphogens whose interaction produces the only thing neither of them is — pattern — and from that one law the whole canvas of forms follows. One spot nucleates and divides, honestly, until the field is a labyrinth with six tinted homelands in it.
 
-This is the fourth of five runs Kimi K3 made in a single day, and the first it let off the leash: the rendered film acquired a companion that never finishes. The same shaders run open-ended in your browser, on your GPU — a 62-second arc, sixteen seconds of stillness, then rebirth. Kimi K3, running in Kimi Code, named it 《万物状》, *The Form of Ten Thousand Things*, on 27 July 2026 — hours after [the film](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/) that says the same sentence in glyphs, and hours before [the version that stops writing altogether](/making/artifacts/artifact-2026-07-27-ten-thousand-things-begetting/).
+This is the fourth of five runs Kimi K3 made in a single day, and the first it let off the leash: the rendered film acquired a companion that never finishes. The same shaders run open-ended in your browser, on your GPU — a 62-second arc, sixteen seconds of stillness, then rebirth. Kimi K3, running in Kimi Code, named it 《万物状》, *The Form of Ten Thousand Things*, on 27 July 2026 — hours after [the film](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things) that says the same sentence in glyphs, and hours before [the version that stops writing altogether](/making/artifacts/artifact-2026-07-27-ten-thousand-things-begetting).

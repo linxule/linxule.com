@@ -48,13 +48,13 @@ companions:
   intro: equation-first ascii · four works
   note: One inquiry, four commitments to ASCII — characters render a law, then remember it, then become it, then outlive it.
   items:
-    - href: /making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock/
+    - href: /making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock
       relation: work I
       title: the loom forgets which clock
-    - href: /making/artifacts/artifact-2026-07-26-the-equation-remembers-where-it-folded/
+    - href: /making/artifacts/artifact-2026-07-26-the-equation-remembers-where-it-folded
       relation: work II
       title: the equation remembers where it folded
-    - href: /making/artifacts/artifact-2026-07-27-the-copy-outlives-the-source/
+    - href: /making/artifacts/artifact-2026-07-27-the-copy-outlives-the-source
       relation: work IV
       title: the copy outlives the source
 ---

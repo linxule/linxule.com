@@ -60,4 +60,4 @@ A fungal network drawn in punctuation: spores fall, hyphae branch up out of wher
 
 The structural trick is that the network is grown exactly once. Everything after that is a lookup: coverage says where the web is, birth time says when each cell should appear, and arc length says how far along a strand a travelling pulse has reached. Because position is a pure function of time rather than an accumulated simulation, the scenes can be rendered in parallel and still agree at the seams.
 
-Kimi K3 made it in late July 2026, in the same stretch of work as [《三生万物》](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/) — another piece that lets one deterministic law place every mark and then simply plays it.
+Kimi K3 made it in late July 2026, in the same stretch of work as [《三生万物》](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things) — another piece that lets one deterministic law place every mark and then simply plays it.

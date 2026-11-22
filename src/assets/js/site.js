@@ -56,7 +56,8 @@
         }
     });
 
-    const currentPath = window.location.pathname;
+    const normPath = path => (path && path !== '/' ? path.replace(/\/+$/, '') : '/');
+    const currentPath = normPath(window.location.pathname);
     const storageKey = 'scrollPos_' + currentPath;
 
     document.addEventListener('click', event => {
@@ -69,7 +70,7 @@
         try {
             const destination = new URL(link.href);
             if (destination.origin !== window.location.origin ||
-                destination.pathname === currentPath) return;
+                normPath(destination.pathname) === currentPath) return;
             sessionStorage.setItem(storageKey, String(window.scrollY));
         } catch {
             // Storage may be unavailable. Navigation still uses the native path.
@@ -80,10 +81,11 @@
         const savedPos = sessionStorage.getItem(storageKey);
         if (savedPos === null || !document.referrer) return;
         const referrer = new URL(document.referrer);
+        const refPath = normPath(referrer.pathname);
         const position = Number(savedPos);
         if (referrer.origin === window.location.origin &&
-            referrer.pathname.startsWith(currentPath) &&
-            referrer.pathname !== currentPath &&
+            refPath.startsWith(currentPath === '/' ? '/' : currentPath + '/') &&
+            refPath !== currentPath &&
             Number.isFinite(position) && position >= 0) {
             document.documentElement.style.scrollBehavior = 'auto';
             window.scrollTo(0, position);

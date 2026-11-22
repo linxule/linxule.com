@@ -2685,6 +2685,7 @@ header{flex-wrap:wrap} .controls{flex-wrap:wrap;margin-left:0} button{padding:6p
   /** Start the band loop; it stops itself while no visuals are showing. */
   function startAudioLoop() {
     if (audioLoopRunning || typeof requestAnimationFrame !== 'function') return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     audioLoopRunning = true;
     requestAnimationFrame(audioFrame);
   }

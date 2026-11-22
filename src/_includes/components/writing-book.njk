@@ -9,11 +9,11 @@
    Optional variables:
    - headerDescription: description text for header spread
    - headerPoem: ASCII concrete poem for visual interest
-   - backLink: where to go back (default: /writing/)
+   - backLink: where to go back (default: /writing)
    - backText: back link text (default: ← all writing)
 #}
 
-<div class="writing-book" id="writing-book">
+<div class="writing-book" id="writing-book" role="region" aria-label="{{ headerTitle }} book">
 
     <!-- Header Spread -->
     <section class="essay-spread header-spread" data-spread="0" data-book-target="opening" id="opening">
@@ -25,8 +25,8 @@
         <pre class="header-description">{{ headerDescription | safe }}</pre>
         {% endif %}
         <span class="header-count">{{ headerCount }} essay{% if headerCount != 1 %}s{% endif %}</span>
-        <nav class="header-nav">
-            <a href="{{ backLink | default('/writing/') }}" class="back-link">{{ backText | default('← all writing') }}</a>
+        <nav class="header-nav" aria-label="Book navigation">
+            <a href="{{ (backLink | default('/writing')) | stripTrailingSlash }}" class="back-link">{{ backText | default('← all writing') }}</a>
             <span class="scroll-hint" id="writing-scroll-hint">↓ scroll</span>
         </nav>
     </section>
@@ -40,7 +40,7 @@
         <div class="essay-series">{{ essay.data.series }}</div>
         {% endif %}
 
-        <h2 class="essay-title">{{ essay.data.title }}</h2>
+        <h2 class="essay-title{% if essay.data.accident %} accident{% endif %}">{{ essay.data.title }}</h2>
 
         {% if essay.data.subtitle %}
         <p class="essay-subtitle">{{ essay.data.subtitle }}</p>
@@ -57,7 +57,7 @@
             {{ essay.date | readableDate }}
         </div>
 
-        <a href="{{ essay.url }}" class="essay-read-link">read essay →</a>
+        <a href="{{ essay.url | stripTrailingSlash }}" class="essay-read-link">read essay →</a>
     </section>
     {% endfor %}
 
@@ -85,13 +85,13 @@
 </div>
 
 <!-- Navigation Dots -->
-<nav class="book-nav" id="writing-nav">
-    <button class="book-nav-dot active" data-target="0" aria-label="Go to introduction"></button>
+<nav class="book-nav" id="writing-nav" aria-label="Essay spreads">
+    <button type="button" class="book-nav-dot active" data-target="0" aria-label="Go to introduction"></button>
     {% for essay in essays %}
-    <button class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ essay.data.title }}"></button>
+    <button type="button" class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ essay.data.title }}"></button>
     {% endfor %}
     {% if companionLink %}
-    <button class="book-nav-dot companion-dot" data-target="{{ (essays | length) + 1 }}" aria-label="Go to {{ companionLabel }}"></button>
+    <button type="button" class="book-nav-dot companion-dot" data-target="{{ (essays | length) + 1 }}" aria-label="Go to {{ companionLabel }}"></button>
     {% endif %}
 </nav>
 
@@ -101,7 +101,38 @@
     const dots = document.querySelectorAll('#writing-nav .book-nav-dot');
     const spreads = book.querySelectorAll('.essay-spread');
     const scrollHint = document.getElementById('writing-scroll-hint');
-    const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
+    const bookMode = window.matchMedia('(min-width: 769px) and (min-height: 700px)');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const getScrollBehavior = () => (reducedMotion.matches ? 'instant' : 'smooth');
+
+    function syncBookFocusability() {
+        if (bookMode.matches) {
+            book.setAttribute('tabindex', '0');
+        } else {
+            book.removeAttribute('tabindex');
+        }
+    }
+    syncBookFocusability();
+    if (bookMode.addEventListener) bookMode.addEventListener('change', syncBookFocusability);
+
+    // Land directly on a deep-linked spread without smooth-scroll snap capture.
+    function restoreHashTarget() {
+        if (!bookMode.matches || !window.location.hash) return;
+        let name = window.location.hash.slice(1);
+        try { name = decodeURIComponent(name); } catch (_) {}
+        const target = document.getElementById(name);
+        if (!target || !book.contains(target)) return;
+        const land = () => {
+            if (bookMode.matches) book.scrollTo({ top: target.offsetTop, behavior: 'instant' });
+        };
+        land();
+        requestAnimationFrame(land);
+        window.addEventListener('pageshow', land, { once: true });
+        if (document.readyState !== 'complete') {
+            window.addEventListener('load', land, { once: true });
+        }
+    }
+    restoreHashTarget();
 
     // The address names the spread in view once the book comes to rest
     // (each spread's id is its data-book-target, e.g. essay:loom-i-...), so a
@@ -123,6 +154,7 @@
 
     // Update active dot on scroll
     book.addEventListener('scroll', () => {
+        if (!bookMode.matches) return;
         const scrollPos = book.scrollTop;
         const spreadHeight = window.innerHeight;
         const currentIndex = Math.round(scrollPos / spreadHeight);
@@ -143,12 +175,13 @@
     // Click dot to jump to spread
     dots.forEach((dot, i) => {
         dot.addEventListener('click', () => {
-            spreads[i].scrollIntoView({ behavior: scrollBehavior });
+            spreads[i].scrollIntoView({ behavior: getScrollBehavior() });
         });
     });
 
-    // Keyboard navigation
+    // Keyboard navigation (desktop book mode only)
     book.addEventListener('keydown', (e) => {
+        if (!bookMode.matches) return;
         const currentScroll = book.scrollTop;
         const spreadHeight = window.innerHeight;
 
@@ -158,18 +191,15 @@
                 Math.floor(currentScroll / spreadHeight) + 1,
                 spreads.length - 1
             );
-            spreads[nextIndex].scrollIntoView({ behavior: scrollBehavior });
+            spreads[nextIndex].scrollIntoView({ behavior: getScrollBehavior() });
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             const prevIndex = Math.max(
                 Math.ceil(currentScroll / spreadHeight) - 1,
                 0
             );
-            spreads[prevIndex].scrollIntoView({ behavior: scrollBehavior });
+            spreads[prevIndex].scrollIntoView({ behavior: getScrollBehavior() });
         }
     });
-
-    // Make book focusable for keyboard nav
-    book.setAttribute('tabindex', '0');
 })();
 </script>

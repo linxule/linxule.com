@@ -4,7 +4,7 @@ title: unfinished light
 date: 2026-09-06
 series: portraits
 companion:
-  href: /making/artifacts/artifact-2026-09-08-unfinished-light/
+  href: /making/artifacts/artifact-2026-09-08-unfinished-light
   relation: the living loom
   title: unfinished light
   note: A three-minute world and score, with threads you can touch.

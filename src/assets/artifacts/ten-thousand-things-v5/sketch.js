@@ -712,10 +712,14 @@ function setup() {
   cnv.id = "morpho";
   document.body.appendChild(cnv);
   setupGL(cnv);
-  if (live) {
+  const reducedMotion = Boolean(
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  if (live && !reducedMotion) {
     frameRate(60);
     liveStart = millis();
   } else {
+    live = false;
     noLoop();
     renderAtFrame(0);
     window.__ready = true;

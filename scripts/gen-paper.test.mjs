@@ -5,6 +5,15 @@ import { encode, periodicLayer, renderStock, seedFor, STOCKS, TILE, SCALE, PAPER
 const SEED_VERSION = "test000";
 const tiles = Object.fromEntries(Object.keys(STOCKS).map((name) => [name, renderStock(name, seedFor(SEED_VERSION, name))]));
 
+// Reuse encoded AVIF buffers across tests instead of re-encoding the same stock multiple times.
+const encodedCache = new Map();
+function encodeStockOnce(name) {
+  if (!encodedCache.has(name)) {
+    encodedCache.set(name, encode(tiles[name]));
+  }
+  return encodedCache.get(name);
+}
+
 const lum = ({ data, size }) => {
   const L = new Float64Array(size * size);
   for (let i = 0; i < L.length; i++) L[i] = 0.2126 * data[i * 3] + 0.7152 * data[i * 3 + 1] + 0.0722 * data[i * 3 + 2];
@@ -56,7 +65,8 @@ describe("paper tiles", () => {
   test("are deterministic: same version and stock, same bytes; different stocks or versions, different paper", async () => {
     const again = renderStock("body", seedFor(SEED_VERSION, "body"));
     expect(Buffer.compare(again.data, tiles.body.data)).toBe(0);
-    expect(Buffer.compare(await encode(again), await encode(tiles.body))).toBe(0);
+    const [encodedAgain, encodedBody] = await Promise.all([encode(again), encodeStockOnce("body")]);
+    expect(Buffer.compare(encodedAgain, encodedBody)).toBe(0);
     expect(seedFor(SEED_VERSION, "body")).not.toBe(seedFor(SEED_VERSION, "title"));
     expect(seedFor(SEED_VERSION, "body")).not.toBe(seedFor("test001", "body"));
   }, 30000);
@@ -118,7 +128,8 @@ describe("paper tiles", () => {
   });
 
   test("fit the byte budget", async () => {
-    for (const t of Object.values(tiles)) expect((await encode(t)).length).toBeLessThan(150 * 1024);
+    const buffers = await Promise.all(Object.keys(STOCKS).map((name) => encodeStockOnce(name)));
+    for (const buf of buffers) expect(buf.length).toBeLessThan(150 * 1024);
   }, 30000);
 
   test.if(existsSync("_site/index.html"))("are in the build for every stock", () => {

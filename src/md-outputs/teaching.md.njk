@@ -4,26 +4,26 @@ eleventyExcludeFromCollections: true
 ---
 {%- for page in collections.all -%}
 {%- if page.url == "/teaching/" or page.url == "/teaching" -%}
-# {{ page.data.title }}
+# {{ page.data.title | safe }}
 
-{{ page.data.description }} *{{ page.data.accident }}* *(accident)*.
+{{ page.data.description | safe }} *{{ page.data.accident | safe }}* *(accident)*.
 
 {% if page.data.items %}
 ## Materials
 
 {% for item in page.data.items %}
-### {{ item.title }}
+### {{ item.title | safe }}
 
-- **Type**: {{ item.label }}
-- **URL**: [{{ item.url }}]({{ item.url }})
+- **Type**: {{ item.label | safe }}
+- **URL**: [{{ item.url | safe }}]({{ item.url | safe }})
 
-{{ item.description }}
+{{ item.description | safe }}
 
 {% endfor %}
 {% endif %}
 
 ---
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/teaching/*
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/teaching*
 {%- endif -%}
 {%- endfor -%}

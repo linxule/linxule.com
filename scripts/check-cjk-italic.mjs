@@ -24,17 +24,37 @@ import path from "node:path";
 const SITE = process.env.SITE_DIR || "_site";
 const CHARS = process.env.KAI_CHARS || "src/assets/fonts/kai-italic.chars.txt";
 const FONTS_CSS = process.env.FONTS_CSS || "src/assets/css/main.css";
-const SKIP = [/^assets\//, /^tsm\//, /^pagefind\//];
+const SKIP = [/^assets\//, /^tsm\//, /^pagefind\//, /^play\//];
 const CJK = /[⺀-⿿　-〿㐀-鿿豈-﫿＀-￯]|[\uD840-\uD87F][\uDC00-\uDFFF]/gu;
 const UA_ITALIC = new Set(["em", "i", "cite", "dfn", "var", "address"]);
 const VOID = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
+const HAS_ITALIC = /(?<![\w-])font-style\s*:\s*(?:italic|oblique)\b|(?<![\w-])font\s*:[^;{}]*\b(?:italic|oblique)\b/i;
+
+export function expandUnicodeRange(range) {
+  const set = new Set();
+  for (const raw of range.split(",")) {
+    const part = raw.trim().replace(/^U\+/i, "");
+    if (!part) continue;
+    if (part.includes("-")) {
+      const [start, end] = part.split("-").map((x) => parseInt(x, 16));
+      for (let cp = start; cp <= end; cp++) set.add(String.fromCodePoint(cp));
+    } else if (part.includes("?")) {
+      const start = parseInt(part.replace(/\?/g, "0"), 16);
+      const end = parseInt(part.replace(/\?/g, "F"), 16);
+      for (let cp = start; cp <= end; cp++) set.add(String.fromCodePoint(cp));
+    } else {
+      set.add(String.fromCodePoint(parseInt(part, 16)));
+    }
+  }
+  return set;
+}
 
 export function italicSelectors(css) {
   const out = [];
   const text = css.replace(/\/\*[\s\S]*?\*\//g, "");
   // innermost blocks only: "selectors { declarations }" with no nested braces (media queries contribute their inner rules)
   for (const m of text.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-    if (!/font-style\s*:\s*italic/i.test(m[2])) continue;
+    if (!HAS_ITALIC.test(m[2])) continue;
     for (const sel of m[1].split(",")) {
       const s = sel.trim();
       if (!s || s.startsWith("@") || /::|:(before|after|marker|placeholder)/.test(s)) continue;
@@ -90,7 +110,7 @@ export function italicCjk(html, selectors) {
     const node = { tag, id: (attrs.match(/\sid=["']?([^"'\s>]+)/) || [])[1] || "", classes: new Set(((attrs.match(/\sclass=["']([^"']*)["']/) || [])[1] || "").split(/\s+/).filter(Boolean)) };
     stack.push(node);
     const inherited = italicDepth.length ? italicDepth[italicDepth.length - 1] : false;
-    italicDepth.push(inherited || UA_ITALIC.has(tag) || /font-style\s*:\s*italic/i.test((attrs.match(/\sstyle=("[^"]*"|'[^']*')/) || [""])[0]) || sels.some((s) => matches(s, stack, stack.length - 1)));
+    italicDepth.push(inherited || UA_ITALIC.has(tag) || HAS_ITALIC.test((attrs.match(/\sstyle=("[^"]*"|'[^']*')/) || [""])[0]) || sels.some((s) => matches(s, stack, stack.length - 1)));
     if (VOID.has(tag) || /\/\s*$/.test(attrs)) { stack.pop(); italicDepth.pop(); }
   }
   return found;
@@ -123,7 +143,7 @@ if (import.meta.main) {
   const block = (readFileSync(FONTS_CSS, "utf8").match(/@font-face\s*\{[^}]*lxgw-wenkai-italic-shared\.[^}]*\}/) || [""])[0];
   const range = (block.match(/unicode-range:\s*([^;]+);/) || [])[1];
   if (!range) { console.error(`[cjk-italic] ${FONTS_CSS}: no lxgw-wenkai-italic-shared @font-face with a unicode-range`); process.exit(1); }
-  const shared = new Set(range.split(",").map((u) => String.fromCodePoint(parseInt(u.trim().replace(/^U\+/i, ""), 16))));
+  const shared = expandUnicodeRange(range);
   const outside = new Map();
   for (const [c, ps] of need) if (!shared.has(c)) for (const p of ps) if (!p.startsWith("/making/")) outside.set(p, (outside.get(p) || "") + c);
   if (byPage.size || outside.size) {

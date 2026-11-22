@@ -1,29 +1,21 @@
-import { beforeAll, describe, expect, test } from "bun:test";
-import Eleventy from "@11ty/eleventy";
+import { describe, expect, test } from "bun:test";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 
+const SITE = "_site";
 const PLAY_URL = "https://linxule.com/play/";
 const PLAY_COPY =
   "No telemetry, no API calls, no external runtime dependencies — fully offline once downloaded.";
 
-let rendered;
-
-beforeAll(async () => {
-  const eleventy = new Eleventy("src", undefined, {
-    configPath: "eleventy.config.js",
-    quietMode: true,
-  });
-  rendered = await eleventy.toJSON();
-}, 60_000); // A complete site render exceeds Bun's 5s hook default on CI.
-
-function output(url) {
-  const page = rendered.find((entry) => entry.url === url);
-  expect(page, `missing rendered output for ${url}`).toBeDefined();
-  return page.content;
+function readBuilt(relPath) {
+  const fullPath = path.join(SITE, relPath);
+  expect(existsSync(fullPath), `missing built output ${fullPath} — run bun run build:site first`).toBe(true);
+  return readFileSync(fullPath, "utf8");
 }
 
 describe("/play integration", () => {
   test("publishes the Worker-canonical URL in the sitemap exactly once", () => {
-    const sitemap = output("/sitemap.xml");
+    const sitemap = readBuilt("sitemap.xml");
     const locations = [
       ...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g),
     ].map((match) => match[1]);
@@ -33,7 +25,7 @@ describe("/play integration", () => {
   });
 
   test("keeps the project index entry canonical and accurately scoped", () => {
-    const siteIndex = JSON.parse(output("/site-index.json"));
+    const siteIndex = JSON.parse(readBuilt("site-index.json"));
     const matches = siteIndex.projects.filter(
       (project) => project.name === "AI Simulator",
     );
@@ -45,8 +37,8 @@ describe("/play integration", () => {
   });
 
   test("keeps primary and secondary links in both project renderings", () => {
-    const markdown = output("/builds.md");
-    const html = output("/builds/");
+    const markdown = readBuilt("builds.md");
+    const html = readBuilt("builds/index.html");
     const expectedLinks = [
       PLAY_URL,
       "https://linxule.itch.io/ai-simulator",

@@ -83,11 +83,7 @@ marker: "making"
         color: var(--ink);
         margin-bottom: 0.5rem;
     }
-    
-    .portrait-title:hover {
-        color: var(--bloom);
-    }
-    
+
     .portrait-meta {
         font-family: var(--font-mono);
         font-size: var(--size-label);
@@ -105,189 +101,173 @@ marker: "making"
     }
 
     /* ========================================
-       Layout: Drift
-       Scattered like specimens on a naturalist's board
+       Desktop layouts (≥1001px)
+       All 8 layout variants are desktop-only so ≤1000px tablet and phone
+       breakpoints never lose on specificity to desktop rules.
        ======================================== */
 
-    .specimens-field.layout-drift {
-        position: relative;
-        min-height: 700px;
-        padding-bottom: 4rem;
-    }
+    @media (min-width: 1001px) {
+        /* Layout: Drift — scattered like specimens on a naturalist's board */
+        .specimens-field.layout-drift {
+            position: relative;
+            min-height: 700px;
+            padding-bottom: 4rem;
+        }
 
-    .layout-drift .specimen {
-        position: absolute;
-        background: var(--paper-dark);
-        overflow: hidden;
-        transition: all 0.4s ease;
-    }
+        .layout-drift .specimen {
+            position: absolute;
+            background: var(--paper-dark);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
 
-    /* 16:9 landscape positions - staggered like pinned prints */
-    .layout-drift .specimen:nth-child(1) { width: 55%; top: 0; right: 0; }
-    .layout-drift .specimen:nth-child(2) { width: 45%; top: 22%; right: 40%; }
-    .layout-drift .specimen:nth-child(3) { width: 50%; top: 48%; right: 5%; }
-    .layout-drift .specimen:nth-child(4) { width: 40%; top: 72%; right: 45%; }
+        /* 16:9 landscape positions - staggered like pinned prints */
+        .layout-drift .specimen:nth-child(1) { width: 55%; top: 0; right: 0; }
+        .layout-drift .specimen:nth-child(2) { width: 45%; top: 22%; right: 40%; }
+        .layout-drift .specimen:nth-child(3) { width: 50%; top: 48%; right: 5%; }
+        .layout-drift .specimen:nth-child(4) { width: 40%; top: 72%; right: 45%; }
 
-    .layout-drift .specimen:hover {
-        z-index: 10;
-        transform: scale(1.08);
-        box-shadow: 0 20px 60px var(--bloom-glow);
-    }
+        .layout-drift .specimen:hover {
+            z-index: 10;
+            transform: scale(1.08);
+            box-shadow: 0 20px 60px var(--bloom-glow);
+        }
 
-    /* ========================================
-       Layout: Column
-       Vertical cascade, like leafing through prints
-       ======================================== */
+        /* Layout: Column — vertical cascade, like leafing through prints */
+        .specimens-field.layout-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
 
-    .specimens-field.layout-column {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        align-items: flex-start;
-    }
+        .layout-column .specimen {
+            position: relative;
+            background: var(--paper-dark);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            width: 75%;
+        }
 
-    .layout-column .specimen {
-        position: relative;
-        background: var(--paper-dark);
-        overflow: hidden;
-        transition: all 0.4s ease;
-        width: 75%;
-    }
+        .layout-column .specimen:nth-child(odd) { margin-left: 0; }
+        .layout-column .specimen:nth-child(even) { margin-left: 25%; }
+        .layout-column .specimen:nth-child(3n) { width: 65%; margin-left: 10%; }
 
-    .layout-column .specimen:nth-child(odd) { margin-left: 0; }
-    .layout-column .specimen:nth-child(even) { margin-left: 25%; }
-    .layout-column .specimen:nth-child(3n) { width: 65%; margin-left: 10%; }
+        .layout-column .specimen:hover {
+            transform: translateX(0.5rem);
+            box-shadow: 0 15px 40px var(--bloom-glow);
+        }
 
-    .layout-column .specimen:hover {
-        transform: translateX(0.5rem);
-        box-shadow: 0 15px 40px var(--bloom-glow);
-    }
+        /* Layout: Focus — hero image with supporting cluster */
+        .specimens-field.layout-focus {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 1rem;
+        }
 
-    /* ========================================
-       Layout: Focus
-       Hero image with supporting cluster
-       ======================================== */
+        .layout-focus .specimen {
+            position: relative;
+            background: var(--paper-dark);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
 
-    .specimens-field.layout-focus {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto;
-        gap: 1rem;
-    }
+        .layout-focus .specimen:first-child {
+            grid-column: 1 / -1;
+            width: 85%;
+            margin: 0 auto 1rem;
+        }
 
-    .layout-focus .specimen {
-        position: relative;
-        background: var(--paper-dark);
-        overflow: hidden;
-        transition: all 0.4s ease;
-    }
+        .layout-focus .specimen:not(:first-child) {
+            width: 100%;
+        }
 
-    .layout-focus .specimen:first-child {
-        grid-column: 1 / -1;
-        width: 85%;
-        margin: 0 auto 1rem;
-    }
+        .layout-focus .specimen:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 40px var(--bloom-glow);
+        }
 
-    .layout-focus .specimen:not(:first-child) {
-        width: 100%;
-    }
+        /* Layout: Stack — vertical images in a flowing column with offsets */
+        .specimens-field.layout-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 320px;
+            margin-left: auto;
+        }
 
-    .layout-focus .specimen:hover {
-        transform: scale(1.03);
-        box-shadow: 0 15px 40px var(--bloom-glow);
-    }
+        .layout-stack .specimen {
+            position: relative;
+            background: var(--paper-dark);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
 
-    /* ========================================
-       Layout: Stack (portrait orientation)
-       Vertical images in a flowing column with offsets
-       ======================================== */
+        .layout-stack .specimen:nth-child(odd) { margin-right: 2rem; }
+        .layout-stack .specimen:nth-child(even) { margin-left: 2rem; }
+        .layout-stack .specimen:nth-child(3n) { margin-left: 1rem; margin-right: 1rem; }
 
-    .specimens-field.layout-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-        max-width: 320px;
-        margin-left: auto;
-    }
+        .layout-stack .specimen:hover {
+            transform: translateY(-0.5rem);
+            box-shadow: 0 15px 40px var(--bloom-glow);
+        }
 
-    .layout-stack .specimen {
-        position: relative;
-        background: var(--paper-dark);
-        overflow: hidden;
-        transition: all 0.4s ease;
-    }
+        /* Layout: Grid — 2x2 grid for vertical images */
+        .specimens-field.layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            max-width: 500px;
+            margin-left: auto;
+            align-items: start;
+        }
 
-    .layout-stack .specimen:nth-child(odd) { margin-right: 2rem; }
-    .layout-stack .specimen:nth-child(even) { margin-left: 2rem; }
-    .layout-stack .specimen:nth-child(3n) { margin-left: 1rem; margin-right: 1rem; }
+        .layout-grid .specimen {
+            position: relative;
+            background: var(--paper-dark);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
 
-    .layout-stack .specimen:hover {
-        transform: translateY(-0.5rem);
-        box-shadow: 0 15px 40px var(--bloom-glow);
-    }
+        .layout-grid .specimen:nth-child(even) {
+            margin-top: 3rem;
+        }
 
-    /* ========================================
-       Layout: Grid (portrait orientation)
-       2x2 grid for vertical images
-       ======================================== */
+        .layout-grid .specimen:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 40px var(--bloom-glow);
+        }
 
-    .specimens-field.layout-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-        max-width: 500px;
-        margin-left: auto;
-        align-items: start;
-    }
+        /* Layout: Filmstrip — horizontal row of vertical images */
+        .specimens-field.layout-filmstrip {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+        }
 
-    .layout-grid .specimen {
-        position: relative;
-        background: var(--paper-dark);
-        overflow: hidden;
-        transition: all 0.4s ease;
-    }
+        .layout-filmstrip .specimen {
+            flex: 0 0 auto;
+            width: 200px;
+            position: relative;
+            background: var(--paper-dark);
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
 
-    .layout-grid .specimen:nth-child(even) {
-        margin-top: 3rem;
-    }
+        .layout-filmstrip .specimen:nth-child(odd) {
+            margin-top: 0;
+        }
 
-    .layout-grid .specimen:hover {
-        transform: scale(1.03);
-        box-shadow: 0 15px 40px var(--bloom-glow);
-    }
+        .layout-filmstrip .specimen:nth-child(even) {
+            margin-top: 2rem;
+        }
 
-    /* ========================================
-       Layout: Filmstrip (portrait orientation)
-       Horizontal row of vertical images
-       ======================================== */
-
-    .specimens-field.layout-filmstrip {
-        display: flex;
-        gap: 1rem;
-        overflow-x: auto;
-        padding-bottom: 1rem;
-    }
-
-    .layout-filmstrip .specimen {
-        flex: 0 0 auto;
-        width: 200px;
-        position: relative;
-        background: var(--paper-dark);
-        overflow: hidden;
-        transition: all 0.4s ease;
-    }
-
-    .layout-filmstrip .specimen:nth-child(odd) {
-        margin-top: 0;
-    }
-
-    .layout-filmstrip .specimen:nth-child(even) {
-        margin-top: 2rem;
-    }
-
-    .layout-filmstrip .specimen:hover {
-        transform: translateY(-0.5rem);
-        box-shadow: 0 15px 40px var(--bloom-glow);
+        .layout-filmstrip .specimen:hover {
+            transform: translateY(-0.5rem);
+            box-shadow: 0 15px 40px var(--bloom-glow);
+        }
     }
 
     /* ========================================
@@ -313,7 +293,7 @@ marker: "making"
             margin: 0;
             background: var(--paper-dark);
             overflow: hidden;
-            transition: all 0.4s ease;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
 
         /* the curated lead (image 01) anchors at full gallery width — the hero
@@ -372,7 +352,7 @@ marker: "making"
             margin: 0;
             background: var(--paper-dark);
             overflow: hidden;
-            transition: all 0.4s ease;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
             aspect-ratio: 16 / 9;   /* one shared size for every frame */
         }
 
@@ -400,7 +380,7 @@ marker: "making"
         width: 100%;
         height: auto;
         display: block;
-        transition: all 0.5s ease;
+        transition: filter 0.5s ease, opacity 0.5s ease;
         cursor: zoom-in;
     }
 
@@ -476,6 +456,13 @@ marker: "making"
         .specimen-num,
         .specimen-download {
             opacity: 1;
+            color: var(--paper);
+            background: rgba(26, 26, 26, 0.55);
+            border-radius: 2px;
+        }
+
+        .specimen-num {
+            padding: 0.1rem 0.35rem;
         }
     }
 
@@ -503,29 +490,29 @@ marker: "making"
         main {
             padding: 8rem 2rem 4rem;
         }
-        
+
         .portrait-spread {
             grid-template-columns: 1fr;
             gap: 4rem;
         }
-        
+
         .specimens-field {
             min-height: auto;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
+            align-items: start;
         }
-        
+
         .specimen {
             position: relative;
         }
-        
+
         .specimen:nth-child(n) {
             top: auto;
             right: auto;
             width: 100%;
             height: auto;
-            aspect-ratio: 1;
         }
     }
 
@@ -609,8 +596,8 @@ marker: "making"
             <h1 class="portrait-title">{{ title | default(date | readableDate) }}</h1>
             <div class="portrait-meta">
                 {{ generator | default("midjourney v6") }}{% if settings %} · {{ settings }}{% endif %}<br>
-                {% if prompter %}prompted by <a href="/making/prompter/{{ prompter | prompterFamily }}/">{{ prompter | prompterFamily }}</a>{% if prompter | prompterModel %} · <a href="/making/prompter/{{ prompter | slugify }}/">{{ prompter | prompterModel }}</a>{% endif %}<br>{% endif %}
-                <a href="/making/#{{ series | default('portraits') | slugify }}">{{ series | default("portraits") }}</a> · {{ date | readableDate }}
+                {% if prompter %}prompted by <a href="/making/prompter/{{ prompter | prompterFamily }}">{{ prompter | prompterFamily }}</a>{% if prompter | prompterModel %} · <a href="/making/prompter/{{ prompter | slugify }}">{{ prompter | prompterModel }}</a>{% endif %}<br>{% endif %}
+                <a href="/making#{{ series | default('portraits') | slugify }}">{{ series | default("portraits") }}</a> · {{ date | readableDate }}
             </div>
             {% if content | trim %}
             <div class="portrait-description">
@@ -626,7 +613,11 @@ marker: "making"
     <div class="specimens-field layout-{{ page.fileSlug | layoutVariant(orientation, images) }}">
         {% for image in images %}
         <figure class="specimen {{ image.src | aspectClass }}" data-src="{{ image.src }}"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
+            {% if loop.first %}
+            {% optimizedImage image.src, image.alt | default(title ~ ' variation ' ~ loop.index), "(max-width: 900px) 100vw, 50vw", "", "eager", "high" %}
+            {% else %}
             {% optimizedImage image.src, image.alt | default(title ~ ' variation ' ~ loop.index), "(max-width: 900px) 100vw, 50vw" %}
+            {% endif %}
             <a class="specimen-download" href="{{ image.src }}" download aria-label="Download original">↓</a>
             <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
         </figure>
@@ -643,11 +634,11 @@ marker: "making"
     
 </article>
 
-<nav class="portrait-nav">
-    <a href="/making/" class="nav-link">← all portraits</a>
+<nav class="portrait-nav" aria-label="Portrait navigation">
+    <a href="/making" class="nav-link">← all portraits</a>
     <span class="page-marker">002</span>
     {% if next %}
-    <a href="{{ next.url }}" class="nav-link">next: {{ next.title }} →</a>
+    <a href="{{ next.url | stripTrailingSlash }}" class="nav-link">next: {{ next.title }} →</a>
     {% else %}
     <span></span>
     {% endif %}

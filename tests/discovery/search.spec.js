@@ -79,8 +79,8 @@ test('browse links remain available if the search UI cannot load', async ({ page
   await page.route('**/pagefind/pagefind-ui.js', route => route.abort());
   await page.goto('/search/');
   await expect(page.locator('#search-fallback')).toBeVisible();
-  await page.locator('.search-fallback a[href="/papers/"]').click();
-  await expect(page).toHaveURL(/\/papers\/$/);
+  await page.locator('.search-fallback a[href="/papers"]').click();
+  await expect(page).toHaveURL(/\/papers\/?$/);
   expect(errors).toEqual([]);
 });
 
@@ -91,8 +91,8 @@ test('search has readable navigation without JavaScript', async ({ browser, base
     await page.route('https://fonts.googleapis.com/**', route => route.abort());
     await page.goto('/search/');
     await expect(page.locator('#search-fallback')).toBeVisible();
-    await page.locator('.search-fallback a[href="/making/"]').click();
-    await expect(page).toHaveURL(/\/making\/$/);
+    await page.locator('.search-fallback a[href="/making"]').click();
+    await expect(page).toHaveURL(/\/making\/?$/);
   } finally {
     await context.close();
   }

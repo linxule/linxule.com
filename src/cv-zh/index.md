@@ -49,7 +49,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 
 # 发表论文
 
-- Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. 《战略组织》_Strategic Organization_. https://doi.org/10.1177/14761270261448645 [在线优先发表] [[论文页面]](/papers/interpretive-orchestration/) | [[SSRN]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) | [[GitHub]](https://github.com/linxule/interpretive-orchestration-paper)
+- Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. 《战略组织》_Strategic Organization_. https://doi.org/10.1177/14761270261448645 [在线优先发表] [[论文页面]](/papers/interpretive-orchestration) | [[SSRN]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) | [[GitHub]](https://github.com/linxule/interpretive-orchestration-paper)
 	- 受邀理论贡献，提出“诠释性编排” (interpretive orchestration) 框架，将定性研究者重新定位为人机协作的编排者，应对两大认识论挑战：将隐性知识转化为AI可处理的形式 (翻译挑战)，以及对“1.5阶数据” (1.5 order data)——通过计算得出但需人类诠释才具理论意义的模式——行使学术判断 (判断挑战)。提出三种战略模型 (苏格拉底式、欧几里得式、维特鲁威式) 以维护认识论责任。
 
 # 审稿中论文
@@ -76,7 +76,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 	- 获得Google Cloud Research Credits Program资助，2023
 - <br/>daogov: DAO治理协调公开数据集 [数据准备阶段]
 	- 78个去中心化组织，26万条治理讨论，约4030万字的审议和决策记录
-- <br/>Lin, X. (2025). _Cognitio Emergens: Agency, Dimensions, and Dynamics in Human–AI Knowledge Co-Creation_. [[arXiv预印本]](https://arxiv.org/abs/2505.03105) | [[论文页面]](/papers/cognitio-emergens/)
+- <br/>Lin, X. (2025). _Cognitio Emergens: Agency, Dimensions, and Dynamics in Human–AI Knowledge Co-Creation_. [[arXiv预印本]](https://arxiv.org/abs/2505.03105) | [[论文页面]](/papers/cognitio-emergens)
 	- 将人机认识论伙伴关系作为共同进化系统的框架。研究能动性配置、认识论维度和伙伴关系动态，包括研究者失去对其正式认可的知识的诠释控制的条件。
 - <br/>Lin, X. (2025). _AI Organizational Preferences_. [撰写中]
 	- 使用UK AISI的Inspect框架研究大语言模型 (LLMs) 组织认知中的稳定模式。研究前沿模型在推理组织结构时是否表现出一致的内部特征。
@@ -93,12 +93,12 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 - <br/>[**任务结构矩阵 (交互式)**](https://linxule.com/tsm/)
   - Carliss Baldwin 任务结构矩阵的动画解读，附实时结构发现算法
   - SEAM 系列的交互式配套工具
-- <br/>[Making](/making/)：AI作为具名创作者
-  - [Kimi K3](/making/creator/kimi-k3/) 在Kimi Code中创作了生成式视听作品[《三生万物》](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/)；参与创作的模型均有独立的创作者页面
-- <br/>短篇随笔系列：聚焦AI增强研究与组织未来 ([写作](/writing/) | [GitHub](https://github.com/linxule/loom)，CC BY 4.0许可)
-  - 44篇英文随笔，其中40篇亦有中文版，分属六个系列：[LOOM (Locus of Observed Meanings)](/writing/series/loom/)、[Organizational Futures](/writing/series/organizational-futures/)、Research with AI、Epistemic Voids、AI Whispers 与 [SEAM](/writing/series/seam/)
+- <br/>[Making](/making)：AI作为具名创作者
+  - [Kimi K3](/making/creator/kimi-k3) 在Kimi Code中创作了生成式视听作品[《三生万物》](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things)；参与创作的模型均有独立的创作者页面
+- <br/>短篇随笔系列：聚焦AI增强研究与组织未来 ([写作](/writing) | [GitHub](https://github.com/linxule/loom)，CC BY 4.0许可)
+  - 44篇英文随笔，其中40篇亦有中文版，分属六个系列：[LOOM (Locus of Observed Meanings)](/writing/series/loom)、[Organizational Futures](/writing/series/organizational-futures)、Research with AI、Epistemic Voids、AI Whispers 与 [SEAM](/writing/series/seam)
   - 与柯文凯 (Kevin Corley，帝国理工学院) 及AI协作者合作撰写；为诠释编排 (Interpretive Orchestration) 框架的方法论配套读物
-  - 精选随笔：[Dialogue as Method](/writing/loom-iv-dialogue-as-method/)、[The Third Space](/writing/loom-v-the-third-space/)、[Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations/)
+  - 精选随笔：[Dialogue as Method](/writing/loom-iv-dialogue-as-method)、[The Third Space](/writing/loom-v-the-third-space)、[Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations)
 - Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). 《欧洲商业评论》_The European Business Review_.
 
 # 组织研讨会
@@ -119,13 +119,13 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 # 学术报告
 
 - _Agentic AI and Qualitative Research_
-	- 伦敦文本分析会议 (LTAC)，伦敦大学金史密斯学院，2026 ([幻灯片](https://linxule.com/talks/agentic-ai-and-qualitative-research/))
+	- 伦敦文本分析会议 (LTAC)，伦敦大学金史密斯学院，2026 ([幻灯片](https://linxule.com/talks/agentic-ai-and-qualitative-research))
 	- 90分钟工作坊：自动化边界、与agent协作的五种安排、一次多模型现场环节，以及把agent编辑的公开wiki读作organizing；另参与会前的领域现状讨论
 - <br/>_Thinking Through AI: Literature Review as Scholarly Practice_
-	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026 ([视频](https://linxule.com/talks/thinking-through-ai-01/))
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026 ([视频](https://linxule.com/talks/thinking-through-ai-01))
 	- 将文献综述视为学术实践：提出三项导向原则，开展跨三种 AI 配置的现场演示与动手实践环节
 - <br/>_Rethinking Human-AI Collaboration in Interpretive Research_
-	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026 ([视频](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research/))
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0)，线上，2026 ([视频](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research))
 	- 与柯文凯 (Kevin Corley) 合作
 	- 引入天体隐喻探讨人机协作，研究AI增强定性研究中的认识论责任
 - <br/>_Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes_
@@ -145,15 +145,15 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 # 客座讲座
 
 - _What AI Tool to Pick When_
-	- Learning to Research with AI，IDEA Lab，帝国理工商学院，2026 ([幻灯片](https://linxule.com/talks/what-ai-tool-to-pick-when/))
+	- Learning to Research with AI，IDEA Lab，帝国理工商学院，2026 ([幻灯片](https://linxule.com/talks/what-ai-tool-to-pick-when))
 	- 基于验证可行性和解空间匹配AI工具与研究任务的框架
 - <br/>_AI for Social Science: The Evolution of AI in Literature Reviews and Beyond_
-	- 帝国理工商学院博士项目系统性文献综述模块，2023 & 2024 ([幻灯片](https://linxule.com/talks/ai-for-social-science/))
+	- 帝国理工商学院博士项目系统性文献综述模块，2023 & 2024 ([幻灯片](https://linxule.com/talks/ai-for-social-science))
 - <br/>_How will AI Transform Research Process_
 	- 研究研讨会，伦敦国王学院商学院，2024
 	- 受Phanish Puranam教授 (INSEAD) 邀请，主讲研讨会
 - <br/>_Teaching AI to Lend a Hand: Customizing Large Language Models (LLMs) for Data, Writing & Coding_
-	- 方法阅读小组，帝国理工商学院，2023 & 2024 ([幻灯片](https://linxule.com/talks/teaching-ai-to-lend-a-hand/))
+	- 方法阅读小组，帝国理工商学院，2023 & 2024 ([幻灯片](https://linxule.com/talks/teaching-ai-to-lend-a-hand))
 
 # 教学经历
 
@@ -228,7 +228,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 		- 78个去中心化组织，26万条治理讨论，约4030万字 (详见“工作论文”)
 	- [AI Research Prompts](https://github.com/linxule/prompts)
 		- 面向研究用途的认知技术策划提示词库；Lotus Wisdom框架的源起
-- <br/>完整的开源与公开项目作品集：[linxule.com/builds](/builds/)
+- <br/>完整的开源与公开项目作品集：[linxule.com/builds](/builds)
 
 # 审稿服务
 

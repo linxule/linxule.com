@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const articlePath = "/writing/ai-whispers-01-context-setting-primers/";
+const articlePath = "/writing/ai-whispers-01-context-setting-primers";
 
 test.beforeEach(async ({ page }) => {
   // Browser regressions should not depend on third-party fonts or analytics.
@@ -49,28 +49,28 @@ test("unavailable session storage does not break reading or navigation", async (
   });
   await page.goto(articlePath);
   await expect(page.locator(".article-body")).toBeVisible();
-  await page.locator('.article-footer a[href="/writing/"]').click();
-  await expect(page).toHaveURL(/\/writing\/$/);
+  await page.locator('.article-footer a[href="/writing"]').click();
+  await expect(page).toHaveURL(/\/writing\/?$/);
   expect(errors).toEqual([]);
 });
 
 test("returning from an article restores and consumes the writing index position", async ({ page }) => {
-  await page.goto("/writing/");
+  await page.goto("/writing");
   const articleLink = page.locator(`.entry-link[href="${articlePath}"]`);
   await articleLink.evaluate(link => link.scrollIntoView({ block: "center", behavior: "instant" }));
   const position = await page.evaluate(() => window.scrollY);
   expect(position).toBeGreaterThan(100);
 
   await articleLink.click();
-  await expect(page).toHaveURL(new RegExp(`${articlePath}$`));
-  const savedPosition = await page.evaluate(() => Number(sessionStorage.getItem("scrollPos_/writing/")));
+  await expect(page).toHaveURL(new RegExp(`${articlePath}\\/?$`));
+  const savedPosition = await page.evaluate(() => Number(sessionStorage.getItem("scrollPos_/writing")));
   expect(Math.abs(savedPosition - position)).toBeLessThanOrEqual(2);
 
-  await page.locator('.article-footer a[href="/writing/"]').click();
-  await expect(page).toHaveURL(/\/writing\/$/);
+  await page.locator('.article-footer a[href="/writing"]').click();
+  await expect(page).toHaveURL(/\/writing\/?$/);
   await expect.poll(async () => Math.abs(await page.evaluate(() => window.scrollY) - position))
     .toBeLessThanOrEqual(2);
-  expect(await page.evaluate(() => sessionStorage.getItem("scrollPos_/writing/"))).toBeNull();
+  expect(await page.evaluate(() => sessionStorage.getItem("scrollPos_/writing"))).toBeNull();
 });
 
 test("article lightbox contains keyboard focus and restores the reading state", async ({ page }) => {

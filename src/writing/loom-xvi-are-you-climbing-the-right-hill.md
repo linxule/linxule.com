@@ -69,13 +69,13 @@ What stays with me isn't how different AI models have varying tendencies in appr
 
 ## The Wrong Hill
 
-It's similar to climbing a hill. Each step takes you higher. The view keeps getting better. Then you reach the top, and from where you stand, every direction leads down. So you conclude you've arrived. It happens in engineering, in machine learning, in research design — researchers in optimization call it a local maximum. Explored as a [conversational breather](/writing/ai-whispers-03-breathers/), a moment to step back and ask whether you're optimizing locally or missing something you'd only see from a different vantage point. I just call it the feeling of being stuck somewhere impressive.
+It's similar to climbing a hill. Each step takes you higher. The view keeps getting better. Then you reach the top, and from where you stand, every direction leads down. So you conclude you've arrived. It happens in engineering, in machine learning, in research design — researchers in optimization call it a local maximum. Explored as a [conversational breather](/writing/ai-whispers-03-breathers), a moment to step back and ask whether you're optimizing locally or missing something you'd only see from a different vantage point. I just call it the feeling of being stuck somewhere impressive.
 
 ChatGPT helped me reach a very well-defended summit. Five stages, internally coherent, reviewer-proof. But it was a local maximum — and the hill itself was the wrong one.
 
 The frustrating thing about local maxima is that they feel like real peaks from where you're standing. The design was rigorous. It addressed every weakness and gap I could identify. It had more stages because more is more, and rigor is supposed to be thorough. The only signal that something was wrong was my unease — the nagging feeling that I was adding armor to something that might not need to exist in that form.
 
-Kevin calls this "performing rigor." The methods section looks impressive. It anticipates critiques. But all that work is happening within a frame that nobody questioned — including me, until I stumbled into conversations that operated at a different depth. What Claude identified as performing rigor in my specific stages, Kevin recognizes as a broader pattern in qualitative research: designing for reviewers rather than for the research question, adding layers of defense when the foundational epistemic and ontological assumptions need examining ([LOOM XIV](/writing/loom-xiv-calculator-fallacy/)).
+Kevin calls this "performing rigor." The methods section looks impressive. It anticipates critiques. But all that work is happening within a frame that nobody questioned — including me, until I stumbled into conversations that operated at a different depth. What Claude identified as performing rigor in my specific stages, Kevin recognizes as a broader pattern in qualitative research: designing for reviewers rather than for the research question, adding layers of defense when the foundational epistemic and ontological assumptions need examining ([LOOM XIV](/writing/loom-xiv-calculator-fallacy)).
 
 ---
 
@@ -93,6 +93,6 @@ If something is nagging you right now, pay attention. A design that keeps growin
 
 ---
 
-*This is the sixteenth entry in [LOOM](/writing/series/loom/), a series exploring how human researchers and AI systems create understanding together. If something here resonated, we'd like to hear about it.*
+*This is the sixteenth entry in [LOOM](/writing/series/loom), a series exploring how human researchers and AI systems create understanding together. If something here resonated, we'd like to hear about it.*
 
 ![Cover image: The fissure — doubt cracking through certainty](/writing/attachments/loom_post_16_cover.png)

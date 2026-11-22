@@ -14,9 +14,9 @@ keywords:
   - management scholarship resources
 ---
 
-# Academic Writing
+## Academic Writing
 
-## General Tips
+### General Tips
 
 - [Storytelling in Academic Writing: Structure, Tools and Techniques](https://youtu.be/rGdTPkPMeDU)
   - Based on [Timothy G. Pollock - How to Use Storytelling in Your Academic Writing](https://www.e-elgar.com/shop/gbp/how-to-use-storytelling-in-your-academic-writing-9781839102813.html)
@@ -26,13 +26,13 @@ keywords:
 - [@juliencayla: 10 academic writing skills I wish I had learned as a PhD student](https://twitter.com/juliencayla/status/1574628448680566784)
 - [@juliencayla: 5 articles you need to read if you want to improve your academic writing](https://twitter.com/juliencayla/status/1572757833623273472)
 
-## Qualitative Papers
+### Qualitative Papers
 
 - [Publishing in AMJ—Part 7: What's Different about Qualitative Research?](https://journals.aom.org/doi/10.5465/amj.2012.4003)
 - [Achieving Rigor in Qualitative Analysis](https://www.youtube.com/watch?v=yYDv8WHcuOY)
 - [The Craft of Writing Qualitative Papers](https://www.youtube.com/watch?v=NOyvX0jY3Q4)
 
-# Sources
+## Sources
 
 - **[The ASQ Blog](https://asqblog.com/)** - Behind the scenes of the Administrative Science Quarterly: A blog organized by students, for students.
   - Most posts are interviews with authors of recent and forthcoming ASQ articles. Two Ph.D. students ask five questions, and article authors answer.

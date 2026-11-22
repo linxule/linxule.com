@@ -21,23 +21,23 @@ territories:
     concepts:
       - term: "Polanyi Inversion"
         oneliner: "We can tell more than we know."
-        essay: "/writing/loom-xvii-the-polanyi-inversion/"
+        essay: "/writing/loom-xvii-the-polanyi-inversion"
 
       - term: "Cognitive Signatures"
         oneliner: "Different AI systems carry different theories of how understanding emerges."
-        essay: "/writing/loom-vi-the-pattern-beneath-the-voices/"
+        essay: "/writing/loom-vi-the-pattern-beneath-the-voices"
 
       - term: "Interpretive Orchestration"
         oneliner: "Holding your own judgment while gaining from what AI enables."
-        essay: "/writing/research-memex/"
+        essay: "/writing/research-memex"
 
       - term: "Calculator Fallacy"
         oneliner: "Treating AI as if it delivers objective truth in interpretive work."
-        essay: "/writing/loom-xiv-calculator-fallacy/"
+        essay: "/writing/loom-xiv-calculator-fallacy"
 
       - term: "Completion Authority"
         oneliner: "Who gets to say the work is done — the call no external scorer can make for you."
-        essay: "/writing/loom-xviii-the-end-of-positivism/"
+        essay: "/writing/loom-xviii-the-end-of-positivism"
 
     questions:
       - "How do you notice when fluency outruns understanding?"
@@ -50,11 +50,11 @@ territories:
     concepts:
       - term: "Whispered Agency"
         oneliner: "Through building artificial agency, we rediscover what was always human."
-        essay: "/writing/loom-x-whispered-agency/"
+        essay: "/writing/loom-x-whispered-agency"
 
       - term: "Vulnerability as Method"
         oneliner: "Using uncertainty as rigorous inquiry."
-        essay: "/writing/loom-xi-navigating-the-unnamed-between/"
+        essay: "/writing/loom-xi-navigating-the-unnamed-between"
 
     questions:
       - "What reveals itself only when you try to replicate it?"

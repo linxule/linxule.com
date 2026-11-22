@@ -17,7 +17,7 @@ link: https://www.threadcounts.org/p/conversationvibe-steering-prodders
 date: 2025-07-05
 ---
 
-So you've set the stage with [primers](/writing/ai-whispers-01-context-setting-primers/), and now it's time to steer this ship through the uncharted waters of AI interaction. Think of these prodders as your trusty first mate, helping you navigate the conversation and keep the vibe lively and engaging (e.g., exploration and creativity, critical thinking and perspective-taking, playful ambiguity and invitation to participate).
+So you've set the stage with [primers](/writing/ai-whispers-01-context-setting-primers), and now it's time to steer this ship through the uncharted waters of AI interaction. Think of these prodders as your trusty first mate, helping you navigate the conversation and keep the vibe lively and engaging (e.g., exploration and creativity, critical thinking and perspective-taking, playful ambiguity and invitation to participate).
 
 > ...
 

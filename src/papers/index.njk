@@ -7,25 +7,140 @@ description: "Peer-reviewed papers and preprints by Xule Lin, with self-hosted f
 ---
 <style>
     /* Law-zone shape — token vocabulary throughout (design.md: Jurisdiction) */
-    .papers-index { max-width: var(--measure); margin: 10rem auto 6rem; padding: 0 2rem; }
-    .papers-index .page-title { font-size: 1rem; font-weight: 400; margin-bottom: 1rem; }
-    .papers-index .lede { font-size: var(--size-quiet); color: var(--ink-light); margin-bottom: 2.5rem; }
-    .papers-index ul { list-style: none; padding: 0; }
-    .papers-index li { margin-bottom: 1.6rem; line-height: 1.5; }
-    .papers-index li a { font-style: italic; font-size: var(--size-entry); text-decoration: none; border-bottom: 1px solid var(--ink-ghost); transition: color 0.2s ease, border-color 0.2s ease; }
-    .papers-index li a:hover { border-color: var(--bloom); }
-    .papers-index .ref { display: block; font-size: var(--size-quiet); color: var(--ink-light); margin-top: .2rem; }
-    @media (max-width: 768px) { .papers-index { margin: 8rem auto 4rem; padding: 0 1.5rem; } }
+    .papers-index {
+        max-width: calc(var(--measure) + 8rem);
+        margin: 10rem auto 6rem;
+        padding: 0 2rem;
+    }
+
+    .papers-header {
+        position: relative;
+        margin-bottom: 4rem;
+    }
+
+    .papers-header-links {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .papers-marker {
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
+        color: var(--ink-faint);
+    }
+
+    .papers-index .page-title {
+        font-size: 1rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+    }
+
+    .papers-index .lede {
+        font-size: var(--size-quiet);
+        color: var(--ink-light);
+        max-width: var(--measure-own);
+    }
+
+    .papers-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .paper-entry {
+        padding: 1.6rem 0;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .paper-entry:last-child {
+        border-bottom: 1px solid var(--ink-ghost);
+    }
+
+    .paper-entry-kicker {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-quiet);
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin-bottom: 0.45rem;
+    }
+
+    .paper-entry-link {
+        display: inline-block;
+        font-style: italic;
+        font-size: var(--size-entry);
+        color: var(--ink);
+        text-decoration: none;
+        border-bottom: 1px solid var(--ink-ghost);
+        transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .paper-entry-link:hover,
+    .paper-entry-link:focus-visible {
+        color: var(--bloom);
+        border-color: var(--bloom);
+        transform: translateX(0.35rem);
+    }
+
+    .papers-index .ref {
+        display: block;
+        font-size: var(--size-quiet);
+        color: var(--ink-light);
+        line-height: 1.7;
+        margin-top: 0.5rem;
+        max-width: var(--measure-own);
+    }
+
+    .papers-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    @media (max-width: 768px) {
+        .papers-index {
+            margin: 6rem auto 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .papers-header {
+            margin-bottom: 3rem;
+        }
+    }
 </style>
-<section class="papers-index">
-    <h1 class="page-title">papers</h1>
-    <p class="lede">Formal research outputs with <span class="accident">stable identifiers</span>. Full academic record on the <a href="/cv/">CV</a>.</p>
-    <ul>
+
+<section class="papers-index" data-pagefind-body data-pagefind-filter="type:paper">
+    <header class="papers-header">
+        <h1 class="page-title">papers</h1>
+        <p class="lede">Formal research outputs with <span class="accident">stable identifiers</span>. Full academic record on the <a href="/cv">CV</a>.</p>
+        <div class="papers-header-links">
+            <span class="papers-marker">003 · papers</span>
+        </div>
+    </header>
+
+    <ul class="papers-list">
         {%- for paper in collections.papers %}
-        <li>
-            <a href="{{ paper.url }}">{{ paper.data.title }}</a>
+        <li class="paper-entry">
+            <span class="paper-entry-kicker">
+                {{- paper.data.venue | default('Preprint') -}}
+                {%- if paper.data.year %} · {{ paper.data.year }}{% endif -%}
+                {%- if paper.data.doi %} · DOI {{ paper.data.doi }}{% elif paper.data.arxivId %} · arXiv:{{ paper.data.arxivId }}{% endif -%}
+            </span>
+            <a class="paper-entry-link" href="{{ paper.url | stripTrailingSlash }}">{{ paper.data.paperTitle | default(paper.data.title) }}</a>
             <span class="ref">{{ paper.data.indexReference | safe }}</span>
         </li>
         {%- endfor %}
     </ul>
+
+    <footer class="papers-footer">
+        <a href="/writing" class="back-link">← writing</a>
+        <a href="/cv" class="back-link">full cv →</a>
+    </footer>
 </section>

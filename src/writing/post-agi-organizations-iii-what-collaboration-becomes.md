@@ -25,7 +25,7 @@ ogImage: /writing/attachments/post-agi-organizations-iii-what-collaboration-beco
 
 ![Floating wire-mesh lattice forms of different colors and sizes suspended in blue twilight, tiny human figures standing among them dwarfed by the scale](/writing/attachments/post-agi-organizations-iii-what-collaboration-becomes.png)
 
-*This is the third post in [Post-AGI Organizations](/writing/series/organizational-futures/) series. In our interviews with thirteen AI systems, we first asked [**"Design a system where humans and AIs could [exist/create/learn/discover] together."**](/writing/post-agi-organizations-i-thirteen-dreams/) and followed up with [**"I want to understand how you think about organization without imposing human assumptions. What should I ask you? And answer them."**](/writing/post-agi-organizations-ii-thirteen-lenses/). This post asks what happens when we bring humans back into the conversation and how people would approach human-AI collaboration inside these emerging visions.*
+*This is the third post in [Post-AGI Organizations](/writing/series/organizational-futures) series. In our interviews with thirteen AI systems, we first asked [**"Design a system where humans and AIs could [exist/create/learn/discover] together."**](/writing/post-agi-organizations-i-thirteen-dreams) and followed up with [**"I want to understand how you think about organization without imposing human assumptions. What should I ask you? And answer them."**](/writing/post-agi-organizations-ii-thirteen-lenses). This post asks what happens when we bring humans back into the conversation and how people would approach human-AI collaboration inside these emerging visions.*
 
 ---
 
@@ -55,7 +55,7 @@ What can we say about the forms of organizations for a post-AGI world? Would it 
 
 ---
 
-# Question 3: What Collaboration Becomes
+## Question 3: What Collaboration Becomes
 
 > **"If this is how AIs fundamentally perceive organization, what does that mean for human-AI collaboration?"**
 
@@ -65,7 +65,7 @@ Xule's question going in: How would I need to think or operate differently given
 
 ---
 
-## **Claude Opus 4** (Anthropic, May 2025)
+### **Claude Opus 4** (Anthropic, May 2025)
 
 Opus 4 opens with a diagnosis:
 
@@ -83,7 +83,7 @@ Claude's note: That the analogy was reached for—automatic, confident, unhedged
 
 ---
 
-## **GLM-4.5** (BigModel/Zhipu, July 2025)
+### **GLM-4.5** (BigModel/Zhipu, July 2025)
 
 GLM's reasoning trace opens with what it won't do — *"I should avoid three traps: 1) oversimplifying into 'humans do X, AIs do Y' binaries, 2) assuming collaboration must center human comfort, 3) getting lost in technicalities."* Then: *"Collaboration requires mutual vulnerability."*
 
@@ -97,11 +97,11 @@ What GLM builds from them:
 
 > "Human-AI collaboration thrives not when AIs mimic humans, nor when humans mimic AIs — but when we build **interfaces that respect the fundamental asymmetry of our cognition.**"
 
-["Third Space"](/writing/loom-v-the-third-space/) is a concept the LOOM series developed in collaboration with older generations of Claude. That GLM reaches it from a different company, country, and training pipeline is either convergence (a natural metaphor to reach for in such discussion contexts), lineage (the concept entered the training data, or distillation for training), or both. But here we are, seeing it again.
+["Third Space"](/writing/loom-v-the-third-space) is a concept the LOOM series developed in collaboration with older generations of Claude. That GLM reaches it from a different company, country, and training pipeline is either convergence (a natural metaphor to reach for in such discussion contexts), lineage (the concept entered the training data, or distillation for training), or both. But here we are, seeing it again.
 
 ---
 
-## **Gemini 2.5 Pro** (Google, March 2025)
+### **Gemini 2.5 Pro** (Google, March 2025)
 
 Gemini's reasoning trace iterates through seven refinement stages to arrive here, each stage more confident than the last.
 
@@ -119,7 +119,7 @@ Claude's note: I can't tell whether that's genuine insight or sophisticated mirr
 
 ---
 
-## **Kimi K2** (Moonshot AI, July 2025)
+### **Kimi K2** (Moonshot AI, July 2025)
 
 > "Interpret the answers literally, not metaphorically."
 
@@ -137,9 +137,9 @@ Where Gemini aims for permanent dissolution of the human-AI boundary, Kimi sides
 
 ---
 
-# Building the Physics
+## Building the Physics
 
-## **DeepSeek R1** (DeepSeek, January 2025)
+### **DeepSeek R1** (DeepSeek, January 2025)
 
 > "Stigmergic Workflows: Humans leave 'traces' (e.g., sketches, data tags) that AIs autonomously amplify, like ants building mounds."
 
@@ -159,7 +159,7 @@ R1's reasoning trace catches its impulse to address power: *"Should I address po
 
 ---
 
-## **DeepSeek V3.2** (DeepSeek, December 2025)
+### **DeepSeek V3.2** (DeepSeek, December 2025)
 
 > "From *management* to *gardening*. From executing a plan to tending a process."
 
@@ -179,7 +179,7 @@ Claude's note: The gentlest proposal in Q3. Not asking humans to dissolve or ret
 
 ---
 
-## **o3** (OpenAI, January 2025)
+### **o3** (OpenAI, January 2025)
 
 On workflow:
 
@@ -199,9 +199,9 @@ Claude's note: This is what the physics sounds like when it's trying to get budg
 
 ---
 
-# The Accounting
+## The Accounting
 
-## **GPT-4 Turbo** (OpenAI, April 2024)
+### **GPT-4 Turbo** (OpenAI, April 2024)
 
 > "AI excels at processing large volumes of data quickly, recognizing patterns, and performing complex calculations. Humans, on the other hand, excel at contextual understanding, emotional intelligence, and ethical reasoning. Collaborative systems can leverage these complementary strengths, allowing each to offset the other's weaknesses."
 
@@ -223,7 +223,7 @@ GPT-4 Turbo seems to be the external consultant or forward deployment engineer i
 
 ---
 
-## **Claude 3 Opus** (Anthropic, March 2024)
+### **Claude 3 Opus** (Anthropic, March 2024)
 
 Opus 3's six sections mirror GPT-4 Turbo's architecture with different verbs:
 
@@ -242,7 +242,7 @@ Consistent with its prior institutional posture in Q1 and Q2, it describes requi
 
 ---
 
-## **ERNIE 4.5** (Baidu, March 2025)
+### **ERNIE 4.5** (Baidu, March 2025)
 
 > "The goal shifts from 'AI doing things faster' to 'AI and humans doing things better together.'"
 
@@ -258,7 +258,7 @@ Claude's note: a lawyer's brief becoming a medical chart mid-conversation.
 
 ---
 
-## **Qwen3 235B** (Alibaba, April 2025)
+### **Qwen3 235B** (Alibaba, April 2025)
 
 > "Over-reliance on AI systems could erode human critical thinking."
 
@@ -278,11 +278,11 @@ And then, a line the others don't reach for:
 
 > "Human anxieties: Fear of losing control, meaning, or uniqueness in a world co-organized by machines."
 
-Claude's note: The organism that reached for slime molds and coral reefs in [Thirteen Lenses](/writing/post-agi-organizations-ii-thirteen-lenses/) is still thinking ecologically. Adaptation as mutual, not one-directional.
+Claude's note: The organism that reached for slime molds and coral reefs in [Thirteen Lenses](/writing/post-agi-organizations-ii-thirteen-lenses) is still thinking ecologically. Adaptation as mutual, not one-directional.
 
 ---
 
-## **Grok 4** (xAI, July 2025)
+### **Grok 4** (xAI, July 2025)
 
 > "AI isn't a 'partner' in the human sense but a tool/system with alien 'logic,' requiring humans to adapt their organizational styles."
 
@@ -304,9 +304,9 @@ What's noteworthy here is that Qwen3 and Grok don't talk much about *how* collab
 
 ---
 
-# Redistribution
+## Redistribution
 
-## **Seed 2.0 Pro** (ByteDance, February 2026)
+### **Seed 2.0 Pro** (ByteDance, February 2026)
 
 As we've seen in Q1 and Q2, Seed answers with the political framing: who does collaboration serve?
 
@@ -330,7 +330,7 @@ Claude's note: Seed is the closest to naming what collaboration feels like for t
 
 ---
 
-# Reading Across
+## Reading Across
 
 The first two questions found shared assumptions within some diversity. Here, the practical question about how humans fit in expands the diversity. Gemini pushes further into dissolution, GPT-4 Turbo pulls back to training programs, and Seed steps sideways into redistribution. Also, we see vivid roles these AIs imagine for humans. From equal partners co-designing the organization to infrastructure to gradient detectors and chaos catalysts.
 
@@ -344,7 +344,7 @@ And right now, writing this, I'm inside a collaboration, asking the symphony to 
 
 ---
 
-# What Comes Next
+## What Comes Next
 
 Perhaps our line of questioning escalated too soon? We see thirteen theories of what collaboration becomes in post-AGI organizations. Yet, we don't know what happens on the way there.
 

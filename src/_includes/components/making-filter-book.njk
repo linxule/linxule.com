@@ -1,0 +1,179 @@
+{# Shared book markup and behavior for the 4 Making filtered views
+   (prompter model, prompter family, creator model, creator family).
+   Required variables before including:
+     - makingFilter: "prompter" | "creator"
+     - filterGroup:  { name, count, items }
+     - filterBackHref: canonical slashless back URL
+     - filterBackText: link label
+#}
+{% include "components/making-filter-styles.njk" %}
+
+<div class="spread-book" id="spread-book" role="region" aria-label="{{ filterGroup.name }} {{ makingFilter }} book">
+
+    <!-- Header Spread -->
+    <section class="spread header-spread" data-spread="0">
+        <a href="{{ filterBackHref }}" class="back-link">{{ filterBackText }}</a>
+        <div class="{{ makingFilter }}-label">{% if makingFilter == "prompter" %}prompted by{% else %}made by{% endif %}</div>
+        <h1 class="page-title">{{ filterGroup.name }}</h1>
+        <p class="page-count">{{ filterGroup.count }} {% if makingFilter == "prompter" %}set{% else %}artifact{% endif %}{% if filterGroup.count != 1 %}s{% endif %}</p>
+
+        <div class="scroll-hint" id="scroll-hint">
+            ↓ scroll to explore
+        </div>
+    </section>
+
+    {% if makingFilter == "prompter" %}
+    <!-- Portrait Spreads -->
+    {%- for portrait in filterGroup.items -%}
+    {%- set galleryId = "filter-portrait-gallery-" ~ loop.index -%}
+    <section class="spread" data-spread="{{ loop.index }}" data-orientation="{{ portrait.data.orientation | default('landscape') }}">
+
+        <div class="spread-text">
+            <div class="spread-poem">
+                {%- for line in portrait.data.prompt -%}
+                <span class="spread-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                {%- endfor -%}
+            </div>
+
+            <div class="spread-meta">
+                <h2 class="spread-title"><a href="{{ portrait.url | stripTrailingSlash }}">{{ portrait.data.title }}</a></h2>
+                <div class="spread-info">
+                    {{ portrait.data.generator }}{% if portrait.data.settings %} · {{ portrait.data.settings }}{% endif %}<br>
+                    {{ portrait.data.prompter }}<br>
+                    {{ portrait.data.date | readableDate }}
+                </div>
+            </div>
+        </div>
+
+        <div class="spread-specimens">
+            {%- for image in portrait.data.images -%}
+            {%- if loop.index <= 4 -%}
+            <figure class="specimen" data-src="{{ image.src }}" data-gallery-id="{{ galleryId }}" data-gallery-index="{{ loop.index0 }}">
+                {% optimizedImage image.src, image.alt | default(portrait.data.title), "(max-width: 900px) 50vw, 25vw" %}
+                <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
+            </figure>
+            {%- endif -%}
+            {%- endfor -%}
+            {%- if portrait.data.images.length > 4 -%}
+            <button type="button" class="specimen-more" data-gallery-id="{{ galleryId }}" data-gallery-index="4" aria-label="View {{ portrait.data.images.length - 4 }} more images, starting with image 5">+{{ portrait.data.images.length - 4 }} more</button>
+            {%- endif -%}
+        </div>
+        <script type="application/json" id="{{ galleryId }}">{{ portrait.data.images | galleryItems | dump | safe }}</script>
+
+    </section>
+    {%- endfor -%}
+
+    {% else %}
+    <!-- Artifact Spreads -->
+    {%- for artifact in filterGroup.items -%}
+    <section class="spread" data-spread="{{ loop.index }}">
+
+        <div class="spread-text">
+            {%- if artifact.data.contextExcerpt -%}
+            <div class="spread-poem">
+                {%- if artifact.data.contextExcerpt.length -%}
+                    {%- for line in artifact.data.contextExcerpt -%}
+                    <span class="spread-line{% if line.accident %} accident{% endif %}">{{ line.text | default(line) }}</span>
+                    {%- endfor -%}
+                {%- else -%}
+                    <span class="spread-line{% if artifact.data.contextExcerpt.accident %} accident{% endif %}">{{ artifact.data.contextExcerpt.text | default(artifact.data.contextExcerpt) }}</span>
+                {%- endif -%}
+            </div>
+            {%- endif -%}
+
+            <div class="spread-meta">
+                <h2 class="spread-title"><a href="{{ artifact.url | stripTrailingSlash }}">{{ artifact.data.title }}</a></h2>
+                <div class="spread-info">
+                    {{ artifact.data.creator }}<br>
+                    {{ artifact.data.medium }}{% if artifact.data.plottable %} · plottable{% endif %}<br>
+                    {{ artifact.data.date | readableDate }}
+                </div>
+            </div>
+        </div>
+
+        <div class="spread-specimens{% if artifact.data.thumbnail or not artifact.data.images %} single{% endif %}">
+            {% if artifact.data.thumbnail %}
+            <a href="{{ artifact.url | stripTrailingSlash }}" class="specimen">
+                {% optimizedImage artifact.data.thumbnail, artifact.data.title, "(max-width: 900px) 100vw, 400px" %}
+            </a>
+            {% elif artifact.data.images %}
+            {%- set artGalleryId = "filter-artifact-gallery-" ~ loop.index -%}
+            {%- for image in artifact.data.images -%}
+            {%- if loop.index <= 4 -%}
+            {% if image.src | isHTMLFile %}
+            <a href="{{ artifact.url | stripTrailingSlash }}" class="specimen specimen--interactive">
+                {%- set iframeCapabilities = image.iframeCapabilities | default(artifact.data.iframeCapabilities | default(["allow-scripts"])) -%}
+                <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index) }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="{{ iframeCapabilities | join(' ') }}"></iframe>
+                <span class="specimen-overlay"></span>
+                <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
+            </a>
+            {% else %}
+            <figure class="specimen" data-src="{{ image.src }}" data-gallery-id="{{ artGalleryId }}" data-gallery-index="{{ loop.index0 }}">
+                {% optimizedImage image.src, image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index), "(max-width: 900px) 50vw, 25vw" %}
+                <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
+            </figure>
+            {% endif %}
+            {%- endif -%}
+            {%- endfor -%}
+            {%- if artifact.data.images.length > 4 -%}
+            <button type="button" class="specimen-more" data-gallery-id="{{ artGalleryId }}" data-gallery-index="4" aria-label="View {{ artifact.data.images.length - 4 }} more images, starting with image 5">+{{ artifact.data.images.length - 4 }} more</button>
+            {%- endif -%}
+            <script type="application/json" id="{{ artGalleryId }}">{{ artifact.data.images | galleryItems | dump | safe }}</script>
+            {% elif artifact.data.src | isHTMLFile %}
+            <a href="{{ artifact.url | stripTrailingSlash }}" class="specimen specimen--interactive">
+                {%- set iframeCapabilities = artifact.data.iframeCapabilities | default(["allow-scripts"]) -%}
+                <iframe src="{{ artifact.data.src }}?v={{ site.version }}" title="{{ artifact.data.title }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="{{ iframeCapabilities | join(' ') }}"></iframe>
+                <span class="specimen-overlay"></span>
+            </a>
+            {% else %}
+            <a href="{{ artifact.url | stripTrailingSlash }}" class="specimen">
+                {% optimizedImage artifact.data.src, artifact.data.title, "(max-width: 900px) 100vw, 400px" %}
+            </a>
+            {% endif %}
+        </div>
+
+    </section>
+    {%- endfor -%}
+    {% endif %}
+
+</div>
+
+<!-- Navigation Dots -->
+<nav class="book-nav" id="book-nav" aria-label="Spread navigation">
+    <button type="button" class="book-nav-dot active" data-target="0" aria-label="Go to introduction"></button>
+    {%- for item in filterGroup.items -%}
+    <button type="button" class="book-nav-dot" data-target="{{ loop.index }}" aria-label="Go to {{ item.data.title }}"></button>
+    {%- endfor -%}
+</nav>
+
+<script>
+(function() {
+    const book = document.getElementById('spread-book');
+    const dots = document.querySelectorAll('#book-nav .book-nav-dot');
+    const spreads = book.querySelectorAll('.spread');
+    const scrollHint = document.getElementById('scroll-hint');
+    const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
+
+    book.addEventListener('scroll', () => {
+        const scrollPos = book.scrollTop;
+        const spreadHeight = window.innerHeight;
+        const currentIndex = Math.round(scrollPos / spreadHeight);
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+        });
+
+        if (scrollPos > 50 && scrollHint) {
+            scrollHint.classList.add('hidden');
+        }
+    });
+
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            spreads[i].scrollIntoView({ behavior: scrollBehavior });
+        });
+    });
+})();
+</script>
+
+{% include "components/lightbox.njk" %}

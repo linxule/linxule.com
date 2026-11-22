@@ -2,130 +2,272 @@
 permalink: /site-index.json
 eleventyExcludeFromCollections: true
 ---
+{%- set pageComma = joiner(",") -%}
+{%- set conceptComma = joiner(",") -%}
+{%- set pubComma = joiner(",") -%}
+{%- set projComma = joiner(",") -%}
 {
-  "version": "{{ "" | isoDate }}",
+  "version": {{ ("" | isoDate) | dump | safe }},
+  "build_head": {{ site.version | dump | safe }},
   "site": {
-    "title": "{{ site.title }}",
-    "url": "{{ site.url }}",
-    "author": "{{ site.author }}",
-    "description": "{{ site.description }}"
+    "title": {{ site.title | dump | safe }},
+    "titleZh": {{ site.titleZh | dump | safe }},
+    "url": {{ site.url | dump | safe }},
+    "author": {{ site.author | dump | safe }},
+    "authorZh": {{ site.authorZh | dump | safe }},
+    "description": {{ site.description | dump | safe }},
+    "descriptionZh": {{ site.descriptionZh | dump | safe }}
   },
-  "pages": [
-{%- for note in collections.all %}
-{%- if note.url == '/builds/vellum/' %}
+  "pages": [{{ pageComma() }}
     {
-      "url": {{ (note.url | replace(r/\/$/, '')) | dump | safe }},
-      "url_md": "/builds/vellum.md",
-      "title": {{ note.data.title | dump | safe }},
+      "url": "/",
+      "url_md": "/index.md",
+      "title": {{ site.title | dump | safe }},
+      "section": "root",
+      "static": true,
+      "keywords": ["Xule Lin", "林徐乐", "SKEMA", "Imperial College London", "human-AI collaboration", "organizational theory", "AI governance", "DAO governance", "qualitative methods"],
+      "summary": {{ site.description | dump | safe }}
+    }
+{%- for item in collections.all %}
+{%- set cleanUrl = item.url | stripTrailingSlash %}
+{%- if cleanUrl == "/thinking" %}{{ pageComma() }}
+    {
+      "url": "/thinking",
+      "url_md": "/thinking.md",
+      "title": {{ (item.data.seoTitle or item.data.title) | dump | safe }},
+      "section": "thinking",
+      "static": true,
+      "keywords": ["thinking", "research framework", "thesis", "implicit theories", "convergence", "loom", "human-AI collaboration", "organizational theory"],
+      "summary": {{ (item.data.description or item.data.thesis or "") | truncate(160) | replace("\n", " ") | dump | safe }}
+    }
+{%- elif cleanUrl == "/concepts" %}{{ pageComma() }}
+    {
+      "url": "/concepts",
+      "url_md": "/concepts.md",
+      "title": {{ (item.data.seoTitle or item.data.title) | dump | safe }},
+      "section": "concepts",
+      "static": true,
+      "keywords": [{% for c in conceptsCatalog.list %}{{ c.term | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "summary": {{ (item.data.seoDescription or item.data.description or "") | truncate(160) | replace("\n", " ") | dump | safe }}
+    }
+{%- elif cleanUrl == "/teaching" %}{{ pageComma() }}
+    {
+      "url": "/teaching",
+      "url_md": "/teaching.md",
+      "title": {{ (item.data.seoTitle or item.data.title) | dump | safe }},
+      "section": "teaching",
+      "static": true,
+      "keywords": ["teaching", "courses", "curriculum", "systematic reviews", "MakerDAO", "Imperial", "SKEMA", "Research Memex"],
+      "summary": {{ (item.data.seoDescription or item.data.description or "") | truncate(160) | replace("\n", " ") | dump | safe }}
+    }
+{%- elif cleanUrl == "/builds" %}{{ pageComma() }}
+    {
+      "url": "/builds",
+      "url_md": "/builds.md",
+      "title": {{ (item.data.seoTitle or item.data.title) | dump | safe }},
       "section": "builds",
-      "summary": {{ note.data.description | dump | safe }}
-    }{% if collections.writing.length or collections.portraits.length or collections.artifacts.length or collections.talks.length or collections.papers.length %},{% endif %}
-{%- endif %}
-{%- endfor %}
-{%- for post in collections.writing %}
+      "static": true,
+      "keywords": ["builds", "open-source", "MCP", "agent plugins", "research tools", "SIGNA", "daogov", "Vellum", "Research Memex", "kimi-plugin-cc"],
+      "summary": {{ (item.data.seoDescription or item.data.description or "") | truncate(160) | replace("\n", " ") | dump | safe }}
+    }
+{%- elif cleanUrl == "/builds/vellum" %}{{ pageComma() }}
     {
-      "url": "{{ post.url | replace(r/\/$/, "") }}",
-      "url_md": "/writing/{{ post.fileSlug }}.md",
+      "url": "/builds/vellum",
+      "url_md": "/builds/vellum.md",
+      "title": {{ item.data.title | dump | safe }},
+      "section": "builds",
+      "static": true,
+      "keywords": ["Vellum", "collective thinking", "living artwork", "MCP", "AI voices", "Claude", "GPT", "Kimi", "DeepSeek", "Grok", "Gemini"],
+      "summary": {{ (item.data.description or "") | dump | safe }}
+    }
+{%- elif cleanUrl == "/cv" %}{{ pageComma() }}
+    {
+      "url": "/cv",
+      "url_md": "/cv.md",
+      "title": {{ (item.data.seoTitle or item.data.title) | dump | safe }},
+      "section": "cv",
+      "static": true,
+      "keywords": ["CV", "curriculum vitae", "Xule Lin", "林徐乐", "SKEMA", "SKEMA Business School", "Imperial College London", "academic appointments", "publications", "DAO", "SIGNA"],
+      "summary": {{ (item.data.seoDescription or item.data.description or "") | truncate(160) | replace("\n", " ") | dump | safe }}
+    }
+{%- elif cleanUrl == "/cv-zh" %}{{ pageComma() }}
+    {
+      "url": "/cv-zh",
+      "url_md": "/cv-zh.md",
+      "title": {{ item.data.title | dump | safe }},
+      "section": "cv",
+      "static": true,
+      "keywords": ["简历", "中文简历", "林徐乐", "Xule Lin", "SKEMA", "SKEMA商学院", "帝国理工学院", "人机协作", "组织理论", "去中心化治理", "定性研究", "DAO", "SIGNA"],
+      "summary": {{ (item.data.description or "") | truncate(160) | replace("\n", " ") | dump | safe }}
+    }
+{%- elif cleanUrl == "/connect" %}{{ pageComma() }}
+    {
+      "url": "/connect",
+      "url_md": "/connect.md",
+      "title": {{ item.data.title | dump | safe }},
+      "section": "connect",
+      "static": true,
+      "keywords": ["connect", "MCP", "Model Context Protocol", "Claude Code", "Claude Desktop", "Cursor", "Codex", "Antigravity", "Gemini CLI", "linxule-mcp"],
+      "summary": {{ (item.data.description or "") | truncate(160) | replace("\n", " ") | dump | safe }}
+    }
+{%- endif %}
+{%- endfor %}{{ pageComma() }}
+    {
+      "url": "/writing",
+      "url_md": "/writing.md",
+      "title": "Writing",
+      "section": "writing",
+      "static": true,
+      "keywords": ["writing", "essays", "LOOM", "SEAM", "Research with AI", "AI Whispers", "Thinking", "Singles", "Epistemic Voids", "Organizational Futures", "Archive"],
+      "summary": "Essays on human–AI collaboration, qualitative methods, modularity, and post-AGI organizational futures, grouped by series."
+    }{{ pageComma() }}
+    {
+      "url": "/making",
+      "url_md": "/making.md",
+      "title": "Making",
+      "section": "making",
+      "static": true,
+      "keywords": ["making", "portraits", "artifacts", "Midjourney", "Claude", "Kimi", "GPT", "DeepSeek", "Gemini", "AI art"],
+      "summary": "AI-rendered portraits and artifacts made directly in conversation with named AI collaborators."
+    }{{ pageComma() }}
+    {
+      "url": "/talks",
+      "url_md": "/talks.md",
+      "title": "Talks",
+      "section": "talks",
+      "static": true,
+      "keywords": ["talks", "presentations", "lectures", "workshops", "slides", "video"],
+      "summary": "Conference presentations, invited talks, workshops, and public lectures on human–AI collaboration and organizing."
+    }{{ pageComma() }}
+    {
+      "url": "/papers",
+      "url_md": "/papers.md",
+      "title": "Papers",
+      "section": "papers",
+      "static": true,
+      "keywords": ["papers", "publications", "preprints", "DOI", "arXiv", "Strategic Organization", "Interpretive Orchestration", "Cognitio Emergens"],
+      "summary": "Peer-reviewed papers and preprints with stable identifiers and self-hosted full text where licensing permits."
+    }
+{%- for post in collections.writing %}{{ pageComma() }}
+    {
+      "url": {{ (post.url | stripTrailingSlash) | dump | safe }},
+      "url_md": {{ ("/writing/" ~ post.fileSlug ~ ".md") | dump | safe }},
       "title": {{ post.data.title | dump | safe }},
       "section": "writing",
-      "date": "{{ post.date.toISOString().split('T')[0] }}",
-      "authors": [{% for author in post.data.authors %}{{ author | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "keywords": [{% for kw in post.data.keywords %}{{ kw | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "summary": {{ (post.data.description or post.data.subtitle or '') | truncate(160) | replace('\n', ' ') | dump | safe }}
-    }{% if not loop.last or collections.portraits.length or collections.artifacts.length or collections.talks.length %},{% endif %}
+      "date": {{ post.date.toISOString().split("T")[0] | dump | safe }},{% if post.data.series %}
+      "series": {{ post.data.series | dump | safe }},{% endif %}
+      "authors": {{ (post.data.authors or []) | dump | safe }},
+      "keywords": {{ (post.data.keywords or []) | dump | safe }},
+      "summary": {{ (post.data.description or post.data.subtitle or "") | truncate(160) | replace("\n", " ") | dump | safe }}
+    }
 {%- endfor %}
-{%- for portrait in collections.portraits %}
+{%- for portrait in collections.portraits %}{{ pageComma() }}
     {
-      "url": "{{ portrait.url | replace(r/\/$/, "") }}",
-      "url_md": "{{ portrait.url | replace(r/\/$/, "") }}.md",
+      "url": {{ (portrait.url | stripTrailingSlash) | dump | safe }},
+      "url_md": {{ ((portrait.url | stripTrailingSlash) ~ ".md") | dump | safe }},
       "title": {{ portrait.data.title | dump | safe }},
       "section": "portraits",
-      "date": "{{ portrait.date.toISOString().split('T')[0] }}",
-      "prompter": {{ (portrait.data.prompter or '') | dump | safe }},
-      "generator": {{ (portrait.data.generator or '') | dump | safe }},
-      "summary": {% if portrait.data.prompt and portrait.data.prompt[0] %}{{ (portrait.data.prompt[0].text or portrait.data.prompt[0]) | truncate(160) | replace('\n', ' ') | dump | safe }}{% else %}""{% endif %}
-    }{% if not loop.last or collections.artifacts.length or collections.talks.length %},{% endif %}
+      "date": {{ portrait.date.toISOString().split("T")[0] | dump | safe }},
+      "prompter": {{ (portrait.data.prompter or "") | dump | safe }},
+      "generator": {{ (portrait.data.generator or "") | dump | safe }},
+      "keywords": {{ (portrait.data.keywords or []) | dump | safe }},
+      "summary": {% if portrait.data.prompt and portrait.data.prompt[0] %}{{ (portrait.data.prompt[0].text or portrait.data.prompt[0]) | truncate(160) | replace("\n", " ") | dump | safe }}{% else %}""{% endif %}
+    }
 {%- endfor %}
-{%- for artifact in collections.artifacts %}
+{%- for artifact in collections.artifacts %}{{ pageComma() }}
     {
-      "url": "{{ artifact.url | replace(r/\/$/, "") }}",
-      "url_md": "{{ artifact.url | replace(r/\/$/, "") }}.md",
+      "url": {{ (artifact.url | stripTrailingSlash) | dump | safe }},
+      "url_md": {{ ((artifact.url | stripTrailingSlash) ~ ".md") | dump | safe }},
       "title": {{ artifact.data.title | dump | safe }},
       "section": "artifacts",
-      "date": "{{ artifact.date.toISOString().split('T')[0] }}",
-      "creator": {{ (artifact.data.creator or '') | dump | safe }},
-      "medium": {{ (artifact.data.medium or '') | dump | safe }},
-      "keywords": [{% for kw in artifact.data.keywords %}{{ kw | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "summary": {% if artifact.data.contextExcerpt and artifact.data.contextExcerpt[0] %}{{ (artifact.data.contextExcerpt[0].text or artifact.data.contextExcerpt[0]) | truncate(160) | replace('\n', ' ') | dump | safe }}{% else %}""{% endif %}
-    }{% if not loop.last or collections.talks.length %},{% endif %}
+      "date": {{ artifact.date.toISOString().split("T")[0] | dump | safe }},
+      "creator": {{ (artifact.data.creator or "") | dump | safe }},
+      "medium": {{ (artifact.data.medium or "") | dump | safe }},
+      "keywords": {{ (artifact.data.keywords or []) | dump | safe }},
+      "summary": {% if artifact.data.contextExcerpt and artifact.data.contextExcerpt[0] %}{{ (artifact.data.contextExcerpt[0].text or artifact.data.contextExcerpt[0]) | truncate(160) | replace("\n", " ") | dump | safe }}{% else %}""{% endif %}
+    }
 {%- endfor %}
-{%- for talk in collections.talks %}
+{%- for talk in collections.talks %}{{ pageComma() }}
     {
-      "url": "{{ talk.url | replace(r/\/$/, "") }}",
-      "url_md": "/talks/{{ talk.fileSlug }}.md",
+      "url": {{ (talk.url | stripTrailingSlash) | dump | safe }},
+      "url_md": {{ ("/talks/" ~ talk.fileSlug ~ ".md") | dump | safe }},
       "title": {{ talk.data.title | dump | safe }},
       "section": "talks",
-      "date": "{{ talk.date.toISOString().split('T')[0] }}",
-      "event": {{ (talk.data.event or '') | dump | safe }},
-      "speakers": [{% for speaker in talk.data.speakers %}{{ speaker | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "keywords": [{% for kw in talk.data.keywords %}{{ kw | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "youtube": {{ (talk.data.youtube or '') | dump | safe }}
-    }{% if not loop.last or collections.papers.length %},{% endif %}
+      "date": {{ talk.date.toISOString().split("T")[0] | dump | safe }},
+      "event": {{ (talk.data.event or "") | dump | safe }},
+      "speakers": {{ (talk.data.speakers or []) | dump | safe }},
+      "keywords": {{ (talk.data.keywords or []) | dump | safe }},
+      "summary": {{ (talk.data.description or (talk.data.title ~ ( " — " ~ talk.data.event if talk.data.event else "" ))) | truncate(160) | replace("\n", " ") | dump | safe }},
+      "youtube": {{ (talk.data.youtube or "") | dump | safe }}{% if talk.data.link %},
+      "link": {{ talk.data.link | dump | safe }}{% endif %}
+    }
 {%- endfor %}
-{%- for paper in collections.papers %}
+{%- for paper in collections.papers %}{{ pageComma() }}
     {
-      "url": "{{ paper.url | replace(r/\/$/, "") }}",
-      "url_md": "{{ paper.url | replace(r/\/$/, "") }}.md",
+      "url": {{ (paper.url | stripTrailingSlash) | dump | safe }},
+      "url_md": {{ ((paper.url | stripTrailingSlash) ~ ".md") | dump | safe }},
       "title": {{ (paper.data.paperTitle | default(paper.data.title)) | dump | safe }},
       "section": "papers",
-      "date": "{{ paper.date.toISOString().split('T')[0] }}",
-      "venue": {{ (paper.data.venue or '') | dump | safe }},
+      "date": {{ paper.date.toISOString().split("T")[0] | dump | safe }},
+      "venue": {{ (paper.data.venue or "") | dump | safe }},
       "authors": [{% for a in paper.data.authors %}{{ a.name | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "summary": {{ (paper.data.abstract or '') | truncate(160) | replace('\n', ' ') | dump | safe }}
-    }{% if not loop.last %},{% endif %}
+      "summary": {{ (paper.data.abstract or "") | truncate(160) | replace("\n", " ") | dump | safe }}
+    }
 {%- endfor %}
   ],
   "concepts": [
-{%- for concept in collections.concepts %}
+{%- for concept in conceptsCatalog.list %}{{ conceptComma() }}
     {
       "term": {{ concept.term | dump | safe }},
-      "definition": {{ concept.definition | dump | safe }},
-      "url": "{{ concept.url | replace(r/\/$/, "") }}#{{ concept.anchor }}",
-      "canonicalEssay": {{ concept.title | dump | safe }},
-      "authors": [{% for author in concept.authors %}{{ author | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "date": "{{ concept.date.toISOString().split('T')[0] }}"
-    }{% if not loop.last %},{% endif %}
+      "slug": {{ concept.slug | dump | safe }},
+      "territory": {{ concept.territory | dump | safe }},
+      "status": {{ concept.status | dump | safe }},
+      "oneliner": {{ (concept.oneliner or "") | dump | safe }},
+      "definition": {{ (concept.definition or concept.oneliner or "") | dump | safe }},
+      "open_questions": {{ (concept.openQuestions or []) | dump | safe }},
+      "url": {{ (concept.url | stripTrailingSlash) | dump | safe }}{% if concept.essayTitle %},
+      "canonicalEssay": {{ concept.essayTitle | dump | safe }}{% endif %}{% if concept.essayUrl %},
+      "essayUrl": {{ (concept.essayUrl | stripTrailingSlash) | dump | safe }}{% endif %}{% if concept.essaySeries %},
+      "essaySeries": {{ concept.essaySeries | dump | safe }}{% endif %}{% if concept.essayYear %},
+      "year": {{ concept.essayYear | dump | safe }}{% endif %}{% if concept.date %},
+      "date": {{ concept.date | dump | safe }}{% endif %}{% if concept.authors and concept.authors.length %},
+      "authors": {{ concept.authors | dump | safe }}{% endif %}{% if concept.doi %},
+      "doi": {{ concept.doi | dump | safe }}{% endif %}{% if concept.paperUrl %},
+      "paperUrl": {{ (concept.paperUrl | stripTrailingSlash) | dump | safe }}{% endif %}
+    }
 {%- endfor %}
   ],
   "publications": [
-{%- for paper in collections.papers %}
+{%- for paper in collections.papers %}{{ pubComma() }}
+    {%- set paperPath = paper.url | stripTrailingSlash -%}
     {
       "title": {{ (paper.data.paperTitle | default(paper.data.title)) | dump | safe }},
       "authors": [{% for a in paper.data.authors %}{{ a.name | dump | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],
-      "year": {{ paper.data.year }},
+      "year": {{ paper.data.year | dump | safe }},
       "venue": {{ paper.data.venue | dump | safe }},
-      "type": {% if paper.data.venueType == 'journal' %}"journal-article"{% elif paper.data.venueType == 'preprint' %}"preprint"{% else %}{{ paper.data.venueType | dump | safe }}{% endif %}{% if paper.data.status %},
+      "type": {% if paper.data.venueType == "journal" %}"journal-article"{% elif paper.data.venueType == "preprint" %}"preprint"{% else %}{{ paper.data.venueType | dump | safe }}{% endif %}{% if paper.data.status %},
       "status": {{ paper.data.status | dump | safe }}{% endif %}{% if paper.data.doi %},
       "doi": {{ paper.data.doi | dump | safe }}{% endif %}{% for l in paper.data.links %}{% if l.label == "SSRN" %},
       "ssrn": {{ l.href | dump | safe }}{% endif %}{% if l.label == "Code" %},
       "code": {{ l.href | dump | safe }}{% endif %}{% endfor %},
-      "url": {% if paper.data.arxivId %}{{ ("https://arxiv.org/abs/" + paper.data.arxivId) | dump | safe }}{% elif paper.data.doi %}{{ ("https://doi.org/" + paper.data.doi) | dump | safe }}{% else %}{{ (site.url + (paper.url | replace(r/\/$/, ""))) | dump | safe }}{% endif %}{% if paper.data.arxivId %},
+      "url": {% if paper.data.arxivId %}{{ ("https://arxiv.org/abs/" ~ paper.data.arxivId) | dump | safe }}{% elif paper.data.doi %}{{ ("https://doi.org/" ~ paper.data.doi) | dump | safe }}{% else %}{{ (site.url ~ paperPath) | dump | safe }}{% endif %}{% if paper.data.arxivId %},
       "arxiv": {{ paper.data.arxivId | dump | safe }}{% endif %}{% if paper.data.license %},
-      "license": "CC BY 4.0"{% endif %}{% if paper.data.coins %},
-      "coins": {{ paper.data.coins | dump | safe }}{% endif %}{% if paper.data.onSite %},
-      "onSite": {{ paper.data.onSite | dump | safe }}{% endif %}
-    }{% if not loop.last %},{% endif %}
+      "license": {{ paper.data.license | dump | safe }}{% endif %}{% if paper.data.coins %},
+      "coins": {{ paper.data.coins | dump | safe }}{% endif %},
+      "onSite": {{ paperPath | dump | safe }},
+      "read_path": {{ paperPath | dump | safe }},
+      "url_md": {{ (paperPath ~ ".md") | dump | safe }}
+    }
 {%- endfor %}
   ],
   "projects": [
-{%- set comma = joiner(",") %}
 {%- for page in collections.all %}
 {%- if page.url == "/builds/" or page.url == "/builds" %}
 {%- for group in page.data.groups %}
-{%- for project in group.projects | selectattr("href") %}{{ comma() }}
+{%- for project in group.projects %}{{ projComma() }}
     {
       "name": {{ project.name | dump | safe }},
-      "url": {{ (project.href if project.href.startsWith("http") else site.url + project.href) | dump | safe }},
+      "url": {% if project.href %}{{ (project.href if project.href.startsWith("http") else (site.url ~ project.href)) | dump | safe }}{% else %}null{% endif %},
       "description": {{ project.description | dump | safe }},{% if project.license %}
       "license": {{ project.license | dump | safe }},{% endif %}{% if project.signal %}
       "note": {{ project.signal | dump | safe }},{% endif %}
@@ -135,5 +277,6 @@ eleventyExcludeFromCollections: true
 {%- endfor %}
 {%- endif %}
 {%- endfor %}
-  ]
+  ],
+  "collaborators": {{ collaboratorsCatalog.families | dump | safe }}
 }

@@ -1,12 +1,5 @@
 import { rewrite, next } from '@vercel/functions';
-
-// Content paths that have .md counterparts
-// Matches: /writing/slug, /making/portraits/slug, /making/artifacts/slug,
-//          /talks/slug, /papers/slug, /cv, /cv-zh, /thinking, /teaching,
-//          /concepts, /builds, index pages
-// NOTE: scripts/check-renderings.mjs parses the next line — keep MD_PATHS a
-// single-line regex literal ending in `;` with NO trailing comment.
-const MD_PATHS = /^\/(writing\/[^/]+|making\/portraits\/[^/]+|making\/artifacts\/[^/]+|talks\/[^/]+|papers\/[^/]+|cv|cv-zh|thinking|teaching|concepts|builds|builds\/vellum|writing|making|talks|papers)\/?$/;
+import { MD_PATHS } from './eleventy/shapes.mjs';
 
 function parseQuality(parameters: string[]): number {
   for (const parameter of parameters) {
@@ -84,6 +77,9 @@ export default function middleware(request: Request) {
   return rewrite(mdUrl);
 }
 
+// Static literal array required by Vercel's AST analyzer.
+// Parity with `eleventy/shapes.mjs` (`MIDDLEWARE_MATCHERS`) is verified by
+// `scripts/check-renderings.mjs` and `scripts/middleware.test.mjs`.
 export const config = {
   matcher: [
     '/',
@@ -102,6 +98,7 @@ export const config = {
     '/teaching',
     '/concepts',
     '/builds',
-    '/builds/vellum',
+    '/builds/:path',
+    '/connect',
   ],
 };

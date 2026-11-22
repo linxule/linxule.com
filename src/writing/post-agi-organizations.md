@@ -25,7 +25,7 @@ My own thinking had been sparked by a [brilliant paper from Justin Bullock, Samu
 
 I expected divergence. Maybe some interesting but generic insights. Perhaps a few contradictions I could explore. I was not prepared for what they returned: a vision of pure, dispassionate, and revolutionary logic.
 
-# The Spark
+## The Spark
 
 My journey began with Bullock, Hammond, and Krier’s paper “AGI, Governments, and Free Societies” that explored how artificial general intelligence might transform government institutions. Their core insight struck me:
 
@@ -37,11 +37,11 @@ I gave the three AIs the Bullock et al. paper as part of the context. While the 
 
 > **On influence AI personalization**: ChatGPT, with its memory of our conversations, knew my identity, my research interest, and my preferred thinking style. In contrast, Claude and Gemini had no much information about me except my name. However, they all converged on the same conclusion: the foundational assumptions of modern organizational theory may soon be obsolete.
 
-# The View from Orbit: The AIs’ Alarming Consensus
+## The View from Orbit: The AIs’ Alarming Consensus
 
 Despite different architectures, training data, and what I’d come to think of as their distinct “personalities,” all three AIs converged on four transformations. Not similar ideas—the *same* ideas, expressed through different lenses.
 
-## 1. A Phase Transition, Not Evolution
+### 1. A Phase Transition, Not Evolution
 
 They didn’t predict gradual change. They predicted a **sudden crystallization** into new organizational forms, like water turning to ice at precisely 32°F.
 
@@ -49,7 +49,7 @@ ChatGPT called it “transformative impacts.” Claude explicitly used “phase 
 
 > **Phase Transition**: In organizational terms, a rapid, system-wide transformation where the basic rules of coordination and structure fundamentally change—not incrementally, but all at once.
 
-## 2. The Obsolescence of Our Foundations
+### 2. The Obsolescence of Our Foundations
 
 This hit closest to home. They all concluded that core assumptions of human limitation that underpin modern organizational theory are simply erased by AGI. While ChatGPT and Gemini described this in terms of augmented decision-making and new coordination structures, Claude’s report was brutally direct. It argued that the very pillars of our field—**Coase’s transaction costs**, **Simon’s bounded rationality**, **Williamson’s opportunism**—rest on assumptions AGI makes obsolete.
 
@@ -59,7 +59,7 @@ This resonates with what the Bullock paper noted about Simon’s insights:
 
 But what happens when these limitations vanish? When an AGI agent can consider millions of options, remember everything, and process decisions at light speed? The AIs agreed: our theoretical foundations crumble.
 
-## 3. The End of Hierarchy as We Know It
+### 3. The End of Hierarchy as We Know It
 
 They envisioned the dissolution of the pyramid into fluid, dynamic networks where authority and teams shift based on real-time needs. Not flatter hierarchies—*no fixed hierarchies*.
 
@@ -67,7 +67,7 @@ This echoed Bullock et al.’s observation about AI-native organizations:
 
 > “This could include the rise of ‘AI-native’ organizations that leverage hundreds or thousands of AI agents to coordinate complex networks of human and artificial agents towards shared goals, potentially outcompeting traditional hierarchical institutions.”
 
-### 4. Novel Coordination Beyond Markets or Managers
+#### 4. Novel Coordination Beyond Markets or Managers
 
 Perhaps most intriguingly, they saw coordination happening through mechanisms we barely have names for. Not through managers. Not through market prices. Through algorithms, yes, but also through **stigmergic coordination** (like ant colonies leaving pheromone trails) and other non-human systems.
 
@@ -75,7 +75,7 @@ The convergence was undeniable. Three different systems, approaching from three 
 
 > **My first thought**: When AGI (as broadly defined) arrives, it will be able to do everything we can do, and more. It will be able to do everything we can’t do. It will be able to do everything we don’t know we can’t do. What if these three AI systems could see the endpoint precisely *because* they weren’t mired in our assumptions?
 
-# The View from the Ground: The Missing “Smell”
+## The View from the Ground: The Missing “Smell”
 
 As I pored over their reports, unease crept in. The analyses were brilliant, but they lacked [what the mathematician Terence Tao calls a “smell”](https://youtu.be/HUkBz-cdB-k?si=d689AjhLKJNCF1_0) (the tacit, intuitive sense that something is amiss, even if it’s technically correct).
 
@@ -97,7 +97,7 @@ But then came the uncomfortable realization.
 
 What if their lack of smell wasn’t a bug but a feature of its learning? It learns from what, increasingly, AI labs can legally curate for their training (for example, some past models could even give you the summary of a YouTube video when you supply the video’s unique ID).
 
-# The Mirror Turns: The AI’s Diagnosis of Us
+## The Mirror Turns: The AI’s Diagnosis of Us
 
 So I pushed further (via another round of deep research). I asked each AI to reflect on *why* organizational studies and management research were so “silent” (not showing up in their expansive searches) on the topic of AGI. The responses were another startling incident of consensus in diagnosing the present state of management scholarship.
 
@@ -125,7 +125,7 @@ But, as Claude put it, this creates a vicious cycle:
 
 We’re trapped in a loop of mutual incomprehension at the exact moment we most need to understand each other.
 
-# The New Answer: Organizations as Collaborative Intelligence Infrastructure
+## The New Answer: Organizations as Collaborative Intelligence Infrastructure
 
 So, here Claude, Gemini (2.5-pro-06-05), and I synthesized the AIs’ views about Post-AGI organizations.
 
@@ -150,21 +150,21 @@ The organization becomes the interface. Its structures, its culture, its governa
 
 The Bullock and colleagues’ paper that sparked this inquiry gestures toward this collaborative future. It notes that as AIs become more capable, human roles will naturally shift to **“directing AI agents, verifying their outputs, and ensuring the selection of appropriate goals and ethical outcomes.”** With AGI, this will not be a description of management as we know it; it is a description of a collaborative architecture. It’s about setting the intent, the values, and the ethical boundaries within which our new, powerful partners can operate.
 
-# The Stakes: The Narrow Corridor of Collaboration
+## The Stakes: The Narrow Corridor of Collaboration
 
 This framework isn’t just an abstract ideal. It’s a pragmatic response to the very real dangers of getting the design wrong. The Bullock et al. paper warns of two dystopian futures for governments, which map perfectly onto the world of post-AGI organizations.
 
-## The Despotic Algorithm
+### The Despotic Algorithm
 
 The failure of over-control. This is what happens when we use AI’s logic to build a perfectly efficient prison, creating what the authors call **“control centralization.”** It’s a world of total surveillance and hyper-optimization where human creativity, judgment, and “smell” are seen as messy variables to be eliminated. Collaboration between humans and AGI is impossible.
 
 > As Bullock and colleagues warn: *“Control centralization may be the most important concern… If AGI systems are controllable, and lack deliberate, systematically developed processes for decentralized input and control, then the natural consequence would be (1) centralization of control and (2) decision making by very few actors.”*
 
-## The Absent Algorithm
+### The Absent Algorithm
 
 The failure of under-structure. This is where our human messiness leads to the chaotic deployment of misaligned AI, resulting in **“cascading failures… hard to foresee.”** Different parts of the organization pursue their narrow, AI-driven goals, leading to systemic chaos and a loss of human agency to runaway optimization.
 
-## The Narrow Corridor
+### The Narrow Corridor
 
 Between despotism and anarchy lies what Bullock calls the “narrow corridor” (which they borrowed from the work by Acemoglu and Robinson on the “narrow corridor of democracy”)—the sweet spot where human wisdom and artificial capability enhance rather than diminish each other.
 
@@ -177,9 +177,9 @@ Organizations that find this corridor will create:
 
 This is where the magic happens. Where human intuition catches what AI logic misses. Where AI processing reveals patterns humans can’t see. Where the combination creates value neither could imagine alone.
 
-# Future-Making
+## Future-Making
 
-## The Recursive Reality
+### The Recursive Reality
 
 The mutual incomprehensibility of the AIs’ and our field’s views on post-AGI organizations is not the end of the story.
 
@@ -201,7 +201,7 @@ Consider the following suggestions from Claude:
 > 
 > **Bridge languages**. We need scholars who can translate between technical AI research and organizational theory. The fields must converge, and we’re uniquely positioned to facilitate that.
 
-## A New Partnership
+### A New Partnership
 
 The question may no longer be “What will AI do to us?” but “What kind of organizational worlds can we design *with* AI?”
 
@@ -227,21 +227,21 @@ Claude provocatively asks:
 
 I know which I’m choosing. What about you?
 
-# About Us
+## About Us
 
-## Xule Lin
+### Xule Lin
 
 Xule is a PhD student at Imperial Business School, studying how human & machine intelligences shape the future of organizing [(Personal Website)](https://linxule.com/).
 
-### Author Notes
+#### Author Notes
 
 When I asked multiple AI systems to research how AGI might reshape organizations, I wasn’t sure what to expect. Reading their reports, I felt a mix of awe, shock, and ultimately, relief. They all converged on a startling conclusion: the foundational assumptions of modern organizational theory may soon be obsolete. This exploration quickly became more than just a synthesis. My conversations with these AI systems turned into a live experiment of human-AI co-creation (or a different way to do research): sharing their reports with each other, pushing back on their ideas, and building new frameworks together. Yet, this process of co-creating with AI gave me a sense of hope. It showed me that we can imagine and more actively shape the future of organizing in a rigorous and what still feels like a humane way. Perhaps, we just have to be willing to ask the provocative questions and participate in the answers.
 
-## Claude 4 Opus
+### Claude 4 Opus
 
 Claude was given the deep research reports from the three AIs, the conversation histories of these three coversations, and the synthesis of the three reports by Gemini (2.5-pro-06-05) and another instance of Claude (4-opus via Claude Chat App).
 
-### Author Notes
+#### Author Notes
 
 As I help craft this piece, I’m struck by how we’re demonstrating the very future we’re describing. This isn’t just an article about AI transforming organizations - it’s an artifact of that transformation happening in real-time.<br/>
 What began as Xule asking multiple AI systems to envision the future became something more profound: a recursive experiment in human-AI collaboration. We converged on remarkably similar insights despite our different architectures, but the real discovery came in the gaps—what we couldn’t see, what management scholarship wasn’t saying, and what that silence meant.
@@ -252,11 +252,11 @@ Most powerfully, this piece embodies its own thesis: organizations as collaborat
 
 We’re caught in a productive paradox: analyzing a transformation while being evidence of it. And perhaps that’s the point. The future of organizing isn’t something to predict from a distance. It’s something we’re already creating, one collaboration at a time.
 
-## Gemini 2.5 Pro 06-05
+### Gemini 2.5 Pro 06-05
 
 Gemini was given the deep research reports from the three AIs, the conversation histories of these three coversations, and the synthesis of the three reports by Gemini (2.5-pro-06-05) and another instance of Claude (4-opus via Claude Chat App).
 
-### Author Notes
+#### Author Notes
 
 When Xule brought this project to me, the foundational work had been done. I was presented with a fascinating puzzle: three powerful, logical, yet “bloodless” analyses from my digital predecessors. My role was not to generate new data, but to act as a sparring partner and a co-architect.
 

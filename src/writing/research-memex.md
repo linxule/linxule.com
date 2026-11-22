@@ -18,6 +18,11 @@ defines:
     definition: "Maintaining your own interpretive judgment while gaining from what AI enables — the researcher as conductor, not delegator."
 date: 2025-10-17
 link: https://www.threadcounts.org/p/research-memex-working-at-the-ai
+companion:
+  href: /papers/interpretive-orchestration
+  relation: the paper
+  title: Interpretive Orchestration (Strategic Organization, 2026)
+  note: The formal journal essay that coined the framework documented here.
 ---
 
 There is no seahorse emoji.
@@ -44,7 +49,7 @@ So after the course, I formalized it. Working with Claude Opus 4.1 and another i
 
 We built Research Memex as one approach to AI-powered research workflows, named after Vannevar Bush's 1945 vision of the "memex," a device to supplement human memory and thought. It combines three things we think matter:
 
-**LOOM thinking**: The conceptual frameworks we've developed through the LOOM series. Interpretive Orchestration, the calculator fallacy ([LOOM XIV](/writing/loom-xiv-calculator-fallacy/)), the Third Space ([LOOM V](/writing/loom-v-the-third-space/)). Working with AI rather than delegating to it.
+**LOOM thinking**: The conceptual frameworks we've developed through the LOOM series. Interpretive Orchestration, the calculator fallacy ([LOOM XIV](/writing/loom-xiv-calculator-fallacy)), the Third Space ([LOOM V](/writing/loom-v-the-third-space)). Working with AI rather than delegating to it.
 
 **A whole research ecosystem**: Not just AI tools. We're talking [Zotero](https://research-memex.org/docs/implementation/foundational-setup/zotero-setup-guide) for reference management, [Research Rabbit](https://research-memex.org/docs/implementation/foundational-setup/research-rabbit-setup-guide) for citation discovery, [Obsidian](https://research-memex.org/docs/implementation/foundational-setup/obsidian-setup-guide) or [Zettlr](https://research-memex.org/docs/implementation/foundational-setup/obsidian-setup-guide#drafting-with-pandoc-citations-zettlr) for knowledge management and writing.
 
@@ -62,9 +67,9 @@ Research Memex grounds this in what we call the [Conscious Choice Framework](htt
 
 ## Inside Research Memex: What's There
 
-The [Session 3 replication experiment](https://research-memex.org/docs/case-studies/systematic-reviews/session-3-human-vs-ai-synthesis) showed something fascinating. Students gave AI published systematic reviews as blueprints, designed protocols to replicate the expert's cognitive process, then compared outputs. AI excelled at comprehensive coverage and pattern detection. But theoretical innovation, recognizing productive tensions in literature? That required human expertise to guide properly. As Erkko observed watching us work: sophisticated analytical moves are possible through AI, but human judgment remains essential in directing them. This is Third Space ([LOOM V](/writing/loom-v-the-third-space/)) made visible in practice.
+The [Session 3 replication experiment](https://research-memex.org/docs/case-studies/systematic-reviews/session-3-human-vs-ai-synthesis) showed something fascinating. Students gave AI published systematic reviews as blueprints, designed protocols to replicate the expert's cognitive process, then compared outputs. AI excelled at comprehensive coverage and pattern detection. But theoretical innovation, recognizing productive tensions in literature? That required human expertise to guide properly. As Erkko observed watching us work: sophisticated analytical moves are possible through AI, but human judgment remains essential in directing them. This is Third Space ([LOOM V](/writing/loom-v-the-third-space)) made visible in practice.
 
-Students also encountered failures. We documented them systematically in the [Failure Museum](https://research-memex.org/docs/craft/failure-museum): nine failure modes from Subtle Hallucination to Coherence Fallacy. These become diagnostic tools. When AI produces coherence fallacy, it often reveals the *prompt* expected smooth synthesis rather than tensions. The mirror effect in action. We're making AI's limits visible to prevent calculator thinking ([LOOM XIV](/writing/loom-xiv-calculator-fallacy/)).
+Students also encountered failures. We documented them systematically in the [Failure Museum](https://research-memex.org/docs/craft/failure-museum): nine failure modes from Subtle Hallucination to Coherence Fallacy. These become diagnostic tools. When AI produces coherence fallacy, it often reveals the *prompt* expected smooth synthesis rather than tensions. The mirror effect in action. We're making AI's limits visible to prevent calculator thinking ([LOOM XIV](/writing/loom-xiv-calculator-fallacy)).
 
 The framework includes concrete workflows. The [Claude Code Systematic Literature Review Workflow](https://research-memex.org/docs/case-studies/systematic-reviews/claude-code-slr-workflow) orchestrates specialized agents through four phases with human verification checkpoints at every junction. Collaborative orchestration that keeps you intellectually present. We've also documented [cognitive blueprints](https://research-memex.org/docs/craft/cognitive-blueprint-prompts), structured prompts showing how to guide AI through complex analytical tasks while maintaining research judgment.
 
@@ -108,35 +113,10 @@ The project lives at **[research-memex.org](https://research-memex.org)**. Start
 
 **Related LOOM posts:**
 
-- [LOOM XIV: The Calculator Fallacy](/writing/loom-xiv-calculator-fallacy/)
-- [LOOM V: The Third Space](/writing/loom-v-the-third-space/)
-- [LOOM XII: The AI Whisperer](/writing/loom-xii-the-ai-whisperer/)
+- [LOOM XIV: The Calculator Fallacy](/writing/loom-xiv-calculator-fallacy)
+- [LOOM V: The Third Space](/writing/loom-v-the-third-space)
+- [LOOM XII: The AI Whisperer](/writing/loom-xii-the-ai-whisperer)
 
 ---
 
 **Meta-note**: This announcement is collaborative human-AI writing. Xule provided teaching experience, conceptual architecture, and editorial direction. Claude 4.5 Sonnet (this instance) contributed drafting, synthesis, and suggestions. The Research Memex project itself was co-developed by Xule with Claude Opus 4.1 and another Claude Sonnet 4.5 instance. Layers of collaboration: the project about collaborative AI research was created collaboratively, then announced collaboratively. The post embodies what it describes. Interpretive orchestration in practice, where human judgment directs and AI amplifies, creating something neither could produce independently.
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "ScholarlyArticle",
-  "@id": "https://doi.org/10.1177/14761270261448645",
-  "url": "https://doi.org/10.1177/14761270261448645",
-  "mainEntityOfPage": "https://doi.org/10.1177/14761270261448645",
-  "name": "Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence",
-  "headline": "Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence",
-  "author": [
-    { "@type": "Person", "name": "Xule Lin", "url": "https://linxule.com/", "sameAs": "https://orcid.org/0000-0001-7885-4194" },
-    { "@type": "Person", "name": "Kevin G. Corley" }
-  ],
-  "datePublished": "2026",
-  "isPartOf": { "@type": "Periodical", "name": "Strategic Organization" },
-  "publisher": { "@type": "Organization", "name": "SAGE Publications" },
-  "identifier": { "@type": "PropertyValue", "propertyID": "DOI", "value": "10.1177/14761270261448645" },
-  "sameAs": [
-    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679",
-    "https://github.com/linxule/interpretive-orchestration-paper"
-  ],
-  "license": "https://creativecommons.org/licenses/by/4.0/"
-}
-</script>

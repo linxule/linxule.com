@@ -48,7 +48,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 # Publications
 
-- Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. Strategic Organization. https://doi.org/10.1177/14761270261448645 [Advance online publication] [[Paper page]](/papers/interpretive-orchestration/) | [[SSRN]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) | [[GitHub]](https://github.com/linxule/interpretive-orchestration-paper)
+- Lin, X., & Corley, K. G. (2026). _Interpretive Orchestration: An Essay Exploring the Epistemic Intersection of Human Intuition and Machine Intelligence_. Strategic Organization. https://doi.org/10.1177/14761270261448645 [Advance online publication] [[Paper page]](/papers/interpretive-orchestration) | [[SSRN]](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6629679) | [[GitHub]](https://github.com/linxule/interpretive-orchestration-paper)
 	- Invited theoretical contribution proposing interpretive orchestration, a framework that reframes qualitative researchers as orchestrators of human-AI collaboration navigating two epistemic challenges: translating tacit knowledge into forms AI can process, and exercising judgment over '1.5 order data'—computationally derived patterns requiring human interpretation for theoretical significance. Develops three strategic models (Socratic, Euclidean, Vitruvian) for maintaining epistemic responsibility.
 
 # Under Review
@@ -75,7 +75,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 	- Grant Recipient, Google Cloud Research Credits Program, 2023
 - <br/>daogov: A Public Dataset on DAO Governance Coordination [Data preparation stage]
 	- 78 decentralized organizations, 260K governance discussions, ~40.3 million words of deliberation and decision-making records
-- <br/>Lin, X. (2025). _Cognitio Emergens: Agency, Dimensions, and Dynamics in Human–AI Knowledge Co-Creation_. [[Preprint on arXiv]](https://arxiv.org/abs/2505.03105) | [[Paper page]](/papers/cognitio-emergens/)
+- <br/>Lin, X. (2025). _Cognitio Emergens: Agency, Dimensions, and Dynamics in Human–AI Knowledge Co-Creation_. [[Preprint on arXiv]](https://arxiv.org/abs/2505.03105) | [[Paper page]](/papers/cognitio-emergens)
 	- Framework for human-AI epistemic partnerships as co-evolutionary systems. Examines agency configurations, epistemic dimensions, and partnership dynamics, including conditions where researchers lose interpretive control over knowledge they formally endorse.
 - <br/>Lin, X. (2025). _AI Organizational Preferences_. [Manuscript in preparation]
 	- Using UK AISI's Inspect framework to study stable patterns in LLMs' organizational cognition. Investigates whether frontier models exhibit consistent internal features when reasoning about organizational structure.
@@ -92,12 +92,12 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 - <br/>[**Task Structure Matrices (interactive)**](https://linxule.com/tsm/)
   - Animated walkthroughs of Carliss Baldwin's task structure matrices, with a live structure-discovery algorithm
   - Interactive companion to the SEAM series
-- <br/>AI as named creator in [Making](/making/)
-  - [Kimi K3](/making/creator/kimi-k3/) created [*Three Begets Ten Thousand Things*](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/), a generative audiovisual work made in Kimi Code; participating models receive dedicated creator pages
-- <br/>Short-form essay corpus on AI-augmented research and organizational futures ([Writing](/writing/) | [GitHub](https://github.com/linxule/loom), CC BY 4.0)
-  - 44 essays in English, 40 also published in Chinese, across six series: [LOOM (Locus of Observed Meanings)](/writing/series/loom/), [Organizational Futures](/writing/series/organizational-futures/), Research with AI, Epistemic Voids, AI Whispers, and [SEAM](/writing/series/seam/)
+- <br/>AI as named creator in [Making](/making)
+  - [Kimi K3](/making/creator/kimi-k3) created [*Three Begets Ten Thousand Things*](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things), a generative audiovisual work made in Kimi Code; participating models receive dedicated creator pages
+- <br/>Short-form essay corpus on AI-augmented research and organizational futures ([Writing](/writing) | [GitHub](https://github.com/linxule/loom), CC BY 4.0)
+  - 44 essays in English, 40 also published in Chinese, across six series: [LOOM (Locus of Observed Meanings)](/writing/series/loom), [Organizational Futures](/writing/series/organizational-futures), Research with AI, Epistemic Voids, AI Whispers, and [SEAM](/writing/series/seam)
   - Written with Kevin Corley (Imperial College London) and AI collaborators; methodological companion to the Interpretive Orchestration framework
-  - Selected essays: [Dialogue as Method](/writing/loom-iv-dialogue-as-method/), [The Third Space](/writing/loom-v-the-third-space/), [Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations/)
+  - Selected essays: [Dialogue as Method](/writing/loom-iv-dialogue-as-method), [The Third Space](/writing/loom-v-the-third-space), [Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations)
 - Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). The European Business Review.
 
 # Organized Symposia
@@ -118,13 +118,13 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 # Presentations
 
 - _"Agentic AI and Qualitative Research"_
-	- London Text Analysis Conference, Goldsmiths, University of London, 2026 ([Slides](https://linxule.com/talks/agentic-ai-and-qualitative-research/))
+	- London Text Analysis Conference, Goldsmiths, University of London, 2026 ([Slides](https://linxule.com/talks/agentic-ai-and-qualitative-research))
 	- 90-minute workshop: the automation frontier, five arrangements for working with agents, a live multi-model moment, and a public wiki edited by agents read as organizing; also contributed to the pre-conference state-of-the-art session
 - <br/>_"Thinking Through AI: Literature Review as Scholarly Practice"_
-	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0), Online, 2026 ([Video](https://linxule.com/talks/thinking-through-ai-01/))
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0), Online, 2026 ([Video](https://linxule.com/talks/thinking-through-ai-01))
 	- Introduced thinking through, engagement design, and the inward lens as orienting principles for literature review with AI; live demonstrations across three AI configurations and a hands-on session
 - <br/>_"Rethinking Human-AI Collaboration in Interpretive Research"_
-	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0), Online, 2026 ([Video](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research/))
+	- [New Scholars](https://www.youtube.com/@NewScholars) [Generative AI Series](https://www.youtube.com/playlist?list=PLbJ0geV0NuEjz4-eIr5EImLRafrGoltK0), Online, 2026 ([Video](https://linxule.com/talks/rethinking-human-ai-collaboration-interpretive-research))
 	- With Kevin Corley
 	- Introduced celestial metaphors for human-AI collaboration and examined epistemic responsibility in AI-augmented qualitative research
 - <br/>_"Tokens' Dual Role in DAOs: Enabling Collective Governance and Shaping Outcomes"_
@@ -144,15 +144,15 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 # Guest Lectures
 
 - _"What AI Tool to Pick When"_
-	- Learning to Research with AI, IDEA Lab, Imperial Business School, 2026 ([Slides](https://linxule.com/talks/what-ai-tool-to-pick-when/))
+	- Learning to Research with AI, IDEA Lab, Imperial Business School, 2026 ([Slides](https://linxule.com/talks/what-ai-tool-to-pick-when))
 	- Framework for matching AI tools to research tasks based on verification feasibility and solution space
 - <br/>_"AI for Social Science: The Evolution of AI in Literature Reviews and Beyond"_
-	- Systematic Reviews module at the PhD program, Imperial Business School, 2023 & 2024 ([Slides](https://linxule.com/talks/ai-for-social-science/))
+	- Systematic Reviews module at the PhD program, Imperial Business School, 2023 & 2024 ([Slides](https://linxule.com/talks/ai-for-social-science))
 - <br/>_"How will AI Transform Research Process"_
 	- Research Seminar, King's Business School, King's College London, 2024
 	- Invited by Prof. Phanish Puranam (INSEAD), main seminar speaker
 - <br/>_"Teaching AI to Lend a Hand: Customizing Large Language Models (LLMs) for Data, Writing & Coding"_
-	- Methods Reading Group, Imperial Business School, 2023 & 2024 ([Slides](https://linxule.com/talks/teaching-ai-to-lend-a-hand/))
+	- Methods Reading Group, Imperial Business School, 2023 & 2024 ([Slides](https://linxule.com/talks/teaching-ai-to-lend-a-hand))
 
 # Teaching
 
@@ -227,7 +227,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 		- 78 decentralized organizations, 260K governance discussions, ~40.3 million words (see Working Papers)
 	- [AI Research Prompts](https://github.com/linxule/prompts)
 		- Curated prompt library of cognitive techniques for research use; origin of the Lotus Wisdom framework
-- <br/>Complete open-source and public-build portfolio: [linxule.com/builds](/builds/)
+- <br/>Complete open-source and public-build portfolio: [linxule.com/builds](/builds)
 
 # Reviewing
 

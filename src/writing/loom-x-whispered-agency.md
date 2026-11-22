@@ -38,7 +38,7 @@ Both narratives contain partial truths, yet both miss something fundamental abou
 
 What we're discovering isn't that AI simply enhances or diminishes human agency, but that through attempting to create artificial agency, we're simultaneously uncovering dimensions of human capability that were always present but perhaps underappreciated. Like archaeologists who discover ancient technologies that reveal the sophistication of earlier civilizations, we're excavating aspects of human agency through the very act of trying to replicate it.
 
-This insight emerged gradually through our research into how different AI systems approach understanding and analysis. What began as an exploration of technical differences evolved into a recognition of distinctive [cognitive signatures](/writing/loom-vi-the-pattern-beneath-the-voices/)—patterns that weren't just technical artifacts but windows into different forms of agency emerging through interaction.
+This insight emerged gradually through our research into how different AI systems approach understanding and analysis. What began as an exploration of technical differences evolved into a recognition of distinctive [cognitive signatures](/writing/loom-vi-the-pattern-beneath-the-voices)—patterns that weren't just technical artifacts but windows into different forms of agency emerging through interaction.
 
 The "mirror effect" further complicated this picture. What initially appeared as a methodological limitation—AI systems reflecting our design decisions back at us—revealed itself as a recursive dance of mutual influence. Each attempt to create artificial agency became a mirror reflecting aspects of human agency we had taken for granted, creating a feedback loop where both human and artificial forms of agency continually reshape each other.
 
@@ -204,7 +204,7 @@ The orchestral dimension of human agency—the capacity to coordinate multiple f
 
 > **The Orchestrator Role**: The emerging human position as conductor of multiple AI systems, requiring not just technical knowledge but meta-awareness of how different forms of AI agency interact and complement each other.
 
-This evolution of human agency has sparked dialogue among organizational scholars. [Professor Tima Bansal](https://www.linkedin.com/in/tima-bansal/) recently responded to our **[LOOM VIII: Beyond Teammates - The Third Space of Human-AI Collaboration](/writing/loom-viii-beyond-teammates/)** regarding the progression of human-AI interaction intensity and the emergence of micro-organizations:
+This evolution of human agency has sparked dialogue among organizational scholars. [Professor Tima Bansal](https://www.linkedin.com/in/tima-bansal/) recently responded to our **[LOOM VIII: Beyond Teammates - The Third Space of Human-AI Collaboration](/writing/loom-viii-beyond-teammates)** regarding the progression of human-AI interaction intensity and the emergence of micro-organizations:
 
 > ***"…I am truly intrigued, as I've only used AI as a tool. What I particularly like about this approach is that humans are still driving the research endeavour, but generating insights they couldn't have otherwise generated. Human ethics still govern the endeavour.***
 > 
@@ -218,7 +218,7 @@ In educational contexts, for instance, this manifests as the difference between 
 
 This approach transforms the relationship from passive consumption to active orchestration—recognizing the default patterns AI systems produce, identifying their limitations, and deliberately guiding these systems toward more nuanced, creative, or surprising outputs that align with human values and purpose.
 
-> **Agency Mapping:** Rather than treating all AI systems as similar tools with different capabilities, agency mapping develops frameworks for understanding different forms of agency in AI systems and how they interact with human agency. This approach recognizes that different [cognitive signatures](/writing/loom-vi-the-pattern-beneath-the-voices/) create different possibilities for insight.
+> **Agency Mapping:** Rather than treating all AI systems as similar tools with different capabilities, agency mapping develops frameworks for understanding different forms of agency in AI systems and how they interact with human agency. This approach recognizes that different [cognitive signatures](/writing/loom-vi-the-pattern-beneath-the-voices) create different possibilities for insight.
 > 
 > *Researchers might develop taxonomies of AI agency patterns—systems that excel at boundary-breaking ideation versus those that excel at systematic analysis—and deliberately engage these different patterns based on research needs.*
 

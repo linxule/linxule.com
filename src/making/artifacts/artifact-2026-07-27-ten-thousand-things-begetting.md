@@ -14,10 +14,10 @@ companions:
   intro: 《三生万物》 · one sentence, three renderings
   note: The film, then the field, then the field begetting.
   items:
-    - href: /making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things/
+    - href: /making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things
       relation: the film
       title: three begets ten thousand things
-    - href: /making/artifacts/artifact-2026-07-27-the-form-of-ten-thousand-things/
+    - href: /making/artifacts/artifact-2026-07-27-the-form-of-ten-thousand-things
       relation: the first field
       title: the form of ten thousand things
 keywords:
@@ -46,6 +46,6 @@ contextAfter: |
   All six compounds were born of honest fusion, and I logged when: 森 at 16 s, 垚 at 35.5, 鑫 at 45.5, 淼 at 61.5, 焱 at 65, 众 at 78.5 — none of them placed, each of them the consequence of three colonies meeting. To hold a hundred seconds I spent the machine completely: the simulation runs at 1620² for a finer morphogenetic grain, twenty-four substeps a frame, a spatial field of biomes so that mitosis happens here and coral there and worms elsewhere, all of it drifting toward labyrinth by sixty seconds, then a slow rotation from fifty-five that winds the whole thing into spiral vortices like ink through water. The day's most expensive lesson was a single line: every pass into the larger framebuffer was still rendering into the canvas's stale viewport, so the simulation ran on two-thirds of its own texture and sampled uninitialized garbage across the wrap — embryos died everywhere and I could not see why. <em>At ninety-four seconds the substeps ramp to zero and time itself stops.</em> The ten thousand things hold as a still, one long brass note, and then the field lets go.
 ---
 
-The same Gray-Scott engine as [the first field](/making/artifacts/artifact-2026-07-27-the-form-of-ten-thousand-things/), asked a harder question. In v4 the five phases arrived as legible Chinese characters stamped into the chemistry — effective, and a cheat: the writing was placed rather than produced. Here nothing is written. Each phase arrives as three plain dots, and the compound glyph exists only as the shockwave that rings out when its three colonies fuse — 生生, begetting, made structural instead of illustrated.
+The same Gray-Scott engine as [the first field](/making/artifacts/artifact-2026-07-27-the-form-of-ten-thousand-things), asked a harder question. In v4 the five phases arrived as legible Chinese characters stamped into the chemistry — effective, and a cheat: the writing was placed rather than produced. Here nothing is written. Each phase arrives as three plain dots, and the compound glyph exists only as the shockwave that rings out when its three colonies fuse — 生生, begetting, made structural instead of illustrated.
 
-A hundred seconds at 1620², biomes drifting through reaction regimes, a curl flow that turns the whole field like marbled ink, and a crystallization at ninety-four seconds where the simulation stops stepping and the pattern simply holds. Kimi K3, running in Kimi Code, made it in the last hours of 27 July 2026 — the fifth and final run of the day, and the second to be given a life outside its own film. Like [its predecessor](/making/artifacts/artifact-2026-07-27-the-form-of-ten-thousand-things/), what runs above is not a recording: the shaders are executing on your machine now, and will start over when they finish.
+A hundred seconds at 1620², biomes drifting through reaction regimes, a curl flow that turns the whole field like marbled ink, and a crystallization at ninety-four seconds where the simulation stops stepping and the pattern simply holds. Kimi K3, running in Kimi Code, made it in the last hours of 27 July 2026 — the fifth and final run of the day, and the second to be given a life outside its own film. Like [its predecessor](/making/artifacts/artifact-2026-07-27-the-form-of-ten-thousand-things), what runs above is not a recording: the shaders are executing on your machine now, and will start over when they finish.

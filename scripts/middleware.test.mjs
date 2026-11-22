@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'bun:test';
-import middleware from '../middleware.ts';
+import { match } from 'path-to-regexp';
+import middleware, { config } from '../middleware.ts';
+import { MD_PATHS, MIDDLEWARE_MATCHERS, STATIC_TWINS } from '../eleventy/shapes.mjs';
 
 function negotiate(pathname, accept) {
   return middleware(new Request(`https://linxule.com${pathname}`, {
@@ -54,12 +56,18 @@ describe('Markdown content negotiation', () => {
       .toBe('https://linxule.com/index.md?source=agent');
   });
 
-  it('negotiates the Vellum note without claiming twins for other build routes', () => {
+  it('negotiates /connect and /builds/:slug routes', () => {
+    expect(negotiate('/connect/?source=agent', 'text/markdown').headers.get('x-middleware-rewrite'))
+      .toBe('https://linxule.com/connect.md?source=agent');
+    expect(negotiate('/connect', 'text/markdown').headers.get('x-middleware-rewrite'))
+      .toBe('https://linxule.com/connect.md');
+    expectPassThrough(negotiate('/connect', 'text/html'));
+    expectPassThrough(negotiate('/connect.md', 'text/markdown'));
+
     expect(negotiate('/builds/vellum/?source=agent', 'text/markdown').headers.get('x-middleware-rewrite'))
       .toBe('https://linxule.com/builds/vellum.md?source=agent');
     expectPassThrough(negotiate('/builds/vellum', 'text/html'));
     expectPassThrough(negotiate('/builds/vellum.md', 'text/markdown'));
-    expectPassThrough(negotiate('/builds/unknown-project', 'text/markdown'));
   });
 
   it.each([undefined, 'text/html', '*/*', 'text/*', 'application/markdown'])
@@ -67,8 +75,31 @@ describe('Markdown content negotiation', () => {
       expectPassThrough(negotiate('/', accept));
     });
 
-  it.each(['/writing/example.md', '/index.md', '/search', '/writing/example/attachment'])
-    ('passes through an existing Markdown file or unsupported route %s', pathname => {
-      expectPassThrough(negotiate(pathname, 'text/markdown'));
-    });
+  it.each([
+    '/writing/example.md',
+    '/index.md',
+    '/search',
+    '/writing/example/attachment',
+    '/writing/series/loom',
+    '/writing/attachments/cover.png',
+    '/tag/ai-governance',
+    '/making/prompter/claude',
+    '/making/creator/opus',
+  ])('passes through an existing Markdown file or unsupported route %s', pathname => {
+    expectPassThrough(negotiate(pathname, 'text/markdown'));
+  });
+
+  it('keeps config.matcher in exact parity with MIDDLEWARE_MATCHERS and covers every static shape', () => {
+    expect(config.matcher).toEqual([...MIDDLEWARE_MATCHERS]);
+    const compiled = config.matcher.map((pattern) => match(pattern, { sensitive: true, end: true }));
+    for (const shape of STATIC_TWINS) {
+      expect(
+        compiled.some((fn) => fn(shape.url) !== false),
+        `config.matcher must match ${shape.url}`,
+      ).toBe(true);
+      if (shape.url !== '/') {
+        expect(MD_PATHS.test(shape.url), `MD_PATHS must match ${shape.url}`).toBe(true);
+      }
+    }
+  });
 });

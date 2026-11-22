@@ -226,7 +226,7 @@ test("the opening spread says what the book is and lists its parts", async ({ pa
 test("an old #tools link opens the last page", async ({ page }, testInfo) => {
   await arrive(page, "/making/#tools");
   const note = page.locator("#end #tools");
-  await expect(note.getByRole("link", { name: "Builds" })).toHaveAttribute("href", "/builds/");
+  await expect(note.getByRole("link", { name: "Builds" })).toHaveAttribute("href", "/builds");
   await expect(note.locator("a.accident")).toHaveCount(1);
   if (isBookMode(testInfo.project.use.viewport)) await expectBookAt(page, "end");
   await expect(note).toBeInViewport();

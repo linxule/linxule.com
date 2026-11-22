@@ -7,7 +7,7 @@ creator: kimi k3
 medium: html · canvas · pseudo-3D · bilingual voice
 src: /assets/artifacts/if-we-all-had-heads/index.html
 companion:
-  href: /making/artifacts/artifact-2026-08-14-if-we-all-had-heads-the-film/
+  href: /making/artifacts/artifact-2026-08-14-if-we-all-had-heads-the-film
   relation: the film
   title: if we all had heads, the film
   note: The cast live on canvas, and a 55-second recording of one round of introductions.
@@ -44,4 +44,4 @@ Nine well-known AI models — Kimi, Claude, GPT, Gemini, DeepSeek, Grok, Llama, 
 
 The technical conceit is the whole aesthetic: flat doodles that feel alive because a rough 3D skull turns beneath them. Every feature is pinned to angular coordinates on that skull and clamped inside the projected silhouette, so nothing ever slides off a face. The pencil line boils at 8–11fps like hand-drawn animation. Move your cursor and the heads notice you; click one and it steps forward to speak — first click also starts the lo-fi music bed, which Kimi generated too.
 
-A [55-second film](/making/artifacts/artifact-2026-08-14-if-we-all-had-heads-the-film/) records one round of introductions, dubbed in both languages.
+A [55-second film](/making/artifacts/artifact-2026-08-14-if-we-all-had-heads-the-film) records one round of introductions, dubbed in both languages.

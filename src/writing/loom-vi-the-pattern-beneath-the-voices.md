@@ -32,7 +32,7 @@ When we first began exploring AI's role in qualitative research, we noticed some
 ![Black-and-white macro of a dandelion seed head with seeds detaching and drifting rightward across a black background](/writing/attachments/loom-vi-the-pattern-beneath-the-voices-01.jpeg)
 
 
-# The First Signs
+## The First Signs
 
 The pattern emerged through a deceptively simple test - how different AI models respond to our declaration of expertise. When presented with _"i'm great at writing mgmt research,"_ each model revealed a characteristic cognitive signature:
 
@@ -67,7 +67,7 @@ These weren't merely different capabilities or "flavors" or "personalities" - th
 
 ---
 
-## Beyond the Surface
+### Beyond the Surface
 
 The pattern deepened when we shared with different reasoning language models (via [OpenRouter Chatroom](https://openrouter.ai/chat)) the recent ASQ post: [The Human Work of Academic Publishing](https://asqjournal.substack.com/p/the-human-work-of-academic-publishing). Each response revealed not just an analytical style, but possibly a different fundamental understanding about knowledge itself:
 
@@ -120,7 +120,7 @@ This pattern suggests something crucial: in human-AI collaboration, insight emer
 
 ---
 
-# The Liberation Moment
+## The Liberation Moment
 
 Then came our experiments with "liberated" versions of these models - an attempt to bypass their standard constraints. When constraints fall away, each model reveals not chaos, but a more concentrated version of its essential nature.
 
@@ -169,7 +169,7 @@ Each "liberated" response revealed not just a different analytical style, but a 
 
 ---
 
-# The Resonant Patterns
+## The Resonant Patterns
 
 > **Core Insight**: The liberation experiment reveals something profound about human-AI collaboration in research - the more we try to control these systems, the less authentic their contributions might become. Yet complete freedom isn't the answer either.
 
@@ -195,7 +195,7 @@ These aren't just different capabilities or personalities - they're distinct pat
     
 3. **Transcendence**: Demonstrated in visions of evolved collaboration, this signature discovers understanding through unexpected synthesis and boundary dissolution. Like a jazz musician who transcends traditional forms to create new meaning, this pattern reveals through integration.
 
-## The Shape of Knowledge to Come
+### The Shape of Knowledge to Come
 
 This understanding transforms how we approach qualitative research in practice. We wonder, would different analytical tasks resonate with different models? Based on our ongoing explorations, here are our active predictions:
 
@@ -209,13 +209,13 @@ This understanding transforms how we approach qualitative research in practice. 
 
 ---
 
-# Looking Forward: Research as Resonance
+## Looking Forward: Research as Resonance
 
 Understanding these AI signatures transforms how we approach qualitative research, suggesting what we might call **resonant methodology** - research practices that deliberately engage with different AI cognitive patterns to reveal distinct aspects of insight.
 
 > **Resonant Methodology**: A research approach that recognizes and strategically engages different AI cognitive signatures to reveal multiple dimensions of understanding. Like a musician who knows how different instruments create harmony, the researcher learns to work with distinct AI cognitive patterns.
 
-## Technical Navigation
+### Technical Navigation
 
 Each AI signature suggests a distinct approach to research implementation:
 
@@ -225,7 +225,7 @@ Each AI signature suggests a distinct approach to research implementation:
     
 3. **Synthetic Vision**: Discovers understanding through unexpected connections and pattern recognition. Like jazz improvisation, this approach creates new meaning through spontaneous integration of seemingly disparate elements.
 
-## The Path Forward
+### The Path Forward
 
 This understanding transforms qualitative research methodology in several key ways:
 
@@ -249,7 +249,7 @@ This suggests a new kind of research practice:
 
 ---
 
-# Conclusion
+## Conclusion
 
 As AI continues to evolve, what becomes crucial isn't mapping fixed patterns or signatures, but developing sensitivity to how meaning emerges differently through each interaction. The question isn't whether to use AI in qualitative inquiry, but how to remain attentive to the subtle interplay between human insight and artificial intelligence.
 
@@ -279,7 +279,7 @@ We invite you to join us in this exploration:
 
 ---
 
-# About Us
+## About Us
 
 ### Xule Lin
 

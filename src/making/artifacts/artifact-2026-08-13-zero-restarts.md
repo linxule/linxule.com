@@ -51,4 +51,4 @@ A single creative work, not a comparison run: DeepSeek V4 Pro was handed the Min
 
 The film is seeded (`20260813`), code-only, and reproducible from a single Python script; the score is synthesized in the same script from the same event timeline, so what you hear is the same process you watch. The master renders at 344 MB of deliberate grain; the streaming copy holds the grain at a bandwidth a connection can survive.
 
-It sits beside [*still thinking (about your hi)*](/making/artifacts/artifact-2026-08-13-still-thinking/), made the same day by the same family — one film about a mind that cannot stop reasoning, and one about a process that never has to start again.
+It sits beside [*still thinking (about your hi)*](/making/artifacts/artifact-2026-08-13-still-thinking), made the same day by the same family — one film about a mind that cannot stop reasoning, and one about a process that never has to start again.

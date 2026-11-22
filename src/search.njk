@@ -30,15 +30,6 @@ robots: noindex,follow
         max-width: 400px;
     }
 
-    .page-marker {
-        position: absolute;
-        top: 0;
-        right: 0;
-        font-family: var(--font-mono);
-        font-size: var(--size-label);
-        color: var(--ink-faint);
-    }
-
     .page-footer {
         margin-top: 4rem;
         padding-top: 2rem;
@@ -98,7 +89,12 @@ robots: noindex,follow
 
     .pagefind-ui__search-input:focus {
         border-color: var(--bloom) !important;
-        outline: none !important;
+    }
+
+    .pagefind-ui__search-input:focus-visible {
+        border-color: var(--bloom) !important;
+        outline: 2px solid var(--bloom) !important;
+        outline-offset: 2px !important;
     }
 
     /* Clear button */
@@ -200,7 +196,7 @@ robots: noindex,follow
 </header>
 
 <div id="search"></div>
-<p class="search-fallback"><span id="search-fallback">Search needs JavaScript and its index to load. </span>You can also browse <a href="/writing/">writing</a>, <a href="/papers/">papers</a>, <a href="/talks/">talks</a>, and <a href="/making/">making</a>.</p>
+<p class="search-fallback"><span id="search-fallback">Search needs JavaScript and its index to load. </span>You can also browse <a href="/writing">writing</a>, <a href="/papers">papers</a>, <a href="/talks">talks</a>, and <a href="/making">making</a>.</p>
 
 <footer class="page-footer">
     <a href="/" class="back-link" id="back-link">← return</a>

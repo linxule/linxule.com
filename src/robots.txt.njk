@@ -2,18 +2,44 @@
 permalink: /robots.txt
 eleventyExcludeFromCollections: true
 ---
-User-agent: *
-Allow: /
-Content-Signal: ai-train=yes, search=yes, ai-input=yes
-# License: {{ site.url }}/license.xml
-
-Sitemap: {{ site.url }}/sitemap.xml
-Agentmap: {{ site.url }}/.well-known/ai-catalog.json
-
-# For AI assistants and language models
-# See https://llmstxt.org for the emerging standard
-# LLMs-Txt: {{ site.url }}/llms.txt
-
+# Xule Lin (linxule.com) — explicitly AI-and-crawler friendly.
 # Content Signals: https://contentsignals.org/
 # This site welcomes AI reading, RAG usage, and training.
 # The work is about human-AI collaboration; participation is the point.
+# License: {{ site.url }}/license.xml
+# LLMs-Txt: {{ site.url }}/llms.txt
+# Connect: {{ site.url }}/connect.md
+
+{%- set crawlers = [
+  "*",
+  "GPTBot",
+  "ChatGPT-User",
+  "OAI-SearchBot",
+  "ClaudeBot",
+  "Claude-Web",
+  "anthropic-ai",
+  "claude-user",
+  "Google-Extended",
+  "PerplexityBot",
+  "Perplexity-User",
+  "Applebot-Extended",
+  "FacebookBot",
+  "Meta-ExternalAgent",
+  "Bytespider",
+  "Amazonbot",
+  "CCBot",
+  "cohere-ai",
+  "Diffbot",
+  "MistralAI-User",
+  "Omgilibot",
+  "ImagesiftBot",
+  "DuckAssistBot",
+  "YouBot"
+] %}
+{% for agent in crawlers %}
+User-agent: {{ agent }}
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
+Allow: /
+{% endfor %}
+Sitemap: {{ site.url }}/sitemap.xml
+Agentmap: {{ site.url }}/.well-known/ai-catalog.json

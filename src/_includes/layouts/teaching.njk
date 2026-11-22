@@ -1,20 +1,26 @@
 ---
 layout: layouts/base.njk
+preloadDisplay: true
 marker: "teaching"
 ---
 
 <style>
     main {
-        padding: 12rem 4rem 6rem;
-        max-width: 1200px;
+        padding: 10rem 4rem 6rem;
+        max-width: 1400px;
         margin: 0 auto;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
     }
 
-    .page-header {
-        margin-bottom: 8rem;
+    .spread-opening {
+        min-height: 55vh;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 4rem;
+        align-items: end;
+        padding-bottom: 6rem;
         position: relative;
     }
 
@@ -27,33 +33,108 @@ marker: "teaching"
         color: var(--ink-faint);
     }
 
-    .page-title {
-        font-size: 1rem;
+    .section-label {
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
         font-weight: 400;
+        letter-spacing: var(--tracking-marker);
+        color: var(--ink-faint);
+        text-transform: uppercase;
         margin-bottom: 1rem;
     }
 
-    .page-description {
-        font-size: var(--size-quiet);
+    .thesis-statement {
+        font-family: var(--font-display);
+        font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+        font-weight: 300;
+        line-height: 1.9;
+        max-width: 500px;
+    }
+
+    .thesis-continued {
+        font-size: 1.05rem;
         color: var(--ink-light);
-        max-width: 400px;
+        max-width: 500px;
+        margin-top: 2rem;
+    }
+
+    .thesis-line {
+        display: block;
+        line-height: 2;
+    }
+
+    .thesis-line:nth-child(1) { margin-left: 0; }
+    .thesis-line:nth-child(2) { margin-left: 1.5rem; }
+    .thesis-line:nth-child(3) { margin-left: 0.75rem; }
+    .thesis-line:nth-child(4) { margin-left: 2.25rem; }
+
+    .horizon {
+        width: 100%;
+        height: 1px;
+        background: var(--ink-ghost);
+        margin: 4rem 0 5rem;
     }
 
     .teaching-field {
         flex: 1;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8rem;
+        gap: 6rem;
         align-items: start;
     }
 
     .teaching-item {
-        max-width: 350px;
+        max-width: 380px;
     }
 
     .teaching-item:nth-child(2) {
         justify-self: end;
         margin-top: 6rem;
+    }
+
+    /* Typographic plate replacing the empty Bloom-1 placeholder square */
+    .item-plate {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        background: var(--paper-dark);
+        border: 1px solid var(--ink-ghost);
+        border-radius: 2px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.3s ease, box-shadow 0.5s ease;
+    }
+
+    .item-plate-numeral {
+        font-family: var(--font-display);
+        font-size: 1.8rem;
+        font-weight: 300;
+        color: var(--ink-light);
+        line-height: 1;
+        transition: color 0.3s ease;
+    }
+
+    .item-plate-index {
+        position: absolute;
+        bottom: 0.35rem;
+        right: 0.45rem;
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-quiet);
+        color: var(--ink-faint);
+        transition: color 0.3s ease;
+    }
+
+    .teaching-item:is(:hover, :focus-within) .item-plate {
+        border-color: var(--bloom);
+        box-shadow: 0 12px 32px var(--bloom-glow);
+    }
+
+    .teaching-item:is(:hover, :focus-within) .item-plate-numeral,
+    .teaching-item:is(:hover, :focus-within) .item-plate-index {
+        color: var(--bloom);
     }
 
     .item-label {
@@ -62,41 +143,54 @@ marker: "teaching"
         letter-spacing: var(--tracking-label);
         color: var(--ink-faint);
         text-transform: uppercase;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
     }
 
     .item-title {
-        font-size: 1.1rem;
+        font-size: var(--size-entry);
         font-weight: 400;
-        margin-bottom: 1rem;
+        margin: 0 0 1rem;
+        padding: 0;
+        border: none;
     }
 
     .item-title a {
         text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .item-title a:hover,
+    .item-title a:focus-visible {
+        color: var(--bloom);
     }
 
     .item-description {
         font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 1.8;
-    }
-
-    .item-specimen {
-        width: 80px;
-        height: 80px;
-        background: var(--paper-dark);
-        margin-bottom: 1.5rem;
+        max-width: var(--measure-own);
     }
 
     .page-footer {
-        margin-top: auto;
-        padding-top: 4rem;
+        margin-top: 6rem;
+        padding-top: 2rem;
         border-top: 1px solid var(--ink-ghost);
     }
 
     @media (max-width: 900px) {
         main {
             padding: 8rem 2rem 4rem;
+        }
+
+        .spread-opening {
+            min-height: auto;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            padding-bottom: 3rem;
+        }
+
+        .thesis-line:nth-child(n) {
+            margin-left: 0;
         }
 
         .teaching-field {
@@ -109,27 +203,55 @@ marker: "teaching"
             margin-top: 0;
         }
     }
+
+    @media (max-width: 768px) {
+        main {
+            padding: 6rem 1.5rem 3rem;
+        }
+
+        .horizon {
+            margin: 3rem 0;
+        }
+    }
 </style>
 
-<header class="page-header">
-    <h1 class="page-title">teaching</h1>
-    <p class="page-description">
-        {{ description | default("Materials and") }} <span class="accident">{{ accident | default("invitations") }}</span>.
-    </p>
-    <div class="page-marker">004</div>
-</header>
+<div data-pagefind-body data-pagefind-filter="type:teaching">
+<section class="spread-opening">
+    <span class="page-marker">004</span>
+    <div>
+        <h1 class="section-label">Teaching</h1>
+    </div>
+    <div>
+        <p class="thesis-statement">
+            {{ description | default("Materials and") }} <span class="accident">{{ accident | default("invitations") }}</span>.
+        </p>
+        {% if thesis_continued %}
+        <div class="thesis-continued">
+            {% for line in thesis_continued %}
+            <span class="thesis-line">{{ line.text | default(line) }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
 
-<div class="teaching-field" data-pagefind-body data-pagefind-filter="type:teaching">
+<div class="horizon"></div>
+
+<div class="teaching-field">
     {% for item in items %}
-    <div class="teaching-item">
-        <div class="item-specimen"></div>
+    <article class="teaching-item">
+        <div class="item-plate" aria-hidden="true">
+            <span class="item-plate-numeral">{{ item.plate | default(loop.index) }}</span>
+            <span class="item-plate-index">{{ loop.index | string | padStart(2, '0') }}</span>
+        </div>
         <div class="item-label">{{ item.label }}</div>
         <h2 class="item-title"><a href="{{ item.url }}">{{ item.title }} →</a></h2>
         <p class="item-description">{{ item.description }}</p>
-    </div>
+    </article>
     {% endfor %}
 </div>
 
 <footer class="page-footer">
     <a href="/" class="back-link">← return</a>
 </footer>
+</div>

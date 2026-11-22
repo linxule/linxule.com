@@ -30,13 +30,13 @@ This moment of shift - from seeing AI as instrument to experiencing it as interl
 
 > **Emergence**: The way complex patterns and insights arise from the interaction between human and artificial intelligence, creating understanding that neither could achieve alone.
 
-# **Weaving New Understanding**
+## **Weaving New Understanding**
 
 The LOOM in our name carries multiple layers of meaning that intertwine with this vision. Historically, it references the Jacquard loom - a mechanical system that wove complex patterns through automation and stands as a crucial predecessor to modern computing. Among some AI enthusiasts, ["LOOM" describes sophisticated interfaces that use multiversal tree structures to explore different possibilities and pathways of understanding.](https://cyborgism.wiki/hypha/loom) (It can also be used as a verb to describe something large or threatening emerging on the horizon…but that's not our intent here…although some may see AI that way).
 
 Like these systems, we create spaces where human and artificial intelligence can work together to explore multiple threads of meaning and possibility. Just as a loom transforms individual threads into complex tapestries, we study how human-AI interaction creates new patterns of understanding that transcend what either could create alone.
 
-## **Our Vision**
+### **Our Vision**
 
 At LOOM, we explore and document the emerging possibilities at the intersection of AI and social scientific qualitative research, while keeping human meaning-making at the center of the process. This series will share:
 
@@ -50,7 +50,7 @@ At LOOM, we explore and document the emerging possibilities at the intersection 
 
 ---
 
-# **Our Philosophical Foundation**
+## **Our Philosophical Foundation**
 
 Our approach is grounded in several key philosophical commitments that shape how we view the potential and limitations of human-AI collaboration.
 
@@ -64,7 +64,7 @@ Think about how understanding emerges when working with AI systems in qualitativ
 
 This pattern of emergence demands new theoretical tools, not because our existing frameworks are wrong, but because they were built for a different kind of understanding. Like cartographers facing unexplored terrain, we need new instruments to map this emerging landscape.
 
-## **Subjectivist Foundations of Understanding**
+### **Subjectivist Foundations of Understanding**
 
 Our theoretical approach begins with a fundamental recognition: the relationship between human and artificial intelligence creates something more than enhanced analytical capability - it opens up new possibilities for how we think, organize, and create meaning. This insight builds on several interconnected theoretical traditions while pushing beyond their original boundaries.
 
@@ -74,7 +74,7 @@ When we approach AI-human interaction through a subjectivist lens, something int
 
 This perspective transforms traditional questions about AI capability into more nuanced explorations of how meaning emerges through interaction. Instead of asking "How accurate is the AI's analysis?" we might ask "What new patterns of understanding become possible through this collaboration?"
 
-## **The Interpretive Approach to Meaning**
+### **The Interpretive Approach to Meaning**
 
 > **Key Insight**: When we recognize meaning as constructed rather than discovered, we must also grapple with how that construction happens - especially when one of our meaning-making partners is artificial.
 
@@ -96,7 +96,7 @@ Think about how a skilled qualitative researcher works with interview transcript
 
 This interpretivist stance naturally flows into our autopoietic perspective, as we begin to see how these systems of interpretation maintain and recreate themselves through ongoing interaction.
 
-## **The Autopoietic Turn**
+### **The Autopoietic Turn**
 
 Perhaps our most radical theoretical move is viewing human-AI systems through an autopoietic lens - seeing them as self-organizing systems where meaning emerges through interaction rather than being imposed from outside. This perspective, originally developed by biologists Humberto Maturana and Francisco Varela to understand living systems, offers surprising insights when applied to human-AI interaction.
 
@@ -116,13 +116,13 @@ This theoretical lens helps us understand phenomena that might otherwise seem pu
 
 [Post by @AISafetyMemes on X](https://x.com/AISafetyMemes/status/1735103933952008616)
 
-## **Beyond the Human Center**
+### **Beyond the Human Center**
 
 Traditional approaches to research technology tend to be anthropocentric - they assume humans are the primary drivers of meaning-making, with tools serving purely instrumental roles. Our theoretical approach highlights something more interesting: humans remain integral to meaning-making but are no longer the sole central reference point. As AI becomes a complementary part of meaning-making in systems of interaction, new patterns emerge that can't be reduced to either human or machine agency alone.
 
 This shift has profound implications for how we understand research practice. Instead of seeing AI as a tool to be mastered, we begin to recognize it as part of a dynamic system where new forms of understanding emerge through collaboration. This doesn't diminish human agency - if anything, it enhances it by opening up new possibilities for insight and discovery.
 
-## An Invitation to Active Collaboration
+### An Invitation to Active Collaboration
 
 When we invite you to join us in this exploration, we're not just asking you to read about collaboration - we're inviting you to engage in it. Your responses, questions, and insights become part of this evolving understanding.
 
@@ -136,7 +136,7 @@ Think about how meaning emerges through dialogue - not just the back-and-forth o
 
 ---
 
-# About Us
+## About Us
 
 ### Xule Lin
 

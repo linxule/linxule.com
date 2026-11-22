@@ -52,7 +52,8 @@
     {%- endif %}
 
     {# Canonical URL — strip trailing slash to match vercel.json trailingSlash: false #}
-    <link rel="canonical" href="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
+    {%- set canonicalPath = '' if page.url == '/' else (page.url | stripTrailingSlash) %}
+    <link rel="canonical" href="{{ site.url }}{{ canonicalPath }}">
 
     {# Open Graph #}
     {# Resolve the card and its alternative together; copy follows the selected image. #}
@@ -66,7 +67,7 @@
     <meta property="og:title" content="{% if seoTitle %}{{ seoTitle }} · {% elif title %}{{ title }} · {% endif %}{{ site.title }}">
     <meta property="og:description" content="{{ metaDescription | default(site.description) | truncate(147) }}">
     <meta property="og:type" content="{% if layout == 'layouts/writing.njk' %}article{% else %}website{% endif %}">
-    <meta property="og:url" content="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
+    <meta property="og:url" content="{{ site.url }}{{ canonicalPath }}">
     <meta property="og:image" content="{{ ogUrl }}">
     {%- if not ogImg.endsWith('.svg') %}
     <meta property="og:image:width" content="1200">
@@ -138,13 +139,14 @@
     })();
     </script>
 
-    {# Fonts. The faces are self-hosted and declared in main.css; the cloak above
-       waits for the ones this page uses. Preloaded: what the first screen sets,
-       so it is in flight before main.css is parsed. Every page: the text roman
-       and Plex 400 (Latin-1). Layout or page front matter adds the display face
-       (preloadDisplay) and the text italic (preloadItalic) where the first screen
-       sets them. Never preloaded: the 500s, the 8-point cut, the Kai italic,
-       Google's Noto Serif SC. Names match main.css (scripts/check-fonts.mjs). #}
+    {# Fonts. Every face is self-hosted and declared in main.css (including upright
+       Noto Serif SC and italic LXGW WenKai); the cloak above waits for the ones
+       this page uses. Preloaded: what the first screen sets, so it is in flight
+       before main.css is parsed. Every page: the text roman and Plex 400 (Latin-1).
+       Layout or page front matter adds the display face (preloadDisplay) and the
+       text italic (preloadItalic) where the first screen sets them. Never preloaded:
+       the 500s, the 8-point cut, the Kai italic, upright Noto Serif SC. Names match
+       main.css (scripts/check-fonts.mjs). #}
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/eb-garamond-roman-400-latin.c793c7ba.woff2">
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/ibm-plex-mono-400-latin1.e8993d94.woff2">
     {%- if preloadDisplay %}
@@ -153,11 +155,6 @@
     {%- if preloadItalic %}
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/eb-garamond-italic-400-latin.befdf137.woff2">
     {%- endif %}
-    {# Google Fonts now serves only the upright Chinese serif (the live site
-       rewrites it to /cf-fonts/); <link>, not @import, to start it early. #}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500&display=swap">
 
     <link rel="alternate" type="application/atom+xml" title="{{ site.title }} - Writing" href="/feed.xml">
     <link rel="stylesheet" href="/assets/css/main.css?v={{ site.version }}">
@@ -180,20 +177,10 @@
     <link rel="me" href="https://x.com/linxule">
     <link rel="me" href="https://orcid.org/0000-0001-7885-4194">
 
-    {# Markdown twin — ONE computation drives both the head alternate and the footer
-       rendering marker, so the marker can never claim a twin that doesn't exist.
-       Series landings (/writing/series/*) are deliberately excluded: curated HTML
-       surfaces whose essays already twin (design-system.md § Renderings). #}
-    {%- set mdAlternate = '' %}
-    {%- if page.url and (page.url.startsWith('/writing/') or page.url.startsWith('/making/portraits/') or page.url.startsWith('/making/artifacts/') or page.url.startsWith('/talks/') or page.url.startsWith('/papers/')) and not page.url.startsWith('/writing/series/') and page.url != '/writing/' and page.url != '/talks/' and page.url != '/making/portraits/' and page.url != '/making/artifacts/' and page.url != '/papers/' %}
-    {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
-    {%- endif %}
-    {%- if page.url == '/writing/' or page.url == '/talks/' or page.url == '/making/' or page.url == '/papers/' or page.url == '/cv/' or page.url == '/cv-zh/' or page.url == '/thinking/' or page.url == '/teaching/' or page.url == '/concepts/' or page.url == '/builds/' or page.url == '/builds/vellum/' %}
-    {%- set mdAlternate = page.url | replace(r/\/$/, "") + ".md" %}
-    {%- endif %}
-    {%- if page.url == '/' %}
-    {%- set mdAlternate = '/index.md' %}
-    {%- endif %}
+    {# Markdown twin — ONE computation (from eleventy/shapes.mjs via mdAlternate)
+       drives both the head alternate and the footer rendering marker, so the marker
+       can never claim a twin that doesn't exist. #}
+    {%- set mdAlternate = page.url | mdAlternate %}
     {%- if mdAlternate %}
     <link rel="alternate" type="text/markdown" href="{{ mdAlternate }}">
     {%- endif %}
@@ -300,14 +287,14 @@
       "usageInfo": {{ ((site.url) ~ "/llms.txt") | jsonScript | safe }},
       "copyrightHolder": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
       "copyrightYear": {{ date.getFullYear() | jsonScript | safe }},
-      "mainEntityOfPage": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if defines %},
+      "mainEntityOfPage": {{ (site.url ~ canonicalPath) | jsonScript | safe }}{% if defines %},
       "hasPart": [{% for def in defines %}{
         "@type": "DefinedTerm",
         "name": {{ def.term | jsonScript | safe }},
         "description": {{ def.definition | jsonScript | safe }},
-        "url": {{ ((site.url) ~ (page.url | replace(r/\/$/, '')) ~ "#dfn-" ~ (def.term | slugify)) | jsonScript | safe }},
-        "inDefinedTermSet": {{ ((site.url) ~ "/concepts/") | jsonScript | safe }},
-        "creator": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}
+        "url": {{ (site.url ~ canonicalPath ~ "#dfn-" ~ (def.term | slugify)) | jsonScript | safe }},
+        "inDefinedTermSet": {{ (site.url ~ "/concepts") | jsonScript | safe }},
+        "creator": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}
       }{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
     }
     </script>
@@ -317,19 +304,20 @@
     {
       "@context": "https://schema.org",
       "@type": "DefinedTermSet",
-      "@id": {{ ((site.url) ~ "/concepts/") | jsonScript | safe }},
-      "name": {{ ("Signature Concepts — " ~ (site.author)) | jsonScript | safe }},
-      "url": {{ ((site.url) ~ "/concepts/") | jsonScript | safe }},
+      "@id": {{ (site.url ~ "/concepts") | jsonScript | safe }},
+      "name": {{ ("Signature Concepts — " ~ site.author) | jsonScript | safe }},
+      "url": {{ (site.url ~ "/concepts") | jsonScript | safe }},
       "inLanguage": "en",
       "license": "https://creativecommons.org/licenses/by/4.0/",
-      "usageInfo": {{ ((site.url) ~ "/llms.txt") | jsonScript | safe }},
-      "hasDefinedTerm": [{% for concept in collections.concepts %}{
+      "usageInfo": {{ (site.url ~ "/llms.txt") | jsonScript | safe }},
+      "copyrightHolder": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "hasDefinedTerm": [{% for concept in conceptsCatalog.list %}{%- set termUrl = concept.url if concept.url.startsWith('http') else (site.url ~ (concept.url | replace('/#', '#') | stripTrailingSlash)) -%}{
         "@type": "DefinedTerm",
         "name": {{ concept.term | jsonScript | safe }},
-        "description": {{ concept.definition | jsonScript | safe }},
-        "url": {{ ((site.url) ~ (concept.url | replace(r/\/$/, '')) ~ "#" ~ (concept.anchor)) | jsonScript | safe }},
-        "inDefinedTermSet": {{ ((site.url) ~ "/concepts/") | jsonScript | safe }},
-        "creator": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}
+        "description": {{ (concept.definition or concept.oneliner) | jsonScript | safe }},
+        "url": {{ termUrl | jsonScript | safe }},
+        "inDefinedTermSet": {{ (site.url ~ "/concepts") | jsonScript | safe }},
+        "creator": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}
       }{% if not loop.last %}, {% endif %}{% endfor %}]
     }
     </script>
@@ -339,22 +327,22 @@
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      "@id": {{ ((site.url) ~ "/builds/") | jsonScript | safe }},
-      "name": {{ ("Builds — " + site.author) | jsonScript | safe }},
-      "url": {{ ((site.url) ~ "/builds/") | jsonScript | safe }},
+      "@id": {{ (site.url ~ "/builds") | jsonScript | safe }},
+      "name": {{ ("Builds — " ~ site.author) | jsonScript | safe }},
+      "url": {{ (site.url ~ "/builds") | jsonScript | safe }},
       "inLanguage": "en",
-      "author": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "author": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
       "license": "https://creativecommons.org/licenses/by/4.0/",
-      "usageInfo": {{ ((site.url) ~ "/llms.txt") | jsonScript | safe }},
-      "copyrightHolder": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
-      "hasPart": [{% set comma = joiner(",") %}{% for group in groups %}{% for project in group.projects | selectattr("href") %}{{ comma() }}{
+      "usageInfo": {{ (site.url ~ "/llms.txt") | jsonScript | safe }},
+      "copyrightHolder": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "hasPart": [{% set comma = joiner(",") %}{% for group in groups %}{% for project in group.projects | selectattr("href") %}{%- if project.href.startsWith("http") -%}{%- set partUrl = project.href -%}{%- elif project.href == "/tsm/" or project.href == "/play/" -%}{%- set partUrl = site.url ~ project.href -%}{%- else -%}{%- set partUrl = site.url ~ (project.href | stripTrailingSlash) -%}{%- endif -%}{{ comma() }}{
         "@type": {% if project.href.startsWith("https://github.com/") %}"SoftwareSourceCode"{% else %}"WebSite"{% endif %},
         "name": {{ project.name | jsonScript | safe }},
         "description": {{ project.description | jsonScript | safe }},
-        "url": {{ (project.href if project.href.startsWith("http") else site.url + project.href) | jsonScript | safe }},{% if project.href.startsWith("https://github.com/") %}
+        "url": {{ partUrl | jsonScript | safe }},{% if project.href.startsWith("https://github.com/") %}
         "codeRepository": {{ project.href | jsonScript | safe }},{% endif %}{% if project.license %}
-        "license": {{ ("https://spdx.org/licenses/" ~ (project.license) ~ ".html") | jsonScript | safe }},{% endif %}
-        "author": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}
+        "license": {{ ("https://spdx.org/licenses/" ~ project.license ~ ".html") | jsonScript | safe }},{% endif %}
+        "author": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}
       }{% endfor %}{% endfor %}]
     }
     </script>
@@ -368,9 +356,9 @@
       "description": {{ metaDescription | default(site.description) | jsonScript | safe }},
       "datePublished": {{ date.toISOString().split('T')[0] | jsonScript | safe }},
       "creator": {"@type": "Person", "name": {{ prompter | default(site.author) | jsonScript | safe }}},
-      "publisher": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
-      "mainEntityOfPage": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if images %},
-      "image": [{% for image in images %}{{ ((site.url) ~ (image.src)) | jsonScript | safe }}{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
+      "publisher": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "mainEntityOfPage": {{ (site.url ~ canonicalPath) | jsonScript | safe }}{% if images %},
+      "image": [{% for image in images %}{{ (site.url ~ image.src) | jsonScript | safe }}{% if not loop.last %}, {% endif %}{% endfor %}]{% endif %}
     }
     </script>
     {% endif %}
@@ -384,8 +372,8 @@
       "datePublished": {{ date.toISOString().split('T')[0] | jsonScript | safe }},
       "creator": {"@type": "SoftwareApplication", "name": {{ schemaCreator | default(creator | default("AI")) | jsonScript | safe }}},
       "creditText": {{ creditText | default("Made by " ~ (creator | default("AI"))) | jsonScript | safe }},
-      "publisher": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
-      "mainEntityOfPage": {{ (site.url ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if thumbnail %},
+      "publisher": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "mainEntityOfPage": {{ (site.url ~ canonicalPath) | jsonScript | safe }}{% if thumbnail %},
       "image": {{ (site.url ~ thumbnail) | jsonScript | safe }}{% elif src and not (src | isHTMLFile) %},
       "image": {{ (site.url ~ src) | jsonScript | safe }}{% endif %}{% if medium %},
       "artMedium": {{ medium | jsonScript | safe }}{% endif %}{% if mediaType == "video" and video %},
@@ -409,10 +397,10 @@
       "name": {{ title | jsonScript | safe }},
       "description": {{ metaDescription | default(site.description) | jsonScript | safe }},
       "datePublished": {{ date.toISOString().split('T')[0] | jsonScript | safe }},
-      "author": [{% if speakers %}{% for speaker in speakers %}{"@type": "Person", {% if speaker == site.author %}"@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, {% endif %}"name": {{ speaker | jsonScript | safe }}}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}{"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}{% endif %}],
-      "publisher": {"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
-      "mainEntityOfPage": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if youtube %},
-      "video": {"@type": "VideoObject", "name": {{ title | jsonScript | safe }}, "description": {{ metaDescription | default(site.description) | jsonScript | safe }}, "embedUrl": {{ ("https://www.youtube.com/embed/" ~ (youtube)) | jsonScript | safe }}, "uploadDate": {{ (videoUploadDate or date.toISOString()) | jsonScript | safe }}, "thumbnailUrl": {{ ("https://i.ytimg.com/vi/" ~ (youtube) ~ "/hqdefault.jpg") | jsonScript | safe }}}{% elif video %},
+      "author": [{% if speakers %}{% for speaker in speakers %}{"@type": "Person", {% if speaker == site.author %}"@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, {% endif %}"name": {{ speaker | jsonScript | safe }}}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}{"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}{% endif %}],
+      "publisher": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
+      "mainEntityOfPage": {{ (site.url ~ canonicalPath) | jsonScript | safe }}{% if youtube %},
+      "video": {"@type": "VideoObject", "name": {{ title | jsonScript | safe }}, "description": {{ metaDescription | default(site.description) | jsonScript | safe }}, "embedUrl": {{ ("https://www.youtube.com/embed/" ~ youtube) | jsonScript | safe }}, "uploadDate": {{ (videoUploadDate or date.toISOString()) | jsonScript | safe }}, "thumbnailUrl": {{ ("https://i.ytimg.com/vi/" ~ youtube ~ "/hqdefault.jpg") | jsonScript | safe }}}{% elif video %},
       "video": {"@type": "VideoObject", "name": {{ title | jsonScript | safe }}, "description": {{ metaDescription | default(site.description) | jsonScript | safe }}, "embedUrl": {{ video | jsonScript | safe }}, "uploadDate": {{ (videoUploadDate or date.toISOString()) | jsonScript | safe }}{% if videoThumbnail %}, "thumbnailUrl": {{ videoThumbnail | jsonScript | safe }}{% endif %}}{% endif %}
     }
     </script>
@@ -439,7 +427,7 @@
     <meta name="citation_arxiv_id" content="{{ arxivId }}">
     <meta name="citation_technical_report_institution" content="arXiv">
     {%- endif %}
-    <meta name="citation_abstract_html_url" content="{{ site.url }}{{ page.url | replace(r/\/$/, '') }}">
+    <meta name="citation_abstract_html_url" content="{{ site.url }}{{ canonicalPath }}">
     {%- if pdf %}
     <meta name="citation_pdf_url" content="{{ site.url }}{{ page.url }}{{ pdf }}">
     {%- endif %}
@@ -449,16 +437,18 @@
       "@type": "ScholarlyArticle",
       "headline": {{ (paperTitle | default(title)) | jsonScript | safe }},
       "name": {{ (paperTitle | default(title)) | jsonScript | safe }},
-      "author": [{% for a in authors %}{"@type": "Person", {% if a.self %}"@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, {% endif %}"name": {{ a.name | jsonScript | safe }}{% if a.orcid %}, "identifier": {{ ("https://orcid.org/" ~ (a.orcid)) | jsonScript | safe }}, "sameAs": {{ ("https://orcid.org/" ~ (a.orcid)) | jsonScript | safe }}{% endif %}}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "author": [{% for a in authors %}{"@type": "Person", {% if a.self %}"@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, {% endif %}"name": {{ a.name | jsonScript | safe }}{% if a.orcid %}, "identifier": {{ ("https://orcid.org/" ~ a.orcid) | jsonScript | safe }}, "sameAs": {{ ("https://orcid.org/" ~ a.orcid) | jsonScript | safe }}{% endif %}}{% if not loop.last %}, {% endif %}{% endfor %}],
       "datePublished": {{ date.toISOString().split('T')[0] | jsonScript | safe }},
-      "publisher": {% if publisher %}{"@type": "Organization", "name": {{ publisher | jsonScript | safe }}}{% else %}{"@type": "Person", "@id": {{ ((site.url) ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}{% endif %},
-      "mainEntityOfPage": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }},
-      "url": {{ ((site.url) ~ (page.url | replace(r/\/$/, ''))) | jsonScript | safe }}{% if venueType == 'journal' and venue %},
+      "publisher": {% if publisher %}{"@type": "Organization", "name": {{ publisher | jsonScript | safe }}}{% else %}{"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}}{% endif %},
+      "mainEntityOfPage": {{ (site.url ~ canonicalPath) | jsonScript | safe }},
+      "url": {{ (site.url ~ canonicalPath) | jsonScript | safe }}{% if venueType == 'journal' and venue %},
       "isPartOf": {"@type": "Periodical", "name": {{ venue | jsonScript | safe }}}{% endif %}{% if doi %},
       "identifier": {"@type": "PropertyValue", "propertyID": "DOI", "value": {{ doi | jsonScript | safe }}},
-      "sameAs": {{ ("https://doi.org/" ~ (doi)) | jsonScript | safe }}{% endif %}{% if license %},
+      "sameAs": {{ ("https://doi.org/" ~ doi) | jsonScript | safe }}{% endif %}{% if license %},
       "license": {{ license | jsonScript | safe }}{% endif %}{% if abstract %},
       "abstract": {{ abstract | striptags | jsonScript | safe }}{% endif %},
+      "usageInfo": {{ (site.url ~ "/llms.txt") | jsonScript | safe }},
+      "copyrightHolder": {"@type": "Person", "@id": {{ (site.url ~ "/#person") | jsonScript | safe }}, "name": {{ site.author | jsonScript | safe }}},
       "creativeWorkStatus": {{ creativeWorkStatus | default('Published') | jsonScript | safe }},
       "inLanguage": "en"
     }
@@ -471,7 +461,7 @@
     <a href="#main-content" class="sr-only">Skip to content</a>
     <div class="bloom-cursor" id="bloom"></div>
 
-    <nav class="spine">
+    <nav class="spine" aria-label="Site">
         <a href="/" class="spine-name">XULE LIN</a>
         {% if marker %}
         <span class="spine-marker">{{ marker }}</span>

@@ -83,10 +83,13 @@ marker: "thinking"
     .section-label {
         font-family: var(--font-mono);
         font-size: var(--size-label);
+        font-weight: 400;
         letter-spacing: var(--tracking-label);
         color: var(--ink-faint);
         text-transform: uppercase;
-        padding-top: 0.5rem;
+        margin: 0;
+        padding: 0.5rem 0 0;
+        border: none;
     }
 
     .section-content {
@@ -118,12 +121,8 @@ marker: "thinking"
         font-size: 1.1rem;
         font-weight: 400;
         font-style: italic;
-        margin-bottom: 1rem;
-        transition: color 0.3s ease;
-    }
-
-    .observation-title:hover {
-        color: var(--bloom);
+        color: var(--ink);
+        margin: 0 0 1rem;
     }
 
     .observation-body {
@@ -160,11 +159,6 @@ marker: "thinking"
         color: var(--ink-light);
         line-height: 1.9;
         max-width: 600px;
-        transition: color 0.3s ease;
-    }
-
-    .orientation:hover {
-        color: var(--bloom);
     }
 
     .orientation:nth-child(2) { margin-left: 0; }
@@ -208,7 +202,21 @@ marker: "thinking"
         .orientation:nth-child(n) {
             margin-left: 0;
         }
+    }
 
+    @media (max-width: 768px) {
+        main {
+            padding: 6rem 1.5rem 3rem;
+        }
+
+        .spread-opening {
+            min-height: auto;
+            padding-bottom: 4rem;
+        }
+
+        .horizon {
+            margin: 3rem 0;
+        }
     }
 </style>
 
@@ -233,7 +241,7 @@ marker: "thinking"
 <div class="horizon"></div>
 
 <section class="spread-problem">
-    <div class="section-label">The problem<br>I keep coming back to</div>
+    <h2 class="section-label">The problem<br>I keep coming back to</h2>
     <div class="section-content">
         {% for p in problem %}
         <p>{{ p }}</p>
@@ -250,7 +258,7 @@ marker: "thinking"
 
     {% for obs in observations %}
     <div class="observation">
-        <div class="observation-title">{{ obs.title }}</div>
+        <h3 class="observation-title">{{ obs.title }}</h3>
         <div class="observation-body">
             {% for frag in obs.fragments %}
             <span class="fragment{% if frag.accident %} accident{% endif %}">{{ frag.text | default(frag) }}</span>
@@ -263,7 +271,7 @@ marker: "thinking"
 <div class="horizon"></div>
 
 <section class="orientations-section">
-    <div class="section-label" style="margin-bottom: 2rem;">Orientations</div>
+    <h2 class="section-label" style="margin-bottom: 2rem;">Orientations</h2>
     {% for item in orientations %}
     <div class="orientation">{{ item }}</div>
     {% endfor %}

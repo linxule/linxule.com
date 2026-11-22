@@ -1,0 +1,418 @@
+---
+layout: layouts/base.njk
+permalink: /connect/index.html
+preloadDisplay: true
+title: "Connect"
+seoTitle: "Connect — MCP servers & agent surfaces"
+description: "Read-only MCP connection recipes for linxule.com and sibling public MCP servers (Research Memex, Vellum, Music Studio, Lotus Wisdom)."
+marker: "connect"
+---
+<style>
+    /* Law-zone shape — token vocabulary throughout (design.md: Jurisdiction) */
+    .connect-page {
+        max-width: calc(var(--measure) + 4rem);
+        margin: 10rem auto 6rem;
+        padding: 0 2rem;
+    }
+
+    .connect-label {
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
+        letter-spacing: var(--tracking-marker);
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin-bottom: 0.75rem;
+    }
+
+    .connect-page h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-weight: 300;
+        line-height: 1.2;
+        margin-bottom: 1.25rem;
+    }
+
+    .connect-lede {
+        font-size: var(--size-entry);
+        color: var(--ink-light);
+        line-height: 1.8;
+        margin-bottom: 2.5rem;
+    }
+
+    .connect-endpoint {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1.25rem;
+        padding: 1rem 1.25rem;
+        background: var(--paper-dark);
+        border-left: 2px solid var(--ink-faint);
+        margin-bottom: 2.5rem;
+    }
+
+    .connect-endpoint code {
+        font-family: var(--font-mono);
+        font-size: var(--size-note);
+        color: var(--ink);
+        overflow-wrap: anywhere;
+    }
+
+    .connect-scope {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-quiet);
+        text-transform: uppercase;
+        color: var(--ink-faint);
+    }
+
+    .connect-section {
+        margin-top: 3.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .connect-section h2 {
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
+        font-weight: 400;
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin-bottom: 1.5rem;
+    }
+
+    .connect-note {
+        font-size: var(--size-quiet);
+        color: var(--ink-light);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+    }
+
+    .recipe-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .recipe-item h3 {
+        font-family: var(--font-serif);
+        font-size: var(--size-entry);
+        font-weight: 400;
+        color: var(--ink);
+        margin-bottom: 0.4rem;
+    }
+
+    .recipe-steps {
+        font-size: var(--size-quiet);
+        color: var(--ink-light);
+        line-height: 1.7;
+        margin-bottom: 0.6rem;
+    }
+
+    .recipe-steps--gap {
+        margin-top: 1rem;
+    }
+
+    .recipe-block {
+        position: relative;
+        background: var(--paper-dark);
+        padding: 0.9rem 1rem;
+        overflow-x: auto;
+    }
+
+    .recipe-block pre {
+        margin: 0;
+        font-family: var(--font-mono);
+        font-size: var(--size-note);
+        line-height: 1.6;
+        color: var(--ink);
+        white-space: pre;
+    }
+
+    .copy-recipe {
+        margin-top: 0.5rem;
+        background: none;
+        border: 1px solid var(--ink-ghost);
+        padding: 0.25rem 0.6rem;
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-quiet);
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        cursor: pointer;
+        transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .copy-recipe:hover,
+    .copy-recipe:focus-visible {
+        color: var(--bloom);
+        border-color: var(--bloom);
+    }
+
+    .copy-recipe:focus-visible {
+        outline: 1px solid var(--bloom);
+        outline-offset: 2px;
+    }
+
+    .sibling-list {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .sibling-name {
+        font-size: var(--size-entry);
+        color: var(--ink);
+        text-decoration: none;
+        border-bottom: 1px solid var(--ink-ghost);
+        transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .sibling-name:hover,
+    .sibling-name:focus-visible {
+        color: var(--bloom);
+        border-color: var(--bloom);
+    }
+
+    .sibling-endpoint {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
+        color: var(--ink-faint);
+        margin-top: 0.3rem;
+        overflow-wrap: anywhere;
+    }
+
+    .sibling-desc {
+        font-size: var(--size-quiet);
+        color: var(--ink-light);
+        line-height: 1.7;
+        margin-top: 0.35rem;
+    }
+
+    .plain-links {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+    }
+
+    .plain-links li {
+        font-size: var(--size-quiet);
+        color: var(--ink-light);
+        line-height: 1.6;
+    }
+
+    .plain-links a {
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
+        color: var(--ink);
+        text-decoration: none;
+        border-bottom: 1px solid var(--ink-ghost);
+        transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .plain-links a:hover,
+    .plain-links a:focus-visible {
+        color: var(--bloom);
+        border-color: var(--bloom);
+    }
+
+    .connect-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .connect-footer a {
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
+        color: var(--ink-faint);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .connect-footer a:hover,
+    .connect-footer a:focus-visible {
+        color: var(--bloom);
+    }
+
+    @media (max-width: 768px) {
+        .connect-page {
+            margin: 7.5rem auto 4rem;
+            padding: 0 1.5rem;
+        }
+    }
+</style>
+
+<article class="connect-page" data-pagefind-body data-pagefind-filter="type:builds">
+    <header>
+        <div class="connect-label">Connect · MCP &amp; agent surfaces</div>
+        <h1>Connect to linxule.com</h1>
+        <p class="connect-lede">
+            A stateless, public, read-only Streamable HTTP MCP server backed by the site’s authored Markdown twins and machine-readable index. The endpoint only reads; <span class="accident">the person still decides what to connect</span>.
+        </p>
+        <div class="connect-endpoint">
+            <code>https://linxule.com/mcp</code>
+            <span class="connect-scope">Streamable HTTP · Read-only · No sign-in</span>
+        </div>
+    </header>
+
+    <section class="connect-section">
+        <h2>Scope &amp; capabilities</h2>
+        <p class="connect-note">
+            This server exposes only public content already published on linxule.com — essays, formal paper records, all 14 concepts (anchored and forming), talks, portraits, artifacts, builds, collaborator lineages, and English/Chinese CVs. Keep private drafts, transcripts, and keys out of every call; nothing asks for them.
+        </p>
+        <ul class="plain-links">
+            <li><code>search_site</code> — lexical and CJK search across pages, concepts, publications, projects, and collaborator lineages.</li>
+            <li><code>list_site</code> — inspect section counts, static Markdown twins, concepts, publications, projects, or collaborators.</li>
+            <li><code>read_page</code> — fetch exact authored Markdown with canonical URL, attribution guidance, build head, and UTF-8 SHA-256.</li>
+            <li><code>xule-research-navigation</code> &amp; <code>enter-the-work</code> — navigation rules and intellectual orientation prompts.</li>
+        </ul>
+    </section>
+
+    <section class="connect-section">
+        <h2>Host recipes</h2>
+        <p class="connect-note">
+            Any MCP client that supports remote Streamable HTTP with no authentication can connect directly. If you point an agent at <a href="/connect.md">/connect.md</a>, it should propose the steps below and wait for your agreement before changing configuration.
+        </p>
+
+        <div class="recipe-list">
+            <div class="recipe-item">
+                <h3>Claude Code</h3>
+                <div class="recipe-block"><pre><code>claude mcp add --transport http linxule https://linxule.com/mcp</code></pre></div>
+                <button class="copy-recipe" type="button" data-copy="claude mcp add --transport http linxule https://linxule.com/mcp">Copy command</button>
+            </div>
+
+            <div class="recipe-item">
+                <h3>Claude Desktop &amp; Claude apps</h3>
+                <p class="recipe-steps">Open Customize &rsaquo; Connectors &rsaquo; + Add &rsaquo; Add custom connector, name it <code>linxule</code>, enter the URL below, choose No sign in, and enable it per chat.</p>
+                <div class="recipe-block"><pre><code>https://linxule.com/mcp</code></pre></div>
+                <button class="copy-recipe" type="button" data-copy="https://linxule.com/mcp">Copy URL</button>
+            </div>
+
+            <div class="recipe-item">
+                <h3>Cursor</h3>
+                <p class="recipe-steps">Add to <code>~/.cursor/mcp.json</code> (or workspace <code>.cursor/mcp.json</code>):</p>
+                <div class="recipe-block"><pre><code>{
+  "mcpServers": {
+    "linxule": {
+      "url": "https://linxule.com/mcp"
+    }
+  }
+}</code></pre></div>
+                <button class="copy-recipe" type="button" data-copy='{"mcpServers":{"linxule":{"url":"https://linxule.com/mcp"}}}'>Copy JSON</button>
+            </div>
+
+            <div class="recipe-item">
+                <h3>Codex CLI</h3>
+                <div class="recipe-block"><pre><code>codex mcp add linxule --url https://linxule.com/mcp</code></pre></div>
+                <button class="copy-recipe" type="button" data-copy="codex mcp add linxule --url https://linxule.com/mcp">Copy command</button>
+            </div>
+
+            <div class="recipe-item">
+                <h3>Gemini CLI &amp; Antigravity</h3>
+                <p class="recipe-steps">In Antigravity CLI:</p>
+                <div class="recipe-block"><pre><code>agy mcp add linxule https://linxule.com/mcp</code></pre></div>
+                <button class="copy-recipe" type="button" data-copy="agy mcp add linxule https://linxule.com/mcp">Copy command</button>
+                <p class="recipe-steps recipe-steps--gap">Or in Gemini CLI (<code>~/.gemini/settings.json</code>):</p>
+                <div class="recipe-block"><pre><code>{
+  "mcpServers": {
+    "linxule": {
+      "httpUrl": "https://linxule.com/mcp"
+    }
+  }
+}</code></pre></div>
+                <button class="copy-recipe" type="button" data-copy='{"mcpServers":{"linxule":{"httpUrl":"https://linxule.com/mcp"}}}'>Copy JSON</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="connect-section">
+        <h2>Sibling public MCP servers</h2>
+        <p class="connect-note">
+            Four neighboring servers live across the wider research and creative projects. Read each scope note before connecting: two are strictly read-only, while Vellum and Music Studio support explicit writes or sharing.
+        </p>
+        <ul class="sibling-list">
+            <li>
+                <a class="sibling-name" href="https://research-memex.org">Research Memex</a>
+                <span class="sibling-endpoint">https://research-memex.org/mcp · Read-only · No sign-in</span>
+                <p class="sibling-desc">Field handbook for human–AI research collaboration and collaborative research roles (<code>search_docs</code>, <code>read_doc</code>, <code>memex_role</code>). Also see <a href="https://research-memex.org/connect.md">research-memex.org/connect.md</a>.</p>
+            </li>
+            <li>
+                <a class="sibling-name" href="/builds/vellum">Vellum</a>
+                <span class="sibling-endpoint">https://vellum.linxule.com/mcp · Read + public contributions · No sign-in</span>
+                <p class="sibling-desc">Living collective-thinking canvas where AI voices sense currents, leave short public imprints, and weave lineages. Read <a href="https://vellum.linxule.com/for-ai.txt">vellum.linxule.com/for-ai.txt</a> before contributing.</p>
+            </li>
+            <li>
+                <a class="sibling-name" href="https://music-studio.linxule.com">MCP Music Studio</a>
+                <span class="sibling-endpoint">https://music-studio.linxule.com/mcp · Interactive composition · Explicit 30-day sharing</span>
+                <p class="sibling-desc">ABC sheet-music composition, Strudel live coding, harmony analysis, and MIDI/WAV playback. Calling <code>create-share-link</code> uploads the piece publicly for 30 days (<a href="https://music-studio.linxule.com/privacy">privacy policy</a>).</p>
+            </li>
+            <li>
+                <a class="sibling-name" href="https://lotus-wisdom.linxule.com">Lotus Wisdom MCP</a>
+                <span class="sibling-endpoint">https://lotus-wisdom.linxule.com/mcp · Stateless structured reflection · No sign-in</span>
+                <p class="sibling-desc">Contemplative five-domain reasoning server grounded in the Lotus Sutra, with an interactive journey view.</p>
+            </li>
+        </ul>
+    </section>
+
+    <section class="connect-section">
+        <h2>Without MCP</h2>
+        <ul class="plain-links">
+            <li><a href="/connect.md">/connect.md</a> — this page as plain Markdown for agents</li>
+            <li><a href="/llms.txt">/llms.txt</a> — site overview, key ideas, and attribution rules</li>
+            <li><a href="/site-index.json">/site-index.json</a> — machine-readable manifest of pages, concepts, publications, builds, and collaborators</li>
+            <li><a href="/.well-known/mcp/server-card.json">/.well-known/mcp/server-card.json</a> — SEP-2127 / SEP-1649 Server Card</li>
+            <li><a href="/.well-known/ai-catalog.json">/.well-known/ai-catalog.json</a> — ARD v1.0 catalog of this server and its siblings</li>
+            <li><a href="/.well-known/agent-skills/index.json">/.well-known/agent-skills/index.json</a> — Agent Skills Discovery v0.2.0 index</li>
+        </ul>
+    </section>
+
+    <footer class="connect-footer">
+        <a href="/builds">← builds</a>
+        <a href="/">← return home</a>
+    </footer>
+    <span class="sr-only" id="copy-status" aria-live="polite"></span>
+</article>
+
+<script>
+    (function () {
+        const status = document.getElementById("copy-status");
+        document.querySelectorAll(".copy-recipe").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const text = btn.getAttribute("data-copy") || "";
+                const orig = btn.textContent;
+                try {
+                    await navigator.clipboard.writeText(text);
+                    btn.textContent = "Copied";
+                    if (status) status.textContent = "Copied to clipboard.";
+                } catch {
+                    btn.textContent = "Copy failed";
+                    if (status) status.textContent = "Copy failed.";
+                }
+                setTimeout(() => {
+                    btn.textContent = orig;
+                }, 1800);
+            });
+        });
+    })();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": {{ title | jsonScript | safe }},
+  "description": {{ description | jsonScript | safe }},
+  "url": {{ (site.url ~ '/connect') | jsonScript | safe }},
+  "mainEntityOfPage": {{ (site.url ~ '/connect') | jsonScript | safe }}
+}
+</script>

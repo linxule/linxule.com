@@ -39,3 +39,12 @@ path = [
 ]
 SPDX-FileCopyrightText = "Xule Lin <x@linxule.com>"
 SPDX-License-Identifier = "MIT"
+
+# Self-hosted Noto Serif SC subsets — SIL Open Font License 1.1 (LICENSES/OFL-NotoSerifSC.txt)
+[[annotations]]
+path = [
+  "src/assets/fonts/noto-serif-sc-roman-*.woff2",
+  "src/assets/fonts/OFL-NotoSerifSC.txt",
+]
+SPDX-FileCopyrightText = "Copyright 2012 Google Inc. All Rights Reserved."
+SPDX-License-Identifier = "OFL-1.1"

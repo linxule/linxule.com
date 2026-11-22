@@ -157,7 +157,7 @@ marker: "making"
         border: 1px solid var(--ink-ghost);
         padding: 0.4rem 0.6rem;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: color 0.2s ease, border-color 0.2s ease;
         z-index: 10;
     }
 
@@ -201,7 +201,8 @@ marker: "making"
         max-width: calc(100% - 7rem);
         margin: 0;
         padding: 0.25rem 0.5rem;
-        font: var(--size-label) var(--font-mono);
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
         color: var(--ink-light);
         background: var(--paper);
         pointer-events: none;
@@ -249,8 +250,8 @@ marker: "making"
         }
     }
 
-    .artifact-display:hover .artifact-viewport img,
-    .artifact-display:hover .artifact-viewport svg,
+    .artifact-display:is(:hover, :focus-within) .artifact-viewport img,
+    .artifact-display:is(:hover, :focus-within) .artifact-viewport svg,
     .artifact-display.fullscreen .artifact-viewport img,
     .artifact-display.fullscreen .artifact-viewport svg {
         filter: grayscale(0%);
@@ -281,7 +282,7 @@ marker: "making"
         }
     }
 
-    .artifact-display--interactive:hover .artifact-iframe,
+    .artifact-display--interactive:is(:hover, :focus-within) .artifact-iframe,
     .artifact-display--interactive.fullscreen .artifact-iframe {
         filter: grayscale(0%);
         opacity: 1;
@@ -331,7 +332,7 @@ marker: "making"
         }
     }
 
-    .artifact-gallery-item:hover img {
+    .artifact-gallery-item:is(:hover, :focus-visible) img {
         filter: grayscale(0%);
         opacity: 1;
     }
@@ -345,11 +346,11 @@ marker: "making"
         transition: filter 0.5s ease, opacity 0.5s ease;
     }
 
-    .artifact-gallery-item:hover {
+    .artifact-gallery-item:is(:hover, :focus-visible) {
         border-color: var(--bloom);
     }
 
-    .artifact-gallery-item:hover iframe {
+    .artifact-gallery-item:is(:hover, :focus-visible) iframe {
         filter: grayscale(0%);
         opacity: 1;
     }
@@ -366,13 +367,17 @@ marker: "making"
         z-index: 2;
     }
 
-    .artifact-gallery-item:hover .specimen-num {
+    .artifact-gallery-item:is(:hover, :focus-visible) .specimen-num {
         opacity: 1;
     }
 
     @media (hover: none) {
         .artifact-gallery-item .specimen-num {
             opacity: 1;
+            color: var(--paper);
+            background: rgba(26, 26, 26, 0.55);
+            padding: 0.1rem 0.35rem;
+            border-radius: 2px;
         }
     }
 
@@ -422,7 +427,7 @@ marker: "making"
         border: 1px solid var(--ink-ghost);
         padding: 0.4rem 0.6rem;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: color 0.2s ease, border-color 0.2s ease;
         z-index: 10;
     }
 
@@ -499,6 +504,7 @@ marker: "making"
         font-size: var(--size-quiet);
         line-height: 1.9;
         color: var(--ink-light);
+        font-style: normal;
     }
 
     .collaborator-block .context-text p {
@@ -541,6 +547,7 @@ marker: "making"
         font-size: var(--size-quiet);
         line-height: 1.9;
         color: var(--ink-light);
+        font-style: normal;
     }
 
     .witnesses-block blockquote {
@@ -672,8 +679,8 @@ marker: "making"
             <h1 class="artifact-title">{{ title }}</h1>
             <div class="artifact-meta">
                 {% if medium %}{{ medium }}{% if plottable %} · plottable{% endif %}<br>{% endif %}
-                {% if creator %}made by <a href="/making/creator/{{ creator | creatorFamily }}/">{{ creator | creatorFamily }}</a>{% if creator | creatorModel %} · <a href="/making/creator/{{ creator | slugify }}/">{{ creator | creatorModel }}</a>{% endif %}<br>{% endif %}
-                <a href="/making/#artifacts">{{ series | default("artifacts") }}</a> · {{ date | readableDate }}
+                {% if creator %}made by <a href="/making/creator/{{ creator | creatorFamily }}">{{ creator | creatorFamily }}</a>{% if creator | creatorModel %} · <a href="/making/creator/{{ creator | slugify }}">{{ creator | creatorModel }}</a>{% endif %}<br>{% endif %}
+                <a href="/making#artifacts">{{ series | default("artifacts") }}</a> · {{ date | readableDate }}
             </div>
         </div>
 
@@ -686,7 +693,8 @@ marker: "making"
             {% for image in images %}
             {% set imageIframeCapabilities = image.iframeCapabilities | default(artifactIframeCapabilities) %}
             {% set imageIsRendered = image.src | isHTMLFile %}
-            <figure class="artifact-gallery-item{% if not imageIsRendered %} artifact-gallery-item--image{% endif %}" data-src="{{ image.src }}{% if image.src | isHTMLFile %}?v={{ site.version }}{% endif %}" data-sandbox="{{ imageIframeCapabilities | join(' ') }}" data-title="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" tabindex="0" role="button"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
+            {% set itemLabel = image.alt | default(title ~ ' variation ' ~ loop.index) %}
+            <figure class="artifact-gallery-item{% if not imageIsRendered %} artifact-gallery-item--image{% endif %}" data-src="{{ image.src }}{% if image.src | isHTMLFile %}?v={{ site.version }}{% endif %}" data-sandbox="{{ imageIframeCapabilities | join(' ') }}" data-title="{{ itemLabel }}" tabindex="0" role="button" aria-label="Expand {{ itemLabel }}"{% if image.interpretation %} title="{{ image.interpretation }}"{% endif %}>
                 {% if image.src | isHTMLFile %}
                 <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(title ~ ' variation ' ~ loop.index) }}" sandbox="{{ imageIframeCapabilities | join(' ') }}" loading="{% if loop.index > 2 %}lazy{% else %}eager{% endif %}" tabindex="-1" aria-hidden="true"></iframe>
                 {% else %}
@@ -716,7 +724,7 @@ marker: "making"
                 <img src="{{ src }}" alt="{{ title }}" draggable="false">
                 {% endif %}
             </div>
-            <span class="zoom-hint"><span class="hint-desktop">scroll to zoom · drag to pan · double-click to reset</span><span class="hint-mobile">pinch to zoom · drag to pan · double-tap to reset</span></span>
+            <span class="zoom-hint"><span class="hint-desktop">pinch or expand to zoom · drag to pan · double-click to reset</span><span class="hint-mobile">pinch to zoom · drag to pan · double-tap to reset</span></span>
         </figure>
         {% endif %}
     </div>
@@ -769,8 +777,8 @@ marker: "making"
 </div>
 {# end artifact Pagefind body #}
 
-<nav class="artifact-nav">
-    <a href="/making/" class="nav-link">← making</a>
+<nav class="artifact-nav" aria-label="Artifact navigation">
+    <a href="/making" class="nav-link">← making</a>
     <span class="page-marker">002</span>
 </nav>
 
@@ -828,7 +836,7 @@ import { createHostModal } from '/assets/js/host-modal.js?v={{ site.version }}';
         function closeFullscreen() {
             fullscreenOverlay.classList.remove('active');
             fullscreenOverlay.setAttribute('aria-hidden', 'true');
-            fullscreenIframe.src = '';
+            fullscreenIframe.removeAttribute('src');
             fullscreenIframe.hidden = true;
             fullscreenImage.removeAttribute('src');
             fullscreenImage.hidden = true;
@@ -929,8 +937,9 @@ import { createHostModal } from '/assets/js/host-modal.js?v={{ site.version }}';
         });
     }
 
-    // Mouse wheel zoom
+    // Mouse wheel zoom (only intercept when fullscreen, zoomed, or pinch/modifier-zooming so normal page scroll is never hijacked)
     container.addEventListener('wheel', (e) => {
+        if (!isFullscreen && !e.ctrlKey && !e.metaKey && scale === 1) return;
         e.preventDefault();
         markInteracted();
 
@@ -949,6 +958,17 @@ import { createHostModal } from '/assets/js/host-modal.js?v={{ site.version }}';
 
         updateTransform();
     }, { passive: false });
+
+    function resetView() {
+        scale = 1;
+        panX = 0;
+        panY = 0;
+        viewport.style.transition = 'transform 0.3s ease';
+        updateTransform();
+        setTimeout(() => {
+            viewport.style.transition = 'transform 0.1s ease-out';
+        }, 300);
+    }
 
     // Mouse drag pan
     container.addEventListener('mousedown', (e) => {
@@ -972,48 +992,37 @@ import { createHostModal } from '/assets/js/host-modal.js?v={{ site.version }}';
     });
 
     // Double-click to reset
-    container.addEventListener('dblclick', () => {
-        scale = 1;
-        panX = 0;
-        panY = 0;
-        viewport.style.transition = 'transform 0.3s ease';
-        updateTransform();
-        setTimeout(() => {
-            viewport.style.transition = 'transform 0.1s ease-out';
-        }, 300);
-    });
+    container.addEventListener('dblclick', resetView);
 
-    // Touch support
+    // Touch support (do not hijack normal page scroll when inline and unzoomed)
     let lastTouchDist = 0;
-    let lastTouchCenter = { x: 0, y: 0 };
+    let lastTapTime = 0;
 
     container.addEventListener('touchstart', (e) => {
-        markInteracted();
-        if (e.touches.length === 1) {
+        if (e.touches.length === 1 && (isFullscreen || scale !== 1)) {
+            markInteracted();
             isDragging = true;
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
             startPanX = panX;
             startPanY = panY;
         } else if (e.touches.length === 2) {
+            markInteracted();
             isDragging = false;
             const dx = e.touches[1].clientX - e.touches[0].clientX;
             const dy = e.touches[1].clientY - e.touches[0].clientY;
             lastTouchDist = Math.sqrt(dx * dx + dy * dy);
-            lastTouchCenter = {
-                x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
-                y: (e.touches[0].clientY + e.touches[1].clientY) / 2
-            };
         }
     }, { passive: true });
 
     container.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (e.touches.length === 1 && isDragging) {
+        if (e.touches.length === 1 && isDragging && (isFullscreen || scale !== 1)) {
+            e.preventDefault();
             panX = startPanX + (e.touches[0].clientX - startX);
             panY = startPanY + (e.touches[0].clientY - startY);
             updateTransform();
-        } else if (e.touches.length === 2) {
+        } else if (e.touches.length === 2 && lastTouchDist > 0) {
+            e.preventDefault();
             const dx = e.touches[1].clientX - e.touches[0].clientX;
             const dy = e.touches[1].clientY - e.touches[0].clientY;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -1026,7 +1035,16 @@ import { createHostModal } from '/assets/js/host-modal.js?v={{ site.version }}';
         }
     }, { passive: false });
 
-    container.addEventListener('touchend', () => {
+    container.addEventListener('touchend', (e) => {
+        if (e.touches.length === 0 && e.changedTouches.length === 1 && (isFullscreen || scale !== 1)) {
+            const now = Date.now();
+            if (now - lastTapTime < 300) {
+                resetView();
+                lastTapTime = 0;
+            } else {
+                lastTapTime = now;
+            }
+        }
         isDragging = false;
     });
 })();

@@ -15,7 +15,12 @@ license: "https://creativecommons.org/licenses/by/4.0/"
 creativeWorkStatus: "Published"
 status: "advance online publication"
 coins: "Interpretive Orchestration"
-onSite: "https://linxule.com/writing/research-memex"
+onSite: "/papers/interpretive-orchestration"
+companion:
+  href: /writing/research-memex
+  relation: the field notes
+  title: "Research Memex: Working at the AI Research Frontier"
+  note: How this framework took shape through teaching and human–AI collaboration.
 bibtex: |
   @article{lin2026interpretive,
     author  = {Lin, Xule and Corley, Kevin G.},
@@ -43,4 +48,4 @@ links:
     href: "https://github.com/linxule/interpretive-orchestration-paper"
 ---
 
-Discussed on-site at [Research Memex](/writing/research-memex/), which traces how this framework took shape through human–AI collaboration. This is the version-of-record landing page; the full text is open access under CC BY 4.0.
+Discussed on-site at [Research Memex](/writing/research-memex), which traces how this framework took shape through human–AI collaboration. This is the version-of-record landing page; the full text is open access under CC BY 4.0.

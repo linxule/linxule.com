@@ -4,6 +4,7 @@ package-lock.json
 
 # Build output
 _site
+out/
 
 # Eleventy image cache (persisted by Vercel between builds)
 .cache

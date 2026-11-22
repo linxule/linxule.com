@@ -3,6 +3,22 @@
  * Defines all content collections for writing, portraits, thinking, and tag aggregations
  */
 
+import { creditFamily, creditModel, slugify } from "./strings.js";
+import seriesCatalog from "../src/_data/seriesCatalog.js";
+
+function resolveSeriesMeta(rawSeries) {
+  if (!rawSeries) {
+    const singles = seriesCatalog.bySlug.singles;
+    return { slug: singles.slug, name: singles.name };
+  }
+  for (const entry of seriesCatalog.list) {
+    if (entry.matchPrefixes.some((prefix) => rawSeries.startsWith(prefix))) {
+      return { slug: entry.slug, name: entry.name };
+    }
+  }
+  return { slug: slugify(rawSeries), name: rawSeries };
+}
+
 export default function(eleventyConfig) {
 
   // Writing collection - sorted newest first
@@ -44,7 +60,11 @@ export default function(eleventyConfig) {
 
     allPortraits.forEach(item => {
       const prompter = item.data.prompter || 'self';
-      const slug = prompter.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+      const familySlug = slugify(creditFamily(prompter));
+      const slug = slugify(prompter);
+      // A family-only credit already has its page in portraitsByPrompterFamily.
+      // Do not invent a model or emit a second page at the same family URL.
+      if (!creditModel(prompter) || slug === familySlug) return;
       if (!byPrompter[slug]) {
         byPrompter[slug] = {
           name: prompter,
@@ -64,22 +84,23 @@ export default function(eleventyConfig) {
     return Object.values(byPrompter).sort((a, b) => a.name.localeCompare(b.name));
   });
 
-  // Portraits grouped by prompter family (first word: claude, chatgpt, etc.)
+  // Portraits grouped by prompter family (normalized: "gpt-6 astra" & "gpt 6 astra" -> "gpt")
   eleventyConfig.addCollection("portraitsByPrompterFamily", function(collectionApi) {
     const allPortraits = collectionApi.getFilteredByGlob("src/making/portraits/**/*.md");
     const byFamily = {};
 
     allPortraits.forEach(item => {
       const prompter = item.data.prompter || 'self';
-      const family = prompter.split(' ')[0].toLowerCase();
-      if (!byFamily[family]) {
-        byFamily[family] = {
+      const family = creditFamily(prompter) || 'self';
+      const slug = slugify(family);
+      if (!byFamily[slug]) {
+        byFamily[slug] = {
           name: family,
-          slug: family,
+          slug: slug,
           items: []
         };
       }
-      byFamily[family].items.push(item);
+      byFamily[slug].items.push(item);
     });
 
     Object.values(byFamily).forEach(f => {
@@ -119,7 +140,7 @@ export default function(eleventyConfig) {
     return allTalks.sort((a, b) => b.date - a.date);
   });
 
-  // Artifacts collection - things Claude made directly (not prompted to other AIs)
+  // Artifacts collection - things AI made directly (not prompted to other AIs)
   // With series numbering (like portraits)
   eleventyConfig.addCollection("artifacts", function(collectionApi) {
     const allArtifacts = collectionApi.getFilteredByGlob("src/making/artifacts/**/*.md");
@@ -152,10 +173,11 @@ export default function(eleventyConfig) {
 
     allArtifacts.forEach(item => {
       const creator = item.data.creator || 'unknown';
+      const familySlug = slugify(creditFamily(creator));
+      const slug = slugify(creator);
       // A family-only credit already has its page in artifactsByCreatorFamily.
       // Do not invent a model or emit a second page at the same family URL.
-      if (!creator.trim().includes(' ')) return;
-      const slug = creator.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+      if (!creditModel(creator) || slug === familySlug) return;
       if (!byCreator[slug]) {
         byCreator[slug] = {
           name: creator,
@@ -175,22 +197,23 @@ export default function(eleventyConfig) {
     return Object.values(byCreator).sort((a, b) => a.name.localeCompare(b.name));
   });
 
-  // Artifacts grouped by creator family (first word: opus, gpt, etc.)
+  // Artifacts grouped by creator family (normalized: "gpt-6 astra" & "gpt 6 astra" -> "gpt")
   eleventyConfig.addCollection("artifactsByCreatorFamily", function(collectionApi) {
     const allArtifacts = collectionApi.getFilteredByGlob("src/making/artifacts/**/*.md");
     const byFamily = {};
 
     allArtifacts.forEach(item => {
       const creator = item.data.creator || 'unknown';
-      const family = creator.split(' ')[0].toLowerCase();
-      if (!byFamily[family]) {
-        byFamily[family] = {
+      const family = creditFamily(creator) || 'unknown';
+      const slug = slugify(family);
+      if (!byFamily[slug]) {
+        byFamily[slug] = {
           name: family,
-          slug: family,
+          slug: slug,
           items: []
         };
       }
-      byFamily[family].items.push(item);
+      byFamily[slug].items.push(item);
     });
 
     Object.values(byFamily).forEach(f => {
@@ -201,34 +224,13 @@ export default function(eleventyConfig) {
     return Object.values(byFamily).sort((a, b) => a.name.localeCompare(b.name));
   });
 
-  // Writing grouped by series for filtering
+  // Writing grouped by series for filtering (ordered via src/_data/seriesCatalog.js)
   eleventyConfig.addCollection("writingBySeries", function(collectionApi) {
     const allWriting = collectionApi.getFilteredByGlob("src/writing/**/*.md");
     const bySeries = {};
 
     allWriting.forEach(item => {
-      let series = item.data.series;
-      let slug, name;
-
-      if (!series) {
-        slug = 'singles';
-        name = 'Singles';
-      } else if (series.startsWith('LOOM')) {
-        slug = 'loom';
-        name = 'LOOM';
-      } else if (series.startsWith('SEAM')) {
-        slug = 'seam';
-        name = 'SEAM';
-      } else if (series.startsWith('Research with AI')) {
-        slug = 'research-with-ai';
-        name = 'Research with AI';
-      } else if (series.startsWith('Organizational Futures')) {
-        slug = 'organizational-futures';
-        name = 'Organizational Futures';
-      } else {
-        slug = series.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-        name = series;
-      }
+      const { slug, name } = resolveSeriesMeta(item.data.series);
 
       if (!bySeries[slug]) {
         bySeries[slug] = {
@@ -246,8 +248,8 @@ export default function(eleventyConfig) {
       s.count = s.items.length;
     });
 
-    // Custom sort order
-    const order = ['loom', 'seam', 'research-with-ai', 'ai-whispers', 'thinking', 'singles', 'epistemic-voids', 'organizational-futures', 'archive'];
+    // Display order comes from seriesCatalog
+    const order = seriesCatalog.list.map((entry) => entry.slug);
     return Object.values(bySeries).sort((a, b) => {
       const aIdx = order.indexOf(a.slug);
       const bIdx = order.indexOf(b.slug);
@@ -261,7 +263,7 @@ export default function(eleventyConfig) {
 
     // Helper to add item to tag
     const addToTag = (tag, item, territory) => {
-      const slug = tag.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+      const slug = slugify(tag);
       if (!tagMap[slug]) {
         tagMap[slug] = {
           name: tag,
@@ -335,7 +337,7 @@ export default function(eleventyConfig) {
     collectionApi.getFilteredByGlob("src/writing/**/*.md").forEach(item => {
       if (item.data.defines) {
         item.data.defines.forEach(def => {
-          const slug = def.term.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+          const slug = slugify(def.term);
           concepts.push({
             term: def.term,
             definition: def.definition,

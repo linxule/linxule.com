@@ -40,6 +40,17 @@ const FILES = [
   "vercel.json",
 ];
 const EXCLUDED_PREFIXES = ["src/tsm/", "mcp/.wrangler/"];
+const BINARY_EXTENSIONS = new Set([
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".webp",
+  ".avif",
+  ".gif",
+  ".mp4",
+  ".pdf",
+  ".woff2",
+]);
 
 function normalized(relativePath) {
   return relativePath.split(path.sep).join("/");
@@ -71,7 +82,12 @@ function fingerprint() {
   for (const file of inputFiles()) {
     hash.update(file);
     hash.update("\0");
-    hash.update(readFileSync(file));
+    if (BINARY_EXTENSIONS.has(path.extname(file).toLowerCase())) {
+      const st = statSync(file);
+      hash.update(`stat:${st.size}:${Math.trunc(st.mtimeMs)}`);
+    } else {
+      hash.update(readFileSync(file));
+    }
     hash.update("\0");
   }
   return hash.digest("hex");

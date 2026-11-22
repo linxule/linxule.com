@@ -15,7 +15,7 @@ keywords:
   - academic writing tools
 ---
 
-# Cite-while-you-write (CWYW) with Zotero
+## Cite-while-you-write (CWYW) with Zotero
 
 Cite-while-you-write (CWYW) is the important step in academic writing. A good setup can make writing with Markdown and formatting with Marked 2 app much more rewarding.
 
@@ -25,7 +25,7 @@ Steps:
   - [Zotpick.applescript by davepwsmith](https://davepwsmith.github.io/academic-scrivener-howto/)
   - [ZotHero via Alfred](https://github.com/deanishe/zothero)
 
-# Export with Marked 2 app
+## Export with Marked 2 app
 
 To share my writing with others, I use [Marked 2 app](https://marked2app.com/) (macOS) to convert the Markdown files into other formats, such as PDF or DOCX.
 
@@ -46,7 +46,7 @@ To share my writing with others, I use [Marked 2 app](https://marked2app.com/) (
 3. Choose the styles for the document (.css)
 4. Export to PDF, DOCX, or HTML
 
-## Configure Marked 2 App
+### Configure Marked 2 App
 
 You need:
 
@@ -54,7 +54,7 @@ You need:
 - Pandoc and pandoc-citeproc
 - [Citation Style Language (CSL)](https://citationstyles.org/) file for the reference style of your choice. Preview and download at the [Zotero Style Repository](https://www.zotero.org/styles).
 
-## Select Document Style
+### Select Document Style
 
 - Marked 2 converts a Markdown file into HTML document file, which in turn gets formatted according to a chosen CSS template
 - [CSS](https://www.w3schools.com/css/default.asp) is a language that describes the style of an HTML document
@@ -68,19 +68,19 @@ You need:
   - **Academic CV.css**: suitable for both academic and industry CVs
   - **Academic Review.css**: based on [Academy of Management's Reviewer Guidelines](http://aom.org/annualmeeting/reviewerguidelines/)
 
-## Print and Share
+### Print and Share
 
 - **To PDF**: Marked 2 supports direct export to PDF format; alternatively, export to HTML format and print from your browser
 - **To DOCX**: export to HTML format and open/save to DOCX format in Microsoft Word
 
-## Issues and Limitations with Marked 2
+### Issues and Limitations with Marked 2
 
 Marked 2 app has issues with exporting files into Word documents. The formats defined by CSL files can be lost.
 
 - **Solution 1**: Export to HTML files, then open with Word
 - **Solution 2**: Use [DocDown](https://raphaelkabo.com/blog/posts/introducing-docdown/) by Ralph Kabo
 
-# DocDown: Alternatives to Marked 2
+## DocDown: Alternatives to Marked 2
 
 - [Download via GitHub](https://github.com/lowercasename/docdown)
 - "Takes Markdown files, filters them through a Zotero bibliography file, a CSL file, and a reference .docx file, and exports a Word document with embedded citations and styles."

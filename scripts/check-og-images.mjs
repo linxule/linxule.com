@@ -10,10 +10,16 @@ const CARD_WIDTH = 1200;
 const CARD_HEIGHT = 630;
 const OK_EXT = new Set([".png", ".jpg", ".jpeg"]);
 
-function htmlFiles(dir) {
+function htmlFiles(dir, root) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const file = path.join(dir, entry.name);
-    return entry.isDirectory() ? htmlFiles(file) : file.endsWith(".html") ? [file] : [];
+    const rel = path.relative(root, file).split(path.sep).join("/");
+    if (entry.isDirectory()) {
+      // Skip independently developed sub-app `_site/tsm/`.
+      if (rel === "tsm" || rel.startsWith("tsm/")) return [];
+      return htmlFiles(file, root);
+    }
+    return file.endsWith(".html") ? [file] : [];
   });
 }
 
@@ -42,7 +48,7 @@ function metadataFrom(html) {
 /**
  * @param {string} siteRoot Built output directory.
  * @param {{siteUrl?: string}} options Origin whose absolute image URLs are local.
- * @returns {Promise<{issues: string[], uniqueCount: number, checkedCount: number, externalCount: number}>}
+ * @returns {Promise<{issues: string[], uniqueCount: number, checkedCount: number, externalCount: number, pageCount: number}>}
  */
 export async function checkOgImages(siteRoot, { siteUrl = "https://linxule.com" } = {}) {
   const root = path.resolve(siteRoot);
@@ -51,12 +57,25 @@ export async function checkOgImages(siteRoot, { siteUrl = "https://linxule.com" 
   const seen = new Set();
   const external = new Set();
   const decoded = new Map();
+  let pageCount = 0;
   const report = (message, url, page) => issues.push(`${message}: ${url}  [${path.relative(root, page)}]`);
 
-  for (const page of htmlFiles(root)) {
+  for (const page of htmlFiles(root, root)) {
+    const rel = path.relative(root, page).split(path.sep).join("/");
+    const isCopiedAsset = rel.startsWith("assets/");
     const metadata = metadataFrom(readFileSync(page, "utf8"));
     const first = (name) => metadata.get(name)?.[0]?.trim() || "";
-    for (const url of metadata.get("og:image") || []) {
+    const ogImages = metadata.get("og:image") || [];
+
+    if (!isCopiedAsset) {
+      pageCount++;
+      if (ogImages.length === 0) {
+        report("missing og:image meta tag", "(none)", page);
+        continue;
+      }
+    }
+
+    for (const url of ogImages) {
       seen.add(url);
       let imageUrl;
       try {
@@ -146,11 +165,11 @@ export async function checkOgImages(siteRoot, { siteUrl = "https://linxule.com" 
       }
     }
   }
-  return { issues, uniqueCount: seen.size, checkedCount: decoded.size, externalCount: external.size };
+  return { issues, uniqueCount: seen.size, checkedCount: decoded.size, externalCount: external.size, pageCount };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
-  const { issues, uniqueCount, checkedCount, externalCount } = await checkOgImages("_site");
+  const { issues, uniqueCount, checkedCount, externalCount, pageCount } = await checkOgImages("_site");
   if (issues.length) {
     console.error(
       `[og-lint] FAILED — ${issues.length} social-card problem(s):\n` +
@@ -160,7 +179,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     process.exitCode = 1;
   } else {
     console.log(
-      `[og-lint] OK — ${uniqueCount} unique og:image(s), ${checkedCount} local cards decoded at 1200x630, all ≤ 1 MB; ` +
+      `[og-lint] OK — ${pageCount} site page(s) carry og:image, ${uniqueCount} unique og:image(s), ${checkedCount} local cards decoded at 1200x630, all ≤ 1 MB; ` +
       `${externalCount} external image(s) skipped.`,
     );
   }

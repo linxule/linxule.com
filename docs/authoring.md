@@ -16,26 +16,11 @@ followed; copies are disposable, so edit only in the main checkout.
 
 ## Code map
 
-- `eleventy.config.js` imports from `eleventy/`: collections, filters,
-  shortcodes, transforms, image-pipeline, og-card-paths.
-- `middleware.ts` rewrites `Accept: text/markdown` requests to the page's
-  `.md` twin.
-- `mcp/` holds the stateless, zero-dependency `linxule-mcp` Cloudflare Worker
-  (`mcp/worker.mjs`, `mcp/wrangler.jsonc`, `mcp/worker.test.mjs`) serving
-  `https://linxule.com/mcp` and `/mcp/server-card`, backed by `/site-index.json`
-  and the site's authored `.md` twins. `mcp/metadata.mjs` is the single source
-  of truth shared with Eleventy via `src/_data/mcpServerCard.js`.
-- Agent-discovery templates live at the root of `src/`:
-  `src/mcp-server-card.json.njk` (`/.well-known/mcp/server-card.json`),
-  `src/ai-catalog.json.njk` (`/.well-known/ai-catalog.json`, ARD v1.0), and
-  `src/api-catalog.njk` (`/.well-known/api-catalog`, RFC 9727 linkset),
-  alongside `src/llms.txt.njk`, `src/site-index.json.njk`, and
-  `src/agent-skills-index.json.njk`. See `docs/agent-discovery.md` for surface
-  rules and excluded hosts.
-- Content types, each with its own layout in `src/_includes/layouts/`:
-  Writing, Portraits, Artifacts, Thinking, Concepts, Teaching, CV, Talks,
-  Papers. Standalone sub-apps live at a root subpath (`/tsm/`); slide decks at
-  `/assets/slides/`.
+- `eleventy.config.js` imports from `eleventy/`: `shapes.mjs` (canonical twinned-shape registry), `strings.js`, `collections.js`, `filters.js`, `shortcodes.js`, `transforms.js`, `image-pipeline.js`, `og-card-paths.js`, `rendering-fidelity.js`. Global data catalogs live in `src/_data/` (`site.js`, `seriesCatalog.js`, `conceptsCatalog.js`, `collaboratorsCatalog.js`, `mcpServerCard.js`, `agentSkills.js`).
+- `middleware.ts` imports `MD_PATHS` from `eleventy/shapes.mjs` and rewrites `Accept: text/markdown` requests to the page's `.md` twin.
+- `mcp/` holds the stateless, zero-dependency `linxule-mcp` Cloudflare Worker (`mcp/worker.mjs`, `mcp/wrangler.jsonc`, `mcp/worker.test.mjs`) serving `https://linxule.com/mcp` and `GET`/`HEAD` `/mcp/server-card`, backed by `/site-index.json`, `/.build-manifest.json`, and the site's authored `.md` twins. `mcp/metadata.mjs` is the single source of truth shared with Eleventy via `src/_data/mcpServerCard.js`.
+- Agent-discovery templates live at the root of `src/`: `src/mcp-server-card.json.njk` (`/.well-known/mcp/server-card.json`), `src/ai-catalog.json.njk` (`/.well-known/ai-catalog.json`, ARD v1.0), `src/api-catalog.njk` (`/.well-known/api-catalog`, RFC 9727 linkset), `src/connect.njk` + `src/md-outputs/connect.md.njk` (`/connect` & `/connect.md`), alongside `src/llms.txt.njk`, `src/site-index.json.njk`, and `src/agent-skills-index.json.njk`. See `docs/agent-discovery.md` for surface rules and excluded hosts.
+- Content types, each with its own layout in `src/_includes/layouts/` (or root template): Writing, Portraits, Artifacts, Thinking, Concepts, Teaching, Builds, Vellum, Connect, CV (en/zh), Talks, Papers. Standalone sub-apps live at root subpaths (`/tsm/`, `/play/`); slide decks at `/assets/slides/`.
 - Images: the `optimizedImage` shortcode (Making) and the writing transform
   both go through `eleventy/image-pipeline.js` and emit AVIF, WebP and a JPEG
   fallback. No PNG output except for sources with real transparency. Portrait
@@ -74,12 +59,7 @@ followed; copies are disposable, so edit only in the main checkout.
   `images`) with `{% if array %}` before reading them.
 - **Don't move the FOUC cloak in `base.njk`.** It hides `body` until fonts are
   ready (1.5 s fallback) and does not reach iframes.
-- **Typefaces are self-hosted and named only by `--font-*` tokens.** The faces
-  are declared at the top of `main.css` (files in `src/assets/fonts/`, each
-  named by its hash and listed in `MANIFEST.tsv`); only the upright Chinese
-  serif comes from Google Fonts. After adding text that sets Chinese in italic,
-  build and run `bun run fonts:kai`, then commit what it changes with the
-  content; `verify` names the page and characters until you do.
+- **Typefaces are self-hosted and named only by `--font-*` tokens.** Every face (including upright `Noto Serif SC` and italic `LXGW WenKai`) is declared at the top of `main.css` with hash-named `.woff2` files in `src/assets/fonts/` and recorded in `MANIFEST.tsv` — no Google Fonts `<link>` in `base.njk`. After adding text that sets Chinese in upright serif or italic, build and run `bun run fonts:noto` (upright) and/or `bun run fonts:kai` (italic), then commit what they change with the content; `verify` (`bun run fonts:lint`) names the page and characters until you do.
 - **Sizes under 1rem and letter-spacing use tokens** (`--size-*`,
   `--tracking-*`); `--ink-ghost` is for rules and ornament, not text; resting
   grayscale goes inside `@media (hover: hover)`. The token lint fails the

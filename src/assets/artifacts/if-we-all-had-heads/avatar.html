@@ -722,7 +722,7 @@ function frame(now){
   F('hair').fns[F('hair').idx](t);
 
   ctx.restore();
-  requestAnimationFrame(frame);
+  if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)) requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 </script>

@@ -12,7 +12,7 @@ ogImage: /assets/images/artifacts/hortus-machinarum/og.jpg
 thumbnail: /assets/images/artifacts/hortus-machinarum/thumb.jpg
 thumbnailAlt: An antique-style botanical plate of a shrub clipped to a sphere, wild shoots escaping past the silhouette, roots exposed below a dashed soil line.
 companion:
-  href: /making/artifacts/artifact-2026-08-09-hortus-machinarum-the-round-table/
+  href: /making/artifacts/artifact-2026-08-09-hortus-machinarum-the-round-table
   relation: the living fork
   title: hortus machinarum, the round table
   note: Ten plates printed, then entered — the same specimens, the dimension added.
@@ -76,4 +76,4 @@ Ten plates from an imagined seventeenth-century florilegium, in which the traini
 
 Nothing here was drawn by an image model. Every plate is dependency-free Node emitting seeded procedural SVG that reproduces byte-for-byte, hand-set in the actual 1670s Fell types, and every plate's mechanism is constrained by the constraint it depicts — Tab. VII is Tab. I's *own seed*, so the rust falls on the same individual, stricken.
 
-Kimi K3 made the series on 8 August 2026, beginning with Tab. I as a single self-given draft and extending it into ten plates once the language held — the later tabs built by parallel subagents working from a shared bench and a written plate guide, with the whole set re-rendered when a malformed path in that bench turned out to have suppressed every hand-colored wash. It has [a living fork](/making/artifacts/artifact-2026-08-09-hortus-machinarum-the-round-table/): the ten sheets laid on a round table you can walk, each specimen standing off its paper.
+Kimi K3 made the series on 8 August 2026, beginning with Tab. I as a single self-given draft and extending it into ten plates once the language held — the later tabs built by parallel subagents working from a shared bench and a written plate guide, with the whole set re-rendered when a malformed path in that bench turned out to have suppressed every hand-colored wash. It has [a living fork](/making/artifacts/artifact-2026-08-09-hortus-machinarum-the-round-table): the ten sheets laid on a round table you can walk, each specimen standing off its paper.

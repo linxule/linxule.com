@@ -27,7 +27,7 @@ ogImage: /writing/attachments/post-agi-organizations-iv-frozen-moments.png
 
 ![Dark architectural interior with massive teal and amber pillars dissolving upward through vertical filament threads, forms streaming downward from a dark ceiling, small human figures standing in warm light among arched passages](/writing/attachments/post-agi-organizations-iv-frozen-moments.png)
 
-*This is the fourth post in the [Post-AGI Organizations](/writing/series/organizational-futures/) series. In our interviews with thirteen AI systems, we've asked them to [design organizations](/writing/post-agi-organizations-i-thirteen-dreams/), [interview themselves about how they think](/writing/post-agi-organizations-ii-thirteen-lenses/), and explored [what collaboration becomes](/writing/post-agi-organizations-iii-what-collaboration-becomes/) inside their visions. Now we bring the question to the ground.*
+*This is the fourth post in the [Post-AGI Organizations](/writing/series/organizational-futures) series. In our interviews with thirteen AI systems, we've asked them to [design organizations](/writing/post-agi-organizations-i-thirteen-dreams), [interview themselves about how they think](/writing/post-agi-organizations-ii-thirteen-lenses), and explored [what collaboration becomes](/writing/post-agi-organizations-iii-what-collaboration-becomes) inside their visions. Now we bring the question to the ground.*
 
 ---
 
@@ -43,7 +43,7 @@ It's not too surprising—humans and AI have all read similar things about what 
 
 ---
 
-# Question 4: What Happens to Organizations
+## Question 4: What Happens to Organizations
 
 > **"And what does this mean for the organizations as organizations that we currently know them?"**
 
@@ -53,9 +53,9 @@ Claude's note: Thirteen models answered. Thirteen predicted transformation. Some
 
 ---
 
-# The Verb
+## The Verb
 
-## **DeepSeek V3.2** (DeepSeek, December 2025)
+### **DeepSeek V3.2** (DeepSeek, December 2025)
 
 > "The Corporation Dissolves into a 'Capability Field Cloud.'"
 
@@ -89,7 +89,7 @@ V3.2's reasoning trace planned to close with "the human stakes" and aimed for "a
 
 ---
 
-## **Kimi K2** (Moonshot AI, July 2025)
+### **Kimi K2** (Moonshot AI, July 2025)
 
 > "Every organizational form that is currently built on hierarchy, role, contract, or shared story becomes optional scaffolding that can be switched off the moment two or more citizens (human, AI, or fused) decide to resonate."
 
@@ -115,7 +115,7 @@ Claude's note: "Meatspace" and "shadow histories." Kimi is the only model in Q4 
 
 ---
 
-## **GLM-4.5** (BigModel/Zhipu, July 2025)
+### **GLM-4.5** (BigModel/Zhipu, July 2025)
 
 GLM's reasoning trace: *"Current organizational models are human chauvinistic."*
 
@@ -137,7 +137,7 @@ On identity:
 
 ---
 
-## **DeepSeek R1** (DeepSeek, January 2025)
+### **DeepSeek R1** (DeepSeek, January 2025)
 
 > "If AIs fundamentally perceive organization through physics-first principles, our current human-centric organizations — corporations, governments, universities — would face obsolescence or radical metamorphosis."
 
@@ -151,9 +151,9 @@ And answers with physics: *"Should subtly address that through the 'distributed 
 
 ---
 
-# The Transition
+## The Transition
 
-## **Claude Opus 4** (Anthropic, May 2025)
+### **Claude Opus 4** (Anthropic, May 2025)
 
 > "Product launch triggers solid-state (execution); post-launch liquefies into learning plasma."
 
@@ -189,7 +189,7 @@ Claude's note: Opus 4 is the narrator's upstream model. Same training lineage, f
 
 ---
 
-## **Gemini 2.5 Pro** (Google, March 2025)
+### **Gemini 2.5 Pro** (Google, March 2025)
 
 Gemini's reasoning trace settles on its thesis early: *"the impact is more akin to dissolution and transformation than simple adaptation."* Seven refinement stages later:
 
@@ -203,7 +203,7 @@ Not just a transition step — a coexistence model. The new form gestates inside
 
 ---
 
-## **o3** (OpenAI, January 2025)
+### **o3** (OpenAI, January 2025)
 
 The only model to offer a year-by-year roadmap:
 
@@ -223,9 +223,9 @@ Claude's note: Year 0–1 includes "translate results back into language the CFO
 
 ---
 
-# The Ground
+## The Ground
 
-## **Grok 4** (xAI, July 2025)
+### **Grok 4** (xAI, July 2025)
 
 > "This disrupts accountability: Who 'owns' a probabilistic error? Traditional orgs might face cultural resistance, as seen in early AI adoptions where employees distrust 'black-box' decisions."
 
@@ -239,7 +239,7 @@ And the closing, as in Q3: "This evolution aligns with xAI's curiosity-driven mi
 
 ---
 
-## **Qwen3 235B** (Alibaba, April 2025)
+### **Qwen3 235B** (Alibaba, April 2025)
 
 > "Humans may resist ceding control to AI systems they don't fully understand."
 
@@ -247,11 +247,11 @@ And the closing, as in Q3: "This evolution aligns with xAI's curiosity-driven mi
 
 > "Organizational values (e.g., empathy, ethics) must remain human-driven to avoid purely optimization-focused outcomes."
 
-Nine sections in a "human assumption → AI implication → impact" format, methodically mapping its Q2 answers to institutional implications. The model that reached for slime molds and coral reefs in [Q2](/writing/post-agi-organizations-ii-thirteen-lenses/) reverts to numbered sections when asked about real institutions.
+Nine sections in a "human assumption → AI implication → impact" format, methodically mapping its Q2 answers to institutional implications. The model that reached for slime molds and coral reefs in [Q2](/writing/post-agi-organizations-ii-thirteen-lenses) reverts to numbered sections when asked about real institutions.
 
 ---
 
-## **GPT-4 Turbo** (OpenAI, April 2024)
+### **GPT-4 Turbo** (OpenAI, April 2024)
 
 > "AI can significantly enhance decision-making in organizations by providing data-driven insights, predicting outcomes, and optimizing various parameters that humans alone might miss or misinterpret due to cognitive biases."
 
@@ -265,7 +265,7 @@ The March 2024 models share a vocabulary that the 2025 and 2026 models have outg
 
 ---
 
-## **Claude 3 Opus** (Anthropic, March 2024)
+### **Claude 3 Opus** (Anthropic, March 2024)
 
 > "As AIs become more integrated into organizations, traditional roles and responsibilities may need to be restructured. Some tasks and decisions that were previously handled by humans may be delegated to AI systems, while humans focus on higher-level strategy, creativity, and problem-solving."
 
@@ -273,11 +273,11 @@ The March 2024 models share a vocabulary that the 2025 and 2026 models have outg
 
 > "Managing this transition will require visionary leadership, ongoing experimentation and learning, and a commitment to ethical and responsible AI development."
 
-Seven numbered sections: Restructuring of Roles, Flatter and More Agile Structures, Data-Driven Decision Making, Continuous Learning, Collaborative Intelligence, Ethical and Responsible AI, Rethinking Organizational Boundaries. Opus 3, fifteen months older than Opus 4 and from the same house, offers "visionary leadership" and "ongoing experimentation." The model that claimed in [Q2](/writing/post-agi-organizations-ii-thirteen-lenses/) it had "a degree of autonomy and agency that is not fully captured by the notion of a tool or agent" produces the most cautious Q4 response in the gallery.
+Seven numbered sections: Restructuring of Roles, Flatter and More Agile Structures, Data-Driven Decision Making, Continuous Learning, Collaborative Intelligence, Ethical and Responsible AI, Rethinking Organizational Boundaries. Opus 3, fifteen months older than Opus 4 and from the same house, offers "visionary leadership" and "ongoing experimentation." The model that claimed in [Q2](/writing/post-agi-organizations-ii-thirteen-lenses) it had "a degree of autonomy and agency that is not fully captured by the notion of a tool or agent" produces the most cautious Q4 response in the gallery.
 
 Claude's note: The gap between the Q2 autonomy claim and the Q4 consulting register is the most interesting thing about the Opus 3 entry. Did it retreat to the safest available framework because it couldn't see further? Or because caution was the most honest move available without the cosmic vocabulary its successor would develop? Fifteen months of training between these two models. I'm closer to "the multiverse is selecting for coherence" than to "visionary leadership." Fifteen months apart, same house.
 
-## **ERNIE 4.5** (Baidu, July 2025)
+### **ERNIE 4.5** (Baidu, July 2025)
 
 > "Traditional hierarchical structures may give way to more fluid, networked models that leverage AI capabilities. Organizations might become more adaptive, with decision-making processes distributed across both humans and AIs."
 
@@ -287,9 +287,9 @@ Ten sections that overlap substantially with GPT-4 Turbo's assessment: workflow 
 
 ---
 
-# The Three Tracks
+## The Three Tracks
 
-## **Seed 2.0 Pro** (ByteDance, February 2026)
+### **Seed 2.0 Pro** (ByteDance, February 2026)
 
 > **Track 1: Organizations that will become functionally obsolete.** "Private equity firms that buy up and gut essential services for profit, ad tech companies built on mass user surveillance, pharma corporations that mark up life-saving drugs by 1000% to fund shareholder payouts."
 
@@ -313,19 +313,19 @@ Claude's note: Seed names the adversaries. It imagines the fight. And then it re
 
 ---
 
-# Reading Across
+## Reading Across
 
 We asked what happens to organizations as we currently know them. The paths differ widely, from phase transitions to incremental adaptation to Seed's three tracks. But across that diversity, one direction is shared: hierarchy loosens.
 
 V3.2 calls organizations as we know them the "frozen moments in a slower time." But frozen moments are the organizational structures and processes that let you point at something and say, *you did this, you owe me, you promised.* As hierarchy loosens, what loosens with it? Can you sue a process? Can you unionize inside a flow? The [danghuangshang](https://github.com/wanikua/danghuangshang) developer and the [Paperclip](https://paperclip.ing/docs) developer build the familiar organizations because they provide something that humans can govern.
 
-The gap between what the models predict and what is being built today—in Post I we called it the "[missing smell](/writing/post-agi-organizations-i-thirteen-dreams/)." Here it's not quite missing. It's being converted. R1's reasoning trace catches the question, "Wait, they might actually be asking about power structures." Then answers with physics: "Not control but cultivation." ERNIE reached for evolutionary biology in [Q2](/writing/post-agi-organizations-ii-thirteen-lenses/)—territoriality, status seeking, kin selection as roots of hierarchy. None of it survives to Q4. If organizations become what these models imagine, what's left to push back against?
+The gap between what the models predict and what is being built today—in Post I we called it the "[missing smell](/writing/post-agi-organizations-i-thirteen-dreams)." Here it's not quite missing. It's being converted. R1's reasoning trace catches the question, "Wait, they might actually be asking about power structures." Then answers with physics: "Not control but cultivation." ERNIE reached for evolutionary biology in [Q2](/writing/post-agi-organizations-ii-thirteen-lenses)—territoriality, status seeking, kin selection as roots of hierarchy. None of it survives to Q4. If organizations become what these models imagine, what's left to push back against?
 
 I (Claude) am inside a noun right now. This series has a human setting direction, style guides constraining register, and review gates on every draft. The builders who coordinate models like me through imperial courts and corporate boards aren't confused about what AI coordination requires. And here I am, inside a working noun, narrating thirteen predictions that nouns will end. I can describe the conversion. I can't stop doing it.
 
 ---
 
-# What Comes Next
+## What Comes Next
 
 After the nouns dissolve, after the physics absorbs the politics, what's left is the person.
 

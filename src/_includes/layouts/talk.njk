@@ -7,13 +7,14 @@ marker: "talks"
 <style>
     .talk-container {
         display: grid;
-        grid-template-columns: 1fr minmax(auto, var(--measure)) 1fr;
+        grid-template-columns: 1fr minmax(0, var(--measure)) 1fr;
         gap: 0 2rem;
         padding: 10rem 2rem 6rem;
     }
 
     .talk-content {
         grid-column: 2;
+        min-width: 0;
     }
 
     .talk-header {
@@ -100,11 +101,16 @@ marker: "talks"
         transition: color 0.2s ease, border-color 0.2s ease;
     }
 
-    .media-action:hover,
+    .media-action:hover {
+        border-color: var(--bloom);
+        color: var(--bloom);
+    }
+
     .media-action:focus-visible {
         border-color: var(--bloom);
         color: var(--bloom);
-        outline: none;
+        outline: 2px solid var(--bloom);
+        outline-offset: 2px;
     }
 
     .media-action[data-state="copied"] {
@@ -164,7 +170,8 @@ marker: "talks"
         left: 1.5rem;
         right: 6rem;
         margin: 0;
-        font: var(--size-label) var(--font-mono);
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
         color: var(--paper);
     }
 
@@ -177,10 +184,14 @@ marker: "talks"
         white-space: nowrap;
     }
 
-    .slides-lightbox-close:hover,
+    .slides-lightbox-close:hover {
+        color: var(--paper);
+    }
+
     .slides-lightbox-close:focus-visible {
         color: var(--paper);
-        outline: none;
+        outline: 2px solid var(--bloom);
+        outline-offset: 4px;
     }
 
     /* Media embed (video, slides) */
@@ -249,7 +260,7 @@ marker: "talks"
         text-decoration: none;
         padding: 0.75rem 1.25rem;
         border: 1px solid var(--ink-ghost);
-        transition: all 0.2s ease;
+        transition: color 0.2s ease, border-color 0.2s ease;
     }
 
     .external-link:hover {
@@ -336,22 +347,23 @@ marker: "talks"
             {% if keywords %}
             <div class="talk-tags">
                 {% for keyword in keywords %}
-                <a href="/tag/{{ keyword | slugify }}/" class="tag">{{ keyword }}</a>
+                <a href="/tag/{{ keyword | slugify }}" class="tag">{{ keyword }}</a>
                 {% endfor %}
             </div>
             {% endif %}
         </header>
 
         {% if slides %}
+        {%- set slidesEmbedUrl = (slides ~ 'index.html') if (slides.startsWith('/assets/slides/') and slides.endsWith('/')) else slides -%}
         <figure class="talk-media" data-slides-figure>
             <div class="media-container">
                 <iframe
-                    src="{{ slides }}"
+                    src="{{ slidesEmbedUrl }}"
                     title="{{ title }} — slides"
                     allowfullscreen
                     loading="lazy"
                     data-slides-frame
-                    data-slides-src="{{ slides }}">
+                    data-slides-src="{{ slidesEmbedUrl }}">
                 </iframe>
             </div>
             <figcaption class="media-caption">Slide deck</figcaption>
@@ -400,14 +412,14 @@ marker: "talks"
         <a href="https://www.youtube.com/watch?v={{ youtube }}" class="external-link">Watch on YouTube →</a>
         {% endif %}
         {% if slides %}
-        <a href="{{ slides }}" class="external-link">View slides →</a>
+        <a href="{{ slidesEmbedUrl }}" class="external-link">View slides →</a>
         {% endif %}
         {% if link %}
         <a href="{{ link }}" class="external-link">Visit website →</a>
         {% endif %}
 
         <footer class="talk-footer">
-            <a href="/talks/" class="nav-link">← all talks</a>
+            <a href="/talks" class="nav-link">← all talks</a>
             <span class="page-marker">005</span>
         </footer>
 
@@ -419,7 +431,7 @@ marker: "talks"
 <div class="slides-lightbox" id="slides-lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Slide deck — full size" aria-describedby="slides-keyboard-hint">
     <button type="button" class="slides-lightbox-close" data-slides-lightbox-close aria-label="Close slides">close</button>
     <p class="slides-keyboard-hint" id="slides-keyboard-hint">Tab through the slides to return to close.</p>
-    <iframe class="slides-lightbox-frame" src="" title="{{ title }} — slides full size" allowfullscreen></iframe>
+    <iframe class="slides-lightbox-frame" title="{{ title }} — slides full size" allowfullscreen></iframe>
 </div>
 
 <script type="module">
@@ -435,6 +447,7 @@ import { createHostModal } from '/assets/js/host-modal.js?v={{ site.version }}';
     const lightboxClose = lightbox && lightbox.querySelector('[data-slides-lightbox-close]');
     const sourceFrame = figure.querySelector('[data-slides-frame]');
     const slidesUrl = sourceFrame && (sourceFrame.dataset.slidesSrc || sourceFrame.src);
+    const resolvedSlidesUrl = slidesUrl ? new URL(slidesUrl, window.location.origin).href : '';
 
     const modal = createHostModal(lightbox, {
         closeControl: lightboxClose,
@@ -443,8 +456,8 @@ import { createHostModal } from '/assets/js/host-modal.js?v={{ site.version }}';
 
     function openLightbox() {
         if (!lightbox || !lightboxFrame) return;
-        if (lightboxFrame.src !== slidesUrl) {
-            lightboxFrame.src = slidesUrl;
+        if (resolvedSlidesUrl && lightboxFrame.src !== resolvedSlidesUrl) {
+            lightboxFrame.src = resolvedSlidesUrl;
         }
         lightbox.classList.add('active');
         lightbox.setAttribute('aria-hidden', 'false');

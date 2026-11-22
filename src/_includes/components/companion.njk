@@ -28,8 +28,9 @@
     <span class="companion-label">companions{% if companions.intro %} — {{ companions.intro }}{% endif %}</span>
     <ul class="companion-list">
         {% for c in companions.items %}
+        {%- set cHref = c.href if (c.href.startsWith('http') or c.href == '/tsm/' or c.href == '/play/') else (c.href | stripTrailingSlash) %}
         <li>
-            <a class="companion-link" href="{{ c.href }}">
+            <a class="companion-link" href="{{ cHref }}">
                 {% if c.relation %}<span class="companion-rel">{{ c.relation }}</span>{% endif %}<span class="companion-title">{{ c.title }}</span><span class="companion-arrow" aria-hidden="true">→</span>
             </a>
         </li>
@@ -38,9 +39,10 @@
     {% if companions.note %}<span class="companion-note">{{ companions.note }}</span>{% endif %}
 </aside>
 {% elif companion %}
+{%- set compHref = companion.href if (companion.href.startsWith('http') or companion.href == '/tsm/' or companion.href == '/play/') else (companion.href | stripTrailingSlash) %}
 <aside class="companion" aria-label="Companion piece" data-pagefind-ignore>
     <span class="companion-label">companion — {{ companion.relation }}</span>
-    <a class="companion-link" href="{{ companion.href }}">
+    <a class="companion-link" href="{{ compHref }}">
         <span class="companion-title">{{ companion.title }}</span><span class="companion-arrow" aria-hidden="true">→</span>
     </a>
     {% if companion.note %}<span class="companion-note">{{ companion.note }}</span>{% endif %}

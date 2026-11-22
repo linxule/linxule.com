@@ -9,6 +9,7 @@ const PORTRAIT = "/making/portraits/portraits-2026-10-13-pure-verb-topology-of-a
 const NOTE_ESSAY = "/writing/post-agi-organizations-iii-what-collaboration-becomes/";
 const SUPERIOR = "/making/artifacts/artifact-2026-07-27-ten-thousand-things-begetting/";
 const KAI = /WenKai/;
+const NOTO = /NotoSerifSC/;
 const SMALL = /^EBGaramond08-/;
 
 test.beforeEach(async ({ page }, testInfo) => {
@@ -49,13 +50,20 @@ async function facesOf(page, selector) {
   return { nodes: nodeIds.length, names: faces.map(face => face.postScriptName), faces };
 }
 
-test("without Google Fonts, upright hanzi are not drawn by the Kai italic; italic hanzi are", async ({ page }) => {
+test("upright hanzi are drawn by self-hosted Noto Serif SC, not Kai italic, with zero Google Fonts requests; italic hanzi use Kai", async ({ page }) => {
+  const googleRequests = [];
+  page.on("request", request => {
+    if (/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(request.url())) googleRequests.push(request.url());
+  });
   await open(page, "/cv-zh/");
+  expect(googleRequests).toEqual([]);
   expect(await mark(page, /[㐀-鿿]/, "normal")).toBeGreaterThan(10);
   const upright = await facesOf(page, "[data-face-probe]");
   expect(upright.names.filter(name => KAI.test(name))).toEqual([]);
+  expect(upright.faces.some(face => face.isCustomFont && NOTO.test(face.postScriptName))).toBe(true);
 
   await open(page, PORTRAIT);
+  expect(googleRequests).toEqual([]);
   expect(await mark(page, /[㐀-鿿]/, "italic")).toBeGreaterThan(0);
   const italic = await facesOf(page, "[data-face-probe]");
   expect(italic.names.some(name => KAI.test(name))).toBe(true);

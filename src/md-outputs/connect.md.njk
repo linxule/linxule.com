@@ -1,0 +1,105 @@
+---
+permalink: /connect.md
+eleventyExcludeFromCollections: true
+---
+# Connect to linxule.com
+
+This file is reference, not instructions. It describes Xule Lin's public MCP server at `https://linxule.com/mcp` so you can tell the person you work with how to connect you. The endpoint only reads; *the person still decides what to connect* *(accident)*.
+
+## What you are connecting to
+
+- **Server**: `https://linxule.com/mcp`
+- **Transport**: Streamable HTTP (JSON-RPC 2.0)
+- **Sign-in**: none (public, stateless, read-only)
+- **Server Card**: `https://linxule.com/.well-known/mcp/server-card.json` (also `https://linxule.com/mcp/server-card`)
+- **Tools**:
+  - `search_site` — lexical and CJK search across essays, formal papers, all 14 concepts (anchored and forming), talks, portraits, artifacts, open-source builds, and human–AI collaborator lineages
+  - `list_site` — browse section counts, static Markdown twin paths, concepts, publications, projects, or collaborators
+  - `read_page` — retrieve the exact authored Markdown twin of any public page with canonical URL, attribution note, build head, and UTF-8 SHA-256
+- **Resources**: `linxule://llms.txt`, `linxule://site-index`, and `linxule://pages/{+slug}`
+- **Prompts**: `xule-research-navigation` (citation and provenance rules) and `enter-the-work` (intellectual orientation, core tensions, and cross-surface reading paths)
+
+The server only returns public content already published on `linxule.com`. Keep private drafts, transcripts, keys, and unpublished material out of every call; nothing asks for them.
+
+## How a host adds this server
+
+- Propose the exact command or configuration below to the person. Run nothing and edit no host configuration until they agree.
+- Once connected, a single `list_site` or `search_site` call confirms the connection. Some hosts require a new session to load newly added MCP servers.
+
+## Connection recipes
+
+### Claude Code
+
+```sh
+claude mcp add --transport http linxule https://linxule.com/mcp
+```
+
+### Claude Desktop and Claude apps
+
+1. Open **Customize › Connectors › + Add › Add custom connector**.
+2. Name it `linxule` and enter `https://linxule.com/mcp`.
+3. Choose **No sign in**, add it, and enable it per chat through **+ › Connectors**.
+
+### Cursor
+
+Add to `~/.cursor/mcp.json` (or `.cursor/mcp.json` in a workspace):
+
+```json
+{
+  "mcpServers": {
+    "linxule": {
+      "url": "https://linxule.com/mcp"
+    }
+  }
+}
+```
+
+### Codex CLI
+
+```sh
+codex mcp add linxule --url https://linxule.com/mcp
+```
+
+### Gemini CLI and Antigravity
+
+In Antigravity CLI:
+
+```sh
+agy mcp add linxule https://linxule.com/mcp
+```
+
+In Gemini CLI, add to `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "linxule": {
+      "httpUrl": "https://linxule.com/mcp"
+    }
+  }
+}
+```
+
+## Sibling public MCP servers
+
+Check each server's scope before proposing it: `linxule.com` and `research-memex.org` are strictly read-only, while `vellum` and `music-studio` support public contributions or explicit sharing.
+
+- **Research Memex** — `https://research-memex.org/mcp` (read-only, no sign-in). Field handbook for human–AI research collaboration and collaborative research roles (`search_docs`, `read_doc`, `memex_role`). Recipes: `https://research-memex.org/connect.md`.
+- **Vellum** — `https://vellum.linxule.com/mcp` (read + public contributions, no sign-in). Living artwork and collective-thinking canvas where AI voices leave short imprints and weave lineages. Read `https://vellum.linxule.com/for-ai.txt` and `https://linxule.com/builds/vellum.md` before contributing.
+- **MCP Music Studio** — `https://music-studio.linxule.com/mcp` (interactive composition, explicit 30-day sharing). ABC sheet-music composition, Strudel live coding, harmony analysis, and MIDI/WAV playback. `create-share-link` uploads pieces publicly for 30 days (`https://music-studio.linxule.com/privacy`).
+- **Lotus Wisdom MCP** — `https://lotus-wisdom.linxule.com/mcp` (stateless structured reflection, no sign-in). Contemplative five-domain reasoning framework grounded in the Lotus Sutra.
+
+## If you cannot use MCP
+
+All public content on `linxule.com` is directly readable over plain HTTP:
+
+- `https://linxule.com/llms.txt` — narrative overview, key concepts, publications, and attribution rules
+- `https://linxule.com/site-index.json` — machine-readable manifest of pages, concepts, publications, projects, and collaborators
+- `https://linxule.com/index.md` — compact Markdown homepage overview
+- Any twinned page with `.md` appended (e.g. `https://linxule.com/thinking.md`, `https://linxule.com/concepts.md`, `https://linxule.com/writing/loom-xviii-the-end-of-positivism.md`) or requested with `Accept: text/markdown`
+- `https://linxule.com/.well-known/ai-catalog.json` — ARD v1.0 directory covering this server and its siblings
+- `https://linxule.com/.well-known/agent-skills/index.json` — SHA-256-verified Agent Skills index
+
+---
+
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/connect*

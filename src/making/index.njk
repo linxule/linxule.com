@@ -485,12 +485,12 @@ thesis_continued:
     /* Visually hidden but accessible to screen readers and LLMs */
     .spread-description {
         position: absolute;
+        left: -9999px;
         width: 1px;
         height: 1px;
         padding: 0;
         margin: -1px;
         overflow: hidden;
-        clip: rect(0, 0, 0, 0);
         white-space: nowrap;
         border: 0;
     }
@@ -545,10 +545,6 @@ thesis_continued:
         display: flex;
         align-items: center;
         justify-content: center;
-        /* Reset main.css .specimen container-level filter so only img-level applies */
-        filter: none;
-        opacity: 1;
-        transition: none; /* Override main.css transition: all */
     }
 
     .specimen img {
@@ -587,10 +583,14 @@ thesis_continued:
         opacity: 1;
     }
 
-    /* No pointer, no hover to reveal the number: it is simply shown. */
+    /* No pointer, no hover to reveal the number: show neutrally over artwork. */
     @media (hover: none) {
         .specimen-num {
             opacity: 1;
+            color: var(--paper);
+            background: rgba(26, 26, 26, 0.55);
+            padding: 0.1rem 0.35rem;
+            border-radius: 2px;
         }
     }
 
@@ -655,43 +655,6 @@ thesis_continued:
     }
 
     /* ========================================
-       Position Indicator (Nav Dots)
-       ======================================== */
-
-    .book-nav {
-        position: fixed;
-        bottom: 2rem;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 0.5rem;
-        z-index: 100;
-    }
-
-    .book-nav-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--ink-ghost);
-        cursor: pointer;
-        transition: background 0.2s ease;
-        border: none;
-        padding: 0;
-    }
-
-    .book-nav-dot:hover {
-        background: var(--bloom);
-    }
-
-    .book-nav-dot.active {
-        background: var(--ink);
-    }
-
-    .book-nav-separator {
-        width: 12px;
-    }
-
-    /* ========================================
        Back Matter (end note + Footer)
        ======================================== */
 
@@ -732,6 +695,17 @@ thesis_continued:
     .page-footer {
         padding: 4rem 4rem;
         border-top: 1px solid var(--ink-ghost);
+    }
+
+    .rendering-inline {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        color: var(--ink-faint);
+        transition: color 0.3s ease;
+    }
+
+    .rendering-inline:hover {
+        color: var(--bloom);
     }
 
     /* ========================================
@@ -888,7 +862,7 @@ thesis_continued:
 
     <section class="spread header-spread opening-spread" data-spread="0" data-book-target="opening" id="opening">
         <div class="header-links">
-            <a href="/search/" class="search-link">search</a>
+            <a href="/search" class="search-link">search</a>
             <span class="page-marker">002</span>
         </div>
         <h1 class="page-title">making</h1>
@@ -946,10 +920,10 @@ thesis_continued:
             </div>
         </div>
 
-        <nav class="filter-chips">
-            <a href="/making/#portraits" class="filter-chip active">all</a>
+        <nav class="filter-chips" aria-label="Filter portraits by prompter">
+            <a href="/making#portraits" class="filter-chip active">all</a>
             {%- for family in collections.portraitsByPrompterFamily -%}
-            <a href="/making/prompter/{{ family.slug }}/" class="filter-chip">{{ family.name }}</a>
+            <a href="/making/prompter/{{ family.slug }}" class="filter-chip">{{ family.name }}</a>
             {%- endfor -%}
         </nav>
     </section>
@@ -967,10 +941,10 @@ thesis_continued:
             </div>
 
             <div class="spread-meta">
-                <h2 class="spread-title"><a href="{{ portrait.url }}">{{ portrait.data.title }}</a></h2>
+                <h2 class="spread-title"><a href="{{ portrait.url | stripTrailingSlash }}">{{ portrait.data.title }}</a></h2>
                 <div class="spread-info">
                     {{ portrait.data.generator }}{% if portrait.data.settings %} · {{ portrait.data.settings }}{% endif %}<br>
-                    {% if portrait.data.prompter %}prompted by <a href="/making/prompter/{{ portrait.data.prompter | prompterFamily }}/">{{ portrait.data.prompter | prompterFamily }}</a>{% if portrait.data.prompter | prompterModel %} · <a href="/making/prompter/{{ portrait.data.prompter | slugify }}/">{{ portrait.data.prompter | prompterModel }}</a>{% endif %}<br>{% endif %}
+                    {% if portrait.data.prompter %}prompted by <a href="/making/prompter/{{ portrait.data.prompter | prompterFamily }}">{{ portrait.data.prompter | prompterFamily }}</a>{% if portrait.data.prompter | prompterModel %} · <a href="/making/prompter/{{ portrait.data.prompter | slugify }}">{{ portrait.data.prompter | prompterModel }}</a>{% endif %}<br>{% endif %}
                     {{ portrait.data.date | readableDate }}
                 </div>
                 {%- set firstPromptLine = portrait.data.prompt[0].text | default(portrait.data.prompt[0]) -%}
@@ -1015,10 +989,10 @@ thesis_continued:
             </div>
         </div>
 
-        <nav class="filter-chips">
-            <a href="/making/#artifacts" class="filter-chip active">all</a>
+        <nav class="filter-chips" aria-label="Filter artifacts by creator">
+            <a href="/making#artifacts" class="filter-chip active">all</a>
             {%- for family in collections.artifactsByCreatorFamily -%}
-            <a href="/making/creator/{{ family.slug }}/" class="filter-chip">{{ family.name }}</a>
+            <a href="/making/creator/{{ family.slug }}" class="filter-chip">{{ family.name }}</a>
             {%- endfor -%}
         </nav>
     </section>
@@ -1041,9 +1015,9 @@ thesis_continued:
             {%- endif -%}
 
             <div class="spread-meta">
-                <h2 class="spread-title"><a href="{{ artifact.url }}">{{ artifact.data.title }}</a></h2>
+                <h2 class="spread-title"><a href="{{ artifact.url | stripTrailingSlash }}">{{ artifact.data.title }}</a></h2>
                 <div class="spread-info">
-                    {% if artifact.data.creator %}<a href="/making/creator/{{ artifact.data.creator | creatorFamily }}/">{{ artifact.data.creator | creatorFamily }}</a>{% if artifact.data.creator | creatorModel %} · <a href="/making/creator/{{ artifact.data.creator | slugify }}/">{{ artifact.data.creator | creatorModel }}</a>{% endif %}<br>{% endif %}
+                    {% if artifact.data.creator %}<a href="/making/creator/{{ artifact.data.creator | creatorFamily }}">{{ artifact.data.creator | creatorFamily }}</a>{% if artifact.data.creator | creatorModel %} · <a href="/making/creator/{{ artifact.data.creator | slugify }}">{{ artifact.data.creator | creatorModel }}</a>{% endif %}<br>{% endif %}
                     {{ artifact.data.medium }}{% if artifact.data.plottable %} · plottable{% endif %}<br>
                     {{ artifact.data.date | readableDate }}
                 </div>
@@ -1056,34 +1030,41 @@ thesis_continued:
 
         <div class="spread-specimens{% if artifact.data.thumbnail or not artifact.data.images %} single{% endif %}">
             {% if artifact.data.thumbnail %}
-            <a href="{{ artifact.url }}" class="specimen">
-                <img src="{{ artifact.data.thumbnail }}" alt="{{ artifact.data.title }}">
+            <a href="{{ artifact.url | stripTrailingSlash }}" class="specimen">
+                {% optimizedImage artifact.data.thumbnail, artifact.data.title, "(max-width: 900px) 100vw, 400px" %}
             </a>
             {% elif artifact.data.images %}
+            {%- set artGalleryId = "artifact-gallery-" ~ loop.index -%}
             {%- for image in artifact.data.images -%}
+            {%- if loop.index <= 4 -%}
             {% if image.src | isHTMLFile %}
-            <a href="{{ artifact.url }}" class="specimen specimen--interactive">
+            <a href="{{ artifact.url | stripTrailingSlash }}" class="specimen specimen--interactive">
                 {%- set iframeCapabilities = image.iframeCapabilities | default(artifact.data.iframeCapabilities | default(["allow-scripts"])) -%}
                 <iframe src="{{ image.src }}?v={{ site.version }}" title="{{ image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index) }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="{{ iframeCapabilities | join(' ') }}"></iframe>
                 <span class="specimen-overlay"></span>
                 <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
             </a>
             {% else %}
-            <figure class="specimen" data-src="{{ image.src }}">
-                <img src="{{ image.src }}" alt="{{ image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index) }}">
+            <figure class="specimen" data-src="{{ image.src }}" data-gallery-id="{{ artGalleryId }}" data-gallery-index="{{ loop.index0 }}">
+                {% optimizedImage image.src, image.alt | default(artifact.data.title ~ ' variation ' ~ loop.index), "(max-width: 900px) 50vw, 25vw" %}
                 <span class="specimen-num">{{ loop.index | string | padStart(2, '0') }}</span>
             </figure>
             {% endif %}
+            {%- endif -%}
             {%- endfor -%}
+            {%- if artifact.data.images.length > 4 -%}
+            <button type="button" class="specimen-more" data-gallery-id="{{ artGalleryId }}" data-gallery-index="4" aria-label="View {{ artifact.data.images.length - 4 }} more images, starting with image 5">+{{ artifact.data.images.length - 4 }} more</button>
+            {%- endif -%}
+            <script type="application/json" id="{{ artGalleryId }}">{{ artifact.data.images | galleryItems | dump | safe }}</script>
             {% elif artifact.data.src | isHTMLFile %}
-            <a href="{{ artifact.url }}" class="specimen specimen--interactive">
+            <a href="{{ artifact.url | stripTrailingSlash }}" class="specimen specimen--interactive">
                 {%- set iframeCapabilities = artifact.data.iframeCapabilities | default(["allow-scripts"]) -%}
                 <iframe src="{{ artifact.data.src }}?v={{ site.version }}" title="{{ artifact.data.title }}" class="specimen-iframe" tabindex="-1" loading="lazy" sandbox="{{ iframeCapabilities | join(' ') }}"></iframe>
                 <span class="specimen-overlay"></span>
             </a>
             {% else %}
-            <a href="{{ artifact.url }}" class="specimen">
-                <img src="{{ artifact.data.src }}" alt="{{ artifact.data.title }}">
+            <a href="{{ artifact.url | stripTrailingSlash }}" class="specimen">
+                {% optimizedImage artifact.data.src, artifact.data.title, "(max-width: 900px) 100vw, 400px" %}
             </a>
             {% endif %}
         </div>
@@ -1097,19 +1078,18 @@ thesis_continued:
 
     <section class="back-matter" id="end" data-book-target="end">
         {# id="tools": this page was the Tools part until the builds moved out; an old /making#tools link still opens it. #}
-        <p class="end-note" id="tools">The tools and open-source builds that once closed this book have a shelf of their own now. <a href="/builds/" class="accident">Builds →</a></p>
+        <p class="end-note" id="tools">The tools and open-source builds that once closed this book have a shelf of their own now. <a href="/builds" class="accident">Builds →</a></p>
 
         <footer class="page-footer">
             <a href="/" class="back-link">← return</a>
-            <span aria-hidden="true"> · </span>
-            <a href="/making.md">the source remains</a>
+            <span class="rendering-inline">one rendering · <a href="/making.md">the source remains</a></span>
         </footer>
     </section>
 
 </div>
 
 <!-- Section Navigation -->
-<nav class="book-nav" id="book-nav">
+<nav class="book-nav" id="book-nav" aria-label="Making sections">
     <button class="book-nav-dot active" data-section="opening" aria-label="Contents" aria-current="true"></button>
     <span class="book-nav-separator"></span>
     <button class="book-nav-dot" data-section="portraits" aria-label="Portraits"></button>

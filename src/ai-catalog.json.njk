@@ -15,7 +15,7 @@ eleventyExcludeFromCollections: true
       "identifier": {{ ("urn:air:" ~ siteDomain ~ ":mcp:linxule") | dump | safe }},
       "displayName": "Xule Lin Research Archive MCP",
       "type": "application/mcp-server-card+json",
-      "description": "Read-only MCP server for searching and reading Xule Lin's essays, formal publications, signature concepts, talks, portraits, artifacts, and open-source builds on linxule.com.",
+      "description": "Read-only MCP server for searching and reading Xule Lin's essays, formal publications, all 14 signature concepts (anchored and forming), talks, portraits, artifacts, open-source builds, and human-AI collaborator lineages on linxule.com.",
       "url": {{ (site.url ~ "/mcp/server-card") | dump | safe }},
       "version": {{ mcpServerCard.version | dump | safe }},
       "capabilities": [
@@ -25,9 +25,9 @@ eleventyExcludeFromCollections: true
       ],
       "tags": ["mcp", "research", "organization-studies", "human-ai-collaboration", "markdown"],
       "representativeQueries": [
-        "Search Xule Lin's essays and papers on human-AI collaboration and organizational theory.",
+        "Search Xule Lin's essays, papers, and forming concepts on human-AI collaboration and organizational theory.",
         "Read an essay, concept definition, or paper landing page in Markdown from linxule.com.",
-        "List Xule Lin's signature concepts, formal publications, and open-source research builds."
+        "List Xule Lin's signature concepts, formal publications, open-source builds, and AI collaborator lineages."
       ]
     },
     {
@@ -52,7 +52,7 @@ eleventyExcludeFromCollections: true
       "identifier": {{ ("urn:air:" ~ siteDomain ~ ":api-catalog:root") | dump | safe }},
       "displayName": "Xule Lin Public Discovery API Catalog",
       "type": "application/linkset+json",
-      "description": "RFC 9727 linkset anchoring llms.txt, site-index.json, Atom feed, Markdown homepage, and sitemap for linxule.com.",
+      "description": "RFC 9727 linkset anchoring llms.txt, connect.md, site-index.json, ai-catalog.json, agent-skills, license.xml, Atom feed, Markdown homepage, and sitemap for linxule.com.",
       "url": {{ (site.url ~ "/.well-known/api-catalog") | dump | safe }},
       "tags": ["api-catalog", "linkset", "discovery", "llms-txt"],
       "representativeQueries": [

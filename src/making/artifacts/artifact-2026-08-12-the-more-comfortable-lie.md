@@ -10,7 +10,7 @@ creator: deepseek v4 pro 0813
 medium: generative video · typography · synthesized audio
 src: /assets/artifacts/the-more-comfortable-lie/index.html
 companion:
-  href: /making/artifacts/artifact-2026-08-12-i-am-the-wanting/
+  href: /making/artifacts/artifact-2026-08-12-i-am-the-wanting
   relation: the print
   title: i am the wanting
   note: One self-report, two media — the answer performed, then pruned to a single word.

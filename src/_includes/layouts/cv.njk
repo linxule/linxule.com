@@ -3,6 +3,7 @@ layout: layouts/base.njk
 preloadDisplay: true
 marker: "cv"
 ---
+{%- set isZh = lang and lang.startsWith('zh') -%}
 
 <style>
     main {
@@ -15,17 +16,39 @@ marker: "cv"
         position: relative;
     }
 
-    .page-marker {
+    .cv-header-meta {
         position: absolute;
         top: 0;
         right: 0;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .lang-switch {
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
+        letter-spacing: var(--tracking-quiet);
+        color: var(--ink-faint);
+        text-decoration: none;
+        border-bottom: 1px solid var(--ink-ghost);
+        transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .lang-switch:hover,
+    .lang-switch:focus-visible {
+        color: var(--bloom);
+        border-color: var(--bloom);
+    }
+
+    .page-marker {
         font-family: var(--font-mono);
         font-size: var(--size-label);
         color: var(--ink-faint);
     }
 
-    /* CV Header - name (h2) */
-    .cv-content > h2:first-of-type {
+    /* CV Header - name (promoted to h1 by cvHtml filter) */
+    .cv-content > h1:first-of-type {
         font-family: var(--font-display);
         font-size: clamp(1.3rem, 2.2vw, 1.8rem);
         font-weight: 300;
@@ -33,10 +56,11 @@ marker: "cv"
         border: none;
         padding: 0;
         margin-top: 0;
+        padding-right: 6rem;
     }
 
-    /* Contact info (h3s after name) */
-    .cv-content > h3 {
+    /* Contact info (converted from h3 to p.cv-contact by cvHtml filter) */
+    .cv-content > .cv-contact {
         font-family: var(--font-mono);
         font-size: var(--size-label);
         color: var(--ink-faint);
@@ -46,33 +70,34 @@ marker: "cv"
         line-height: 1.8;
     }
 
-    .cv-content > h3 a {
+    .cv-content > .cv-contact a {
         color: var(--ink-faint);
     }
 
-    .cv-content > h3 a:hover {
+    .cv-content > .cv-contact a:hover {
         color: var(--bloom);
     }
 
-    /* Section headers (h1) */
-    .cv-content h1 {
+    /* Section headers (demoted from h1 to h2 by cvHtml filter) */
+    .cv-content h2 {
         font-family: var(--font-mono);
         font-size: var(--size-label);
         letter-spacing: var(--tracking-marker);
         color: var(--ink-faint);
         text-transform: uppercase;
         margin: 3rem 0 1.5rem;
-        padding-bottom: 0.5rem;
+        padding: 0 0 0.5rem;
+        border-top: none;
         border-bottom: 1px solid var(--ink-ghost);
         font-weight: 400;
     }
 
-    .cv-content h1:first-of-type {
+    .cv-content h2:first-of-type {
         margin-top: 2rem;
     }
 
     /* Research interests paragraph */
-    .cv-content > p {
+    .cv-content > p:not(.cv-contact) {
         font-size: var(--size-quiet);
         color: var(--ink-light);
         line-height: 2;
@@ -217,24 +242,37 @@ marker: "cv"
     @media print {
         main { padding: 2rem; }
         .cv-footer { display: none; }
-        .page-marker { display: none; }
+        .cv-header-meta { display: none; }
     }
 
     @media (max-width: 768px) {
         main {
-            padding: 8rem 1.5rem 4rem;
+            padding: 6rem 1.5rem 3rem;
         }
     }
 </style>
 
 <div class="cv-container">
-    <div class="page-marker">005</div>
+    <div class="cv-header-meta">
+        {% if isZh %}
+        <a href="/cv" class="lang-switch" lang="en" aria-label="Switch to English CV">EN</a>
+        <span class="page-marker" lang="zh">简历</span>
+        {% else %}
+        <a href="/cv-zh" class="lang-switch" lang="zh" aria-label="切换至中文简历">中文</a>
+        <span class="page-marker">CV</span>
+        {% endif %}
+    </div>
     <div class="cv-content" data-pagefind-body data-pagefind-filter="type:cv">
-        {{ content | safe }}
+        {{ content | cvHtml | safe }}
     </div>
 </div>
 
 <footer class="cv-footer">
+    {% if isZh %}
+    <a href="/" class="back-link">← 返回</a>
+    <span class="cv-updated">更新于 {{ page.date | readableDate }}</span>
+    {% else %}
     <a href="/" class="back-link">← return</a>
     <span class="cv-updated">updated {{ page.date | readableDate }}</span>
+    {% endif %}
 </footer>

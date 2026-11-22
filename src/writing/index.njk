@@ -131,12 +131,12 @@ seoDescription: "Essays on human–AI collaboration in qualitative research — 
     /* Visually hidden but accessible to screen readers and LLMs */
     .entry-description {
         position: absolute;
+        left: -9999px;
         width: 1px;
         height: 1px;
         padding: 0;
         margin: -1px;
         overflow: hidden;
-        clip: rect(0, 0, 0, 0);
         white-space: nowrap;
         border: 0;
     }
@@ -202,6 +202,86 @@ seoDescription: "Essays on human–AI collaboration in qualitative research — 
         text-decoration: none;
     }
 
+    .chip-count {
+        font-size: var(--size-whisper);
+        color: var(--ink-faint);
+        margin-left: 0.2rem;
+    }
+
+    /* Formal papers shelf — lives inside Writing rather than adding a homepage lane */
+    .papers-shelf {
+        margin-bottom: 4rem;
+        padding: 1.5rem 0;
+        border-top: 1px solid var(--ink-ghost);
+        border-bottom: 1px solid var(--ink-ghost);
+    }
+
+    .papers-shelf-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 1rem;
+    }
+
+    .papers-shelf-label {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+        color: var(--ink-faint);
+    }
+
+    .papers-shelf-all {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-whisper);
+        color: var(--ink-faint);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .papers-shelf-all:hover {
+        color: var(--bloom);
+    }
+
+    .papers-shelf-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .papers-shelf-link {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.35rem 1.25rem;
+        text-decoration: none;
+        transition: transform 0.2s ease;
+    }
+
+    .papers-shelf-link:hover {
+        transform: translateX(0.35rem);
+    }
+
+    .papers-shelf-title {
+        font-size: var(--size-quiet);
+        font-style: italic;
+        color: var(--ink-light);
+        transition: color 0.2s ease;
+    }
+
+    .papers-shelf-link:hover .papers-shelf-title {
+        color: var(--bloom);
+    }
+
+    .papers-shelf-meta {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-quiet);
+        color: var(--ink-faint);
+    }
+
     @media (max-width: 900px) {
         main {
             padding: 8rem 2rem 4rem;
@@ -215,6 +295,16 @@ seoDescription: "Essays on human–AI collaboration in qualitative research — 
             padding-left: 0;
         }
     }
+
+    @media (max-width: 768px) {
+        main {
+            padding: 6rem 1.5rem 3rem;
+        }
+
+        .page-header {
+            margin-bottom: 4rem;
+        }
+    }
 </style>
 
 <header class="page-header">
@@ -225,22 +315,41 @@ seoDescription: "Essays on human–AI collaboration in qualitative research — 
         Archive includes earlier tutorials and resources.
     </p>
     <div class="header-links">
-        <a href="/search/" class="search-link">search</a>
+        <a href="/search" class="search-link">search</a>
         <span class="page-marker">003</span>
     </div>
 </header>
 
-<nav class="filter-chips">
-    <span class="filter-chip active">all</span>
+<nav class="filter-chips" aria-label="Filter writing by series">
+    <span class="filter-chip active">all <span class="chip-count">{{ collections.writing | length }}</span></span>
     {%- for series in collections.writingBySeries -%}
-    <a href="/writing/series/{{ series.slug }}/" class="filter-chip">{{ series.name | lower }}</a>
+    <a href="/writing/series/{{ series.slug }}" class="filter-chip">{{ series.name | lower }} <span class="chip-count">{{ series.count }}</span></a>
     {%- endfor -%}
 </nav>
+
+{%- if collections.papers and collections.papers.length -%}
+<section class="papers-shelf" aria-labelledby="papers-shelf-label">
+    <div class="papers-shelf-head">
+        <span class="papers-shelf-label" id="papers-shelf-label">peer-reviewed &amp; preprints</span>
+        <a href="/papers" class="papers-shelf-all">all papers →</a>
+    </div>
+    <ul class="papers-shelf-list">
+        {%- for paper in collections.papers -%}
+        <li>
+            <a href="{{ paper.url | stripTrailingSlash }}" class="papers-shelf-link">
+                <span class="papers-shelf-title">{{ paper.data.paperTitle | default(paper.data.title) }}</span>
+                <span class="papers-shelf-meta">{{ paper.data.venue | default('Preprint') }}{% if paper.data.year %} · {{ paper.data.year }}{% endif %}</span>
+            </a>
+        </li>
+        {%- endfor -%}
+    </ul>
+</section>
+{%- endif -%}
 
 <div class="entries">
     {%- for post in collections.writing -%}
     <div class="entry">
-        <a href="{{ post.url }}" class="entry-link">
+        <a href="{{ post.url | stripTrailingSlash }}" class="entry-link">
             {%- if post.data.series -%}
             <span class="entry-series">{{ post.data.series }}</span>
             {%- endif -%}

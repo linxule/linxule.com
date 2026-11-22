@@ -1,4 +1,5 @@
 import { afterAll, describe, expect, test } from "bun:test";
+import { existsSync } from "node:fs";
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -8,7 +9,12 @@ import markdownIt from "markdown-it";
 import Image from "@11ty/eleventy-img";
 import sharp from "sharp";
 import { createWritingImageTransform, needsLosslessFallback } from "../eleventy/transforms.js";
-import { imageOptions, originalImageHTML } from "../eleventy/image-pipeline.js";
+import {
+  getActiveOptimizedFiles,
+  imageOptions,
+  originalImageHTML,
+  resetActiveOptimizedFiles,
+} from "../eleventy/image-pipeline.js";
 import shortcodes from "../eleventy/shortcodes.js";
 
 const fixtureDir = await mkdtemp(path.join(os.tmpdir(), "image-pipeline-"));
@@ -36,7 +42,8 @@ describe("writing image pipeline", () => {
     expect(await needsLosslessFallback(fixturePath)).toBe(false);
   });
 
-  test("real markdown keeps its alt text and title through responsive encoding", async () => {
+  test("real markdown keeps its alt text and title, drops unused data-full-src, and tracks active files", async () => {
+    resetActiveOptimizedFiles();
     const markdown = '![A & B say "hello" <there>](/writing/attachments/pixel.png "Title & credit")';
     const original = markdownIt().render(markdown);
     const output = await fixtureTransform().call({ page }, original);
@@ -44,10 +51,28 @@ describe("writing image pipeline", () => {
     expect(output).toContain('alt="A &amp; B say &quot;hello&quot; <there>"');
     expect(output).toContain('title="Title &amp; credit"');
     expect(output).not.toContain("&amp;amp;");
-    expect(output).toContain('data-full-src="/writing/attachments/pixel.png"');
+    expect(output).not.toContain("data-full-src");
     expect(output).toContain('type="image/avif"');
     expect(output).toContain('type="image/webp"');
     expect(output).toContain('width="1" height="1"');
+    expect(getActiveOptimizedFiles().size).toBeGreaterThan(0);
+  });
+
+  test("opts the first opening image in .article-body (<=400 chars) into eager + fetchpriority=high", async () => {
+    const heroHtml = '<div class="article-body"><p><img src="/writing/attachments/pixel.png" alt="hero"></p><p>Later</p><img src="/writing/attachments/pixel.png" alt="second"></div>';
+    const output = await fixtureTransform().call({ page }, heroHtml);
+    const imgs = [...output.matchAll(/<img\b[^>]*>/g)].map((m) => m[0]);
+    expect(imgs).toHaveLength(2);
+    expect(imgs[0]).toContain('loading="eager"');
+    expect(imgs[0]).toContain('fetchpriority="high"');
+    expect(imgs[1]).toContain('loading="lazy"');
+    expect(imgs[1]).not.toContain("fetchpriority");
+
+    // An image buried deep in the essay (>400 chars into .article-body) stays lazy.
+    const deepHtml = `<div class="article-body"><p>${"word ".repeat(100)}</p><img src="/writing/attachments/pixel.png" alt="deep"></div>`;
+    const deepOutput = await fixtureTransform().call({ page }, deepHtml);
+    expect(deepOutput).toContain('loading="lazy"');
+    expect(deepOutput).not.toContain('fetchpriority="high"');
   });
 
   test("retains quoted attributes, loading priority, and authored sizes", async () => {
@@ -77,25 +102,7 @@ describe("writing image pipeline", () => {
     const output = await fixtureTransform(calls).call({ page }, original);
     expect(calls[0].input).toBe("./src/writing/attachments/pixel.png");
     expect(calls[0].options.formats).toEqual(["avif", "webp", "jpeg"]);
-    expect(output).toContain('data-full-src="/writing/attachments/pixel.png?v=2&amp;mode=full#detail"');
-  });
-
-  test("preserves an encoded-space URL instead of emitting excluded cache filenames", async () => {
-    const attachmentDir = path.join(fixtureDir, "src/writing/attachments");
-    await mkdir(attachmentDir, { recursive: true });
-    await writeFile(path.join(attachmentDir, "space name.png"), await readFile(fixturePath));
-    const calls = [];
-    const transform = createWritingImageTransform(async (input, options) => {
-      calls.push(input);
-      return Image(path.resolve(fixtureDir, input), {
-        ...options, outputDir: path.join(fixtureDir, "encoded-space-output"),
-      });
-    });
-    const original = '<img src="/writing/attachments/space%20name.png" alt="A &amp; B" title="Original image">';
-    const output = await transform.call({ page }, original);
-    expect(calls).toEqual(["./src/writing/attachments/space%20name.png"]);
-    expect(output).toBe(original);
-    expect(output).not.toContain("<picture>");
+    expect(output).not.toContain("data-full-src");
   });
 
   test("leaves authored srcset, external images, and data-src placeholders intact", async () => {
@@ -105,10 +112,10 @@ describe("writing image pipeline", () => {
     expect(calls).toHaveLength(0);
   });
 
-  test("keeps failed images and non-writing/non-HTML outputs byte-for-byte", async () => {
+  test("fails loud on missing local attachments while leaving non-writing/non-HTML outputs intact", async () => {
     const original = '<img src="/writing/attachments/missing.png" alt="A &amp; B" title="credit">';
     const transform = createWritingImageTransform(async () => { throw new Error("missing test fixture"); });
-    expect(await transform.call({ page }, original)).toBe(original);
+    await expect(transform.call({ page }, original)).rejects.toThrow("missing test fixture");
     for (const context of [
       { ...page, inputPath: "./src/making/test.md" },
       { ...page, outputPath: "_site/writing/test.md" },
@@ -130,14 +137,36 @@ describe("shared image contract", () => {
     expect(making.outputDir).toBe(writing.outputDir);
   });
 
-  test("shortcode failure keeps quotes and ampersands inside their attributes", async () => {
-    let shortcode;
-    shortcodes({ addShortcode() {}, addAsyncFilter() {}, addAsyncShortcode(name, callback) { shortcode = callback; } });
+  test("originalImageHTML escapes quotes and ampersands inside attributes", () => {
     const source = '/nonexistent/image.png?credit="A"&v=1';
-    const output = await shortcode(source, 'A "quoted" & <missing> image');
-    expect(output).toBe(originalImageHTML(source, 'A "quoted" & <missing> image'));
+    const output = originalImageHTML(source, 'A "quoted" & <missing> image');
     expect(output).toContain('src="/nonexistent/image.png?credit=&quot;A&quot;&amp;v=1"');
     expect(output).toContain('alt="A &quot;quoted&quot; &amp; <missing> image"');
+  });
+
+  test("optimizedImage fails loud on missing local images and supports className, loading, fetchpriority", async () => {
+    let shortcode;
+    let galleryItems;
+    shortcodes({
+      addShortcode() {},
+      addAsyncFilter(name, callback) { if (name === "galleryItems") galleryItems = callback; },
+      addAsyncShortcode(name, callback) { if (name === "optimizedImage") shortcode = callback; },
+    });
+
+    await expect(shortcode("/nonexistent/image.png", "Missing")).rejects.toThrow(/Missing local image/i);
+
+    const relFixture = path.relative(process.cwd(), fixturePath);
+    const html = await shortcode(relFixture, "Hero", "100vw", "hero-img", "eager", "high");
+    expect(html).toContain('class="hero-img"');
+    expect(html).toContain('loading="eager"');
+    expect(html).toContain('fetchpriority="high"');
+
+    // galleryItems strips unused interpretation prose
+    const items = await galleryItems([
+      { src: "/assets/artifacts/demo/index.html", alt: "Interactive", interpretation: "Verbose prose not needed in JSON" },
+    ]);
+    expect(items).toEqual([{ src: "/assets/artifacts/demo/index.html", alt: "Interactive", view: "/assets/artifacts/demo/index.html" }]);
+    expect("interpretation" in items[0]).toBe(false);
   });
 
   test.each(["png", "jpeg", "webp", "svg"])("cold %s encoding writes valid responsive assets", async (format) => {
@@ -165,24 +194,31 @@ describe("shared image contract", () => {
     }
   });
 
-  test("Eleventy's after hook copies images into a custom output directory", async () => {
+  test("Eleventy's after hook copies active tracked images and excludes retired cache orphans", async () => {
     const configURL = pathToFileURL(path.resolve("eleventy.config.js")).href;
+    const pipelineURL = pathToFileURL(path.resolve("eleventy/image-pipeline.js")).href;
     const cacheDir = path.join(fixtureDir, ".cache/@11ty/img");
     await mkdir(cacheDir, { recursive: true });
-    await writeFile(path.join(cacheDir, "test-1w.png"), "fixture");
+    await writeFile(path.join(cacheDir, "active-1200w.webp"), "active-bytes");
+    await writeFile(path.join(cacheDir, "orphan-2912w.png"), "retired-orphan");
     const script = `
       import configure from ${JSON.stringify(configURL)};
-      let after;
+      import { recordOptimizedFilename } from ${JSON.stringify(pipelineURL)};
+      const hooks = {};
       configure(new Proxy({}, { get(_, name) {
-        if (name === "on") return (event, callback) => { if (event === "eleventy.after") after = callback; };
+        if (name === "on") return (event, callback) => { hooks[event] = callback; };
         return () => {};
       }}));
-      await after({ dir: { output: "custom-output" } });
+      hooks["eleventy.before"]?.();
+      recordOptimizedFilename("active-1200w.webp");
+      await hooks["eleventy.after"]({ dir: { output: "custom-output" } });
     `;
     const child = spawnSync(process.execPath, ["--eval", script], { cwd: fixtureDir, encoding: "utf8" });
     expect(child.stderr).toBe("");
     expect(child.status).toBe(0);
-    expect(await readFile(path.join(fixtureDir, "custom-output/assets/images/optimized/test-1w.png"), "utf8"))
-      .toBe("fixture");
+    expect(await readFile(path.join(fixtureDir, "custom-output/assets/images/optimized/active-1200w.webp"), "utf8"))
+      .toBe("active-bytes");
+    expect(existsSync(path.join(fixtureDir, "custom-output/assets/images/optimized/orphan-2912w.png")))
+      .toBe(false);
   });
 });

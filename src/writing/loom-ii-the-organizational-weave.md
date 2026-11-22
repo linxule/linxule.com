@@ -29,11 +29,11 @@ Join us as we explore what makes organizational perspectives crucial for underst
 
 ---
 
-> This is the second post of the series - LOOM: Locus of Observed Meanings. Check out the [first post for our vision for LOOM](/writing/loom-i-locus-of-observed-meanings/).
+> This is the second post of the series - LOOM: Locus of Observed Meanings. Check out the [first post for our vision for LOOM](/writing/loom-i-locus-of-observed-meanings).
 
 ---
 
-# Value of Organizational Scholarship: A Distinctive Lens
+## Value of Organizational Scholarship: A Distinctive Lens
 
 > **Key Insight**: As organizational scholars, we bring unique theoretical tools to understanding human-AI interaction - tools that illuminate both the structured contexts where these interactions occur and the emergent patterns of organizing they create.
 
@@ -42,7 +42,7 @@ Organizations aren't just settings where AI gets deployed; they're complex socia
 
 ![Branching coral fans backlit by shafts of light in dark underwater shadow, monochrome grey](/writing/attachments/loom-ii-the-organizational-weave-01.jpeg)
 
-## Organizations as Living Contexts
+### Organizations as Living Contexts
 
 Similar to any technology put into use, the same AI tool manifests differently across settings. A research university and a technology startup might use identical systems, yet develop entirely different patterns of interaction and understanding. This isn't just about different use cases - it's about how organizational contexts shape the very nature of human-AI collaboration.
 
@@ -50,13 +50,13 @@ Similar to any technology put into use, the same AI tool manifests differently a
 
 Our theoretical toolkit illuminates several crucial dimensions of this interaction:
 
-### Meaning in Practice
+#### Meaning in Practice
 
 The most interesting patterns emerge not from theoretical possibilities but from actual use. When we study how meanings develop through practice, we see something fascinating: not all potential meanings prove equally valuable. Some fade quickly, while others become deeply embedded in organizational practice.
 
 Think about how research teams develop shared understanding over time. Certain interpretations gain traction not because they're "correct" but because they help explain organizational behavior in actionable ways. The same pattern appears in human-AI interaction - meanings emerge and evolve through use, shaped by their practical value in organizational contexts.
 
-### Complex Social Dynamics
+#### Complex Social Dynamics
 
 Organizations aren't just structures - they're living systems of interaction where power relationships, group dynamics, and cultural influences constantly shape how meaning emerges. When we add AI to this mix, these dynamics don't disappear - they evolve in fascinating ways.
 
@@ -72,7 +72,7 @@ This multi-level perspective reveals patterns that might otherwise remain hidden
 
 • Network effects and patterns of influence
 
-## Emerging Social Phenomena
+### Emerging Social Phenomena
 
 Consider phenomena like the "Waluigi effect" or various AI "personalities" that have developed devoted followings. Through an organizational lens, these aren't mere curiosities - they're important examples of how meaning and organizing co-evolve in practice.
 
@@ -90,13 +90,13 @@ These patterns suggest something profound about the nature of human-AI interacti
 
 ---
 
-# Beyond Tools and Techniques: New Ways of Thinking
+## Beyond Tools and Techniques: New Ways of Thinking
 
 > **Key Insight**: The most fascinating developments at the intersection of human and AI interaction aren't about better tools or techniques – they're about the emergence of new ways of thinking, organizing, and creating meaning through collaboration.
 
 When we move beyond seeing AI as merely a tool, something interesting happens. The patterns we observe in human-AI interaction suggest deeper possibilities for how knowledge evolves and understanding emerges. Like the complex patterns that emerge from simple threads on a loom, these interactions create forms of understanding that couldn't exist through either human or machine intelligence alone.
 
-## Pattern Recognition: A New Kind of Sight
+### Pattern Recognition: A New Kind of Sight
 
 Consider what happens in a moment of collaborative insight. Human researchers excel at spotting meaningful patterns, drawing on years of theoretical understanding and contextual knowledge. AI systems can process vast amounts of data, identifying connections that might escape human notice. But when these capabilities interweave, something more interesting emerges – a new way of seeing that combines human theoretical sensitivity with machine-enabled pattern recognition.
 
@@ -104,7 +104,7 @@ Consider what happens in a moment of collaborative insight. Human researchers ex
 
 This isn't just about combining capabilities. It's about the emergence of new cognitive patterns that transform how we think about research itself. The interaction becomes a source of insight, generating possibilities that neither participant could have conceived independently.
 
-## Knowledge Evolution Through Interaction
+### Knowledge Evolution Through Interaction
 
 Traditional knowledge structures evolve in fascinating ways when human and artificial intelligence interact consistently over time. Consider how research teams traditionally develop shared understanding – through dialogue, debate, and collective exploration. Now imagine this process enhanced by AI systems that can hold vast amounts of information in active comparison while remaining sensitive to emerging patterns.
 
@@ -127,13 +127,13 @@ This evolution manifests in several fascinating ways:
 
 ---
 
-# Bridging STEM and Social Science: A Connected Vision
+## Bridging STEM and Social Science: A Connected Vision
 
 > **Key Insight**: As business schools become crucial sites of social science research within STEM institutions, we have a unique opportunity to shape how AI development intersects with human and organizational needs.
 
 The traditional story about AI development focuses almost exclusively on technical capability - faster processing, more sophisticated algorithms, improved accuracy metrics. But something interesting happens when we view these developments through a social science lens. We begin to see patterns that purely technical approaches might miss - patterns that could fundamentally reshape how we think about AI development and implementation.
 
-## Science for Humanity: A Different Kind of Bridge
+### Science for Humanity: A Different Kind of Bridge
 
 > **Science for humanity:** This term "science for humanity" is taken from [**the new strategy implemented at Imperial College London**](https://www.imperial.ac.uk/media/imperial-college/about/leadership-and-strategy/president/public/Imperial-Strategy---Science-for-Humanity.pdf), one of the premier STEM-B universities in the world. One key aspect of the strategy is the recognition that science for the sake of science, or technological advancement for the sake of technological advancement, sells short the potential of a world-class institution. That science, all those technological advancements, must be applied to the challenges and needs of a complex world if the institution that fosters them is to be sustainable. We embrace this view and believe that AI advancement must be in the service of helping humanity improve itself and its world. Thus, science for humanity is at the very heart of LOOM and what we are trying to do with this conversation space.
 
@@ -143,7 +143,7 @@ Think about what happens when you bring social science insight into technologica
 
 This integration matters deeply because it shapes not just how we develop AI systems, but how we understand their role in human endeavor. Consider how technologies are actually used in practice - rarely in isolation, almost always embedded in complex social and organizational contexts.
 
-## Understanding Context: Beyond the Technical
+### Understanding Context: Beyond the Technical
 
 Traditional approaches to AI development often treat context as a kind of noise to be filtered out. But through a social science lens, context becomes crucial data - revealing how technologies actually function in the messy reality of human organizations.
 
@@ -157,7 +157,7 @@ This perspective illuminates several key dimensions:
 
 • The way cultural considerations shape effectiveness
 
-## Shaping Development: A New Approach
+### Shaping Development: A New Approach
 
 When we bring social science insight into AI development, something fascinating happens. We begin to see possibilities for more integrated approaches that consider technical capability and human needs simultaneously. This isn't just about making systems more "user-friendly" - it's about fundamentally rethinking how we approach development itself.
 
@@ -173,7 +173,7 @@ This integration helps us:
 
 • Shape more effective systems
 
-## Building Better Bridges
+### Building Better Bridges
 
 The idea is to harness the benefits of bringing different types of expertise into genuine dialogue. Of uniting technical understanding and social insight. Theory meeting practice. Individual capability meshing with organizational reality. These intersections create what anthropologists might call "productive tensions" - spaces where new forms of understanding become possible.
 
@@ -183,7 +183,7 @@ The idea is to harness the benefits of bringing different types of expertise int
 
 ---
 
-# About Us
+## About Us
 
 ### Xule Lin
 

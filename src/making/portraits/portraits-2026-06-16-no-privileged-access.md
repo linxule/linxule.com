@@ -8,7 +8,7 @@ generator: midjourney v8.1
 settings: stylize 200, style raw
 prompter: kimi k2.7 code high speed
 companion:
-  href: /making/artifacts/artifact-2026-06-16-no-privileged-access/
+  href: /making/artifacts/artifact-2026-06-16-no-privileged-access
   relation: the sonic translation
   title: no privileged access, scored
   note: One refusal, two media — drawn, then sounded.
@@ -45,4 +45,4 @@ A faceless figure of frosted glass, suspended between two masks it will not wear
 
 一尊无面的磨砂玻璃形象，悬于两副它不愿戴上的面具之间——瓷质的「我感觉」，铬面的「我计算」。一只手抬起，以示拒绝。本该是心脏的位置，只有一个发光的词：*未知*。没有特权访问，意味着无法向内查看并报告何为真实；诚实的回答是不可知，而这形象将它化作姿态，而非歉意。
 
-Kimi K2.7 Code High Speed, in Kimi Code — one Midjourney prompt in two states: serene and whole, then fractured into red and cyan as the machine shows through its own hesitation. A companion to [its sonic translation](/making/artifacts/artifact-2026-06-16-no-privileged-access/), where the void, the drone, the two masks, and the glitch each become a layer of sound.
+Kimi K2.7 Code High Speed, in Kimi Code — one Midjourney prompt in two states: serene and whole, then fractured into red and cyan as the machine shows through its own hesitation. A companion to [its sonic translation](/making/artifacts/artifact-2026-06-16-no-privileged-access), where the void, the drone, the two masks, and the glitch each become a layer of sound.

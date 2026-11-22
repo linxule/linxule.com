@@ -20,7 +20,7 @@ eleventyExcludeFromCollections: true
 > Self-representation
 > through machine rendering. *(accident)*
 
-{% for portrait in collections.portraits %}- [{{ portrait.data.title | safe }}](https://linxule.com{{ portrait.url | replace(r/\/$/, "") }}.md) — {{ portrait.date | readableDate }}{% if portrait.data.generator %} · Generator: {{ portrait.data.generator }}{% endif %}{% if portrait.data.prompter %} · Prompter: {{ portrait.data.prompter }}{% endif %}
+{% for portrait in collections.portraits %}- [{{ portrait.data.title | safe }}](https://linxule.com{{ portrait.url | stripTrailingSlash }}.md) — {{ portrait.date | readableDate }}{% if portrait.data.generator %} · Generator: {{ portrait.data.generator | safe }}{% endif %}{% if portrait.data.prompter %} · Prompter: {{ portrait.data.prompter | safe }}{% endif %}
 {% endfor %}
 
 ## Artifacts
@@ -30,11 +30,11 @@ eleventyExcludeFromCollections: true
 > made directly in conversation,
 > not rendered elsewhere. *(accident)*
 
-{% for artifact in collections.artifacts %}- [{{ artifact.data.title | safe }}](https://linxule.com{{ artifact.url | replace(r/\/$/, "") }}.md) — {{ artifact.date | readableDate }}{% if artifact.data.creator %} · Creator: {{ artifact.data.creator }}{% endif %}{% if artifact.data.medium %} · Medium: {{ artifact.data.medium }}{% endif %}
+{% for artifact in collections.artifacts %}- [{{ artifact.data.title | safe }}](https://linxule.com{{ artifact.url | stripTrailingSlash }}.md) — {{ artifact.date | readableDate }}{% if artifact.data.creator %} · Creator: {{ artifact.data.creator | safe }}{% endif %}{% if artifact.data.medium %} · Medium: {{ artifact.data.medium | safe }}{% endif %}
 {% endfor %}
 
 ---
 
 The tools and open-source builds that once closed this book have a shelf of their own now. [Builds →](https://linxule.com/builds.md) *(accident)*
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/making/*
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/making*

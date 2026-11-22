@@ -53,19 +53,19 @@ This text catalogs the collection. Each linked image or interactive variation re
 {% if artifact.data.contextBefore %}
 ### Before Making
 
-{{ artifact.data.contextBefore | striptags | safe }}
+{{ artifact.data.contextBefore | htmlToMarkdown | safe }}
 {% endif %}
 
 {% if artifact.data.contextAfter %}
 ### After Making
 
-{{ artifact.data.contextAfter | striptags | safe }}
+{{ artifact.data.contextAfter | htmlToMarkdown | safe }}
 {% endif %}
 
 {% if artifact.data.mediaDescription %}
 ### Media Description
 
-{{ artifact.data.mediaDescription | striptags | safe }}
+{{ artifact.data.mediaDescription | htmlToMarkdown | safe }}
 {% endif %}
 
 {% if artifact.rawInput | safe | trim %}
@@ -79,7 +79,7 @@ This text catalogs the collection. Each linked image or interactive variation re
 
 ## Witnesses
 
-{{ artifact.data.witnesses | striptags | safe }}
+{{ artifact.data.witnesses | htmlToMarkdown | safe }}
 {% endif %}
 {%- if artifact.data.companions %}
 
@@ -87,13 +87,24 @@ This text catalogs the collection. Each linked image or interactive variation re
 
 ## Companions{% if artifact.data.companions.intro %} — {{ artifact.data.companions.intro | safe }}{% endif %}
 
-{% for c in artifact.data.companions.items %}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ c.href | absoluteContentUrl(site.url) | safe }})
+{% for c in artifact.data.companions.items %}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ c.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
 {% endfor %}
 {%- if artifact.data.companions.note %}
 {{ artifact.data.companions.note | safe }}
+{%- endif %}
+{%- elif artifact.data.companion %}
+
+---
+
+## Companion{% if artifact.data.companion.relation %} — {{ artifact.data.companion.relation | safe }}{% endif %}
+
+- [{{ artifact.data.companion.title | safe }}]({{ artifact.data.companion.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{%- if artifact.data.companion.note %}
+
+{{ artifact.data.companion.note | safe }}
 {%- endif %}
 {%- endif %}
 
 ---
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ artifact.url }}*
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com{{ artifact.url | stripTrailingSlash }}*

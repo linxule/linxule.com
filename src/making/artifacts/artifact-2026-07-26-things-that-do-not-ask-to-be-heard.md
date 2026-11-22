@@ -38,13 +38,13 @@ contextAfter: |
 mediaDescription: |
   <p><strong>No speech.</strong> Forty-three seconds of sound built entirely from modelled physical objects. Struck and rubbed bodies of four material families — brass, glass, wood and ceramic — ring at inharmonic ratios and decay at rates that differ by frequency, so high partials die away first and leave a duller residue behind. Energy passes between the objects through a thirteen-node network: seven touches arrive from outside the system and provoke twenty-seven further events that the objects generate among themselves. Sympathetic strings answer only some of the strikes. Short friction gestures scrape between them. Each object stays put in the stereo image, so the exchanges read as movement across a room rather than as a widening effect. Three silences run longer than a second, including a 2.07-second one at the end; the piece stops without resolving.</p>
 companion:
-  href: /making/artifacts/no-sound-begins-here/
+  href: /making/artifacts/no-sound-begins-here
   relation: the second sound work
   title: no sound begins here
   note: Two tests of the same small Python stack under two incompatible theories of what a sound is.
 ---
 
-Two standalone sound works made in the same week as the [equation-first ASCII films](/making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock/), and the reason those films sound the way they do. The question was not whether a model can produce a passable soundtrack — it was whether it can be given a *compositional* system: a source world, a causal law, a grammar of time, and a spatial identity per role.
+Two standalone sound works made in the same week as the [equation-first ASCII films](/making/artifacts/artifact-2026-07-26-the-loom-forgets-which-clock), and the reason those films sound the way they do. The question was not whether a model can produce a passable soundtrack — it was whether it can be given a *compositional* system: a source world, a causal law, a grammar of time, and a spatial identity per role.
 
 The anti-default test the project runs is blunt. Dark drone, filtered air, granular dust, sparse impacts, rising pressure and a final sub-bass hit are one vocabulary, not the neutral sound of generative art; if the same treatment would fit a space documentary, an AI demo and a gallery loop equally well, the source world is underdesigned.
 

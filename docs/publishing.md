@@ -45,19 +45,17 @@ does not change image quality or either site's production domains.
    `docs/releases/design-2026-11-12.md`).
 
    The normal build runs the site's verification gate. Inspect payload size
-   before upload. Output was approximately 1.4 GB as of September 13, 2026
-   (down from 2.6 GB once the gallery pipeline stopped re-emitting PNG: AVIF,
-   WebP and a JPEG fallback at 400/800/1200/2000w; the original files under
-   `assets/images/portraits/` remain as the download targets). Measure each
-   release rather than treating this as a permanent budget.
-   Generated optimized images must have zero space-named merge duplicates
-   (they are iCloud conflict copies; `_site`, `.cache` and
-   `node_modules/.cache` are symlinks to `*.nosync` directories so iCloud
-   never writes them — check with `ls -la` if any appear) and no PNG
-   variants except for sources with real transparency. `.vercel/output` is
-   not nosync-protected: delete it after the deploy is verified.
-   Do not wipe the image cache to solve deployment storage: it avoids expensive
-   cold builds and is separate from retained deployment output.
+   before upload. After dropping PNG variants (Sept 2026), unreferenced writing
+   originals, and retired responsive orphans (Nov 2026; use `bun run cache:prune`
+   to prune stale cache artifacts locally), measure each release rather than
+   treating a historical figure as a permanent budget. Generated optimized images
+   must have zero space-named merge duplicates (they are iCloud conflict copies;
+   `_site`, `.cache` and `node_modules/.cache` are symlinks to `*.nosync`
+   directories so iCloud never writes them — check with `ls -la` if any appear)
+   and no PNG variants except for sources with real transparency. `.vercel/output`
+   is not nosync-protected: delete it after the deploy is verified. Do not wipe
+   the image cache to solve deployment storage: it avoids expensive cold builds
+   and is separate from retained deployment output.
    The paper is made per commit: `scripts/gen-paper.mjs` writes one tile per
    stock to `.cache/paper/`, seeded by the short SHA, and the build copies them
    to `assets/paper/` (about 190 KB in all). They are not in git and need no
@@ -90,14 +88,16 @@ does not change image quality or either site's production domains.
    ambiguous, keep the previous snapshots and diagnose or roll back first.
 
    When the release adds or changes font files (`src/assets/fonts/`, each named
-   by its hash): fetch each new file once with a cache-busting query
-   (`…woff2?cb=<n>`) and require 200 before requesting its bare URL, because a
-   404 on a new `/assets/` path is cached for a year. Then open one essay,
-   `/cv-zh/` and one portrait in a browser with an empty cache and check that
-   text, titles, margin notes and italic Chinese are in the site's faces, not
-   Georgia or a system serif. The stylesheet link carries the release SHA
-   (`main.css?v=<sha>`), so a new release never pairs new pages with an old
-   stylesheet; no cache purge is needed for that.
+   by its hash — including upright `Noto Serif SC` via `bun run fonts:noto` and
+   italic `LXGW WenKai` via `bun run fonts:kai`): fetch each new file once with
+   a cache-busting query (`…woff2?cb=<n>`) and require 200 before requesting its
+   bare URL, because a 404 on a new `/assets/` path is cached for a year. Then
+   open one essay, `/cv-zh` and one portrait in a browser with an empty cache
+   and check that text, titles, margin notes, upright Chinese, and italic
+   Chinese are in the site's self-hosted faces, not Georgia or a system serif.
+   The stylesheet link carries the release SHA (`main.css?v=<sha>`), so a new
+   release never pairs new pages with an old stylesheet; no cache purge is
+   needed for that.
 
 5. **Prune only after successful verification.** Replace the placeholders with
    the new current ID and the production ID recorded in step 1:
@@ -150,15 +150,11 @@ chart shows the daily maximum per project and lags a little.
 Consequences for planning:
 
 - Only two levers act inside the current period: **payload per deployment**
-  (≈ 1.3 GB / 4.1k files since the pipeline change; portrait originals ~0.5 GB
-  offered as wallpaper downloads and writing attachments ~0.5 GB are
-  deliberate) and **how many deployments are created** in a trailing 30 days.
+  (portrait originals ~0.5 GB offered as wallpaper downloads are deliberate;
+  writing attachments ship optimized variants rather than raw PNG/WebP originals)
+  and **how many deployments are created** in a trailing 30 days.
   Batch changes into fewer publishes; do not "deploy to check".
-- Expected floor once the pre-fix holds clear (mid-October 2026): number of
-  deployments in the trailing 30 days × 1.3 GB, less whatever Vercel
-  deduplicates across identical files. Read the chart then before deciding
-  whether the originals need to move to external storage (R2 / release assets).
-- The two-deployment rule below still matters for rollback hygiene and for
+- The two-deployment rule above still matters for rollback hygiene and for
   keeping the list legible; it is not a storage tool.
 - Never delete the known-good rollback early merely to make room for an
   unverified build.
@@ -171,58 +167,19 @@ builds (changed from the 30-day default via
 launchd job still cover only the first two. Vercel keeps
 a floor of the last 10 deployments (`deploymentsToKeep` is not writable on
 Hobby) and never expires aliased deployments, so it is a fallback, not
-enforcement of the two-version policy. Research Memex's `vercel.json` now uses
+enforcement of the two-version policy. Research Memex's `vercel.json` uses
 `git.deploymentEnabled` to suppress Git-triggered deployments for `mcp-worker`,
 `dependabot/**`, and `codex/**`; `main` and unspecified branches remain enabled.
-This replaces `ignoreCommand`, which cancels builds but still creates deployment
-records and consumes deployment/concurrency quota. These exclusions do not
-delete existing previews or block manual deploys. See the Research Memex
-`DEPLOY-CHECKLIST.md` for branch-config propagation and live rollout verification;
-a local edit is not evidence that suppression is active on remote branches.
 
 A weekly launchd job on the primary Mac (`com.xulelin.vercel-retention`,
-Mondays 09:30, wrapper `~/.local/bin/vercel-retention.sh`, log
-`~/.local/log/vercel-retention.log`) runs
-`bun scripts/deployment-retention.mjs --project <name> --auto --apply` for
-`research-memex` and then `linxule-com`. `--auto` keeps whatever production
+Mondays 09:30, wrapper `scripts/vercel-retention.sh` installed at
+`~/.local/bin/vercel-retention.sh`, log `~/.local/log/vercel-retention.log`)
+runs `bun scripts/deployment-retention.mjs --project <name> --auto --apply`
+for `research-memex` and then `linxule-com`. `--auto` keeps whatever production
 points at plus the newest older READY production deployment; every other guard
-(domains, aliases, in-flight builds, previews) is unchanged. It is a no-op when
-only two successful releases exist. During a `linxule-com` publish still pass
-the recorded IDs explicitly; do not rely on the weekly run.
-
-### September 18 audit and remediation
-
-At the pre-release audit, Research Memex had ten READY previews, seven from
-`mcp-worker`, plus stale branch aliases. The branch is checked out in an existing
-worktree. The dry-run stopped with `needs separate review; no automatic preview deletion`.
-Review ownership, aliases and exact deployment IDs separately before removing
-anything. Keep the preview guard; do not classify these as routine production
-deletion candidates. Rerun the read-only plan after authorized cleanup.
-
-The installed weekly job had not yet run (`runs=0` at this audit). The original
-wrapper returned only the final project's exit status, hiding an earlier failure.
-The maintained replacement is `scripts/vercel-retention.sh`; install that exact
-file with `install -m 755 scripts/vercel-retention.sh ~/.local/bin/vercel-retention.sh`
-without changing the LaunchAgent schedule.
-It runs both projects, logs each outcome and returns nonzero if either fails or
-logging cannot start. `bun run retention:test` covers the helper and an isolated,
-stubbed wrapper regression. A manual check is not proof of future unattended
-operation; inspect the next scheduled run's per-project outcomes.
-
-Release checkpoint, September 18 at 22:53 CEST: the reviewed wrapper is installed
-and byte-equal to its tracked source. All 25 helper/wrapper tests pass; Kimi's
-follow-up review approved the execute-bit and test-isolation corrections.
-Research Memex commit `2cc1a41` is pushed to `main` and remote `mcp-worker`.
-The existing local MCP worktree was not changed; it must fast-forward before
-its next push. Its remote now includes branch suppression.
-
-Vercel reports an active "Elevated Errors Triggering Deployments" incident.
-The Git push produced no deployment; the documented CLI fallback created
-`dpl_8KhDgT87RXB7C76roGffuxdBEm3G`, which was still INITIALIZING at this checkpoint.
-Do not retry blindly or prune during this state. Keep live production/rollback
-`dpl_G7EUfCpd95ny5eWBj71K298kHmN8` until the new release is READY and its canonical
-surfaces pass. Preview/alias cleanup and the final retention apply remain pending.
-Provider source: [Vercel status](https://www.vercel-status.com/).
+(domains, aliases, in-flight builds, previews) is unchanged. `bun run retention:test`
+covers the helper and wrapper regressions. During a `linxule-com` publish still
+pass the recorded IDs explicitly; do not rely on the weekly run.
 
 Routine verified publishing includes the cleanup above. Extra previews, alias
 removal, a different rollback window, and deletion outside this project are
@@ -234,14 +191,18 @@ References: [Deployment Storage](https://vercel.com/docs/deployment-storage),
 
 ## Provider incidents and the CLI fallback
 
-On 2026-09-18 a `research-memex` push landed inside a Vercel "errors
-triggering deployments" incident. The Git deployment arrived 17 minutes late; a
-CLI fallback submitted after 3 minutes created a second production deployment
-of the same commit that never left INITIALIZING and had to be cancelled. Before
-falling back to `vercel deploy --prod` for any project, check
-`https://www.vercel-status.com/api/v2/status.json` (indicator `none`), wait at
-least 30 minutes, and confirm no deployment already carries the commit SHA. A
-pending `Vercel` commit status on GitHub means the webhook was received. The
-usage page read 25.4 GB Deployment Storage that evening with `linxule-com` at
-22 GB and no deployments since 2026-09-15: the number is the recovery hold, as
-described above, and is expected to fall in mid-October.
+Before falling back to `vercel deploy --prod` during a delayed Git deployment
+on any project, check `https://www.vercel-status.com/api/v2/status.json`
+(indicator `none`), wait at least 30 minutes, and confirm no deployment already
+carries the commit SHA. A pending `Vercel` commit status on GitHub means the
+webhook was received.
+
+*Historical incident archive (2026-09-18, resolved):* A `research-memex` push
+landed during a Vercel "Elevated Errors Triggering Deployments" incident. The
+Git deployment arrived 17 minutes late while a 3-minute CLI fallback created a
+duplicate production deployment stuck in `INITIALIZING` that had to be
+cancelled; the same audit surfaced 10 stale `mcp-worker` previews on Research
+Memex and replaced the weekly LaunchAgent wrapper with `scripts/vercel-retention.sh`
+so failures in the first project are never masked. The 22 GB storage reading on
+`linxule-com` that evening reflected the 30-day recovery hold on prior 2.6 GB
+deploys rather than active payload size.

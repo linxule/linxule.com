@@ -115,26 +115,6 @@ marker: "writing"
         }
     }
     
-    .pullquote {
-        margin: 2.5rem 0;
-        border-left: 2px solid var(--ink-ghost);
-        padding-left: 1.5rem;
-    }
-    
-    .pullquote-text {
-        font-size: 1.05rem;
-        font-style: italic;
-        color: var(--ink-light);
-        line-height: 1.9;
-    }
-    
-    .pullquote-source {
-        font-family: var(--font-mono);
-        font-size: var(--size-label);
-        color: var(--ink-faint);
-        margin-top: 0.75rem;
-    }
-    
     .external-link {
         display: inline-block;
         margin-top: 2rem;
@@ -144,7 +124,7 @@ marker: "writing"
         text-decoration: none;
         padding: 0.75rem 1.25rem;
         border: 1px solid var(--ink-ghost);
-        transition: all 0.2s ease;
+        transition: color 0.2s ease, border-color 0.2s ease;
     }
     
     .external-link:hover {
@@ -197,7 +177,7 @@ marker: "writing"
         padding: 0.3rem 0.8rem;
         margin-top: 0.75rem;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: color 0.2s ease, border-color 0.2s ease;
     }
 
     .citation-copy:hover {
@@ -287,7 +267,7 @@ marker: "writing"
             {% if keywords %}
             <div class="article-tags">
                 {% for keyword in keywords %}
-                <a href="/tag/{{ keyword | slugify }}/" class="tag">{{ keyword }}</a>
+                <a href="/tag/{{ keyword | slugify }}" class="tag">{{ keyword }}</a>
                 {% endfor %}
             </div>
             {% endif %}
@@ -301,6 +281,8 @@ marker: "writing"
         <a href="{{ link }}" class="external-link">Read on Thread Counts →</a>
         {% endif %}
 
+        {% include "components/companion.njk" %}
+
         {% if defines %}
         <div class="article-citation">
             <div class="citation-label">cite this</div>
@@ -310,8 +292,9 @@ marker: "writing"
                 {% endfor %}
                 — first defined here.
             </div>
-            <div class="citation-full" id="citation-text">{{ authors | join(", ") }} ({{ date | readableDate }}). "{{ title }}." {{ site.url }}{{ page.url }}</div>
-            <button class="citation-copy" onclick="navigator.clipboard.writeText(document.getElementById('citation-text').textContent.trim()).then(()=>{this.textContent='copied';setTimeout(()=>{this.textContent='copy'},1500)})">copy</button>
+            <div class="citation-full" id="citation-text">{{ authors | join(", ") }} ({{ date | readableDate }}). "{{ title }}." {{ site.url }}{{ page.url | stripTrailingSlash }}</div>
+            <button type="button" class="citation-copy" data-citation-copy>copy</button>
+            <span class="sr-only" role="status" aria-live="polite" data-citation-status></span>
         </div>
         {% endif %}
 
@@ -320,7 +303,7 @@ marker: "writing"
         </div>
 
         <footer class="article-footer">
-            <a href="/writing/" class="nav-link">← all writing</a>
+            <a href="/writing" class="nav-link">← all writing</a>
             <span class="page-marker">003</span>
         </footer>
         
@@ -457,7 +440,7 @@ marker: "writing"
         });
     }
 
-    // Marginalia bloom — ref and note highlight together on hover
+    // Marginalia bloom — ref and note highlight together on hover and keyboard focus
     document.querySelectorAll('.fn-ref').forEach(function(ref) {
         var noteId = ref.getAttribute('href');
         if (!noteId) return;
@@ -471,6 +454,44 @@ marker: "writing"
 
         note.addEventListener('mouseenter', function() { ref.classList.add('bloom-active'); });
         note.addEventListener('mouseleave', function() { ref.classList.remove('bloom-active'); });
+        note.addEventListener('focusin', function() { ref.classList.add('bloom-active'); });
+        note.addEventListener('focusout', function() { ref.classList.remove('bloom-active'); });
     });
+
+    // Citation copy with polite live status and clipboard fallback
+    var copyBtn = document.querySelector('[data-citation-copy]');
+    var citationText = document.getElementById('citation-text');
+    var citationStatus = document.querySelector('[data-citation-status]');
+    if (copyBtn && citationText) {
+        copyBtn.addEventListener('click', function() {
+            var text = citationText.textContent.trim();
+            function announce() {
+                copyBtn.textContent = 'copied';
+                if (citationStatus) citationStatus.textContent = 'Citation copied to clipboard.';
+                setTimeout(function() {
+                    copyBtn.textContent = 'copy';
+                    if (citationStatus) citationStatus.textContent = '';
+                }, 1500);
+            }
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(announce, function() {
+                    fallbackCopy(text, announce);
+                });
+            } else {
+                fallbackCopy(text, announce);
+            }
+        });
+    }
+    function fallbackCopy(text, onDone) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { if (document.execCommand('copy')) onDone(); } catch (_) {}
+        document.body.removeChild(ta);
+    }
 })();
 </script>

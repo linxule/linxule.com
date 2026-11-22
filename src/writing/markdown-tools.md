@@ -14,7 +14,7 @@ keywords:
   - knowledge management
 ---
 
-# Compare Markdown Editors (offline)
+## Compare Markdown Editors (offline)
 
 | Features | [Obsidian.md](https://obsidian.md/) | [Zettlr](https://www.zettlr.com/) | [Bear Note](https://bear.app/) | [Typora](https://typora.io/) |
 | --- | --- | --- | --- | --- |
@@ -28,14 +28,14 @@ keywords:
 | Rendering (PDFs, docx, slides...) | Possible with [Marked 2 App](https://marked2app.com/) | Yes | Yes | Yes |
 | Other notable features | Web-publishing, Custom CSS | Readability scores, Pomodoro timer | Fast syncing via iCloud | Integration with GitHub Desktop |
 
-# Information Capture Tools
+## Information Capture Tools
 
-## [Roam-Highlighter - Chrome Extension](https://github.com/GitMurf/roam-highlighter#how-to-use-the-highlighter)
+### [Roam-Highlighter - Chrome Extension](https://github.com/GitMurf/roam-highlighter#how-to-use-the-highlighter)
 
 - Great for taking notes on webpages and copy highlights in MD
 - Output formatted for Roam or Obsidian
 
-## [Mdnotes - Zotero Add-on](https://github.com/argenos/zotero-mdnotes)
+### [Mdnotes - Zotero Add-on](https://github.com/argenos/zotero-mdnotes)
 
 - Export Zotero item metadata file and notes to **markdown**
 - Create a file for own notes; batch export all of the above
@@ -60,11 +60,11 @@ Sample output:
 * Topics: [[Ecosystem]], [[Innovation Ecosystem]], [[Entrepreneurial Ecosystem]]
 ```
 
-## [Zotero to Roam Export](https://github.com/melat0nin/zotero-roam-export)
+### [Zotero to Roam Export](https://github.com/melat0nin/zotero-roam-export)
 
 > Zotero exports single or multiple items, as well as collections to Roam's **JSON** format
 
-### (macOS) Keyboard Shortcuts and System Services
+#### (macOS) Keyboard Shortcuts and System Services
 
 - [The Markdown Service Tools](https://brettterpstra.com/projects/markdown-service-tools/) by brettterpstra are a collection of OS X Services designed to make writing Markdown text easier.
 - [PopClip Extensions](https://brettterpstra.com/projects/bretts-popclip-extensions/) by brettterpstra

@@ -4,14 +4,15 @@
  * Pure ESM JavaScript with zero Node.js or Eleventy imports so both the
  * Cloudflare Worker (`mcp/worker.mjs`) and Eleventy (`src/_data/mcpServerCard.js`)
  * derive their server cards, tool schemas, resources, and prompts from a single
- * source of truth.
+ * source of truth. Static Markdown twins derive directly from `eleventy/shapes.mjs`.
  */
+import { STATIC_TWINS } from "../eleventy/shapes.mjs";
 
 export const MCP_SERVER_INFO = Object.freeze({
   name: "linxule",
   sep2127Name: "com.linxule/mcp",
   title: "Xule Lin",
-  version: "1.0.0",
+  version: "2.0.0",
 });
 
 // SEP-2127 server-card schema caps description at 100 characters (currently 92).
@@ -46,19 +47,27 @@ export const MCP_READONLY_ANNOTATIONS = Object.freeze({
 
 export const MCP_INSTRUCTIONS = [
   "Read-only MCP server for Xule Lin's (林徐乐) public research archive at https://linxule.com.",
-  "Use `search_site` to find essays (LOOM, Research with AI, SEAM, Organizational Futures), formal publications, signature concepts (Interpretive Orchestration, Polanyi Inversion, Completion Authority, Cognitive Signatures, Token Duality), talks, portraits, artifacts, and open-source builds.",
-  "Use `list_site` to inspect section counts, static Markdown twins, concepts, publications, or open-source builds.",
-  "Use `read_page` to read the exact authored Markdown twin of any page before quoting or citing it.",
-  "Attribution & licensing: prose in writing, concepts, thinking, CV, and paper landing pages is CC BY 4.0 (credit `Xule Lin (林徐乐), <title>, <year>, <canonical_url>`; prefer DOI/arXiv for formal papers). AI-generated images and artifacts under `/making/` carry per-page provenance and are not blanket-licensed.",
+  "Use `search_site` to find essays (LOOM, SEAM, Research with AI, AI Whispers, Thinking, Singles, Epistemic Voids, Organizational Futures, Archive), formal publications, all 14 signature concepts (both anchored and forming — including Interpretive Orchestration, Polanyi Inversion, Completion Authority, Cognitive Signatures, Token Duality, Artificial Organizing, Runtime Organization), talks, portraits, artifacts, open-source builds (including SIGNA and daogov), static pages (/thinking, /concepts, /cv, /cv-zh, /connect), and human-AI collaborator lineages.",
+  "Use `list_site` to inspect section counts, static Markdown twins, concepts, publications, open-source builds, or collaborators.",
+  "Use `read_page` to read the exact authored Markdown twin of any page before quoting or citing it (URL fragments like `#dfn-...` and `.md` suffixes are accepted).",
+  "Use the `enter-the-work` prompt for intellectual orientation and cross-surface reading trails, or `xule-research-navigation` for citation and provenance boundaries.",
+  "Attribution & licensing: prose in writing, concepts, thinking, CV, and paper landing pages is CC BY 4.0 (credit `Xule Lin (林徐乐), <title>, <year>, <canonical_url>`; prefer DOI/arXiv for formal papers). AI-generated images and artifacts under `/making` carry per-page provenance and are not blanket-licensed.",
 ].join(" ");
 
 export const PAGE_SECTIONS = Object.freeze([
+  "root",
   "writing",
   "papers",
   "talks",
   "portraits",
   "artifacts",
   "builds",
+  "making",
+  "thinking",
+  "concepts",
+  "teaching",
+  "cv",
+  "connect",
 ]);
 
 export const SEARCH_KINDS = Object.freeze([
@@ -67,6 +76,7 @@ export const SEARCH_KINDS = Object.freeze([
   "concepts",
   "publications",
   "projects",
+  "collaborators",
 ]);
 
 export const LIST_KINDS = Object.freeze([
@@ -75,111 +85,41 @@ export const LIST_KINDS = Object.freeze([
   "concepts",
   "publications",
   "projects",
+  "collaborators",
 ]);
 
 /**
- * Fixed public Markdown/text endpoints on `linxule.com` beyond `site-index.json`'s
- * collection items. Every entry maps canonical path -> { mdPath, title, section, mimeType }.
+ * Fixed public Markdown/text endpoints on `linxule.com` derived directly from
+ * `eleventy/shapes.mjs` (`STATIC_TWINS`) plus `/llms.txt` and `SKILL.md`.
+ * Every entry maps canonical path -> { canonicalPath, mdPath, title, section, mimeType }.
  */
 export const STATIC_MARKDOWN_TWINS = Object.freeze({
-  "/": {
-    canonicalPath: "/",
-    mdPath: "/index.md",
-    title: "Xule Lin — Homepage Overview",
-    section: "root",
-    mimeType: "text/markdown",
-  },
-  "/thinking": {
-    canonicalPath: "/thinking",
-    mdPath: "/thinking.md",
-    title: "Thinking — Research Framework",
-    section: "thinking",
-    mimeType: "text/markdown",
-  },
-  "/concepts": {
-    canonicalPath: "/concepts",
-    mdPath: "/concepts.md",
-    title: "Concepts — Signature Concepts by Territory",
-    section: "concepts",
-    mimeType: "text/markdown",
-  },
-  "/builds": {
-    canonicalPath: "/builds",
-    mdPath: "/builds.md",
-    title: "Builds — Open-Source Tools and Public Infrastructure",
-    section: "builds",
-    mimeType: "text/markdown",
-  },
-  "/builds/vellum": {
-    canonicalPath: "/builds/vellum",
-    mdPath: "/builds/vellum.md",
-    title: "Vellum",
-    section: "builds",
-    mimeType: "text/markdown",
-  },
-  "/cv": {
-    canonicalPath: "/cv",
-    mdPath: "/cv.md",
-    title: "CV (English)",
-    section: "cv",
-    mimeType: "text/markdown",
-  },
-  "/cv-zh": {
-    canonicalPath: "/cv-zh",
-    mdPath: "/cv-zh.md",
-    title: "CV (中文)",
-    section: "cv",
-    mimeType: "text/markdown",
-  },
-  "/teaching": {
-    canonicalPath: "/teaching",
-    mdPath: "/teaching.md",
-    title: "Teaching",
-    section: "teaching",
-    mimeType: "text/markdown",
-  },
-  "/writing": {
-    canonicalPath: "/writing",
-    mdPath: "/writing.md",
-    title: "Writing Index",
-    section: "writing",
-    mimeType: "text/markdown",
-  },
-  "/making": {
-    canonicalPath: "/making",
-    mdPath: "/making.md",
-    title: "Making Index",
-    section: "making",
-    mimeType: "text/markdown",
-  },
-  "/talks": {
-    canonicalPath: "/talks",
-    mdPath: "/talks.md",
-    title: "Talks Index",
-    section: "talks",
-    mimeType: "text/markdown",
-  },
-  "/papers": {
-    canonicalPath: "/papers",
-    mdPath: "/papers.md",
-    title: "Papers Index",
-    section: "papers",
-    mimeType: "text/markdown",
-  },
-  "/llms.txt": {
+  ...Object.fromEntries(
+    STATIC_TWINS.map((shape) => [
+      shape.url,
+      Object.freeze({
+        canonicalPath: shape.url,
+        mdPath: shape.mdUrl,
+        title: shape.title,
+        section: shape.section,
+        mimeType: "text/markdown",
+      }),
+    ]),
+  ),
+  "/llms.txt": Object.freeze({
     canonicalPath: "/llms.txt",
     mdPath: "/llms.txt",
     title: "Xule Lin — Site Overview for AI Readers (llms.txt)",
     section: "discovery",
     mimeType: "text/plain",
-  },
-  "/.well-known/agent-skills/xule-research-navigation/SKILL.md": {
+  }),
+  "/.well-known/agent-skills/xule-research-navigation/SKILL.md": Object.freeze({
     canonicalPath: "/.well-known/agent-skills/xule-research-navigation/SKILL.md",
     mdPath: "/.well-known/agent-skills/xule-research-navigation/SKILL.md",
     title: "Xule Research Navigation Skill",
     section: "discovery",
     mimeType: "text/markdown",
-  },
+  }),
 });
 
 export const MCP_TOOLS = Object.freeze([
@@ -187,7 +127,7 @@ export const MCP_TOOLS = Object.freeze([
     name: "search_site",
     title: "Search Xule Lin's research archive",
     description:
-      "Search Xule Lin's essays, formal publications, signature concepts, talks, portraits, artifacts, and open-source builds on linxule.com. Read matching pages with `read_page` before quoting.",
+      "Search Xule Lin's essays, formal publications, all 14 signature concepts (anchored and forming), talks, portraits, artifacts, open-source builds, static pages, and human-AI collaborator lineages on linxule.com. Supports English word/stem matching and CJK queries. Read matching pages with `read_page` before quoting.",
     inputSchema: {
       type: "object",
       properties: {
@@ -195,7 +135,7 @@ export const MCP_TOOLS = Object.freeze([
           type: "string",
           minLength: 1,
           maxLength: 200,
-          description: "Topic, concept, title, collaborator, or keyword query.",
+          description: "Topic, concept, title, collaborator, or keyword query (English or Chinese).",
         },
         kind: {
           type: "string",
@@ -205,7 +145,13 @@ export const MCP_TOOLS = Object.freeze([
         section: {
           type: "string",
           enum: [...PAGE_SECTIONS],
-          description: "Optional page-section filter (`writing`, `papers`, `talks`, `portraits`, `artifacts`, `builds`).",
+          description: "Optional page-section filter (e.g. `writing`, `papers`, `talks`, `portraits`, `artifacts`, `builds`, `cv`, `thinking`, `concepts`, `connect`).",
+        },
+        collaborator: {
+          type: "string",
+          minLength: 1,
+          maxLength: 100,
+          description: "Optional human or AI collaborator name or family filter (e.g. `Claude`, `Kevin Corley`, `Kimi`, `GPT`, `DeepSeek`).",
         },
         limit: {
           type: "integer",
@@ -221,9 +167,9 @@ export const MCP_TOOLS = Object.freeze([
   },
   {
     name: "list_site",
-    title: "List linxule.com sections, concepts, papers, and builds",
+    title: "List linxule.com sections, concepts, papers, builds, and collaborators",
     description:
-      "Browse section counts, static Markdown twin paths, or structured lists of pages, signature concepts, formal publications, and open-source builds from linxule.com.",
+      "Browse section counts, static Markdown twin paths, or structured lists of pages, signature concepts, formal publications, open-source builds, and human-AI collaborator lineages from linxule.com.",
     inputSchema: {
       type: "object",
       properties: {
@@ -236,6 +182,12 @@ export const MCP_TOOLS = Object.freeze([
           type: "string",
           enum: [...PAGE_SECTIONS],
           description: "Optional section filter when listing `pages` or `overview`.",
+        },
+        collaborator: {
+          type: "string",
+          minLength: 1,
+          maxLength: 100,
+          description: "Optional collaborator name or family filter when listing `pages` or `collaborators`.",
         },
         limit: {
           type: "integer",
@@ -252,7 +204,7 @@ export const MCP_TOOLS = Object.freeze([
     name: "read_page",
     title: "Read an authored Markdown page from linxule.com",
     description:
-      "Read exact authored Markdown (with canonical URL, attribution guidance, and UTF-8 SHA-256) for any public page on linxule.com, e.g. `/thinking`, `/concepts`, `/writing/loom-xviii-the-end-of-positivism`, `/papers/interpretive-orchestration`, or `/llms.txt`.",
+      "Read exact authored Markdown (with canonical URL, attribution guidance, build head, and UTF-8 SHA-256) for any public page on linxule.com, e.g. `/thinking`, `/concepts`, `/connect`, `/writing/loom-xviii-the-end-of-positivism#dfn-completion-authority`, `/papers/interpretive-orchestration`, or `/llms.txt`.",
     inputSchema: {
       type: "object",
       properties: {
@@ -260,7 +212,7 @@ export const MCP_TOOLS = Object.freeze([
           type: "string",
           minLength: 1,
           maxLength: 200,
-          description: "Canonical page path, `.md` twin path, or full `https://linxule.com/...` URL.",
+          description: "Canonical page path, `.md` twin path, or full `https://linxule.com/...` URL (`#fragment` and `?query` are stripped automatically).",
         },
         expected_sha256: {
           type: "string",
@@ -287,7 +239,7 @@ export const MCP_STATIC_RESOURCES = Object.freeze([
     uri: "linxule://site-index",
     name: "site-index.json",
     title: "Machine-Readable Site Index",
-    description: "Complete JSON manifest of pages, signature concepts, formal publications, and open-source projects on linxule.com.",
+    description: "Complete JSON manifest of pages, all 14 signature concepts, formal publications, open-source projects, and human-AI collaborators on linxule.com.",
     mimeType: "application/json",
   },
   {
@@ -308,14 +260,21 @@ export const MCP_STATIC_RESOURCES = Object.freeze([
     uri: "linxule://pages/concepts",
     name: "/concepts.md",
     title: "Concepts Index",
-    description: "Signature concepts organized by intellectual territory, with definitions and open questions.",
+    description: "All 14 signature concepts organized by intellectual territory, with anchored definitions, forming vocabulary, and open questions.",
     mimeType: "text/markdown",
   },
   {
     uri: "linxule://pages/builds",
     name: "/builds.md",
     title: "Open-Source Builds Catalogue",
-    description: "MCP servers, agent plugins, research tools, and public experiments with repository and license links.",
+    description: "MCP servers, agent plugins, research tools, datasets, and public experiments with repository and license links.",
+    mimeType: "text/markdown",
+  },
+  {
+    uri: "linxule://pages/connect",
+    name: "/connect.md",
+    title: "MCP Connection Recipes",
+    description: "Read-only connection recipes for Claude Code, Claude apps, Cursor, Codex, and Antigravity, plus sibling public MCP servers.",
     mimeType: "text/markdown",
   },
   {
@@ -333,7 +292,7 @@ export const MCP_RESOURCE_TEMPLATES = Object.freeze([
     name: "pages",
     title: "Authored Markdown Twin by Slug",
     description:
-      "Read any public Markdown twin on linxule.com by path slug, e.g. `linxule://pages/writing/loom-xviii-the-end-of-positivism` or `linxule://pages/papers/interpretive-orchestration`.",
+      "Read any public Markdown twin on linxule.com by path slug (with or without `.md`), e.g. `linxule://pages/writing/loom-xviii-the-end-of-positivism` or `linxule://pages/papers/interpretive-orchestration.md`.",
     mimeType: "text/markdown",
   },
 ]);
@@ -343,6 +302,11 @@ export const MCP_PROMPTS = Object.freeze([
     name: "xule-research-navigation",
     description:
       "Guide for navigating, reading, and attributing Xule Lin's essays, formal papers, concepts, builds, and per-page media provenance on linxule.com.",
+  },
+  {
+    name: "enter-the-work",
+    description:
+      "Intellectual orientation to Xule Lin's core question, active tensions, anchored vs. forming concepts, human-AI collaborator practice, and cross-surface reading trails.",
   },
 ]);
 

@@ -3,61 +3,89 @@ permalink: /.well-known/api-catalog
 eleventyExcludeFromCollections: true
 eleventyAllowMissingExtension: true
 ---
+{%- set feedCount = (collections.writing | combineByDate(collections.portraits, collections.artifacts, collections.talks, collections.papers) | feedSelection(20, 1, collections.writing, collections.portraits, collections.artifacts, collections.talks, collections.papers)).length -%}
 {
   "linkset": [
     {
-      "anchor": "{{ site.url }}/",
+      "anchor": {{ (site.url ~ "/") | dump | safe }},
       "service-doc": [
         {
-          "href": "{{ site.url }}/llms.txt",
+          "href": {{ (site.url ~ "/llms.txt") | dump | safe }},
           "type": "text/plain",
           "title": "Site overview for AI systems (llms.txt)"
+        },
+        {
+          "href": {{ (site.url ~ "/connect.md") | dump | safe }},
+          "type": "text/markdown",
+          "title": "Read-only MCP connection recipes for AI hosts"
         }
       ],
       "describedby": [
         {
-          "href": "{{ site.url }}/site-index.json",
+          "href": {{ (site.url ~ "/site-index.json") | dump | safe }},
           "type": "application/json",
-          "title": "Machine-readable content index"
+          "title": "Machine-readable content, concept, build, and collaborator index"
+        },
+        {
+          "href": {{ (site.url ~ "/.well-known/ai-catalog.json") | dump | safe }},
+          "type": "application/json",
+          "title": "AI Resource Directory (ARD v1.0) catalog"
+        },
+        {
+          "href": {{ (site.url ~ "/.well-known/agent-skills/index.json") | dump | safe }},
+          "type": "application/json",
+          "title": "Agent Skills Discovery v0.2.0 index"
+        }
+      ],
+      "license": [
+        {
+          "href": {{ (site.url ~ "/license.xml") | dump | safe }},
+          "type": "application/xml",
+          "title": "Machine-readable licensing and attribution declaration (RSL)"
         }
       ],
       "alternate": [
         {
-          "href": "{{ site.url }}/feed.xml",
+          "href": {{ (site.url ~ "/feed.xml") | dump | safe }},
           "type": "application/atom+xml",
-          "title": "Atom feed — 20 most recent items"
+          "title": {{ ("Atom feed — " ~ feedCount ~ " most recent items") | dump | safe }}
         },
         {
-          "href": "{{ site.url }}/index.md",
+          "href": {{ (site.url ~ "/index.md") | dump | safe }},
           "type": "text/markdown",
           "title": "Homepage as markdown"
         }
       ],
       "sitemap": [
         {
-          "href": "{{ site.url }}/sitemap.xml",
+          "href": {{ (site.url ~ "/sitemap.xml") | dump | safe }},
           "type": "application/xml",
           "title": "Sitemap"
         }
       ]
     },
     {
-      "anchor": "{{ site.url }}/mcp",
+      "anchor": {{ (site.url ~ "/mcp") | dump | safe }},
       "service-desc": [
         {
-          "href": "{{ site.url }}/.well-known/mcp/server-card.json",
+          "href": {{ (site.url ~ "/.well-known/mcp/server-card.json") | dump | safe }},
           "type": "application/json",
           "title": "MCP Server Card (SEP-1649 / SEP-2127)"
         },
         {
-          "href": "{{ site.url }}/mcp/server-card",
+          "href": {{ (site.url ~ "/mcp/server-card") | dump | safe }},
           "type": "application/mcp-server-card+json",
           "title": "MCP Server Card (Worker endpoint)"
         }
       ],
       "service-doc": [
         {
-          "href": "{{ site.url }}/llms.txt",
+          "href": {{ (site.url ~ "/connect.md") | dump | safe }},
+          "type": "text/markdown",
+          "title": "MCP connection recipes and read-only scope notes"
+        },
+        {
+          "href": {{ (site.url ~ "/llms.txt") | dump | safe }},
           "type": "text/plain",
           "title": "Site overview and attribution rules for AI systems"
         }

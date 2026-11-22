@@ -12,9 +12,16 @@ eleventyComputed:
   seoTitle: "Tagged: {{ tag.name }}"
 ---
 
+{%- set hasWriting = tag.writing and tag.writing.length >= 1 -%}
+{%- set hasPapers = tag.papers and tag.papers.length >= 1 -%}
+{%- set hasTalks = tag.talks and tag.talks.length >= 1 -%}
+{%- set hasPortraits = tag.portraits and tag.portraits.length >= 1 -%}
+{%- set hasArtifacts = tag.artifacts and tag.artifacts.length >= 1 -%}
+{%- set writingOnly = hasWriting and not hasPapers and not hasTalks and not hasPortraits and not hasArtifacts -%}
+{%- set anyContent = hasWriting or hasPapers or hasTalks or hasPortraits or hasArtifacts -%}
+
 <style>
-    /* Override base layout for full-bleed book */
-    {% if tag.writing.length >= 1 %}
+    {% if writingOnly %}
     main {
         padding: 0;
         max-width: none;
@@ -22,9 +29,14 @@ eleventyComputed:
     }
     {% endif %}
 
-    /* Tag header for empty state */
+    .tag-page {
+        padding: 8rem 4rem 6rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
     .tag-header {
-        margin-bottom: 2rem;
+        margin-bottom: 3rem;
     }
 
     .tag-label {
@@ -38,14 +50,94 @@ eleventyComputed:
 
     .tag-name {
         font-family: var(--font-display);
-        font-size: 1.5rem;
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
         font-weight: 300;
         color: var(--ink);
     }
 
+    .tag-summary {
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
+        color: var(--ink-faint);
+        margin-top: 0.75rem;
+    }
+
+    .tag-territory {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .tag-territory-label {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        font-weight: 400;
+        letter-spacing: var(--tracking-label);
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        margin: 0 0 1.5rem;
+        padding: 0;
+        border: none;
+    }
+
+    .tag-list {
+        list-style: none;
+    }
+
+    .tag-entry {
+        margin-bottom: 1.5rem;
+    }
+
+    .tag-entry-link {
+        display: block;
+        text-decoration: none;
+        transition: transform 0.2s ease;
+    }
+
+    .tag-entry-link:hover {
+        transform: translateX(0.5rem);
+    }
+
+    .tag-entry-kicker {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        color: var(--ink-faint);
+        letter-spacing: var(--tracking-quiet);
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .tag-entry-title {
+        font-size: 1.1rem;
+        font-weight: 400;
+        color: var(--ink-light);
+        transition: color 0.2s ease;
+    }
+
+    .tag-entry-link:hover .tag-entry-title {
+        color: var(--bloom);
+    }
+
+    .tag-entry-date {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        color: var(--ink-faint);
+        margin-left: 1rem;
+    }
+
+    .tag-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
     .empty-tag {
-        padding: 8rem 4rem;
+        padding: 8rem 4rem 6rem;
         max-width: 600px;
+        margin: 0 auto;
     }
 
     .empty-tag p {
@@ -53,237 +145,152 @@ eleventyComputed:
         margin-bottom: 2rem;
     }
 
-    /* Portraits section within tag page */
-    .tag-portraits,
-    .tag-artifacts {
-        padding: 4rem;
-        max-width: 800px;
-    }
+    @media (max-width: 768px) {
+        .tag-page,
+        .empty-tag {
+            padding: 6rem 1.5rem 3rem;
+        }
 
-    .tag-portraits .tag-label,
-    .tag-artifacts .tag-label {
-        font-family: var(--font-mono);
-        font-size: var(--size-whisper);
-        letter-spacing: var(--tracking-marker);
-        color: var(--ink-faint);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-    }
-
-    .tag-portraits .tag-name,
-    .tag-artifacts .tag-name {
-        font-size: 1.5rem;
-        font-weight: 300;
-        color: var(--ink);
-    }
-
-    .portraits-list,
-    .artifacts-list {
-        margin-top: 2rem;
-    }
-
-    .portrait-entry,
-    .artifact-entry {
-        margin-bottom: 1.5rem;
-    }
-
-    .portrait-entry-link,
-    .artifact-entry-link {
-        display: block;
-        text-decoration: none;
-        transition: transform 0.2s ease;
-    }
-
-    .portrait-entry-link:hover,
-    .artifact-entry-link:hover {
-        transform: translateX(0.5rem);
-    }
-
-    .portrait-entry-prompter,
-    .artifact-entry-medium {
-        font-family: var(--font-mono);
-        font-size: var(--size-whisper);
-        color: var(--ink-faint);
-        letter-spacing: var(--tracking-quiet);
-        display: block;
-        margin-bottom: 0.25rem;
-    }
-
-    .portrait-entry-title,
-    .artifact-entry-title {
-        font-size: 1.1rem;
-        font-weight: 400;
-        color: var(--ink-light);
-        transition: color 0.2s ease;
-    }
-
-    .portrait-entry-link:hover .portrait-entry-title,
-    .artifact-entry-link:hover .artifact-entry-title {
-        color: var(--bloom);
-    }
-
-    .portrait-entry-date,
-    .artifact-entry-date {
-        font-family: var(--font-mono);
-        font-size: var(--size-whisper);
-        color: var(--ink-faint);
-        margin-left: 1rem;
-    }
-
-    /* Talks section within tag page */
-    .tag-talks {
-        padding: 4rem;
-        max-width: 800px;
-    }
-
-    .tag-talks-header {
-        margin-bottom: 2rem;
-    }
-
-    .tag-talks .tag-label {
-        font-family: var(--font-mono);
-        font-size: var(--size-whisper);
-        letter-spacing: var(--tracking-marker);
-        color: var(--ink-faint);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-    }
-
-    .tag-talks .tag-name {
-        font-size: 1.5rem;
-        font-weight: 300;
-        color: var(--ink);
-    }
-
-    .talks-list {
-        margin-top: 2rem;
-    }
-
-    .talk-entry {
-        margin-bottom: 1.5rem;
-    }
-
-    .talk-entry-link {
-        display: block;
-        text-decoration: none;
-        transition: transform 0.2s ease;
-    }
-
-    .talk-entry-link:hover {
-        transform: translateX(0.5rem);
-    }
-
-    .talk-entry-event {
-        font-family: var(--font-mono);
-        font-size: var(--size-whisper);
-        color: var(--ink-faint);
-        letter-spacing: var(--tracking-quiet);
-        display: block;
-        margin-bottom: 0.25rem;
-    }
-
-    .talk-entry-title {
-        font-size: 1.1rem;
-        font-weight: 400;
-        color: var(--ink-light);
-        transition: color 0.2s ease;
-    }
-
-    .talk-entry-link:hover .talk-entry-title {
-        color: var(--bloom);
-    }
-
-    .talk-entry-date {
-        font-family: var(--font-mono);
-        font-size: var(--size-whisper);
-        color: var(--ink-faint);
-        margin-left: 1rem;
+        .tag-entry-date {
+            display: block;
+            margin-left: 0;
+            margin-top: 0.15rem;
+        }
     }
 </style>
 
-{% if tag.writing.length >= 1 %}
-{# Writing-book for any number of essays #}
+{% if writingOnly %}
+{# Writing-only tag keeps the full-bleed writing book #}
 {% set essays = tag.writing %}
 {% set headerTitle = tag.name %}
 {% set headerCount = tag.writing.length %}
-{% set backLink = "/writing/" %}
+{% set backLink = "/writing" %}
 {% include "components/writing-book.njk" %}
 
-{% elif tag.portraits.length >= 1 %}
-{# Portrait list when no writing but has portraits #}
-<div class="tag-portraits">
-    <header class="tag-portraits-header">
+{% elif anyContent %}
+{# Multi-territory or non-writing tag renders every territory sequentially so zero items drop #}
+<div class="tag-page">
+    <header class="tag-header">
         <div class="tag-label">tagged</div>
         <h1 class="tag-name">{{ tag.name }}</h1>
-    </header>
-    <div class="portraits-list">
-        {%- for portrait in tag.portraits -%}
-        <div class="portrait-entry">
-            <a href="{{ portrait.url }}" class="portrait-entry-link">
-                <span class="portrait-entry-prompter">prompted by {{ portrait.data.prompter | default('unknown') }}</span>
-                <span class="portrait-entry-title">{{ portrait.data.title }}</span>
-                <span class="portrait-entry-date">{{ portrait.date | readableDate }}</span>
-            </a>
+        <div class="tag-summary">
+            {%- set sep = joiner(" · ") -%}
+            {%- if hasWriting %}{{ sep() }}{{ tag.writing.length }} essay{% if tag.writing.length != 1 %}s{% endif %}{% endif -%}
+            {%- if hasPapers %}{{ sep() }}{{ tag.papers.length }} paper{% if tag.papers.length != 1 %}s{% endif %}{% endif -%}
+            {%- if hasTalks %}{{ sep() }}{{ tag.talks.length }} talk{% if tag.talks.length != 1 %}s{% endif %}{% endif -%}
+            {%- if hasPortraits %}{{ sep() }}{{ tag.portraits.length }} portrait{% if tag.portraits.length != 1 %}s{% endif %}{% endif -%}
+            {%- if hasArtifacts %}{{ sep() }}{{ tag.artifacts.length }} artifact{% if tag.artifacts.length != 1 %}s{% endif %}{% endif -%}
         </div>
-        {%- endfor -%}
-    </div>
-    <a href="/making/" class="back-link" style="margin-top: 2rem; display: inline-block;">← all making</a>
-</div>
+    </header>
 
-{% elif tag.artifacts.length >= 1 %}
-{# Artifact list when no writing/portraits but has artifacts #}
-<div class="tag-artifacts">
-    <header class="tag-artifacts-header">
-        <div class="tag-label">tagged</div>
-        <h1 class="tag-name">{{ tag.name }}</h1>
-    </header>
-    <div class="artifacts-list">
-        {%- for artifact in tag.artifacts -%}
-        <div class="artifact-entry">
-            <a href="{{ artifact.url }}" class="artifact-entry-link">
-                {%- if artifact.data.medium -%}
-                <span class="artifact-entry-medium">{{ artifact.data.medium }}</span>
-                {%- endif -%}
-                <span class="artifact-entry-title">{{ artifact.data.title }}</span>
-                <span class="artifact-entry-date">{{ artifact.date | readableDate }}</span>
-            </a>
-        </div>
-        {%- endfor -%}
-    </div>
-    <a href="/making/" class="back-link" style="margin-top: 2rem; display: inline-block;">← all making</a>
-</div>
+    {% if hasWriting %}
+    <section class="tag-territory tag-writing" aria-labelledby="tag-writing-heading">
+        <h2 class="tag-territory-label" id="tag-writing-heading">writing</h2>
+        <ul class="tag-list">
+            {%- for essay in tag.writing -%}
+            <li class="tag-entry">
+                <a href="{{ essay.url | stripTrailingSlash }}" class="tag-entry-link">
+                    {%- if essay.data.series -%}
+                    <span class="tag-entry-kicker">{{ essay.data.series }}</span>
+                    {%- endif -%}
+                    <span class="tag-entry-title{% if essay.data.accident %} accident{% endif %}">{{ essay.data.title }}</span>
+                    <span class="tag-entry-date">{{ essay.date | readableDate }}</span>
+                </a>
+            </li>
+            {%- endfor -%}
+        </ul>
+    </section>
+    {% endif %}
 
-{% elif tag.talks.length >= 1 %}
-{# Talks list when no writing/portraits/artifacts but has talks #}
-<div class="tag-talks">
-    <header class="tag-talks-header">
-        <div class="tag-label">tagged</div>
-        <h1 class="tag-name">{{ tag.name }}</h1>
-    </header>
-    <div class="talks-list">
-        {%- for talk in tag.talks -%}
-        <div class="talk-entry">
-            <a href="{{ talk.url }}" class="talk-entry-link">
-                {%- if talk.data.event -%}
-                <span class="talk-entry-event">{{ talk.data.event }}</span>
-                {%- endif -%}
-                <span class="talk-entry-title">{{ talk.data.title }}</span>
-                <span class="talk-entry-date">{{ talk.date | readableDate }}</span>
-            </a>
-        </div>
-        {%- endfor -%}
-    </div>
-    <a href="/talks/" class="back-link" style="margin-top: 2rem; display: inline-block;">← all talks</a>
+    {% if hasPapers %}
+    <section class="tag-territory tag-papers" aria-labelledby="tag-papers-heading">
+        <h2 class="tag-territory-label" id="tag-papers-heading">papers</h2>
+        <ul class="tag-list">
+            {%- for paper in tag.papers -%}
+            <li class="tag-entry">
+                <a href="{{ paper.url | stripTrailingSlash }}" class="tag-entry-link">
+                    {%- if paper.data.venue -%}
+                    <span class="tag-entry-kicker">{{ paper.data.venue }}</span>
+                    {%- endif -%}
+                    <span class="tag-entry-title">{{ paper.data.paperTitle | default(paper.data.title) }}</span>
+                    <span class="tag-entry-date">{{ paper.date | readableDate }}</span>
+                </a>
+            </li>
+            {%- endfor -%}
+        </ul>
+    </section>
+    {% endif %}
+
+    {% if hasTalks %}
+    <section class="tag-territory tag-talks" aria-labelledby="tag-talks-heading">
+        <h2 class="tag-territory-label" id="tag-talks-heading">talks</h2>
+        <ul class="tag-list">
+            {%- for talk in tag.talks -%}
+            <li class="tag-entry">
+                <a href="{{ talk.url | stripTrailingSlash }}" class="tag-entry-link">
+                    {%- if talk.data.event -%}
+                    <span class="tag-entry-kicker">{{ talk.data.event }}</span>
+                    {%- endif -%}
+                    <span class="tag-entry-title{% if talk.data.accident %} accident{% endif %}">{{ talk.data.title }}</span>
+                    <span class="tag-entry-date">{{ talk.date | readableDate }}</span>
+                </a>
+            </li>
+            {%- endfor -%}
+        </ul>
+    </section>
+    {% endif %}
+
+    {% if hasPortraits %}
+    <section class="tag-territory tag-portraits" aria-labelledby="tag-portraits-heading">
+        <h2 class="tag-territory-label" id="tag-portraits-heading">portraits</h2>
+        <ul class="tag-list">
+            {%- for portrait in tag.portraits -%}
+            <li class="tag-entry">
+                <a href="{{ portrait.url | stripTrailingSlash }}" class="tag-entry-link">
+                    <span class="tag-entry-kicker">prompted by {{ portrait.data.prompter | default('unknown') }}</span>
+                    <span class="tag-entry-title">{{ portrait.data.title }}</span>
+                    <span class="tag-entry-date">{{ portrait.date | readableDate }}</span>
+                </a>
+            </li>
+            {%- endfor -%}
+        </ul>
+    </section>
+    {% endif %}
+
+    {% if hasArtifacts %}
+    <section class="tag-territory tag-artifacts" aria-labelledby="tag-artifacts-heading">
+        <h2 class="tag-territory-label" id="tag-artifacts-heading">artifacts</h2>
+        <ul class="tag-list">
+            {%- for artifact in tag.artifacts -%}
+            <li class="tag-entry">
+                <a href="{{ artifact.url | stripTrailingSlash }}" class="tag-entry-link">
+                    {%- if artifact.data.medium -%}
+                    <span class="tag-entry-kicker">{{ artifact.data.medium }}</span>
+                    {%- endif -%}
+                    <span class="tag-entry-title">{{ artifact.data.title }}</span>
+                    <span class="tag-entry-date">{{ artifact.date | readableDate }}</span>
+                </a>
+            </li>
+            {%- endfor -%}
+        </ul>
+    </section>
+    {% endif %}
+
+    <footer class="tag-footer">
+        {% if hasWriting %}<a href="/writing" class="back-link">← all writing</a>{% endif %}
+        {% if hasPapers %}<a href="/papers" class="back-link">← all papers</a>{% endif %}
+        {% if hasTalks %}<a href="/talks" class="back-link">← all talks</a>{% endif %}
+        {% if hasPortraits or hasArtifacts %}<a href="/making" class="back-link">← all making</a>{% endif %}
+    </footer>
 </div>
 
 {% else %}
-{# No content - empty state #}
 <div class="empty-tag">
     <header class="tag-header">
         <div class="tag-label">tagged</div>
         <h1 class="tag-name">{{ tag.name }}</h1>
     </header>
     <p>No content found with this tag.</p>
-    <a href="/writing/" class="back-link">← all writing</a>
+    <a href="/writing" class="back-link">← all writing</a>
 </div>
 {% endif %}

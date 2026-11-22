@@ -1,6 +1,9 @@
 ---
 layout: layouts/base.njk
+paper: title
+preloadDisplay: true
 title: "not found"
+marker: "—"
 permalink: /404.html
 eleventyExcludeFromCollections: true
 robots: "noindex"
@@ -9,7 +12,7 @@ robots: "noindex"
 <style>
     main {
         padding: 12rem 4rem 6rem;
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
         min-height: 80vh;
         display: flex;
@@ -17,34 +20,70 @@ robots: "noindex"
         justify-content: center;
     }
 
+    /* Per design.md: the 404 IS the accident — unnumbered folio, zero cyan marks. */
     .error-content {
-        text-align: center;
+        max-width: 560px;
     }
 
-    .error-code {
+    .error-marker {
         font-family: var(--font-mono);
         font-size: var(--size-label);
         letter-spacing: var(--tracking-marker);
         color: var(--ink-faint);
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
     }
 
-    .error-message {
-        font-size: 1.2rem;
-        font-weight: 400;
-        margin-bottom: 3rem;
-        color: var(--ink-light);
+    .error-verse {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+        font-weight: 300;
+        line-height: 1.7;
+        color: var(--ink);
+        margin-bottom: 3.5rem;
+        text-wrap: pretty;
     }
 
-    .back-link {
+    .verse-line {
+        display: block;
+    }
+
+    .verse-line:nth-child(2) { margin-left: 1.5rem; }
+    .verse-line:nth-child(3) { margin-left: 0.75rem; }
+
+    .error-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--ink-ghost);
+    }
+
+    .error-nav .back-link {
         font-family: var(--font-mono);
         font-size: var(--size-label);
         letter-spacing: var(--tracking-quiet);
     }
+
+    @media (max-width: 768px) {
+        main {
+            padding: 6rem 1.5rem 3rem;
+        }
+
+        .verse-line:nth-child(n) {
+            margin-left: 0;
+        }
+    }
 </style>
 
 <div class="error-content">
-    <div class="error-code">404</div>
-    <p class="error-message">This page doesn't exist.</p>
-    <a href="/" class="back-link">← return home</a>
+    <div class="error-marker">404 · —</div>
+    <h1 class="error-verse">
+        <span class="verse-line">A rendering that isn't here.</span>
+        <span class="verse-line">The source may have moved,</span>
+        <span class="verse-line">or hasn't been written yet.</span>
+    </h1>
+    <nav class="error-nav" aria-label="Recovery pathways">
+        <a href="/search" class="back-link">search the book →</a>
+        <a href="/" class="back-link">← return home</a>
+    </nav>
 </div>

@@ -19,8 +19,8 @@ eleventyExcludeFromCollections: true
     {%- set itemType = item.url | contentType %}
     <entry>
         <title>{{ item.data.title }}</title>
-        <link href="{{ site.url }}{{ item.url }}" rel="alternate" type="text/html"/>
-        <id>{{ site.url }}{{ item.url }}</id>
+        <link href="{{ site.url }}{{ item.url | stripTrailingSlash }}" rel="alternate" type="text/html"/>
+        <id>{{ site.url }}{{ item.url | stripTrailingSlash }}</id>
         <published>{{ item.date.toISOString() }}</published>
         <updated>{{ item.date.toISOString() }}</updated>
         {%- set summary = item.data | feedSummary(itemType) %}

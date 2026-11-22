@@ -335,6 +335,7 @@ const readImages = page => page.evaluate(async () => {
     const caption = image.closest("p")?.querySelector(":scope > em");
     return {
       width: box.width, left: box.left - column.left, right: column.right - box.right,
+      viewportLeft: box.left, viewportRight: box.right,
       bottom: box.bottom, captionTop: caption ? caption.getClientRects()[0].top : null,
     };
   }) };
@@ -357,11 +358,15 @@ for (const width of [820, 1280]) {
   });
 }
 
-test("images keep the inline flow on a phone", async ({ page }) => {
+test("images keep the inline flow on a phone without clipping past the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(imagePath);
   const { bleed, images } = await readImages(page);
-  for (const image of images) expect(Math.abs(image.left + bleed)).toBeLessThanOrEqual(1);
+  for (const image of images) {
+    expect(Math.abs(image.left + bleed)).toBeLessThanOrEqual(1);
+    expect(image.viewportLeft).toBeGreaterThanOrEqual(-0.5);
+    expect(image.viewportRight).toBeLessThanOrEqual(390.5);
+  }
 });
 
 test("repeated footnotes return to the selected reference", async ({ page }) => {

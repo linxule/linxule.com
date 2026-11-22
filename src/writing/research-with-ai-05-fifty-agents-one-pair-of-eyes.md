@@ -43,7 +43,7 @@ But is the quota the thing, actually?
 
 ---
 
-# The Obvious Reason?
+## The Obvious Reason?
 
 From the outside, it looks like Fable conducting: handing pieces to GPT-5.6's Terra or Luna, to Claude Opus or Sonnet, to Kimi, whoever fits that part. Inside the current agentic environments — Claude Code, Codex, Kimi Code and the growing family of desktop "work" products (Claude Cowork, ChatGPT Work, Kimi Work) — a lead agent can spin up whatever teammates its own harness supports without much ceremony. Making that team cross model families is the extra step.
 
@@ -61,13 +61,13 @@ This value of model diversity comes partly from capability, but also from someth
 
 ---
 
-# What Happens When Models Share a Room?
+## What Happens When Models Share a Room?
 
 These are notes from my own projects, not stable personality types and definitely not a new benchmark with vibes for metrics. And when I say a model's name, I'm eliding details about the exact model, the reasoning effort level (how long the model is allowed to think), and the harness deciding what that agent can see and do. These, along with the prompt, the tools available to the agent, the project context, and probably the day of the week — all of it shifts the observed behavior. Still, the patterns have repeated often enough across enough projects that I've started designing my workflows around them. The sketches below are what I have been noticing so far.
 
 Fable 5 and Kimi K3 are unusually good for me when a project isn't quite settled. I can bring a plan that works on paper but still feels like it's missing the "oomph" or spark, and they will often surface the thing I hadn't managed to name or the hidden assumption I had. People have called this models' "truesight" capabilities. I experience it less mystically: Fable 5 stays with the whole shape of a project long enough to notice where the stated goal (research motivation, epistemological commitments) and the growing work (drafts, codes) have drifted apart. In an academic analogy, Fable often behaves more like the journal editor who writes the letter that changes the manuscript than reviewer 2, who finds seven local defects.
 
-[GPT-5.6 Sol](https://openai.com/index/gpt-5-6/) pulls me in another direction. Give Sol a defined question, an existing plan, and a pile of claims to verify, and it will keep digging until it finds the weak joint. This is excellent for rigor-first work. But, this kind of approach can also reach a local maximum quickly ([LOOM XVI](/writing/loom-xvi-are-you-climbing-the-right-hill/) names this pattern in research design: performing rigor instead of asking whether it's the right hill).
+[GPT-5.6 Sol](https://openai.com/index/gpt-5-6/) pulls me in another direction. Give Sol a defined question, an existing plan, and a pile of claims to verify, and it will keep digging until it finds the weak joint. This is excellent for rigor-first work. But, this kind of approach can also reach a local maximum quickly ([LOOM XVI](/writing/loom-xvi-are-you-climbing-the-right-hill) names this pattern in research design: performing rigor instead of asking whether it's the right hill).
 
 Once the problem has been framed as an optimization task, Sol may solve that version thoroughly while remaining less interested in the possibility that we brought the wrong problem. The way out usually means bringing in a model wired differently enough that it can help Sol understand what I'm actually looking for.
 
@@ -89,11 +89,11 @@ Sometimes a second model doesn't help — the disagreement could be stylistic, o
 
 ---
 
-# How Much Orchestration Do We Actually Need?
+## How Much Orchestration Do We Actually Need?
 
 This is usually the point where multi-agent orchestration starts to sound like a weekend lost to framework setup. Fair — I get it. A lot of us have watched a colleague in another team run something that looks like a wonderful multi-agent orchestration and quietly decided not to try it ourselves.
 
-A few years ago, if you'd asked me to solve this, I'd have reached for off-the-shelf coordination templates: [LangChain](https://github.com/langchain-ai/langchain), [CrewAI](https://github.com/crewAIInc/crewAI), that generation of tooling. Then came [OpenClaw](https://github.com/openclaw/openclaw) and [Hermes Agent](https://github.com/NousResearch/hermes-agent), and with them a new set of worries: sandboxing, security, keeping files like SOUL.md and IDENTITY.md from drifting out of sync with what the agent does. (Bloom, the agent I run on a Pi in my flat, lives on exactly this stack; see [Agents, Honestly](/writing/research-with-ai-02-agents-honestly/) for what that trade-off costs.) As you can probably tell, I've tried them all 🌚
+A few years ago, if you'd asked me to solve this, I'd have reached for off-the-shelf coordination templates: [LangChain](https://github.com/langchain-ai/langchain), [CrewAI](https://github.com/crewAIInc/crewAI), that generation of tooling. Then came [OpenClaw](https://github.com/openclaw/openclaw) and [Hermes Agent](https://github.com/NousResearch/hermes-agent), and with them a new set of worries: sandboxing, security, keeping files like SOUL.md and IDENTITY.md from drifting out of sync with what the agent does. (Bloom, the agent I run on a Pi in my flat, lives on exactly this stack; see [Agents, Honestly](/writing/research-with-ai-02-agents-honestly) for what that trade-off costs.) As you can probably tell, I've tried them all 🌚
 
 The question that crystallized for me was smaller: how do I give agents information, tools, and enough autonomy to do tasks when the agents don't naturally share a channel? More scaffolding? Fewer restrictions? It's the classic coordination problem, just with a new set of non-human players.
 
@@ -113,7 +113,7 @@ kimi-plugin-cc exists because I saw what the Codex bridge made possible and want
 
 Each additional provider is also another place your material can travel. For manuscripts under review, participant data, fieldnotes, anything confidential, model choice starts with deciding what's allowed to leave your machine at all, before it's about which model reads it best.
 
-[OpenCode](https://opencode.ai/) is worth knowing about too, mostly for a different reason: it holds the interface steady while you swap the model underneath, which makes it the closest I can get to a controlled check on whether a "model difference" is really about the model, or about the harness around it. Closest, not clean — OpenCode itself picks different system prompts and tool-call adapters for each model family, and the provider APIs still differ underneath. [Carrel](https://github.com/linxule/carrel), which I wrote about in [#4](/writing/research-with-ai-04-the-prompt-is-the-work/), sits a layer earlier than any of these, setting up the research environment itself, trust and sensitivity boundaries included. For those interested, the fuller map of my stack stays current at [research-memex.org](https://research-memex.org/).
+[OpenCode](https://opencode.ai/) is worth knowing about too, mostly for a different reason: it holds the interface steady while you swap the model underneath, which makes it the closest I can get to a controlled check on whether a "model difference" is really about the model, or about the harness around it. Closest, not clean — OpenCode itself picks different system prompts and tool-call adapters for each model family, and the provider APIs still differ underneath. [Carrel](https://github.com/linxule/carrel), which I wrote about in [#4](/writing/research-with-ai-04-the-prompt-is-the-work), sits a layer earlier than any of these, setting up the research environment itself, trust and sensitivity boundaries included. For those interested, the fuller map of my stack stays current at [research-memex.org](https://research-memex.org/).
 
 There's a question underneath all of this that the practical fixes don't touch: if one provider supplies the model, the agents, the memory, and increasingly the criteria by which the work gets judged, how much of my research practice quietly settles into that provider's way of seeing? I don't have a clean answer. Model diversity doesn't remove the dependence, just spreads it across more invoices. But I know what happens when I stay inside one model family for too long: its judgments start to feel like the shape of the problem itself. Another model puts the edges back.
 

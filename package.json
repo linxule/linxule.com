@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Personal website - book aesthetic, algorithmic age",
   "scripts": {
-    "start": "bun scripts/gen-og-cards.mjs && bun scripts/gen-paper.mjs && eleventy --serve",
+    "start": "bun scripts/gen-og-cards.mjs && bun scripts/gen-paper.mjs && bun scripts/sync-image-cache.mjs restore && eleventy --serve",
     "build": "bun run build:site && bun run verify",
     "build:site": "bun scripts/gen-og-cards.mjs && bun scripts/gen-paper.mjs && bun scripts/sync-image-cache.mjs restore && bun scripts/clean-output.mjs && eleventy && bun scripts/sync-image-cache.mjs save && bunx pagefind --site _site && bun scripts/build-freshness.mjs --write",
     "verify": "bun run freshness:check && bun run og:lint && bun run renderings:lint && bun run tokens:lint && bun run tokens:test && bun run fonts:lint && bun run built-json:lint && bun run artifact:test && bun run play:test && bun run sitemap:test && bun run sitemap:lint && bun run paper:test && bun run pipeline:test && bun run surface:test && bun run retention:test",
@@ -23,8 +23,10 @@
     "og:lint": "bun scripts/check-og-images.mjs",
     "renderings:lint": "bun scripts/check-renderings.mjs",
     "tokens:lint": "bun scripts/check-tokens.mjs",
-    "fonts:lint": "bun scripts/check-fonts.mjs && bun scripts/check-cjk-italic.mjs",
+    "fonts:lint": "bun scripts/check-fonts.mjs && bun scripts/check-cjk-italic.mjs && bun scripts/check-cjk-upright.mjs",
     "fonts:kai": "bun scripts/gen-kai.mjs",
+    "fonts:noto": "bun scripts/gen-noto-sc.mjs",
+    "cache:prune": "bun scripts/sync-image-cache.mjs prune",
     "tokens:test": "bun test scripts/check-tokens.test.mjs",
     "sitemap:lint": "bun scripts/check-sitemap-redirects.mjs",
     "sitemap:test": "bun test scripts/check-sitemap-redirects.test.mjs",
@@ -32,7 +34,7 @@
     "play:test": "bun test scripts/check-play-integration.test.mjs",
     "pipeline:test": "bun test scripts/image-cache.test.mjs scripts/image-pipeline*.test.mjs scripts/middleware.test.mjs scripts/image-aspect.test.mjs",
     "test:runtime": "bun run freshness:check && playwright test tests/runtime --project=desktop --project=mobile-boundary",
-    "surface:test": "bun test scripts/social-cards.test.mjs scripts/rendering-fidelity.test.mjs scripts/spread-ids.test.mjs mcp/worker.test.mjs",
+    "surface:test": "bun test scripts/social-cards.test.mjs scripts/rendering-fidelity.test.mjs scripts/spread-ids.test.mjs scripts/registries.test.mjs mcp/worker.test.mjs",
     "test:ui": "bun run freshness:check && playwright test tests/reading tests/fonts --project=desktop && playwright test tests/modals --project=desktop --project=phone --project=phone-narrow && playwright test tests/discovery --project=phone --project=desktop"
   },
   "dependencies": {

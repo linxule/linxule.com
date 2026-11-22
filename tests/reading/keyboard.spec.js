@@ -158,3 +158,84 @@ test("on a touch screen the glow stays away and plate numbers are shown", async 
   expect(new Set(shown)).toEqual(new Set(["1"]));
   await context.close();
 });
+
+test("skip link becomes visible inside the viewport on Tab #1", async ({ page }) => {
+  await settle(page, "/");
+  await page.keyboard.press("Tab");
+  const skip = await page.evaluate(() => {
+    const el = document.activeElement;
+    const rect = el ? el.getBoundingClientRect() : null;
+    return {
+      href: el?.getAttribute("href"),
+      left: rect?.left ?? -1,
+      top: rect?.top ?? -1,
+      width: rect?.width ?? 0,
+      height: rect?.height ?? 0,
+    };
+  });
+  expect(skip.href).toBe("#main-content");
+  expect(skip.left).toBeGreaterThanOrEqual(0);
+  expect(skip.top).toBeGreaterThanOrEqual(0);
+  expect(skip.width).toBeGreaterThan(40);
+  expect(skip.height).toBeGreaterThan(20);
+});
+
+test("portrait detail plates do not double-dim their container at rest", async ({ page }) => {
+  await settle(page, PORTRAIT);
+  const rest = await page.evaluate(() => {
+    const plate = document.querySelector(".specimen");
+    const img = plate.querySelector("img");
+    return {
+      plateOpacity: Number(getComputedStyle(plate).opacity),
+      plateFilter: getComputedStyle(plate).filter,
+      imgOpacity: Number(getComputedStyle(img).opacity),
+    };
+  });
+  expect(rest.plateOpacity).toBe(1);
+  expect(rest.plateFilter).toBe("none");
+  expect(rest.imgOpacity).toBeCloseTo(0.8, 1);
+});
+
+test("writing series book-nav is fixed with >=24px hit height and respects prefers-reduced-motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/writing/series/loom/");
+  await page.waitForFunction(() => !document.documentElement.classList.contains("fonts-loading"));
+
+  const state = await page.evaluate(() => {
+    const book = document.getElementById("writing-book");
+    const nav = document.getElementById("writing-nav");
+    const dots = [...nav.querySelectorAll(".book-nav-dot")];
+    const navRect = nav.getBoundingClientRect();
+    return {
+      scrollBehavior: getComputedStyle(book).scrollBehavior,
+      navPosition: getComputedStyle(nav).position,
+      navBottom: navRect.bottom,
+      viewportHeight: window.innerHeight,
+      dotCount: dots.length,
+      minDotHeight: Math.min(...dots.map(d => d.getBoundingClientRect().height)),
+    };
+  });
+  expect(state.scrollBehavior).toBe("auto");
+  expect(state.navPosition).toBe("fixed");
+  expect(state.navBottom).toBeLessThanOrEqual(state.viewportHeight);
+  expect(state.dotCount).toBeGreaterThan(5);
+  expect(state.minDotHeight).toBeGreaterThanOrEqual(24);
+});
+
+test("multi-territory tag pages show all territories with a single h1 clear of the spine", async ({ page }) => {
+  await settle(page, "/tag/human-ai-collaboration/");
+  const info = await page.evaluate(() => {
+    const h1s = [...document.querySelectorAll("h1")];
+    const header = document.querySelector(".tag-header");
+    return {
+      h1Count: h1s.length,
+      headerTop: header ? header.getBoundingClientRect().top : 0,
+      writingLinks: document.querySelectorAll(".tag-writing .tag-entry-link").length,
+      talkLinks: document.querySelectorAll(".tag-talks .tag-entry-link").length,
+    };
+  });
+  expect(info.h1Count).toBe(1);
+  expect(info.headerTop).toBeGreaterThanOrEqual(80);
+  expect(info.writingLinks).toBeGreaterThan(0);
+  expect(info.talkLinks).toBeGreaterThan(0);
+});

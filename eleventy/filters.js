@@ -4,7 +4,9 @@
  */
 
 import { autoCardPath, ogCard, resolveSocialCard } from "./og-card-paths.js";
-import { imageAttributes } from "./image-pipeline.js";
+import { imageAttributes, resolveOptimizedAttachmentUrl } from "./image-pipeline.js";
+import { COLLECTION_TWINS, mdAlternateForUrl } from "./shapes.mjs";
+import { creditFamily, creditModel, slugify } from "./strings.js";
 import sharp from "sharp";
 import { decodeHTML } from "entities";
 
@@ -16,6 +18,8 @@ const FENCE = /^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/gm;
 const CODE_SPAN = /(`+)(?!`)[^\n]*?(?<!`)\1(?!`)/g;
 const DETAILS = /<details\b[^>]*>([\s\S]*?)<\/details>/gi;
 const ACCIDENT = /<span\b[^>]*\bclass=(["'])(?:[^"']*\s)?accident(?:\s[^"']*)?\1[^>]*>([\s\S]*?)<\/span>/gi;
+const SCRIPT_BLOCK = /<script\b[\s\S]*?<\/script\s*>/gi;
+const EMPTY_DFN_ANCHOR = /<a\b[^>]*\bid=(["'])dfn-[^"']*\1[^>]*>\s*<\/a>/gi;
 const BREAK = /<br\s*\/?>/.source;
 
 function weave(text, pattern, onMatch, onRest) {
@@ -38,11 +42,46 @@ function lineBreaks(text) {
     .replace(new RegExp(`${BREAK}[ \\t]*\\n?`, "gi"), "  \n");
 }
 
-function proseToMarkdown(text) {
-  return decodeHTML(lineBreaks(text.replace(ACCIDENT, "*$2* *(accident)*")));
+function rewriteWritingAttachmentUrls(text) {
+  // Rewrite Markdown image/link targets pointing at `/writing/attachments/<name>.<ext>`
+  // (excluding `*-og.jpg`) to their deterministic optimized `/assets/images/optimized/` URL,
+  // preserving any optional origin prefix, query/fragment, and Markdown title.
+  const rewrittenMd = text.replace(
+    /(\!?\[[^\]]*\]\(\s*)(https?:\/\/linxule\.com)?(\/writing\/attachments\/[^\s)"']+)/gi,
+    (match, prefix, origin = "", rawUrl) => {
+      const suffixMatch = rawUrl.match(/^([^?#]+)([?#].*)?$/);
+      const pathname = suffixMatch ? suffixMatch[1] : rawUrl;
+      const suffix = suffixMatch?.[2] || "";
+      const optimized = resolveOptimizedAttachmentUrl(pathname);
+      if (!optimized) return match;
+      return `${prefix}${origin}${optimized}${suffix}`;
+    },
+  );
+
+  // Also rewrite raw inline HTML <img src="/writing/attachments/..."> attributes if any exist.
+  return rewrittenMd.replace(
+    /(<img\b[^>]*\bsrc=)(["'])(https?:\/\/linxule\.com)?(\/writing\/attachments\/[^"']+)\2/gi,
+    (match, prefix, quote, origin = "", rawUrl) => {
+      const suffixMatch = rawUrl.match(/^([^?#]+)([?#].*)?$/);
+      const pathname = suffixMatch ? suffixMatch[1] : rawUrl;
+      const suffix = suffixMatch?.[2] || "";
+      const optimized = resolveOptimizedAttachmentUrl(pathname);
+      if (!optimized) return match;
+      return `${prefix}${quote}${origin}${optimized}${suffix}${quote}`;
+    },
+  );
 }
 
-function htmlToMarkdown(html) {
+function proseToMarkdown(text) {
+  const cleaned = text
+    .replace(SCRIPT_BLOCK, "")
+    .replace(EMPTY_DFN_ANCHOR, "")
+    .replace(ACCIDENT, "*$2* *(accident)*");
+  return decodeHTML(lineBreaks(rewriteWritingAttachmentUrls(cleaned)));
+}
+
+export function htmlToMarkdown(html) {
+  if (!html) return "";
   const tidy = text => text.replace(/[ \t]+$/gm, match => (match === "  " ? match : "")).replace(/\n{3,}/g, "\n\n").trim();
   const blocks = text => text
     .replace(/<\/li>\s*/gi, "")
@@ -54,7 +93,10 @@ function htmlToMarkdown(html) {
     .replace(/<li\b[^>]*>/gi, "\n- ")
     .replace(/<hr\b[^>]*>/gi, "\n\n---\n\n")
     .replace(/<\/?(?:p|ul|div)\b[^>]*>/gi, "\n\n");
-  const text = blocks(html
+  const stripped = String(html)
+    .replace(SCRIPT_BLOCK, "")
+    .replace(/<style\b[\s\S]*?<\/style\s*>/gi, "");
+  const text = blocks(stripped
     .replace(/<summary\b[^>]*>([\s\S]*?)<\/summary>/gi, "\n\n**$1**\n\n")
     .replace(/<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/gi, (_, quoted) =>
       `\n\n${tidy(blocks(quoted)).replace(/^/gm, "> ").replace(/^> $/gm, ">")}\n\n`))
@@ -66,12 +108,53 @@ function htmlToMarkdown(html) {
   return decodeHTML(tidy(lineBreaks(text).replace(/<\/?[a-z][^>]*>/gi, "")));
 }
 
-function markdownBody(value) {
+export function markdownBody(value) {
   if (!value) return "";
   const source = String(value).replace(/\{%-?\s*(?:end)?raw\s*-?%\}/g, "");
   return weave(source, FENCE, match => match[0], outsideFences =>
     weave(outsideFences, DETAILS, match => `\n\n${htmlToMarkdown(match[1])}\n\n`, outsideDetails =>
       weave(outsideDetails, CODE_SPAN, match => match[0], proseToMarkdown)));
+}
+
+export function stripTrailingSlash(value) {
+  const s = String(value || "");
+  if (!s || s === "/") return s;
+  return s.replace(/\/+$/, "") || "/";
+}
+
+/**
+ * Normalize CV HTML heading hierarchy without editing raw `#` headings in `src/cv/index.md`
+ * or `src/cv-zh/index.md`:
+ *   - opening `<h2>Name</h2>` -> `<h1>Name</h1>`
+ *   - opening `<h3>contact</h3>` lines before the first section -> `<p class="cv-contact">...</p>`
+ *   - all section `<h1>...</h1>` headings -> `<h2>...</h2>` (preserving attributes and inner HTML)
+ */
+export function cvHtml(html) {
+  if (!html) return "";
+  let promotedName = false;
+  let seenSection = false;
+  return String(html).replace(
+    /<(h[123])(\b[^>]*)>([\s\S]*?)<\/\1>/gi,
+    (match, tag, attrs, inner) => {
+      const lower = tag.toLowerCase();
+      if (lower === "h1") {
+        seenSection = true;
+        return `<h2${attrs}>${inner}</h2>`;
+      }
+      if (lower === "h2" && !seenSection && !promotedName) {
+        promotedName = true;
+        return `<h1${attrs}>${inner}</h1>`;
+      }
+      if (lower === "h3" && !seenSection) {
+        if (/\bclass\s*=\s*"([^"]*)"/i.test(attrs)) {
+          const merged = attrs.replace(/\bclass\s*=\s*"([^"]*)"/i, (_, cls) => `class="${cls} cv-contact"`);
+          return `<p${merged}>${inner}</p>`;
+        }
+        return `<p class="cv-contact"${attrs}>${inner}</p>`;
+      }
+      return match;
+    },
+  );
 }
 
 // Classify an image by aspect ratio for layout routing. Reads header dims only
@@ -104,6 +187,9 @@ export default function(eleventyConfig) {
     return resolveSocialCard(data, cover?.alt);
   });
 
+  // Markdown twin alternate URL from unified shapes registry
+  eleventyConfig.addFilter("mdAlternate", mdAlternateForUrl);
+
   // Date formatting
   eleventyConfig.addFilter("readableDate", (dateObj) => {
     return new Date(dateObj).toLocaleDateString('en-US', {
@@ -120,9 +206,7 @@ export default function(eleventyConfig) {
   });
 
   // URL-safe slug generation
-  eleventyConfig.addFilter("slugify", (str) => {
-    return str.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-  });
+  eleventyConfig.addFilter("slugify", slugify);
 
   // Number padding
   eleventyConfig.addFilter("padStart", (num, length, char) => {
@@ -134,38 +218,14 @@ export default function(eleventyConfig) {
     return String(value);
   });
 
-  // Canonical path helper for extension-style alternates.
-  eleventyConfig.addFilter("stripTrailingSlash", (value) => {
-    return String(value || '').replace(/\/$/, '');
-  });
+  // Canonical path helper for extension-style alternates and slashless URLs.
+  eleventyConfig.addFilter("stripTrailingSlash", stripTrailingSlash);
 
-  // Extract prompter family (first word)
-  eleventyConfig.addFilter("prompterFamily", (prompter) => {
-    if (!prompter) return null;
-    const parts = prompter.split(' ');
-    return parts[0].toLowerCase();
-  });
-
-  // Extract prompter model (everything after first word)
-  eleventyConfig.addFilter("prompterModel", (prompter) => {
-    if (!prompter) return null;
-    const parts = prompter.split(' ');
-    return parts.slice(1).join(' ') || null;
-  });
-
-  // Extract creator family (first word): "opus 4.5" → "opus"
-  eleventyConfig.addFilter("creatorFamily", (creator) => {
-    if (!creator) return null;
-    const parts = creator.split(' ');
-    return parts[0].toLowerCase();
-  });
-
-  // Extract creator model (everything after first word): "opus 4.5" → "4.5"
-  eleventyConfig.addFilter("creatorModel", (creator) => {
-    if (!creator) return null;
-    const parts = creator.split(' ');
-    return parts.slice(1).join(' ') || null;
-  });
+  // Extract prompter / creator family & model via shared credit normalizer
+  eleventyConfig.addFilter("prompterFamily", creditFamily);
+  eleventyConfig.addFilter("prompterModel", creditModel);
+  eleventyConfig.addFilter("creatorFamily", creditFamily);
+  eleventyConfig.addFilter("creatorModel", creditModel);
 
   // Deterministic layout picker. A uniform set of ≤4 same-shape images gets one
   // of three orientation-matched variants, hashed by slug → stable per page,
@@ -234,7 +294,9 @@ export default function(eleventyConfig) {
       .trim();
   });
 
+  eleventyConfig.addFilter("htmlToMarkdown", htmlToMarkdown);
   eleventyConfig.addFilter("markdownBody", markdownBody);
+  eleventyConfig.addFilter("cvHtml", cvHtml);
 
   // Combine and sort multiple arrays by date (newest first)
   eleventyConfig.addFilter("combineByDate", (...arrays) => {
@@ -265,13 +327,12 @@ export default function(eleventyConfig) {
   // Shared with the card generator so URL normalization cannot drift.
   eleventyConfig.addFilter("ogCard", ogCard);
 
-  // Get content type from page URL for feed entries
+  // Get content type from page URL for feed entries (derived from shapes registry)
   eleventyConfig.addFilter("contentType", (url) => {
-    if (url.startsWith('/writing/')) return 'writing';
-    if (url.startsWith('/making/portraits/')) return 'portrait';
-    if (url.startsWith('/making/artifacts/')) return 'artifact';
-    if (url.startsWith('/talks/')) return 'talk';
-    if (url.startsWith('/papers/')) return 'paper';
-    return 'page';
+    if (!url || typeof url !== "string") return "page";
+    for (const shape of COLLECTION_TWINS) {
+      if (url.startsWith(shape.urlPrefix)) return shape.pagefindType;
+    }
+    return "page";
   });
 }

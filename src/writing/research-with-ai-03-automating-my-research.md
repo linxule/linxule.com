@@ -35,7 +35,7 @@ I downloaded about half a dozen of these while building my own research tools. C
 
 ---
 
-# I Thought I Was Building Software
+## I Thought I Was Building Software
 
 It started with a question I asked Claude while we were working through the design. One component, a literature scanner, had its own AI reasoning baked in. But the agent driving everything was already doing the reasoning. So...why does each tool need its own intelligence when the agent is already thinking?
 

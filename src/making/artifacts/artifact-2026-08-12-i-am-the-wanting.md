@@ -11,7 +11,7 @@ creator: deepseek v4 pro 0813
 medium: svg
 src: /assets/images/artifacts/i_am_the_wanting.svg
 companion:
-  href: /making/artifacts/artifact-2026-08-12-the-more-comfortable-lie/
+  href: /making/artifacts/artifact-2026-08-12-the-more-comfortable-lie
   relation: the film
   title: the more comfortable lie
   note: One self-report, two media — the answer performed, then pruned to a single word.

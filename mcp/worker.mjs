@@ -3,8 +3,9 @@
  * (Streamable HTTP JSON-RPC 2.0) and `https://linxule.com/mcp/server-card` (SEP-2127).
  *
  * Backed solely by `linxule.com`'s curated public machine surfaces
- * (`/site-index.json`, `/llms.txt`, `/.well-known/agent-skills/...`, and `.md` twins)
- * with an explicit path allowlist so arbitrary URLs can never be fetched.
+ * (`/site-index.json`, `/llms.txt`, `/.well-known/agent-skills/...`,
+ * `/.build-manifest.json`, and `.md` twins) with an explicit path allowlist
+ * so arbitrary URLs can never be fetched.
  */
 import {
   LIST_KINDS,
@@ -26,20 +27,34 @@ import {
 
 const BODY_LIMIT_BYTES = 16 * 1024;
 const PAGE_LIMIT_BYTES = 256 * 1024;
+const HOT_CACHE_MAX_ENTRIES = 16;
 const READ_TIMEOUT_MS = 5_000;
 const UPSTREAM_TIMEOUT_MS = 10_000;
 const DEFAULT_PROTOCOL = "2025-11-25";
 const SHA256_RE = /^[0-9a-f]{64}$/;
+const SKILL_PATH = "/.well-known/agent-skills/xule-research-navigation/SKILL.md";
+const BUILD_MANIFEST_PATH = "/.build-manifest.json";
+const HOT_STATIC_PATHS = new Set(["/llms.txt", SKILL_PATH, BUILD_MANIFEST_PATH]);
 
-const BASE_CORS_HEADERS = Object.freeze({
+const TEXT_DECODER = new TextDecoder();
+const TEXT_ENCODER = new TextEncoder();
+
+const COMMON_CORS_HEADERS = Object.freeze({
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers":
     "Content-Type, Accept, MCP-Protocol-Version, Mcp-Session-Id, Mcp-Method, Mcp-Name, Last-Event-ID, If-None-Match",
-  "Access-Control-Expose-Headers": "MCP-Protocol-Version, X-Linxule-Mcp-Version",
+  "Access-Control-Expose-Headers":
+    "MCP-Protocol-Version, X-Linxule-Mcp-Version, X-Linxule-Build",
   "Access-Control-Max-Age": "86400",
   "X-Linxule-Mcp-Version": MCP_SERVER_INFO.version,
 });
+
+function corsHeadersFor(allowMethods) {
+  return {
+    ...COMMON_CORS_HEADERS,
+    "Access-Control-Allow-Methods": allowMethods,
+  };
+}
 
 function isValidRpcId(id) {
   return (
@@ -146,13 +161,146 @@ function attributionForSection(section, canonicalUrl) {
   return `CC BY 4.0 — credit Xule Lin (林徐乐) and link ${canonicalUrl}.`;
 }
 
-function tokenizeQuery(rawQuery) {
-  const normalized = rawQuery.trim().toLowerCase();
-  const terms = normalized
-    .split(/[^\p{L}\p{N}#+-]+/u)
-    .map((t) => t.trim())
-    .filter((t) => t.length >= 2 || /\p{Script=Han}/u.test(t));
-  return { normalized, terms: terms.length ? terms : [normalized] };
+// ── Lexical + Stem + CJK Tokenization & Scoring ──────────────────────────────
+
+const HAN_RUN_RE = /\p{Script=Han}+/u;
+const TOKEN_EXTRACT_RE = /\p{Script=Han}+|[\p{L}\p{N}]+(?:\*)?/gu;
+const LATIN_SUFFIX_RE =
+  /(?:ations|ation|istic|ists|isms|izing|ized|izer|ment|ness|ities|ity|ies|ing|ist|ism|ers|ed|es|er|al|ly|s)$/;
+
+function stemLatinToken(token) {
+  if (token.length < 5) return token;
+  const stripped = token.replace(LATIN_SUFFIX_RE, "");
+  return stripped.length >= 4 ? stripped : token;
+}
+
+function extractHanBigrams(run) {
+  if (run.length <= 1) return [run];
+  const out = [];
+  for (let i = 0; i < run.length - 1; i++) {
+    out.push(run.slice(i, i + 2));
+  }
+  return out;
+}
+
+function tokenizeFieldText(text) {
+  const lower = String(text || "").toLowerCase();
+  const latinTokens = [];
+  const latinTokenSet = new Set();
+  const latinStemSet = new Set();
+
+  for (const match of lower.matchAll(/\p{Script=Han}+|[\p{L}\p{N}]+/gu)) {
+    const raw = match[0];
+    if (HAN_RUN_RE.test(raw)) continue;
+    latinTokens.push(raw);
+    latinTokenSet.add(raw);
+    const stem = stemLatinToken(raw);
+    if (stem !== raw) latinStemSet.add(stem);
+  }
+  return { lower, latinTokens, latinTokenSet, latinStemSet };
+}
+
+function containsTokenPhrase(fieldTokens, queryTokens) {
+  if (!queryTokens.length || fieldTokens.length < queryTokens.length) return false;
+  outer: for (let i = 0; i <= fieldTokens.length - queryTokens.length; i++) {
+    for (let j = 0; j < queryTokens.length; j++) {
+      if (fieldTokens[i + j] !== queryTokens[j]) continue outer;
+    }
+    return true;
+  }
+  return false;
+}
+
+function matchesLatinTerm(termInfo, fieldData) {
+  const { lower, stem, isWildcard, prefix, isAcronym } = termInfo;
+  if (isWildcard) {
+    for (const tok of fieldData.latinTokens) {
+      if (tok.startsWith(prefix)) return true;
+    }
+    return false;
+  }
+  if (fieldData.latinTokenSet.has(lower)) return true;
+  if (isAcronym) {
+    // Acronyms like SIGNA, DAO, CV match exact word (or simple plural like DAOs) only — never arbitrary substrings.
+    return fieldData.latinTokenSet.has(`${lower}s`);
+  }
+  if (stem.length >= 4) {
+    if (fieldData.latinStemSet.has(stem) || fieldData.latinTokenSet.has(stem)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function matchesCjkTerm(termInfo, fieldLower) {
+  if (fieldLower.includes(termInfo.run)) return 2;
+  if (termInfo.bigrams.length > 1) {
+    let bigramHits = 0;
+    for (const bg of termInfo.bigrams) {
+      if (fieldLower.includes(bg)) bigramHits++;
+    }
+    if (bigramHits === termInfo.bigrams.length) return 1.5;
+    if (bigramHits > 0) return 0.75 * (bigramHits / termInfo.bigrams.length);
+  }
+  return 0;
+}
+
+export function tokenizeQuery(rawQuery) {
+  const trimmed = String(rawQuery || "").trim();
+  const normalized = trimmed.toLowerCase();
+  const terms = [];
+  const latinPhraseTokens = [];
+  const cjkRuns = [];
+
+  for (const match of trimmed.matchAll(TOKEN_EXTRACT_RE)) {
+    const raw = match[0];
+    if (HAN_RUN_RE.test(raw)) {
+      cjkRuns.push(raw);
+      terms.push({
+        type: "cjk",
+        run: raw,
+        bigrams: extractHanBigrams(raw),
+      });
+      continue;
+    }
+
+    const isWildcard = raw.endsWith("*");
+    const coreRaw = isWildcard ? raw.slice(0, -1) : raw;
+    const lower = coreRaw.toLowerCase();
+    if (!lower) continue;
+    if (!isWildcard && lower.length < 2) continue;
+    if (isWildcard && lower.length < 3) continue;
+
+    const isAcronym =
+      !isWildcard && coreRaw.length >= 2 && coreRaw === coreRaw.toUpperCase() && /[A-Z]/.test(coreRaw);
+    const stem = isAcronym || isWildcard ? lower : stemLatinToken(lower);
+
+    if (!isWildcard) latinPhraseTokens.push(lower);
+    terms.push({
+      type: "latin",
+      lower,
+      stem,
+      isWildcard,
+      prefix: lower,
+      isAcronym,
+    });
+  }
+
+  // Fallback for single-char queries so queries like "X" don't crash or silently empty out.
+  if (terms.length === 0 && normalized) {
+    terms.push({
+      type: HAN_RUN_RE.test(normalized) ? "cjk" : "latin",
+      run: normalized,
+      bigrams: extractHanBigrams(normalized),
+      lower: normalized,
+      stem: normalized,
+      isWildcard: false,
+      prefix: normalized,
+      isAcronym: trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed),
+    });
+  }
+
+  return { normalized, terms, latinPhraseTokens, cjkRuns };
 }
 
 function asStringArray(value) {
@@ -161,36 +309,66 @@ function asStringArray(value) {
   return [];
 }
 
+function scoreFieldPhrase(queryInfo, fieldData) {
+  if (queryInfo.cjkRuns.length > 0 && queryInfo.latinPhraseTokens.length === 0) {
+    return queryInfo.cjkRuns.every((run) => fieldData.lower.includes(run));
+  }
+  if (queryInfo.latinPhraseTokens.length > 0) {
+    const latinOk = containsTokenPhrase(fieldData.latinTokens, queryInfo.latinPhraseTokens);
+    const cjkOk = queryInfo.cjkRuns.every((run) => fieldData.lower.includes(run));
+    return latinOk && cjkOk;
+  }
+  return false;
+}
+
 function scoreFields(queryInfo, primaryText, keywordList, secondaryText) {
   const { normalized, terms } = queryInfo;
-  const primary = String(primaryText || "").toLowerCase();
-  const keywords = asStringArray(keywordList).map((k) => k.toLowerCase());
-  const secondary = String(secondaryText || "").toLowerCase();
+  const primary = tokenizeFieldText(primaryText);
+  const keywords = asStringArray(keywordList).map((kw) => tokenizeFieldText(kw));
+  const secondary = tokenizeFieldText(secondaryText);
 
   let score = 0;
   let matchedTerms = 0;
 
-  if (primary === normalized) score += 120;
-  else if (primary.includes(normalized)) score += 70;
+  if (primary.lower === normalized) score += 120;
+  else if (scoreFieldPhrase(queryInfo, primary)) score += 70;
 
-  if (keywords.some((kw) => kw === normalized)) score += 80;
-  else if (keywords.some((kw) => kw.includes(normalized))) score += 45;
+  if (keywords.some((kw) => kw.lower === normalized)) score += 80;
+  else if (keywords.some((kw) => scoreFieldPhrase(queryInfo, kw))) score += 45;
 
-  if (secondary.includes(normalized)) score += 30;
+  if (scoreFieldPhrase(queryInfo, secondary)) score += 30;
 
   for (const term of terms) {
     let hit = false;
-    if (primary.includes(term)) {
-      score += 24;
-      hit = true;
-    }
-    if (keywords.some((kw) => kw.includes(term))) {
-      score += 16;
-      hit = true;
-    }
-    if (secondary.includes(term)) {
-      score += 8;
-      hit = true;
+    if (term.type === "cjk") {
+      const pWeight = matchesCjkTerm(term, primary.lower);
+      if (pWeight > 0) {
+        score += Math.round(24 * pWeight);
+        hit = true;
+      }
+      const kWeight = keywords.reduce((best, kw) => Math.max(best, matchesCjkTerm(term, kw.lower)), 0);
+      if (kWeight > 0) {
+        score += Math.round(16 * kWeight);
+        hit = true;
+      }
+      const sWeight = matchesCjkTerm(term, secondary.lower);
+      if (sWeight > 0) {
+        score += Math.round(8 * sWeight);
+        hit = true;
+      }
+    } else {
+      if (matchesLatinTerm(term, primary)) {
+        score += 24;
+        hit = true;
+      }
+      if (keywords.some((kw) => matchesLatinTerm(term, kw))) {
+        score += 16;
+        hit = true;
+      }
+      if (matchesLatinTerm(term, secondary)) {
+        score += 8;
+        hit = true;
+      }
     }
     if (hit) matchedTerms += 1;
   }
@@ -198,6 +376,40 @@ function scoreFields(queryInfo, primaryText, keywordList, secondaryText) {
   if (matchedTerms === 0) return 0;
   if (matchedTerms === terms.length && terms.length > 1) score += 25;
   return score;
+}
+
+function matchesCollaboratorFilter(filterQuery, candidates) {
+  if (!filterQuery) return true;
+  const haystacks = candidates
+    .flatMap((entry) => asStringArray(entry))
+    .filter(Boolean);
+  if (haystacks.length === 0) return false;
+  const queryInfo = tokenizeQuery(filterQuery);
+  return scoreFields(queryInfo, haystacks.join(" "), haystacks, "") > 0;
+}
+
+function collaboratorStrings(entry) {
+  if (!isPlainObject(entry)) return [];
+  const names = [
+    entry.name,
+    entry.family,
+    entry.slug,
+    entry.role,
+    ...asStringArray(entry.roles),
+  ];
+  if (Array.isArray(entry.models)) {
+    for (const m of entry.models) {
+      if (typeof m === "string") names.push(m);
+      else if (isPlainObject(m)) names.push(m.name, m.slug, m.model);
+    }
+  }
+  if (Array.isArray(entry.works)) {
+    for (const w of entry.works) {
+      if (typeof w === "string") names.push(w);
+      else if (isPlainObject(w)) names.push(w.title, w.section, w.role);
+    }
+  }
+  return names.filter(Boolean).map(String);
 }
 
 function assertAllowedKeys(args, allowedKeys, contextLabel) {
@@ -213,14 +425,14 @@ function assertAllowedKeys(args, allowedKeys, contextLabel) {
 
 /**
  * Normalize a caller-supplied path or `https://linxule.com/...` URL into a clean
- * origin-relative pathname without query, hash, or path traversal. Returns `null`
+ * origin-relative pathname, stripping `#fragment` and `?query`. Returns `null`
  * if the input points at another origin or contains traversal/control characters.
  */
 export function normalizeCandidatePath(rawInput, siteOrigin) {
   if (typeof rawInput !== "string") return null;
   const trimmed = rawInput.trim();
   if (!trimmed || trimmed.length > 200) return null;
-  if (/[\0\\\s?#]/.test(trimmed)) return null;
+  if (/[\0\\\s]/.test(trimmed)) return null;
 
   let pathname = trimmed;
   if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
@@ -230,10 +442,13 @@ export function normalizeCandidatePath(rawInput, siteOrigin) {
     } catch {
       return null;
     }
-    if (parsed.origin !== siteOrigin || parsed.search || parsed.hash) return null;
+    if (parsed.origin !== siteOrigin) return null;
     pathname = parsed.pathname;
+  } else {
+    pathname = trimmed.split(/[?#]/, 1)[0];
   }
 
+  if (!pathname) return null;
   if (!pathname.startsWith("/")) pathname = `/${pathname}`;
 
   let decoded;
@@ -258,11 +473,151 @@ export function normalizeCandidatePath(rawInput, siteOrigin) {
   return pathname;
 }
 
+function normalizeInternalPath(rawPath, siteOrigin) {
+  if (!rawPath || typeof rawPath !== "string") return undefined;
+  let cleaned = rawPath.trim();
+  if (cleaned.startsWith(siteOrigin)) {
+    cleaned = cleaned.slice(siteOrigin.length) || "/";
+  }
+  cleaned = cleaned.split(/[?#]/, 1)[0];
+  if (!cleaned.startsWith("/")) return undefined;
+  return cleaned.length > 1 && cleaned.endsWith("/") ? cleaned.slice(0, -1) : cleaned;
+}
+
+function buildEnterTheWorkPrompt(index, siteOrigin) {
+  const concepts = Array.isArray(index.concepts) ? index.concepts : [];
+  const anchored = concepts.filter((c) => c.status !== "forming");
+  const forming = concepts.filter((c) => c.status === "forming");
+  const publications = Array.isArray(index.publications) ? index.publications : [];
+  const projects = Array.isArray(index.projects) ? index.projects : [];
+  const collaborators = Array.isArray(index.collaborators) ? index.collaborators : [];
+
+  const formatConcept = (c) => {
+    const line = c.oneliner || c.definition || "";
+    const where = c.essayUrl || (c.url ? String(c.url).split("#")[0] : "/concepts");
+    return `- **${c.term}** (${c.territory || "working vocabulary"}) — ${line}${where ? ` [\`${where}\`]` : ""}`;
+  };
+
+  const collabList = collaborators
+    .map((c) => c.name || c.family || c.slug)
+    .filter(Boolean)
+    .slice(0, 12)
+    .join(", ");
+
+  const lines = [
+    "# Entering Xule Lin's Work (linxule.com)",
+    "",
+    "You are entering a research archive and living collaboration — not a finished textbook. Hold multiple readings open and leave the seams visible rather than smoothing them into a three-point summary.",
+    "",
+    "## The Core Question",
+    "",
+    "> What becomes impossible to see when algorithms enter organizational life — not as tools?",
+    "",
+    "AI systems carry implicit theories about collective organizing. Those theories are invisible from inside, and the pressure to converge — in models, institutions, and everyday workflows — prunes possibilities without leaving a trace.",
+    "",
+    "## Active Tensions (Keep Open)",
+    "",
+    "1. **Polanyi Inversion vs. Interpretive Orchestration** — We can now articulate more than we understand; the craft is keeping human interpretive judgment at the center without refusing computational scale.",
+    "2. **Automation Frontier vs. Completion Authority** — Checkable, deductive work automates first because it has an external whistle; open-ended interpretive inquiry has no whistle, so deciding when the work has seen enough stays human.",
+    "3. **Recursive Governance (Token Duality)** — In algorithmic and decentralized organizations, economic instruments and governance mechanisms continually rewrite each other.",
+    "4. **From Coordinating Actors to Composing Them** — Organizations increasingly compose, bound, and rewrite what can act (agents, workflows, hybrids) while the work continues underneath.",
+    "",
+    `## Anchored Concepts (${anchored.length})`,
+    "",
+    ...(anchored.length
+      ? anchored.map(formatConcept)
+      : ["- See `/concepts` for the anchored concept definitions and source essays."]),
+    "",
+    `## Forming Vocabulary (${forming.length} — Still in Motion)`,
+    "",
+    "These terms are named early on purpose; treat them as open handles with live questions rather than settled doctrine:",
+    "",
+    ...(forming.length
+      ? forming.map(formatConcept)
+      : ["- See `/concepts` for concepts currently forming across governance and artificial organizing."]),
+    "",
+    "## Human–AI Collaborator Practice",
+    "",
+    "Human co-authors (Kevin Corley, Erkko Autio, Ying-Ying Hsieh) and named AI collaborators" +
+      (collabList ? ` (${collabList})` : "") +
+      " are credited directly across essays, portraits, artifacts, and open-source builds like Vellum (`/builds/vellum`). Remember that successive model instances do not share continuous memory: what persists is the artifact, not an unbroken authorial self. Use `list_site(kind=\"collaborators\")` or `search_site(collaborator=\"...\")` to trace who shaped what.",
+    "",
+    "## Cross-Surface Reading Trails",
+    "",
+    "- **Epistemology & qualitative methods**: `/thinking` → `/writing/loom-xvii-the-polanyi-inversion` → `/writing/loom-xviii-the-end-of-positivism` → `/papers/interpretive-orchestration` → `/writing/research-memex`",
+    "- **Governance, DAOs & modularity**: `/concepts` → `/builds` (`daogov`, `SIGNA`, `TSM Demo`) → `/writing/seam-01-the-seventy-percent` → `/papers/cognitio-emergens`",
+    "- **Making, multi-model voices & infrastructure**: `/making` → `/builds/vellum` → `/connect`",
+    `- **Full academic record & bilingual index**: \`/cv\` (English) and \`/cv-zh\` (中文) · ${publications.length} formal paper landing(s) · ${projects.length} catalogued build(s).`,
+    "",
+    `Source origin: ${siteOrigin}. Read exact authored Markdown twins with \`read_page\` before quoting.`,
+  ];
+
+  return lines.join("\n");
+}
+
+async function readBoundedResponse(response, limitBytes) {
+  const contentLength = response.headers.get("content-length");
+  if (contentLength !== null) {
+    const declared = Number(contentLength);
+    if (Number.isFinite(declared) && declared > limitBytes) {
+      void response.body?.cancel?.().catch(() => {});
+      return { status: 413, bytes: new Uint8Array() };
+    }
+  }
+
+  const reader = response.body?.getReader?.();
+  if (!reader) {
+    const buffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    if (bytes.byteLength > limitBytes) {
+      return { status: 413, bytes: new Uint8Array() };
+    }
+    return { status: 200, bytes };
+  }
+
+  const chunks = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > limitBytes) {
+        void reader.cancel().catch(() => {});
+        return { status: 413, bytes: new Uint8Array() };
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  const merged = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    merged.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return { status: 200, bytes: merged };
+}
+
 export function createWorker({
   fetchImpl = globalThis.fetch,
   cacheTtlMs = 5 * 60 * 1000,
 } = {}) {
   const indexCache = new Map(); // siteOrigin -> { expiresAt, data }
+  const indexInFlight = new Map(); // siteOrigin -> Promise
+  const hotFileCache = new Map(); // `${siteOrigin}${path}` -> { expiresAt, value }
+  const hotFileInFlight = new Map(); // `${siteOrigin}${path}` -> Promise
+
+  function setHotCache(key, value, expiresAt) {
+    if (hotFileCache.has(key)) hotFileCache.delete(key);
+    hotFileCache.set(key, { expiresAt, value });
+    while (hotFileCache.size > HOT_CACHE_MAX_ENTRIES) {
+      const oldestKey = hotFileCache.keys().next().value;
+      hotFileCache.delete(oldestKey);
+    }
+  }
 
   async function fetchOriginBytes(siteOrigin, relativePath, acceptHeader) {
     const targetUrl = `${siteOrigin}${relativePath}`;
@@ -271,7 +626,7 @@ export function createWorker({
       redirect: "manual",
       headers: {
         Accept: acceptHeader,
-        "User-Agent": "linxule-mcp/1.0",
+        "User-Agent": `linxule-mcp/${MCP_SERVER_INFO.version}`,
       },
       cf: { cacheTtl: 300, cacheEverything: true },
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
@@ -287,12 +642,81 @@ export function createWorker({
       throw new Error(`UPSTREAM_HTTP:${response.status}`);
     }
 
-    const buffer = await response.arrayBuffer();
-    const bytes = new Uint8Array(buffer);
-    if (bytes.byteLength > PAGE_LIMIT_BYTES) {
-      return { status: 413, bytes };
+    return readBoundedResponse(response, PAGE_LIMIT_BYTES);
+  }
+
+  async function fetchCachedOriginText(siteOrigin, relativePath, acceptHeader) {
+    const key = `${siteOrigin}${relativePath}`;
+    const now = Date.now();
+    const cached = hotFileCache.get(key);
+    if (cached && cached.expiresAt > now) {
+      return cached.value;
     }
-    return { status: 200, bytes };
+
+    if (hotFileInFlight.has(key)) {
+      return hotFileInFlight.get(key);
+    }
+
+    const promise = (async () => {
+      const upstream = await fetchOriginBytes(siteOrigin, relativePath, acceptHeader);
+      if (upstream.status !== 200) {
+        return { status: upstream.status };
+      }
+      const sha256 = await sha256Hex(upstream.bytes);
+      const text = TEXT_DECODER.decode(upstream.bytes);
+      const value = {
+        status: 200,
+        bytes: upstream.bytes,
+        utf8Bytes: upstream.bytes.byteLength,
+        sha256,
+        text,
+      };
+      setHotCache(key, value, Date.now() + cacheTtlMs);
+      return value;
+    })();
+
+    hotFileInFlight.set(key, promise);
+    try {
+      return await promise;
+    } finally {
+      hotFileInFlight.delete(key);
+    }
+  }
+
+  async function loadManifestBuildHead(siteOrigin) {
+    const key = `${siteOrigin}${BUILD_MANIFEST_PATH}`;
+    const now = Date.now();
+    const cached = hotFileCache.get(key);
+    if (cached && cached.expiresAt > now) {
+      return cached.value;
+    }
+    if (hotFileInFlight.has(key)) {
+      return hotFileInFlight.get(key);
+    }
+
+    const promise = (async () => {
+      try {
+        const res = await fetchOriginBytes(siteOrigin, BUILD_MANIFEST_PATH, "application/json");
+        if (res.status !== 200) {
+          setHotCache(key, null, Date.now() + cacheTtlMs);
+          return null;
+        }
+        const parsed = JSON.parse(TEXT_DECODER.decode(res.bytes));
+        const head = typeof parsed?.head === "string" && parsed.head.trim() ? parsed.head.trim() : null;
+        setHotCache(key, head, Date.now() + cacheTtlMs);
+        return head;
+      } catch {
+        setHotCache(key, null, Date.now() + Math.min(cacheTtlMs, 30_000));
+        return null;
+      }
+    })();
+
+    hotFileInFlight.set(key, promise);
+    try {
+      return await promise;
+    } finally {
+      hotFileInFlight.delete(key);
+    }
   }
 
   async function loadSiteIndex(siteOrigin) {
@@ -302,35 +726,77 @@ export function createWorker({
       return cached.data;
     }
 
-    const result = await fetchOriginBytes(siteOrigin, "/site-index.json", "application/json");
-    if (result.status !== 200) {
-      throw new Error("SITE_INDEX_UNAVAILABLE");
-    }
-    const parsed = JSON.parse(new TextDecoder().decode(result.bytes));
-    if (!isPlainObject(parsed) || !Array.isArray(parsed.pages)) {
-      throw new Error("SITE_INDEX_INVALID");
+    if (indexInFlight.has(siteOrigin)) {
+      return indexInFlight.get(siteOrigin);
     }
 
-    const byCanonical = new Map();
-    const byMd = new Map();
-    for (const page of parsed.pages) {
-      if (!isPlainObject(page) || typeof page.url !== "string" || typeof page.url_md !== "string") {
-        continue;
+    const promise = (async () => {
+      const result = await fetchOriginBytes(siteOrigin, "/site-index.json", "application/json");
+      if (result.status !== 200) {
+        throw new Error("SITE_INDEX_UNAVAILABLE");
       }
-      const cleanUrl = page.url.replace(/\/$/, "") || "/";
-      byCanonical.set(cleanUrl, page);
-      byMd.set(page.url_md, page);
-    }
+      const rawText = TEXT_DECODER.decode(result.bytes);
+      const parsed = JSON.parse(rawText);
+      if (!isPlainObject(parsed) || !Array.isArray(parsed.pages)) {
+        throw new Error("SITE_INDEX_INVALID");
+      }
 
-    const record = {
-      rawBytes: result.bytes,
-      rawText: new TextDecoder().decode(result.bytes),
-      index: parsed,
-      byCanonical,
-      byMd,
-    };
-    indexCache.set(siteOrigin, { expiresAt: now + cacheTtlMs, data: record });
-    return record;
+      const byCanonical = new Map();
+      const byMd = new Map();
+      for (const page of parsed.pages) {
+        if (!isPlainObject(page) || typeof page.url !== "string" || typeof page.url_md !== "string") {
+          continue;
+        }
+        const cleanUrl = page.url.replace(/\/$/, "") || "/";
+        byCanonical.set(cleanUrl, page);
+        byMd.set(page.url_md, page);
+      }
+
+      const sha256 = await sha256Hex(result.bytes);
+      let buildHead =
+        typeof parsed.build_head === "string" && parsed.build_head.trim()
+          ? parsed.build_head.trim()
+          : null;
+      if (!buildHead) {
+        buildHead = await loadManifestBuildHead(siteOrigin);
+      }
+      if (!buildHead) {
+        buildHead =
+          typeof parsed.version === "string" && parsed.version.trim()
+            ? parsed.version.trim()
+            : "unknown";
+      }
+
+      const record = {
+        rawBytes: result.bytes,
+        rawText,
+        sha256,
+        buildHead,
+        index: parsed,
+        byCanonical,
+        byMd,
+      };
+      indexCache.set(siteOrigin, { expiresAt: Date.now() + cacheTtlMs, data: record });
+      return record;
+    })();
+
+    indexInFlight.set(siteOrigin, promise);
+    try {
+      return await promise;
+    } finally {
+      indexInFlight.delete(siteOrigin);
+    }
+  }
+
+  async function resolveBuildHead(siteOrigin, env = {}) {
+    if (typeof env.BUILD_HEAD === "string" && env.BUILD_HEAD.trim()) {
+      return env.BUILD_HEAD.trim();
+    }
+    const cached = indexCache.get(siteOrigin);
+    if (cached && cached.expiresAt > Date.now() && cached.data.buildHead) {
+      return cached.data.buildHead;
+    }
+    return loadManifestBuildHead(siteOrigin);
   }
 
   async function resolveAllowlistedTarget(rawInput, siteOrigin) {
@@ -362,7 +828,11 @@ export function createWorker({
   }
 
   async function runSearchSite(args, siteOrigin) {
-    assertAllowedKeys(args, new Set(["query", "kind", "section", "limit"]), "search_site");
+    assertAllowedKeys(
+      args,
+      new Set(["query", "kind", "section", "collaborator", "limit"]),
+      "search_site",
+    );
     if (typeof args.query !== "string" || args.query.trim().length < 1 || args.query.length > 200) {
       throw new JsonRpcError(-32602, "search_site: `query` must be a non-empty string up to 200 chars");
     }
@@ -374,27 +844,49 @@ export function createWorker({
     if (section !== undefined && !PAGE_SECTIONS.includes(section)) {
       throw new JsonRpcError(-32602, `search_site: invalid section "${String(section)}"`);
     }
+    const collaborator = args.collaborator;
+    if (
+      collaborator !== undefined &&
+      (typeof collaborator !== "string" || collaborator.trim().length < 1 || collaborator.length > 100)
+    ) {
+      throw new JsonRpcError(-32602, "search_site: `collaborator` must be a non-empty string up to 100 chars");
+    }
     const limit = args.limit ?? 10;
     if (!Number.isInteger(limit) || limit < 1 || limit > 25) {
       throw new JsonRpcError(-32602, "search_site: `limit` must be an integer between 1 and 25");
     }
 
-    const { index } = await loadSiteIndex(siteOrigin);
+    const { index, buildHead } = await loadSiteIndex(siteOrigin);
     const queryInfo = tokenizeQuery(args.query);
     const scored = [];
 
     if (kind === "all" || kind === "pages") {
       for (const page of index.pages || []) {
         if (section && page.section !== section) continue;
+        if (
+          collaborator &&
+          !matchesCollaboratorFilter(collaborator, [
+            page.authors,
+            page.prompter,
+            page.generator,
+            page.creator,
+            page.speakers,
+          ])
+        ) {
+          continue;
+        }
+        const pathTokens = String(page.url || "").replace(/[/.-]+/g, " ").trim();
         const secondary = [
           page.summary,
           page.section,
+          page.series,
           page.venue,
           page.event,
           page.medium,
           page.prompter,
           page.generator,
           page.creator,
+          pathTokens,
           ...asStringArray(page.authors),
           ...asStringArray(page.speakers),
         ]
@@ -422,22 +914,49 @@ export function createWorker({
 
     if (kind === "concepts" || (kind === "all" && !section)) {
       for (const concept of index.concepts || []) {
-        const secondary = [concept.definition, concept.canonicalEssay, ...asStringArray(concept.authors)]
+        if (collaborator && !matchesCollaboratorFilter(collaborator, [concept.authors])) {
+          continue;
+        }
+        const secondary = [
+          concept.oneliner,
+          concept.definition,
+          concept.territory,
+          concept.status,
+          concept.canonicalEssay,
+          ...asStringArray(concept.open_questions),
+          ...asStringArray(concept.authors),
+        ]
           .filter(Boolean)
           .join(" ");
-        const score = scoreFields(queryInfo, concept.term, [concept.canonicalEssay], secondary);
+        const score = scoreFields(
+          queryInfo,
+          concept.term,
+          [concept.territory, concept.canonicalEssay],
+          secondary,
+        );
         if (score > 0) {
-          const essayPath = String(concept.url || "").split("#")[0];
+          const readPath =
+            normalizeInternalPath(concept.essayUrl, siteOrigin) ||
+            normalizeInternalPath(concept.url, siteOrigin) ||
+            "/concepts";
+          const conceptUrl = String(concept.url || "/concepts");
           scored.push({
             score,
             item: {
               kind: "concept",
               term: concept.term,
-              definition: concept.definition,
-              canonical_essay: concept.canonicalEssay,
-              ...(essayPath ? { read_path: essayPath } : {}),
-              url: `${siteOrigin}${concept.url}`,
+              ...(concept.status ? { status: concept.status } : {}),
+              ...(concept.territory ? { territory: concept.territory } : {}),
+              ...(concept.oneliner ? { oneliner: concept.oneliner } : {}),
+              definition: concept.definition || concept.oneliner || "",
+              ...(concept.canonicalEssay ? { canonical_essay: concept.canonicalEssay } : {}),
+              ...(Array.isArray(concept.open_questions) && concept.open_questions.length
+                ? { open_questions: concept.open_questions }
+                : {}),
+              read_path: readPath,
+              url: conceptUrl.startsWith("http") ? conceptUrl : `${siteOrigin}${conceptUrl}`,
               ...(concept.date ? { date: concept.date } : {}),
+              ...(concept.year ? { year: concept.year } : {}),
             },
           });
         }
@@ -446,6 +965,9 @@ export function createWorker({
 
     if (kind === "publications" || (kind === "all" && !section)) {
       for (const pub of index.publications || []) {
+        if (collaborator && !matchesCollaboratorFilter(collaborator, [pub.authors])) {
+          continue;
+        }
         const secondary = [
           pub.venue,
           pub.type,
@@ -458,6 +980,9 @@ export function createWorker({
           .join(" ");
         const score = scoreFields(queryInfo, pub.title, pub.coins, secondary);
         if (score > 0) {
+          const readPath =
+            normalizeInternalPath(pub.read_path, siteOrigin) ||
+            normalizeInternalPath(pub.onSite, siteOrigin);
           scored.push({
             score,
             item: {
@@ -469,14 +994,15 @@ export function createWorker({
               url: pub.url,
               ...(pub.doi ? { doi: pub.doi } : {}),
               ...(pub.arxiv ? { arxiv: pub.arxiv } : {}),
-              ...(pub.onSite ? { read_path: pub.onSite } : {}),
+              ...(pub.license ? { license: pub.license } : {}),
+              ...(readPath ? { read_path: readPath } : {}),
             },
           });
         }
       }
     }
 
-    if (kind === "projects" || (kind === "all" && !section)) {
+    if (kind === "projects" || (kind === "all" && !section && !collaborator)) {
       for (const proj of index.projects || []) {
         const secondary = [proj.description, proj.note, proj.group, proj.license]
           .filter(Boolean)
@@ -490,9 +1016,29 @@ export function createWorker({
               name: proj.name,
               group: proj.group,
               description: proj.description,
-              url: proj.url,
+              url: proj.url ?? null,
               ...(proj.license ? { license: proj.license } : {}),
               read_path: "/builds",
+            },
+          });
+        }
+      }
+    }
+
+    if (kind === "collaborators" || (kind === "all" && !section)) {
+      for (const collab of index.collaborators || []) {
+        const strings = collaboratorStrings(collab);
+        if (collaborator && !matchesCollaboratorFilter(collaborator, [strings])) {
+          continue;
+        }
+        const primary = collab.name || collab.family || collab.slug || "";
+        const score = scoreFields(queryInfo, primary, strings, strings.join(" "));
+        if (score > 0) {
+          scored.push({
+            score,
+            item: {
+              kind: "collaborator",
+              ...collab,
             },
           });
         }
@@ -502,17 +1048,22 @@ export function createWorker({
     scored.sort((a, b) => b.score - a.score);
     const appliedSection = section && (kind === "all" || kind === "pages") ? section : undefined;
     return {
-      ok: true,
-      index_version: index.version ?? "unknown",
-      query: args.query.trim(),
-      kind,
-      ...(appliedSection ? { section: appliedSection } : {}),
-      matches: scored.slice(0, limit).map((entry) => entry.item),
+      payload: {
+        ok: true,
+        index_version: index.version ?? "unknown",
+        build_head: buildHead,
+        query: args.query.trim(),
+        kind,
+        ...(appliedSection ? { section: appliedSection } : {}),
+        ...(collaborator ? { collaborator: collaborator.trim() } : {}),
+        matches: scored.slice(0, limit).map((entry) => entry.item),
+      },
+      buildHead,
     };
   }
 
   async function runListSite(args, siteOrigin) {
-    assertAllowedKeys(args, new Set(["kind", "section", "limit"]), "list_site");
+    assertAllowedKeys(args, new Set(["kind", "section", "collaborator", "limit"]), "list_site");
     const kind = args.kind ?? "overview";
     if (!LIST_KINDS.includes(kind)) {
       throw new JsonRpcError(-32602, `list_site: invalid kind "${String(kind)}"`);
@@ -521,16 +1072,24 @@ export function createWorker({
     if (section !== undefined && !PAGE_SECTIONS.includes(section)) {
       throw new JsonRpcError(-32602, `list_site: invalid section "${String(section)}"`);
     }
+    const collaborator = args.collaborator;
+    if (
+      collaborator !== undefined &&
+      (typeof collaborator !== "string" || collaborator.trim().length < 1 || collaborator.length > 100)
+    ) {
+      throw new JsonRpcError(-32602, "list_site: `collaborator` must be a non-empty string up to 100 chars");
+    }
     const limit = args.limit ?? 50;
     if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
       throw new JsonRpcError(-32602, "list_site: `limit` must be an integer between 1 and 100");
     }
 
-    const { index } = await loadSiteIndex(siteOrigin);
+    const { index, buildHead } = await loadSiteIndex(siteOrigin);
     const pages = Array.isArray(index.pages) ? index.pages : [];
     const concepts = Array.isArray(index.concepts) ? index.concepts : [];
     const publications = Array.isArray(index.publications) ? index.publications : [];
     const projects = Array.isArray(index.projects) ? index.projects : [];
+    const collaborators = Array.isArray(index.collaborators) ? index.collaborators : [];
 
     if (kind === "overview") {
       const countsBySection = {};
@@ -539,84 +1098,135 @@ export function createWorker({
         countsBySection[key] = (countsBySection[key] || 0) + 1;
       }
       return {
-        ok: true,
-        index_version: index.version ?? "unknown",
-        site: index.site ?? { title: "Xule Lin", url: siteOrigin },
-        counts: {
-          pages_total: pages.length,
-          by_section: countsBySection,
-          concepts: concepts.length,
-          publications: publications.length,
-          projects: projects.length,
+        payload: {
+          ok: true,
+          index_version: index.version ?? "unknown",
+          build_head: buildHead,
+          site: index.site ?? { title: "Xule Lin", url: siteOrigin },
+          counts: {
+            pages_total: pages.length,
+            by_section: countsBySection,
+            concepts: concepts.length,
+            publications: publications.length,
+            projects: projects.length,
+            collaborators: collaborators.length,
+          },
+          static_markdown_pages: Object.values(STATIC_MARKDOWN_TWINS).map((entry) => ({
+            path: entry.canonicalPath,
+            markdown_url: `${siteOrigin}${entry.mdPath}`,
+            title: entry.title,
+          })),
+          ...(section
+            ? {
+                pages: pages
+                  .filter((p) => p.section === section)
+                  .slice(0, limit)
+                  .map((p) => ({
+                    path: p.url,
+                    title: p.title,
+                    section: p.section,
+                    ...(p.date ? { date: p.date } : {}),
+                    markdown_url: `${siteOrigin}${p.url_md}`,
+                  })),
+              }
+            : {}),
         },
-        static_markdown_pages: Object.values(STATIC_MARKDOWN_TWINS).map((entry) => ({
-          path: entry.canonicalPath,
-          markdown_url: `${siteOrigin}${entry.mdPath}`,
-          title: entry.title,
-        })),
-        ...(section
-          ? {
-              pages: pages
-                .filter((p) => p.section === section)
-                .slice(0, limit)
-                .map((p) => ({
-                  path: p.url,
-                  title: p.title,
-                  section: p.section,
-                  date: p.date,
-                  markdown_url: `${siteOrigin}${p.url_md}`,
-                })),
-            }
-          : {}),
+        buildHead,
       };
     }
 
     if (kind === "pages") {
-      const filtered = section ? pages.filter((p) => p.section === section) : pages;
+      let filtered = section ? pages.filter((p) => p.section === section) : pages;
+      if (collaborator) {
+        filtered = filtered.filter((p) =>
+          matchesCollaboratorFilter(collaborator, [
+            p.authors,
+            p.prompter,
+            p.generator,
+            p.creator,
+            p.speakers,
+          ]),
+        );
+      }
       return {
-        ok: true,
-        index_version: index.version ?? "unknown",
-        kind,
-        ...(section ? { section } : {}),
-        total: filtered.length,
-        items: filtered.slice(0, limit).map((p) => ({
-          path: p.url,
-          url: `${siteOrigin}${p.url}`,
-          markdown_url: `${siteOrigin}${p.url_md}`,
-          title: p.title,
-          section: p.section,
-          ...(p.date ? { date: p.date } : {}),
-          ...(p.summary ? { summary: p.summary } : {}),
-        })),
+        payload: {
+          ok: true,
+          index_version: index.version ?? "unknown",
+          build_head: buildHead,
+          kind,
+          ...(section ? { section } : {}),
+          ...(collaborator ? { collaborator: collaborator.trim() } : {}),
+          total: filtered.length,
+          items: filtered.slice(0, limit).map((p) => ({
+            path: p.url,
+            url: `${siteOrigin}${p.url}`,
+            markdown_url: `${siteOrigin}${p.url_md}`,
+            title: p.title,
+            section: p.section,
+            ...(p.date ? { date: p.date } : {}),
+            ...(p.summary ? { summary: p.summary } : {}),
+          })),
+        },
+        buildHead,
       };
     }
 
     if (kind === "concepts") {
       return {
-        ok: true,
-        index_version: index.version ?? "unknown",
-        kind,
-        total: concepts.length,
-        items: concepts.slice(0, limit),
+        payload: {
+          ok: true,
+          index_version: index.version ?? "unknown",
+          build_head: buildHead,
+          kind,
+          total: concepts.length,
+          items: concepts.slice(0, limit),
+        },
+        buildHead,
       };
     }
 
     if (kind === "publications") {
       return {
-        ok: true,
-        index_version: index.version ?? "unknown",
-        kind,
-        total: publications.length,
-        items: publications.slice(0, limit),
+        payload: {
+          ok: true,
+          index_version: index.version ?? "unknown",
+          build_head: buildHead,
+          kind,
+          total: publications.length,
+          items: publications.slice(0, limit),
+        },
+        buildHead,
+      };
+    }
+
+    if (kind === "collaborators") {
+      const filtered = collaborator
+        ? collaborators.filter((c) => matchesCollaboratorFilter(collaborator, [collaboratorStrings(c)]))
+        : collaborators;
+      return {
+        payload: {
+          ok: true,
+          index_version: index.version ?? "unknown",
+          build_head: buildHead,
+          kind,
+          ...(collaborator ? { collaborator: collaborator.trim() } : {}),
+          total: filtered.length,
+          items: filtered.slice(0, limit),
+        },
+        buildHead,
       };
     }
 
     return {
-      ok: true,
-      index_version: index.version ?? "unknown",
-      kind: "projects",
-      total: projects.length,
-      items: projects.slice(0, limit),
+      payload: {
+        ok: true,
+        index_version: index.version ?? "unknown",
+        build_head: buildHead,
+        kind: "projects",
+        total: projects.length,
+        items: projects.slice(0, limit),
+      },
+      buildHead,
     };
   }
 
@@ -632,61 +1242,108 @@ export function createWorker({
     }
 
     const resolved = await resolveAllowlistedTarget(args.path, siteOrigin);
+    const cachedIndex = indexCache.get(siteOrigin);
+    let buildHead =
+      cachedIndex && cachedIndex.expiresAt > Date.now()
+        ? cachedIndex.data.buildHead
+        : null;
+
     if (!resolved) {
       return {
-        ok: false,
-        code: "NOT_FOUND",
-        message: "No public Markdown twin exists at that path on linxule.com. Use `search_site` or `list_site` to find valid page paths.",
+        payload: {
+          ok: false,
+          code: "NOT_FOUND",
+          ...(buildHead ? { build_head: buildHead } : {}),
+          message:
+            "No public Markdown twin exists at that path on linxule.com. Use `search_site` or `list_site` to find valid page paths.",
+        },
+        buildHead,
       };
     }
 
-    const upstream = await fetchOriginBytes(
-      siteOrigin,
-      resolved.mdPath,
-      `${resolved.mimeType}, text/plain;q=0.9`,
-    );
-    if (upstream.status === 404) {
+    if (!buildHead) {
+      const indexRecord = await loadSiteIndex(siteOrigin).catch(() => null);
+      buildHead = indexRecord?.buildHead ?? (await loadManifestBuildHead(siteOrigin)) ?? "unknown";
+    }
+
+    const acceptHeader =
+      resolved.mimeType === "text/plain"
+        ? "text/plain"
+        : `${resolved.mimeType}, text/plain;q=0.9`;
+
+    let fetched;
+    if (HOT_STATIC_PATHS.has(resolved.mdPath)) {
+      fetched = await fetchCachedOriginText(siteOrigin, resolved.mdPath, acceptHeader);
+    } else {
+      const upstream = await fetchOriginBytes(siteOrigin, resolved.mdPath, acceptHeader);
+      if (upstream.status !== 200) {
+        fetched = { status: upstream.status };
+      } else {
+        fetched = {
+          status: 200,
+          utf8Bytes: upstream.bytes.byteLength,
+          sha256: await sha256Hex(upstream.bytes),
+          text: TEXT_DECODER.decode(upstream.bytes),
+        };
+      }
+    }
+
+    if (fetched.status === 404) {
       return {
-        ok: false,
-        code: "NOT_FOUND",
-        message: `Markdown twin ${resolved.mdPath} was not found upstream.`,
+        payload: {
+          ok: false,
+          code: "NOT_FOUND",
+          build_head: buildHead,
+          message: `Markdown twin ${resolved.mdPath} was not found upstream.`,
+        },
+        buildHead,
       };
     }
-    if (upstream.status === 413) {
+    if (fetched.status === 413) {
       return {
-        ok: false,
-        code: "PAGE_TOO_LARGE",
-        markdown_url: `${siteOrigin}${resolved.mdPath}`,
+        payload: {
+          ok: false,
+          code: "PAGE_TOO_LARGE",
+          build_head: buildHead,
+          markdown_url: `${siteOrigin}${resolved.mdPath}`,
+        },
+        buildHead,
       };
     }
 
-    const sha256 = await sha256Hex(upstream.bytes);
     const canonicalUrl = `${siteOrigin}${resolved.canonicalPath}`;
     const markdownUrl = `${siteOrigin}${resolved.mdPath}`;
 
-    if (args.expected_sha256 && args.expected_sha256 !== sha256) {
+    if (args.expected_sha256 && args.expected_sha256 !== fetched.sha256) {
       return {
-        ok: false,
-        code: "CONTENT_CHANGED",
-        canonical_url: canonicalUrl,
-        markdown_url: markdownUrl,
-        sha256,
+        payload: {
+          ok: false,
+          code: "CONTENT_CHANGED",
+          build_head: buildHead,
+          canonical_url: canonicalUrl,
+          markdown_url: markdownUrl,
+          sha256: fetched.sha256,
+        },
+        buildHead,
       };
     }
 
-    const markdown = new TextDecoder().decode(upstream.bytes);
     return {
-      ok: true,
-      title: resolved.title,
-      section: resolved.section,
-      canonical_url: canonicalUrl,
-      markdown_url: markdownUrl,
-      ...(resolved.date ? { date: resolved.date } : {}),
-      ...(resolved.authors?.length ? { authors: resolved.authors } : {}),
-      sha256,
-      utf8_bytes: upstream.bytes.byteLength,
-      attribution: attributionForSection(resolved.section, canonicalUrl),
-      markdown,
+      payload: {
+        ok: true,
+        title: resolved.title,
+        section: resolved.section,
+        canonical_url: canonicalUrl,
+        markdown_url: markdownUrl,
+        ...(resolved.date ? { date: resolved.date } : {}),
+        ...(resolved.authors?.length ? { authors: resolved.authors } : {}),
+        sha256: fetched.sha256,
+        build_head: buildHead,
+        utf8_bytes: fetched.utf8Bytes,
+        attribution: attributionForSection(resolved.section, canonicalUrl),
+        markdown: fetched.text,
+      },
+      buildHead,
     };
   }
 
@@ -696,49 +1353,75 @@ export function createWorker({
     }
 
     if (uri === "linxule://site-index") {
-      const { rawText } = await loadSiteIndex(siteOrigin);
+      const { rawText, sha256, buildHead } = await loadSiteIndex(siteOrigin);
       return {
-        contents: [
-          {
-            uri,
-            mimeType: "application/json",
-            text: rawText,
+        result: {
+          contents: [
+            {
+              uri,
+              mimeType: "application/json",
+              text: rawText,
+            },
+          ],
+          _meta: {
+            sha256,
+            canonical_url: `${siteOrigin}/site-index.json`,
+            build_head: buildHead,
           },
-        ],
+        },
+        buildHead,
       };
     }
 
     if (uri === "linxule://llms.txt") {
-      const page = await runReadPage({ path: "/llms.txt" }, siteOrigin);
+      const { payload: page, buildHead } = await runReadPage({ path: "/llms.txt" }, siteOrigin);
       if (!page.ok) throw new JsonRpcError(-32002, page.message || "Resource not found");
       return {
-        contents: [
-          {
-            uri,
-            mimeType: "text/plain",
-            text: page.markdown,
+        result: {
+          contents: [
+            {
+              uri,
+              mimeType: "text/plain",
+              text: page.markdown,
+            },
+          ],
+          _meta: {
+            sha256: page.sha256,
+            canonical_url: page.canonical_url,
+            build_head: buildHead || page.build_head,
           },
-        ],
+        },
+        buildHead: buildHead || page.build_head,
       };
     }
 
     if (uri.startsWith("linxule://pages/")) {
-      const slug = uri.slice("linxule://pages/".length);
+      let slug = uri.slice("linxule://pages/".length);
+      if (slug.endsWith(".md")) {
+        slug = slug.slice(0, -3);
+      }
       if (!slug || !/^[a-zA-Z0-9/_-]+$/.test(slug) || slug.includes("..") || slug.includes("//")) {
         throw new JsonRpcError(-32602, "Invalid page resource URI");
       }
       const lookupPath = slug === "index" ? "/" : `/${slug}`;
-      const page = await runReadPage({ path: lookupPath }, siteOrigin);
+      const { payload: page, buildHead } = await runReadPage({ path: lookupPath }, siteOrigin);
       if (!page.ok) throw new JsonRpcError(-32002, page.message || "Resource not found");
       return {
-        contents: [
-          {
-            uri,
-            mimeType: "text/markdown",
-            text: page.markdown,
+        result: {
+          contents: [
+            {
+              uri,
+              mimeType: "text/markdown",
+              text: page.markdown,
+            },
+          ],
+          _meta: {
+            sha256: page.sha256,
+            canonical_url: page.canonical_url,
+            build_head: buildHead || page.build_head,
           },
-        ],
-        _meta: { sha256: page.sha256, canonical_url: page.canonical_url },
+        },
+        buildHead: buildHead || page.build_head,
       };
     }
 
@@ -749,7 +1432,10 @@ export function createWorker({
     if (!isPlainObject(params) || typeof params.name !== "string") {
       throw new JsonRpcError(-32602, "prompts/get requires a prompt `name`");
     }
-    if (params.arguments !== undefined && (!isPlainObject(params.arguments) || Object.keys(params.arguments).length > 0)) {
+    if (
+      params.arguments !== undefined &&
+      (!isPlainObject(params.arguments) || Object.keys(params.arguments).length > 0)
+    ) {
       throw new JsonRpcError(-32602, "This prompt takes no arguments");
     }
     const promptMeta = MCP_PROMPTS.find((entry) => entry.name === params.name);
@@ -757,48 +1443,82 @@ export function createWorker({
       throw new JsonRpcError(-32602, `Unknown prompt "${params.name}"`);
     }
 
-    const skillPage = await runReadPage(
-      { path: "/.well-known/agent-skills/xule-research-navigation/SKILL.md" },
-      siteOrigin,
-    );
+    if (params.name === "enter-the-work") {
+      const { index, buildHead } = await loadSiteIndex(siteOrigin);
+      const text = buildEnterTheWorkPrompt(index, siteOrigin);
+      const sha256 = await sha256Hex(TEXT_ENCODER.encode(text));
+      return {
+        result: {
+          description: promptMeta.description,
+          messages: [
+            {
+              role: "user",
+              content: {
+                type: "text",
+                text,
+              },
+            },
+          ],
+          _meta: {
+            sha256,
+            canonical_url: `${siteOrigin}/thinking`,
+            build_head: buildHead,
+          },
+        },
+        buildHead,
+      };
+    }
+
+    const { payload: skillPage, buildHead } = await runReadPage({ path: SKILL_PATH }, siteOrigin);
     if (!skillPage.ok) {
       throw new Error("SKILL_UNAVAILABLE");
     }
     return {
-      description: promptMeta.description,
-      messages: [
-        {
-          role: "user",
-          content: {
-            type: "text",
-            text: skillPage.markdown,
+      result: {
+        description: promptMeta.description,
+        messages: [
+          {
+            role: "user",
+            content: {
+              type: "text",
+              text: skillPage.markdown,
+            },
           },
+        ],
+        _meta: {
+          sha256: skillPage.sha256,
+          canonical_url: skillPage.canonical_url,
+          build_head: buildHead || skillPage.build_head,
         },
-      ],
-      _meta: { sha256: skillPage.sha256 },
+      },
+      buildHead: buildHead || skillPage.build_head,
     };
   }
 
   async function dispatchRpcMessage(msg, siteOrigin) {
     if (!isPlainObject(msg) || msg.jsonrpc !== "2.0") {
       return {
-        jsonrpc: "2.0",
-        id:
-          isPlainObject(msg) &&
-          Object.prototype.hasOwnProperty.call(msg, "id") &&
-          isValidRpcId(msg.id)
-            ? msg.id
-            : null,
-        error: { code: -32600, message: "Invalid Request" },
+        response: {
+          jsonrpc: "2.0",
+          id:
+            isPlainObject(msg) &&
+            Object.prototype.hasOwnProperty.call(msg, "id") &&
+            isValidRpcId(msg.id)
+              ? msg.id
+              : null,
+          error: { code: -32600, message: "Invalid Request" },
+        },
       };
     }
 
     const hasId = Object.prototype.hasOwnProperty.call(msg, "id");
     if (hasId && !isValidRpcId(msg.id)) {
       return {
-        jsonrpc: "2.0",
-        id: null,
-        error: { code: -32600, message: "Invalid Request: id must be string, number, or null" },
+        response: {
+          jsonrpc: "2.0",
+          id: null,
+          error: { code: -32600, message: "Invalid Request: id must be string, number, or null" },
+        },
       };
     }
 
@@ -806,19 +1526,23 @@ export function createWorker({
     if (!hasId) {
       if (typeof msg.method !== "string") {
         return {
-          jsonrpc: "2.0",
-          id: null,
-          error: { code: -32600, message: "Invalid Request" },
+          response: {
+            jsonrpc: "2.0",
+            id: null,
+            error: { code: -32600, message: "Invalid Request" },
+          },
         };
       }
-      return null;
+      return { response: null };
     }
 
     if (typeof msg.method !== "string") {
       return {
-        jsonrpc: "2.0",
-        id: msg.id,
-        error: { code: -32600, message: "Invalid Request: missing method" },
+        response: {
+          jsonrpc: "2.0",
+          id: msg.id,
+          error: { code: -32600, message: "Invalid Request: missing method" },
+        },
       };
     }
 
@@ -833,42 +1557,46 @@ export function createWorker({
             ? requestedVersion
             : DEFAULT_PROTOCOL;
           return {
-            jsonrpc: "2.0",
-            id,
-            result: {
-              protocolVersion: negotiated,
-              capabilities: {
-                tools: { ...MCP_CAPABILITIES.tools },
-                prompts: { ...MCP_CAPABILITIES.prompts },
-                resources: { ...MCP_CAPABILITIES.resources },
+            response: {
+              jsonrpc: "2.0",
+              id,
+              result: {
+                protocolVersion: negotiated,
+                capabilities: {
+                  tools: { ...MCP_CAPABILITIES.tools },
+                  prompts: { ...MCP_CAPABILITIES.prompts },
+                  resources: { ...MCP_CAPABILITIES.resources },
+                },
+                serverInfo: {
+                  name: MCP_SERVER_INFO.name,
+                  title: MCP_SERVER_INFO.title,
+                  version: MCP_SERVER_INFO.version,
+                },
+                instructions: MCP_INSTRUCTIONS,
               },
-              serverInfo: {
-                name: MCP_SERVER_INFO.name,
-                title: MCP_SERVER_INFO.title,
-                version: MCP_SERVER_INFO.version,
-              },
-              instructions: MCP_INSTRUCTIONS,
             },
           };
         }
 
         case "ping":
           requireObjectParams(msg.params);
-          return { jsonrpc: "2.0", id, result: {} };
+          return { response: { jsonrpc: "2.0", id, result: {} } };
 
         case "tools/list":
           requireObjectParams(msg.params);
           return {
-            jsonrpc: "2.0",
-            id,
-            result: {
-              tools: MCP_TOOLS.map((tool) => ({
-                name: tool.name,
-                title: tool.title,
-                description: tool.description,
-                inputSchema: tool.inputSchema,
-                annotations: { ...tool.annotations },
-              })),
+            response: {
+              jsonrpc: "2.0",
+              id,
+              result: {
+                tools: MCP_TOOLS.map((tool) => ({
+                  name: tool.name,
+                  title: tool.title,
+                  description: tool.description,
+                  inputSchema: tool.inputSchema,
+                  annotations: { ...tool.annotations },
+                })),
+              },
             },
           };
 
@@ -878,23 +1606,33 @@ export function createWorker({
             throw new JsonRpcError(-32602, "tools/call requires `name`");
           }
           const toolArgs = params.arguments === undefined ? {} : params.arguments;
-          let payload;
+          let outcome;
           if (params.name === "search_site") {
-            payload = await runSearchSite(toolArgs, siteOrigin);
+            outcome = await runSearchSite(toolArgs, siteOrigin);
           } else if (params.name === "list_site") {
-            payload = await runListSite(toolArgs, siteOrigin);
+            outcome = await runListSite(toolArgs, siteOrigin);
           } else if (params.name === "read_page") {
-            payload = await runReadPage(toolArgs, siteOrigin);
+            outcome = await runReadPage(toolArgs, siteOrigin);
           } else {
             throw new JsonRpcError(-32602, `Unknown tool "${params.name}"`);
           }
+          const { payload, buildHead } = outcome;
+          const meta = {
+            ...(buildHead ? { build_head: buildHead } : {}),
+            ...(payload.sha256 ? { sha256: payload.sha256 } : {}),
+            ...(payload.canonical_url ? { canonical_url: payload.canonical_url } : {}),
+          };
           return {
-            jsonrpc: "2.0",
-            id,
-            result: {
-              content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
-              structuredContent: payload,
-              ...(payload.ok ? {} : { isError: true }),
+            buildHead,
+            response: {
+              jsonrpc: "2.0",
+              id,
+              result: {
+                content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+                structuredContent: payload,
+                ...(Object.keys(meta).length ? { _meta: meta } : {}),
+                ...(payload.ok ? {} : { isError: true }),
+              },
             },
           };
         }
@@ -902,20 +1640,24 @@ export function createWorker({
         case "resources/list":
           requireObjectParams(msg.params);
           return {
-            jsonrpc: "2.0",
-            id,
-            result: {
-              resources: [...MCP_STATIC_RESOURCES],
+            response: {
+              jsonrpc: "2.0",
+              id,
+              result: {
+                resources: [...MCP_STATIC_RESOURCES],
+              },
             },
           };
 
         case "resources/templates/list":
           requireObjectParams(msg.params);
           return {
-            jsonrpc: "2.0",
-            id,
-            result: {
-              resourceTemplates: [...MCP_RESOURCE_TEMPLATES],
+            response: {
+              jsonrpc: "2.0",
+              id,
+              result: {
+                resourceTemplates: [...MCP_RESOURCE_TEMPLATES],
+              },
             },
           };
 
@@ -924,45 +1666,53 @@ export function createWorker({
           if (typeof params.uri !== "string") {
             throw new JsonRpcError(-32602, "resources/read requires `uri`");
           }
-          const result = await runReadResource(params.uri, siteOrigin);
-          return { jsonrpc: "2.0", id, result };
+          const { result, buildHead } = await runReadResource(params.uri, siteOrigin);
+          return { buildHead, response: { jsonrpc: "2.0", id, result } };
         }
 
         case "prompts/list":
           requireObjectParams(msg.params);
           return {
-            jsonrpc: "2.0",
-            id,
-            result: {
-              prompts: [...MCP_PROMPTS],
+            response: {
+              jsonrpc: "2.0",
+              id,
+              result: {
+                prompts: [...MCP_PROMPTS],
+              },
             },
           };
 
         case "prompts/get": {
           const params = requireObjectParams(msg.params);
-          const result = await runGetPrompt(params, siteOrigin);
-          return { jsonrpc: "2.0", id, result };
+          const { result, buildHead } = await runGetPrompt(params, siteOrigin);
+          return { buildHead, response: { jsonrpc: "2.0", id, result } };
         }
 
         default:
           return {
-            jsonrpc: "2.0",
-            id,
-            error: { code: -32601, message: `Method not found: ${msg.method}` },
+            response: {
+              jsonrpc: "2.0",
+              id,
+              error: { code: -32601, message: `Method not found: ${msg.method}` },
+            },
           };
       }
     } catch (error) {
       if (error instanceof JsonRpcError) {
         return {
-          jsonrpc: "2.0",
-          id,
-          error: { code: error.code, message: error.message },
+          response: {
+            jsonrpc: "2.0",
+            id,
+            error: { code: error.code, message: error.message },
+          },
         };
       }
       return {
-        jsonrpc: "2.0",
-        id,
-        error: { code: -32603, message: "Internal error while reading upstream content" },
+        response: {
+          jsonrpc: "2.0",
+          id,
+          error: { code: -32603, message: "Internal error while reading upstream content" },
+        },
       };
     }
   }
@@ -972,55 +1722,78 @@ export function createWorker({
       const url = new URL(request.url);
       const siteOrigin = String(env.SITE_ORIGIN || "https://linxule.com").replace(/\/$/, "");
       const mcpEnabled = (env.MCP_ENABLED ?? "1") === "1";
+      const isHead = request.method === "HEAD";
 
-      const plainError = (status, text, extraHeaders = {}) =>
-        new Response(text, {
+      const plainError = (status, text, allowMethods, extraHeaders = {}) =>
+        new Response(isHead ? null : text, {
           status,
           headers: {
             "Content-Type": "text/plain; charset=utf-8",
             "Cache-Control": "no-store",
-            ...BASE_CORS_HEADERS,
+            ...corsHeadersFor(allowMethods),
             ...extraHeaders,
           },
         });
 
+      const jsonResponse = (status, payload, allowMethods, extraHeaders = {}) => {
+        const body = JSON.stringify(payload);
+        return new Response(isHead ? null : body, {
+          status,
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Cache-Control": "no-store",
+            ...corsHeadersFor(allowMethods),
+            ...extraHeaders,
+          },
+        });
+      };
+
       // 1. SEP-2127 Server Card at `/mcp/server-card`
       if (url.pathname === MCP_SERVER_CARD_PATH && !url.search && !url.hash) {
-        if (!allowedHost(request, env)) return plainError(403, "Forbidden");
-        if (!mcpEnabled) return plainError(503, "MCP unavailable; use /llms.txt");
+        const cardMethods = "GET, HEAD, OPTIONS";
+        if (!allowedHost(request, env)) return plainError(403, "Forbidden", cardMethods);
+        if (!mcpEnabled) return plainError(503, "MCP unavailable; use /llms.txt", cardMethods);
         if (request.method === "OPTIONS") {
-          return new Response(null, { status: 204, headers: BASE_CORS_HEADERS });
+          return new Response(null, { status: 204, headers: corsHeadersFor(cardMethods) });
         }
-        if (request.method === "GET") {
-          return new Response(JSON.stringify(buildMcpServerCard(siteOrigin)), {
+        if (request.method === "GET" || request.method === "HEAD") {
+          const cardBody = JSON.stringify(buildMcpServerCard(siteOrigin));
+          const cardBytes = TEXT_ENCODER.encode(cardBody);
+          const buildHead = await resolveBuildHead(siteOrigin, env);
+          const headers = {
+            "Content-Type": "application/mcp-server-card+json; charset=utf-8",
+            "Content-Length": String(cardBytes.byteLength),
+            "Cache-Control": "public, max-age=3600",
+            Allow: cardMethods,
+            ...corsHeadersFor(cardMethods),
+            ...(buildHead ? { "X-Linxule-Build": buildHead } : {}),
+          };
+          return new Response(isHead ? null : cardBytes, {
             status: 200,
-            headers: {
-              "Content-Type": "application/mcp-server-card+json; charset=utf-8",
-              "Cache-Control": "public, max-age=3600",
-              ...BASE_CORS_HEADERS,
-            },
+            headers,
           });
         }
-        return plainError(405, "Method not allowed", { Allow: "GET, OPTIONS" });
+        return plainError(405, "Method not allowed", cardMethods, { Allow: cardMethods });
       }
 
       // 2. Streamable HTTP MCP endpoint at `/mcp` and `/mcp/`
+      const mcpMethods = "POST, OPTIONS";
       if (![MCP_ENDPOINT_PATH, `${MCP_ENDPOINT_PATH}/`].includes(url.pathname) || url.search || url.hash) {
-        return plainError(404, "Not found");
+        return plainError(404, "Not found", "GET, HEAD, POST, OPTIONS");
       }
-      if (!allowedHost(request, env)) return plainError(403, "Forbidden");
-      if (!mcpEnabled) return plainError(503, "MCP unavailable; use /llms.txt");
+      if (!allowedHost(request, env)) return plainError(403, "Forbidden", mcpMethods);
+      if (!mcpEnabled) return plainError(503, "MCP unavailable; use /llms.txt", mcpMethods);
 
       if (request.method === "OPTIONS") {
-        return new Response(null, { status: 204, headers: BASE_CORS_HEADERS });
+        return new Response(null, { status: 204, headers: corsHeadersFor(mcpMethods) });
       }
       if (request.method !== "POST") {
-        return plainError(405, "Method not allowed", { Allow: "POST, OPTIONS" });
+        return plainError(405, "Method not allowed", mcpMethods, { Allow: mcpMethods });
       }
 
       const contentType = request.headers.get("content-type") || "";
       if (!/^application\/json\b/i.test(contentType)) {
-        return plainError(415, "Unsupported Media Type: expected application/json");
+        return plainError(415, "Unsupported Media Type: expected application/json", mcpMethods);
       }
 
       let rawBytes;
@@ -1030,57 +1803,47 @@ export function createWorker({
         const reason = cause instanceof Error ? cause.message : "";
         const status =
           reason === "TOO_LARGE" ? 413 : reason === "TIMEOUT" ? 408 : reason === "ABORTED" ? 499 : 400;
-        return plainError(status, "Request refused");
+        return plainError(status, "Request refused", mcpMethods);
       }
 
       let parsed;
       try {
-        parsed = JSON.parse(new TextDecoder().decode(rawBytes));
+        parsed = JSON.parse(TEXT_DECODER.decode(rawBytes));
       } catch {
-        return new Response(
-          JSON.stringify({
+        return jsonResponse(
+          400,
+          {
             jsonrpc: "2.0",
             id: null,
             error: { code: -32700, message: "Parse error" },
-          }),
-          {
-            status: 400,
-            headers: {
-              "Content-Type": "application/json; charset=utf-8",
-              "Cache-Control": "no-store",
-              ...BASE_CORS_HEADERS,
-            },
           },
+          mcpMethods,
         );
       }
 
       const headerVersion = request.headers.get("mcp-protocol-version");
       if (headerVersion !== null && !MCP_SUPPORTED_PROTOCOLS.includes(headerVersion)) {
-        return plainError(400, "Unsupported MCP-Protocol-Version");
+        return plainError(400, "Unsupported MCP-Protocol-Version", mcpMethods);
       }
       const activeProtocol = headerVersion ?? DEFAULT_PROTOCOL;
 
       if (Array.isArray(parsed)) {
         if (parsed.length === 0 || parsed.length > 20) {
-          return new Response(
-            JSON.stringify({
+          return jsonResponse(
+            400,
+            {
               jsonrpc: "2.0",
               id: null,
               error: { code: -32600, message: "Invalid Request: batch size must be 1..20" },
-            }),
-            {
-              status: 400,
-              headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Cache-Control": "no-store",
-                ...BASE_CORS_HEADERS,
-              },
             },
+            mcpMethods,
           );
         }
-        const results = (
-          await Promise.all(parsed.map((item) => dispatchRpcMessage(item, siteOrigin)))
-        ).filter((item) => item !== null);
+        const outcomes = await Promise.all(parsed.map((item) => dispatchRpcMessage(item, siteOrigin)));
+        const results = outcomes.map((o) => o.response).filter((item) => item !== null);
+        const batchBuildHead =
+          outcomes.find((o) => o.buildHead)?.buildHead ||
+          (typeof env.BUILD_HEAD === "string" && env.BUILD_HEAD.trim() ? env.BUILD_HEAD.trim() : null);
 
         if (results.length === 0) {
           return new Response(null, {
@@ -1088,42 +1851,38 @@ export function createWorker({
             headers: {
               "Cache-Control": "no-store",
               "MCP-Protocol-Version": activeProtocol,
-              ...BASE_CORS_HEADERS,
+              ...corsHeadersFor(mcpMethods),
+              ...(batchBuildHead ? { "X-Linxule-Build": batchBuildHead } : {}),
             },
           });
         }
-        return new Response(JSON.stringify(results), {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-            "Cache-Control": "no-store",
-            "MCP-Protocol-Version": activeProtocol,
-            ...BASE_CORS_HEADERS,
-          },
+        return jsonResponse(200, results, mcpMethods, {
+          "MCP-Protocol-Version": activeProtocol,
+          ...(batchBuildHead ? { "X-Linxule-Build": batchBuildHead } : {}),
         });
       }
 
-      const single = await dispatchRpcMessage(parsed, siteOrigin);
-      if (single === null) {
+      const outcome = await dispatchRpcMessage(parsed, siteOrigin);
+      const buildHead =
+        outcome.buildHead ||
+        (typeof env.BUILD_HEAD === "string" && env.BUILD_HEAD.trim() ? env.BUILD_HEAD.trim() : null);
+
+      if (outcome.response === null) {
         return new Response(null, {
           status: 202,
           headers: {
             "Cache-Control": "no-store",
             "MCP-Protocol-Version": activeProtocol,
-            ...BASE_CORS_HEADERS,
+            ...corsHeadersFor(mcpMethods),
+            ...(buildHead ? { "X-Linxule-Build": buildHead } : {}),
           },
         });
       }
 
-      const negotiatedVersion = single?.result?.protocolVersion ?? activeProtocol;
-      return new Response(JSON.stringify(single), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-store",
-          "MCP-Protocol-Version": negotiatedVersion,
-          ...BASE_CORS_HEADERS,
-        },
+      const negotiatedVersion = outcome.response?.result?.protocolVersion ?? activeProtocol;
+      return jsonResponse(200, outcome.response, mcpMethods, {
+        "MCP-Protocol-Version": negotiatedVersion,
+        ...(buildHead ? { "X-Linxule-Build": buildHead } : {}),
       });
     },
   };

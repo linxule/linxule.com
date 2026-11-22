@@ -8,13 +8,19 @@ seoDescription: "AI-augmented qualitative research — the Imperial systematic r
 description: "Materials and"
 accident: "invitations"
 
+thesis_continued:
+  - "Cases built to be played through,"
+  - "methods built to be carried out of the room."
+
 items:
-  - label: "Simulation"
+  - plate: "I"
+    label: "Simulation"
     title: "MakerDAO Teaching Case"
     url: "https://makerdao.daogov.info/"
     description: "A simulation exploring coordination failure, fork dynamics, and emergent governance. What happens when code is constitution and tokens are voice."
 
-  - label: "Methods"
+  - plate: "II"
+    label: "Methods"
     title: "Research Memex"
     url: "https://research-memex.org"
     description: "Framework for human-AI research collaboration. Co-developed with Claude models for the Systematic Reviews course at Imperial—documentation of AI-augmented research workflows."

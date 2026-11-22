@@ -6,11 +6,20 @@
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/((?!_vercel|api|cdn-cgi|assets|writing/attachments|pagefind).*)",
       "headers": [
         {
           "key": "Link",
-          "value": "</llms.txt>; rel=\"service-doc\"; type=\"text/plain\", </.well-known/api-catalog>; rel=\"api-catalog\", </site-index.json>; rel=\"describedby\"; type=\"application/json\", </sitemap.xml>; rel=\"sitemap\"; type=\"application/xml\", </llms.txt>; rel=\"llms-txt\", </.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\", </.well-known/ai-catalog.json>; rel=\"ai-catalog\"; type=\"application/json\", </.well-known/mcp/server-card.json>; rel=\"service-desc\"; type=\"application/json\""
+          "value": "</llms.txt>; rel=\"service-doc\"; type=\"text/plain\", </connect.md>; rel=\"service-doc\"; type=\"text/markdown\", </.well-known/api-catalog>; rel=\"api-catalog\"; type=\"application/linkset+json\", </site-index.json>; rel=\"describedby\"; type=\"application/json\", </sitemap.xml>; rel=\"sitemap\"; type=\"application/xml\", </llms.txt>; rel=\"llms-txt\"; type=\"text/plain\", </.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\", </.well-known/ai-catalog.json>; rel=\"ai-catalog\"; type=\"application/json\", </.well-known/mcp/server-card.json>; rel=\"service-desc\"; type=\"application/json\""
+        }
+      ]
+    },
+    {
+      "source": "/feed.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/atom+xml; charset=utf-8"
         }
       ]
     },
@@ -122,18 +131,11 @@
       ]
     },
     {
-      "source": "/((?!_vercel|api|cdn-cgi).*)",
-      "has": [
-        {
-          "type": "header",
-          "key": "Accept",
-          "value": ".*text/(html|markdown).*"
-        }
-      ],
+      "source": "/((?!_vercel|api|cdn-cgi|assets|writing/attachments|pagefind).*)",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, s-maxage=60, stale-while-revalidate=600"
+          "value": "public, max-age=0, s-maxage=300, stale-while-revalidate=3600"
         },
         {
           "key": "Vary",

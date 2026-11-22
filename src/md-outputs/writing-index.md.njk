@@ -7,7 +7,7 @@ eleventyExcludeFromCollections: true
 All posts grouped by series.
 
 {% for series in collections.writingBySeries %}
-## {{ series.name }}
+## {{ series.name | safe }}
 
 {% for post in series.items %}- [{{ post.data.title | safe }}](https://linxule.com/writing/{{ post.fileSlug }}.md){% if post.data.accident %} *(accident)*{% endif %} — {{ post.date | readableDate }}{% if post.data.subtitle %} · *{{ post.data.subtitle | safe }}*{% endif %}{% if post.data.authors %} · {{ post.data.authors | join(", ") | safe }}{% endif %}{% if post.data.keywords %} · Keywords: {{ post.data.keywords | join(", ") | safe }}{% endif %}
 {% endfor %}
@@ -15,4 +15,4 @@ All posts grouped by series.
 
 ---
 
-*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/writing/*
+*This file is one rendering. The HTML surface is another. The source remains: https://linxule.com/writing*

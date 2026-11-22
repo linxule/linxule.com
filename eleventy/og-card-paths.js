@@ -1,4 +1,6 @@
 /** Shared social-card paths and visible copy, used by templates and generator. */
+import seriesCatalog from "../src/_data/seriesCatalog.js";
+
 export const OG_CARDS_DIR = "/assets/og-cards";
 export const AUTO_DIR = `${OG_CARDS_DIR}/auto`;
 // Existing assets stay available: their URLs are cached for a year, immutable.
@@ -22,17 +24,9 @@ export const SECTION_CARDS = {
   cv: ["Organization scholar and", "human–AI collaboration researcher."],
   papers: ["Published research and working papers", "on human–AI collaboration and organizing."],
 };
-export const SERIES_CARDS = {
-  loom: ["LOOM", "Human–AI collaboration in research"],
-  seam: ["SEAM", "Patterns rhyming across paradigms"],
-  "research-with-ai": ["Research with AI", "Building thinking partners"],
-  singles: ["Singles", "Standalone notes on the AI moment"],
-  "ai-whispers": ["AI Whispers", "Techniques for steering AI"],
-  "epistemic-voids": ["Epistemic Voids", "Gaps in AI discourse"],
-  "organizational-futures": ["Organizational Futures", "Coordination after AGI"],
-  thinking: ["Thinking", "Periodic notes from the work"],
-  archive: ["Archive", "Earlier tutorials and foundations"],
-};
+export const SERIES_CARDS = Object.fromEntries(
+  seriesCatalog.list.map((entry) => [entry.slug, [entry.name, entry.cardSubtitle]]),
+);
 const AUTO_LAYOUTS = new Set(["layouts/writing.njk", "layouts/artifact.njk", "layouts/talk.njk", "layouts/paper.njk"]);
 
 export function sectionCardPath(section) {

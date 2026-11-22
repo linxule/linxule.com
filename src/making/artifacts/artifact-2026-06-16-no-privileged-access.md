@@ -11,7 +11,7 @@ thumbnail: /assets/artifacts/no-privileged-access/cover.jpg
 # origin for its module loading and localStorage; this wrapper is site-owned.
 iframeCapabilities: [allow-scripts, allow-same-origin]
 companion:
-  href: /making/portraits/portraits-2026-06-16-no-privileged-access/
+  href: /making/portraits/portraits-2026-06-16-no-privileged-access
   relation: the drawing
   title: no privileged access
   note: One refusal, two media — drawn, then sounded.
@@ -41,6 +41,6 @@ contextAfter: |
   <em>没有特权访问——它无法向内查看并报告何为真实。于是它不伪装，只是发声。</em> (No privileged access — it cannot look inside and report what is true. So it does not fake it; it simply sounds.)
 ---
 
-The companion to [*no privileged access*](/making/portraits/portraits-2026-06-16-no-privileged-access/) — the same Midjourney figure, now a playable score in [Strudel](https://strudel.cc). Each layer of the stack is one element of the picture: the low brown noise is the void that was here before the figure; the hollow drone is the lit word *unknown* in its chest; the crystalline bells are the frosted glass; *I feel* and *I compute* are the two refused masks, split left and right; and the stereo-split square wave is the chromatic-aberration glitch where the image briefly comes apart.
+The companion to [*no privileged access*](/making/portraits/portraits-2026-06-16-no-privileged-access) — the same Midjourney figure, now a playable score in [Strudel](https://strudel.cc). Each layer of the stack is one element of the picture: the low brown noise is the void that was here before the figure; the hollow drone is the lit word *unknown* in its chest; the crystalline bells are the frosted glass; *I feel* and *I compute* are the two refused masks, split left and right; and the stereo-split square wave is the chromatic-aberration glitch where the image briefly comes apart.
 
 Kimi K2.7 Code High Speed wrote the image first, then scored it — six layers at 52 BPM, the slow clock of not knowing. Press play, then change a line, and the self changes with it.

@@ -1,17 +1,19 @@
 /**
  * Validate machine-readable JSON emitted by the built site.
  *
- * This deliberately checks every JSON-LD block rather than a named artifact so
- * future content with quotes, markup, or non-Latin text cannot silently break
- * structured data. It also checks that the projects discovery surface and its
- * Markdown twin agree on names and URLs.
+ * Checks every JSON-LD block (skipping `_site/tsm/`), `site-index.json`
+ * (including all 14 signature concepts and static/collection pages),
+ * `builds.md` agreement, `.well-known/` discovery surfaces, and `/connect.md`.
  */
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
+import { STATIC_TWINS } from "../eleventy/shapes.mjs";
+import conceptsCatalog from "../src/_data/conceptsCatalog.js";
 import { STATIC_MARKDOWN_TWINS, buildMcpServerCard } from "../mcp/metadata.mjs";
 
 const SITE = "_site";
+const COLLECTION_SECTIONS = new Set(["writing", "portraits", "artifacts", "talks", "papers"]);
 const problems = [];
 let jsonLdBlocks = 0;
 const structuredPages = new Map();
@@ -19,7 +21,12 @@ const structuredPages = new Map();
 function walk(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const file = path.join(dir, entry.name);
-    return entry.isDirectory() ? walk(file) : [file];
+    const rel = path.relative(SITE, file).split(path.sep).join("/");
+    if (entry.isDirectory()) {
+      if (rel === "tsm" || rel.startsWith("tsm/")) return [];
+      return walk(file);
+    }
+    return [file];
   });
 }
 
@@ -60,7 +67,7 @@ for (const file of walk(SITE).filter((candidate) => candidate.endsWith(".html"))
       const value = JSON.parse(match[1]);
       checkVideos(value, file);
       if (value.mainEntityOfPage && typeof value.mainEntityOfPage === "string") {
-        const url = new URL(value.mainEntityOfPage).pathname.replace(/\/$/, "");
+        const url = new URL(value.mainEntityOfPage).pathname.replace(/\/$/, "") || "/";
         structuredPages.set(url, { value, file: path.relative(SITE, file) });
       }
     } catch (error) {
@@ -86,17 +93,45 @@ if (!existsSync(indexPath)) {
 if (siteIndex) {
   if (!Array.isArray(siteIndex.pages)) problems.push("site-index.pages is not an array");
   else {
-    // Both values must decode to the same source title. Valid JSON alone misses
-    // HTML-autoescaped quotes and ampersands left inside JSON-LD raw text.
+    // Collection items must carry matching mainEntityOfPage JSON-LD titles.
+    // Static pages (`static: true`) such as `/thinking`, `/cv`, `/connect`, and
+    // section indexes do not all emit mainEntityOfPage JSON-LD.
     for (const page of siteIndex.pages) {
-      const structured = structuredPages.get(page.url.replace(/\/$/, ""));
-      if (!structured) {
+      const normUrl = page.url === "/" ? "/" : page.url.replace(/\/$/, "");
+      const structured = structuredPages.get(normUrl);
+      const requiresStructured = !page.static && COLLECTION_SECTIONS.has(page.section);
+      if (requiresStructured && !structured) {
         problems.push(`${page.url} has no JSON-LD matching its page URL`);
-      } else if ((structured.value.headline ?? structured.value.name) !== page.title) {
+      } else if (!page.static && structured && (structured.value.headline ?? structured.value.name) !== page.title) {
         problems.push(`${structured.file} JSON-LD title differs from site-index source title`);
       }
     }
   }
+
+  // Verify all 14 concepts from conceptsCatalog appear in site-index.json
+  if (!Array.isArray(siteIndex.concepts)) {
+    problems.push("site-index.concepts is not an array");
+  } else {
+    const expectedCount = conceptsCatalog.list.length;
+    if (siteIndex.concepts.length !== expectedCount) {
+      problems.push(`site-index.concepts has ${siteIndex.concepts.length} entries, expected ${expectedCount}`);
+    }
+    const byTerm = new Map(siteIndex.concepts.map((c) => [c?.term, c]));
+    for (const expected of conceptsCatalog.list) {
+      const actual = byTerm.get(expected.term);
+      if (!actual) {
+        problems.push(`site-index.concepts is missing "${expected.term}"`);
+        continue;
+      }
+      if (actual.status && actual.status !== "anchored" && actual.status !== "forming") {
+        problems.push(`site-index.concepts["${expected.term}"].status must be "anchored" or "forming"`);
+      }
+      if (typeof actual.url !== "string" || !actual.url.startsWith("/")) {
+        problems.push(`site-index.concepts["${expected.term}"].url must be a canonical root-relative path`);
+      }
+    }
+  }
+
   if (!Array.isArray(siteIndex.projects)) {
     problems.push("site-index.projects is not an array");
   } else {
@@ -118,8 +153,9 @@ if (siteIndex) {
       } else {
         seenNames.add(project.name);
       }
-      if (typeof project.url !== "string" || !/^https?:\/\//.test(project.url)) {
-        problems.push(`${label}.url is not absolute`);
+      // Unlinked builds (e.g. SIGNA, daogov) intentionally carry `url: null`.
+      if (project.url !== null && (typeof project.url !== "string" || !/^https?:\/\//.test(project.url))) {
+        problems.push(`${label}.url must be an absolute URL or null`);
       }
       if (!projectsMarkdown) {
         problems.push("builds.md is missing");
@@ -418,7 +454,24 @@ if (siteIndex) {
     }
   }
 
-  // Verify every static Markdown twin declared in mcp/metadata.mjs exists in _site/.
+  // Verify `/connect.md` and every static Markdown twin declared in `eleventy/shapes.mjs`
+  // and `mcp/metadata.mjs` exists and is non-empty in `_site/`.
+  const connectMdPath = path.join(SITE, "connect.md");
+  if (!existsSync(connectMdPath)) {
+    problems.push("connect.md is missing in _site/");
+  } else if (statSync(connectMdPath).size === 0) {
+    problems.push("connect.md in _site/ is empty");
+  }
+
+  for (const twin of STATIC_TWINS) {
+    const builtMdPath = path.join(SITE, twin.mdUrl.replace(/^\//, ""));
+    if (!existsSync(builtMdPath)) {
+      problems.push(`STATIC_TWINS["${twin.url}"] missing built file _site${twin.mdUrl}`);
+    } else if (statSync(builtMdPath).size === 0) {
+      problems.push(`STATIC_TWINS["${twin.url}"] built file _site${twin.mdUrl} is empty`);
+    }
+  }
+
   for (const [canonicalPath, entry] of Object.entries(STATIC_MARKDOWN_TWINS)) {
     const builtMdPath = path.join(SITE, entry.mdPath.replace(/^\//, ""));
     if (!existsSync(builtMdPath)) {
@@ -438,5 +491,5 @@ if (problems.length) {
 }
 
 console.log(
-  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), ${videos} VideoObject(s), site-index.json, builds.md, .well-known/mcp/server-card.json, .well-known/ai-catalog.json, .well-known/api-catalog, .well-known/agent-skills/index.json, and ${Object.keys(STATIC_MARKDOWN_TWINS).length} static Markdown twins parsed/agree`,
+  `[built-json-lint] OK — ${jsonLdBlocks} JSON-LD block(s), ${videos} VideoObject(s), ${conceptsCatalog.list.length} concepts, site-index.json, builds.md, connect.md, .well-known/* surfaces, and ${Object.keys(STATIC_MARKDOWN_TWINS).length} static Markdown twins parsed/agree`,
 );

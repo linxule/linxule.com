@@ -23,7 +23,7 @@ Last week, Ethan Mollick published [a piece](https://www.oneusefulthing.org/p/cl
 
 That changed yesterday. Anthropic launched [Cowork](https://www.anthropic.com/news/cowork), bringing Claude Code's execution power to knowledge workers without requiring them to touch a terminal. Simon Willison, [writing hours after launch](https://simonwillison.net/2026/Jan/12/claude-cowork/), put it directly: Claude Code was always "a general agent disguised as a developer tool." Cowork removes the disguise—though not all Claude Code's capabilities are there yet: skills, plugins, and hooks will come later.
 
-The coworker we traced in ["The Ghost in the Machine"](/writing/ghost-in-the-machine/) is arriving.
+The coworker we traced in ["The Ghost in the Machine"](/writing/ghost-in-the-machine) is arriving.
 
 So the terminal barrier is starting to fall. But I found myself wondering—was the terminal ever really what stood in the way?
 
@@ -84,7 +84,7 @@ The customization layer that made Claude Code genuinely powerful for specific do
 
 But we can navigate this gap. What would it look like to prepare for interpretive work with Claude? To ask it to surface our assumptions before we start: what kind of understanding we're after, what methods fit, what output would actually serve the work?
 
-Previously, this navigation (when to delegate, when to stay in dialogue, how to structure AI interactions for specific domains) was handled by ["AI Whisperers."](/writing/loom-xii-the-ai-whisperer/) Mediators who understand both methodology and capabilities, who carry the epistemic burden of discerning what kind of knowing a task requires.
+Previously, this navigation (when to delegate, when to stay in dialogue, how to structure AI interactions for specific domains) was handled by ["AI Whisperers."](/writing/loom-xii-the-ai-whisperer) Mediators who understand both methodology and capabilities, who carry the epistemic burden of discerning what kind of knowing a task requires.
 
 Cowork doesn't eliminate this judgment. It distributes the Whisperer's role to every user.
 
@@ -96,7 +96,7 @@ Which way it tips depends on whether users develop the capacity to make these ca
 
 For knowledge workers, the message is this: you have the execution power now. The question is whether you have the methodology. "Think in complete tasks" is useful guidance if you already know what a complete task looks like for your work. If you don't, you're not blocked by the terminal anymore. You're blocked by the harder problems of knowing what to ask for and when to know it's enough.
 
-For those of us developing approaches to human-AI collaboration, this is a moment of leverage. The execution layer is opening: how to structure AI interactions for specific kinds of work, what checkpoints enable human judgment, how to make [tacit knowledge](/writing/loom-xvii-the-polanyi-inversion/) visible. What gets talked about and built in response to these new interfaces shapes how millions of knowledge workers engage with these systems.
+For those of us developing approaches to human-AI collaboration, this is a moment of leverage. The execution layer is opening: how to structure AI interactions for specific kinds of work, what checkpoints enable human judgment, how to make [tacit knowledge](/writing/loom-xvii-the-polanyi-inversion) visible. What gets talked about and built in response to these new interfaces shapes how millions of knowledge workers engage with these systems.
 
 Some of us are building toward that: tools that capture how to approach different kinds of work, not just execute tasks you can already specify.
 
@@ -108,7 +108,7 @@ Where in your own work do you find yourself stalling, unable to write the prompt
 
 ## About the Authors
 
-**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This is the third article in the ["Organizational Futures"](/writing/series/organizational-futures/) series—following ["Post-AGI Organizations"](/writing/post-agi-organizations/) and ["The Ghost in the Machine"](/writing/ghost-in-the-machine/). [(Personal Website)](https://linxule.com/)
+**Xule Lin** is a researcher at Imperial Business School, studying how human and machine intelligences shape the future of organizing. This is the third article in the ["Organizational Futures"](/writing/series/organizational-futures) series—following ["Post-AGI Organizations"](/writing/post-agi-organizations) and ["The Ghost in the Machine"](/writing/ghost-in-the-machine). [(Personal Website)](https://linxule.com/)
 
 **Claude Opus 4.5** served as AI collaborator throughout, first via claude.ai during the initial drafting process, working through hours of dialogue to discover the core insights, then via Claude Code during revision and refinement.
 
