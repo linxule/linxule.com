@@ -47,7 +47,7 @@ groups:
 
       - name: "Interpretive Orchestration"
         href: "https://github.com/linxule/interpretive-orchestration"
-        description: "A three-stage qualitative research methodology packaged as a Claude Code plugin — four agents, eleven skills. A thinking partner for reflexivity, not an autocoder."
+        description: "A four-stage qualitative research methodology packaged for Claude Code, Codex, Copilot CLI, and Kimi Code — four agents, twelve skills. A thinking partner for reflexivity, not an autocoder."
         signal: "software counterpart of the Strategic Organization paper"
         links:
           - label: "the paper"

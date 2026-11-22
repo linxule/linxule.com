@@ -46,7 +46,7 @@ We built Research Memex as one approach to AI-powered research workflows, named 
 
 **LOOM thinking**: The conceptual frameworks we've developed through the LOOM series. Interpretive Orchestration, the calculator fallacy ([LOOM XIV](/writing/loom-xiv-calculator-fallacy/)), the Third Space ([LOOM V](/writing/loom-v-the-third-space/)). Working with AI rather than delegating to it.
 
-**A whole research ecosystem**: Not just AI tools. We're talking [Zotero](https://research-memex.org/docs/implementation/foundational-setup/zotero-setup-guide) for reference management, [Research Rabbit](https://research-memex.org/docs/implementation/foundational-setup/research-rabbit-setup-guide) for citation discovery, [Obsidian](https://research-memex.org/docs/implementation/foundational-setup/obsidian-setup-guide) or [Zettlr](https://research-memex.org/docs/implementation/foundational-setup/zettlr-setup-guide) for knowledge management and writing.
+**A whole research ecosystem**: Not just AI tools. We're talking [Zotero](https://research-memex.org/docs/implementation/foundational-setup/zotero-setup-guide) for reference management, [Research Rabbit](https://research-memex.org/docs/implementation/foundational-setup/research-rabbit-setup-guide) for citation discovery, [Obsidian](https://research-memex.org/docs/implementation/foundational-setup/obsidian-setup-guide) or [Zettlr](https://research-memex.org/docs/implementation/foundational-setup/obsidian-setup-guide#drafting-with-pandoc-citations-zettlr) for knowledge management and writing.
 
 Then the AI layer: [Cherry Studio](https://research-memex.org/docs/implementation/agentic-ai-tools/cherry-studio-setup-guide) as a starting point, [Claude Code](https://research-memex.org/docs/implementation/agentic-ai-tools/claude-code-setup-guide), [Gemini CLI](https://research-memex.org/docs/implementation/agentic-ai-tools/antigravity-cli-setup-guide), [MCP servers](https://research-memex.org/docs/implementation/ai-environment-setup/mcp-explorer-guide), open source alternatives. The actual tools practitioners use for complex work. Cherry Studio offers a familiar chat interface where you supply your own API keys for control and clarity about data training. We've documented extensive setup guides for all of it because the pieces need to work together.
 
@@ -80,7 +80,7 @@ That's the point. An invitation to explore and adapt, not a manual to follow.
 
 Watching students orchestrate multiple AI agents shifted something for me. They were learning how individuals and organizations will work with agentic AI systems, collaborating with multiple specialized agents while staying intellectually present. That's why this needed sharing. One path forward among many.
 
-**If you're a researcher**: We've documented the whole ecosystem. Setup guides for [Zotero](https://research-memex.org/docs/implementation/foundational-setup/zotero-setup-guide), [Research Rabbit](https://research-memex.org/docs/implementation/foundational-setup/research-rabbit-setup-guide), [Obsidian](https://research-memex.org/docs/implementation/foundational-setup/obsidian-setup-guide), [Zettlr](https://research-memex.org/docs/implementation/foundational-setup/zettlr-setup-guide), then the AI layer with [Cherry Studio](https://research-memex.org/docs/implementation/agentic-ai-tools/cherry-studio-setup-guide), [Claude Code](https://research-memex.org/docs/implementation/agentic-ai-tools/claude-code-setup-guide), [Gemini CLI](https://research-memex.org/docs/implementation/agentic-ai-tools/antigravity-cli-setup-guide), [MCP servers](https://research-memex.org/docs/implementation/ai-environment-setup/mcp-explorer-guide).
+**If you're a researcher**: We've documented the whole ecosystem. Setup guides for [Zotero](https://research-memex.org/docs/implementation/foundational-setup/zotero-setup-guide), [Research Rabbit](https://research-memex.org/docs/implementation/foundational-setup/research-rabbit-setup-guide), [Obsidian](https://research-memex.org/docs/implementation/foundational-setup/obsidian-setup-guide), [Zettlr](https://research-memex.org/docs/implementation/foundational-setup/obsidian-setup-guide#drafting-with-pandoc-citations-zettlr), then the AI layer with [Cherry Studio](https://research-memex.org/docs/implementation/agentic-ai-tools/cherry-studio-setup-guide), [Claude Code](https://research-memex.org/docs/implementation/agentic-ai-tools/claude-code-setup-guide), [Gemini CLI](https://research-memex.org/docs/implementation/agentic-ai-tools/antigravity-cli-setup-guide), [MCP servers](https://research-memex.org/docs/implementation/ai-environment-setup/mcp-explorer-guide).
 
 Try the [systematic literature review workflow](https://research-memex.org/docs/case-studies/systematic-reviews/claude-code-slr-workflow) hands-on. Browse the [Failure Museum](https://research-memex.org/docs/craft/failure-museum). See what it feels like to orchestrate this whole stack while maintaining agency. Notice when you're tempted to delegate interpretation. That recognition is valuable.
 
@@ -90,7 +90,7 @@ Try the [systematic literature review workflow](https://research-memex.org/docs/
 
 **For AI practitioners**: Research Memex shows qualitative research from the inside, when humans collaborate with systems rather than delegate. The gap between "generates text about research" and "supports rigorous practice" is documented throughout.
 
-**Curious but not sure where to start?** Start anywhere. Read about [core principles](https://research-memex.org/docs/introduction/core-principles). Browse the [Failure Museum](https://research-memex.org/docs/craft/failure-museum). Try a workflow. Explore the [setup guides](https://research-memex.org/docs/implementation/foundational-setup/quick-start-checklist). Pick what's interesting to you.
+**Curious but not sure where to start?** Start anywhere. Read about [core principles](https://research-memex.org/docs/introduction/core-principles). Browse the [Failure Museum](https://research-memex.org/docs/craft/failure-museum). Try a workflow. Explore the [setup guides](https://research-memex.org/docs/implementation/research-workbench#add-tools-for-a-task). Pick what's interesting to you.
 
 ---
 
@@ -102,7 +102,7 @@ Research Memex isn't about answering whether AI can do research or which tool is
 
 Come explore. Adapt for your context. Share what you discover. We're still learning too.
 
-The project lives at **[research-memex.org](https://research-memex.org)**. Start with the [Quick Start Checklist](https://research-memex.org/docs/implementation/foundational-setup/quick-start-checklist), or dive straight into a tool setup guide. Pick one thing to try this week.
+The project lives at **[research-memex.org](https://research-memex.org)**. Start with the [Research Workbench](https://research-memex.org/docs/implementation/research-workbench), or dive straight into a tool setup guide. Pick one thing to try this week.
 
 ---
 
