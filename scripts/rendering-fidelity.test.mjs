@@ -190,6 +190,22 @@ describe("text-surface repairs", () => {
       expect(index).toContain(`<span class="ref">${paper.data.indexReference}</span>`);
     }
   });
+
+  test("teaching twin renders open materials and unlinked SKEMA courses cleanly", () => {
+    const teaching = source("src/teaching/index.md");
+    const twin = nunjucks.compile(matter(read("src/md-outputs/teaching.md.njk")).content, env)
+      .render({ collections: { all: [teaching] } });
+    expect(twin).toContain("## Materials");
+    expect(twin).toContain("### MakerDAO Teaching Case");
+    expect(twin).toContain("### Research Memex");
+    expect(twin).toContain("## Courses & workshops");
+    expect(twin).toContain("- **AI for Business** (MS Chef de Projet IA · SKEMA Business School · 2026) — Frontier models, agentic orchestration, adoption economics, and a work-study (*alternance*) inquiry observed in firms and interpreted in class.");
+    expect(twin).toContain("- **Tech Skills: Practical AI and Digital Tools** (MSc Product Management & UX Design · SKEMA Business School · 2026) — Hands-on workshop building AI agents and generative workflows across the product lifecycle.");
+    expect(twin).not.toContain("&amp;");
+    expect(twin).not.toMatch(/<\/?[a-z]/i);
+    expect(twin).not.toContain("a4b.linxule.com");
+    expect(twin).not.toContain("pmux.research-memex.org");
+  });
 });
 
 describe("Atom fidelity", () => {

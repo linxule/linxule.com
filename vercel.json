@@ -424,6 +424,11 @@
       "source": "/tag/research-methods",
       "destination": "/tag/research-methodology",
       "statusCode": 301
+    },
+    {
+      "source": "/.well-known/mcp.json",
+      "destination": "/.well-known/mcp/server-card.json",
+      "statusCode": 308
     }
   ]
 }

@@ -159,6 +159,64 @@ marker: "teaching"
         max-width: var(--measure-own);
     }
 
+    .teaching-courses h2 {
+        font-family: var(--font-mono);
+        font-size: var(--size-label);
+        font-weight: 400;
+        letter-spacing: var(--tracking-marker);
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        border: none;
+        padding: 0;
+        margin: 0 0 1.8rem;
+    }
+
+    .course-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .course-entry {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+        gap: 0.35rem 4rem;
+        align-items: baseline;
+    }
+
+    .course-head {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .course-title {
+        font-family: var(--font-serif);
+        font-size: 1rem;
+        font-weight: 400;
+        color: var(--ink);
+        line-height: 1.5;
+    }
+
+    .course-meta {
+        font-family: var(--font-mono);
+        font-size: var(--size-whisper);
+        letter-spacing: var(--tracking-quiet);
+        color: var(--ink-faint);
+        line-height: 1.6;
+    }
+
+    .course-description {
+        font-size: var(--size-quiet);
+        color: var(--ink-light);
+        line-height: 1.7;
+        max-width: var(--measure);
+        margin: 0;
+    }
+
     .page-footer {
         margin-top: 6rem;
         padding-top: 2rem;
@@ -189,6 +247,11 @@ marker: "teaching"
         .teaching-item:nth-child(2) {
             justify-self: start;
             margin-top: 0;
+        }
+
+        .course-entry {
+            grid-template-columns: 1fr;
+            gap: 0.45rem;
         }
     }
 
@@ -237,6 +300,25 @@ marker: "teaching"
     </article>
     {% endfor %}
 </div>
+
+{% if courses %}
+<div class="horizon"></div>
+
+<section class="teaching-courses" aria-labelledby="courses-heading">
+    <h2 id="courses-heading">Courses &amp; workshops</h2>
+    <ul class="course-list">
+        {% for course in courses %}
+        <li class="course-entry">
+            <div class="course-head">
+                <span class="course-title">{{ course.title }}</span>
+                <span class="course-meta">{{ course.meta }}</span>
+            </div>
+            <p class="course-description">{{ course.description | safe }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
 
 <footer class="page-footer">
     <a href="/" class="back-link">← return</a>

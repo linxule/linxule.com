@@ -25,6 +25,12 @@ eleventyExcludeFromCollections: true
 
 {% endfor %}
 {% endif %}
+{% if page.data.courses %}
+## Courses & workshops
+
+{% for course in page.data.courses %}- **{{ course.title | safe }}** ({{ course.meta | safe }}) — {{ course.description | htmlToMarkdown | safe }}
+{% endfor %}
+{% endif %}
 
 ---
 

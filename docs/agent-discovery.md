@@ -24,14 +24,14 @@ The Agent Skills index is generated from `src/_data/agentSkills.js`. The SHA-256
 
 ### Hosted Public MCP Subdomains
 
-- `https://vellum.linxule.com/mcp` — serves its own `/.well-known/mcp/server-card.json` (referenced by `url` in `ai-catalog.json`).
-- `https://music-studio.linxule.com/mcp` — represented via inline SEP-2127/SEP-1649 `data` server card in `ai-catalog.json`.
-- `https://lotus-wisdom.linxule.com/mcp` — custom domain attached to the `lotus-wisdom-mcp` Cloudflare Worker (2026-11-21), represented via inline SEP-2127/SEP-1649 `data` server card in `ai-catalog.json`.
+- `https://vellum.linxule.com/mcp` — serves its own SEP-2127 `/.well-known/mcp/server-card.json` (referenced by `url` in `ai-catalog.json`).
+- `https://music-studio.linxule.com/mcp` — serves its own SEP-2127 `/.well-known/mcp/server-card.json` and `/llms.txt` (referenced by `url` in `ai-catalog.json`).
+- `https://lotus-wisdom.linxule.com/mcp` — custom domain attached to the `lotus-wisdom-mcp` Cloudflare Worker, serving its own SEP-2127 `/.well-known/mcp/server-card.json` and `/llms.txt` (referenced by `url` in `ai-catalog.json`).
 - `https://research-memex.org/mcp` — sibling domain MCP server (`https://research-memex.org/mcp/server-card`, referenced by `url` in `ai-catalog.json`).
 
-## Cloudflare Edge Posture (hardened 2026-11-21)
+## Cloudflare Edge Posture (hardened 2026-11-22)
 
-- `ssl: strict`, `min_tls_version: 1.2`, `speed_brain: off`, `hotlink_protection: off`, `rocket_loader: off`.
+- `ssl: strict`, `min_tls_version: 1.2`, `speed_brain: off`, `hotlink_protection: off`, `rocket_loader: off`, `fonts: off`, `browser_check: off`.
 - Edge response header rules add `X-Robots-Tag: noindex, nofollow` on `open-interview-staging.linxule.com` and `a4b.linxule.com`.
 - Keep Cloudflare's edge "Markdown for Agents" (`content_converter`) **OFF** — origin `.md` twins and `middleware.ts` negotiation are authoritative and preserve curated structure and exact headers.
 
