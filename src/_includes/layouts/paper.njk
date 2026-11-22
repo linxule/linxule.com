@@ -98,13 +98,21 @@ marker: "papers"
     var textEl = document.getElementById('paper-citation-text');
     var statusEl = document.querySelector('[data-paper-cite-status]');
     if (!btn || !textEl) return;
-    function announce() {
-        btn.textContent = 'copied';
-        if (statusEl) statusEl.textContent = 'Citation copied to clipboard.';
-        setTimeout(function () {
+    var resetTimer;
+    function flash(label, statusText) {
+        clearTimeout(resetTimer);
+        btn.textContent = label;
+        if (statusEl) statusEl.textContent = statusText;
+        resetTimer = setTimeout(function () {
             btn.textContent = 'copy';
             if (statusEl) statusEl.textContent = '';
         }, 1500);
+    }
+    function announce() {
+        flash('copied', 'Citation copied to clipboard.');
+    }
+    function announceFailure() {
+        flash('copy failed', 'Could not copy citation to clipboard.');
     }
     function fallbackCopy(text) {
         var ta = document.createElement('textarea');
@@ -114,8 +122,11 @@ marker: "papers"
         ta.style.opacity = '0';
         document.body.appendChild(ta);
         ta.select();
-        try { if (document.execCommand('copy')) announce(); } catch (_) {}
+        var copied = false;
+        try { copied = Boolean(document.execCommand('copy')); } catch (_) { copied = false; }
         document.body.removeChild(ta);
+        if (copied) announce();
+        else announceFailure();
     }
     btn.addEventListener('click', function () {
         var text = textEl.textContent.trim();

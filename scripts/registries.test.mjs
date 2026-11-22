@@ -10,7 +10,14 @@ import {
   mdAlternateForUrl,
 } from "../eleventy/shapes.mjs";
 import { creditFamily, creditModel, slugify } from "../eleventy/strings.js";
-import { cvHtml, htmlToMarkdown, markdownBody, stripTrailingSlash } from "../eleventy/filters.js";
+import {
+  cvHtml,
+  htmlToMarkdown,
+  markdownBody,
+  readableDateZh,
+  stripTrailingSlash,
+  truncateWords,
+} from "../eleventy/filters.js";
 import seriesCatalog from "../src/_data/seriesCatalog.js";
 import conceptsCatalog from "../src/_data/conceptsCatalog.js";
 import collaboratorsCatalog from "../src/_data/collaboratorsCatalog.js";
@@ -126,15 +133,16 @@ describe("global data catalogs", () => {
     expect(seriesCatalog.bySlug.seam.companion?.link).toBe("/tsm/");
   });
 
-  test("conceptsCatalog joins all 14 concepts (7 anchored + 7 forming) with canonical slashless URLs", () => {
+  test("conceptsCatalog joins all 14 concepts (7 anchored + 4 grounded + 3 forming) with canonical slashless URLs", () => {
     expect(conceptsCatalog.list).toHaveLength(14);
     expect(conceptsCatalog.anchoredCount).toBe(7);
-    expect(conceptsCatalog.formingCount).toBe(7);
+    expect(conceptsCatalog.groundedCount).toBe(4);
+    expect(conceptsCatalog.formingCount).toBe(3);
     expect(conceptsCatalog.territories).toHaveLength(4);
 
     for (const c of conceptsCatalog.list) {
       expect(conceptsCatalog.bySlug[c.slug]).toBe(c);
-      expect(["anchored", "forming"]).toContain(c.status);
+      expect(["anchored", "grounded", "forming"]).toContain(c.status);
       expect(c.anchorId).toBe(`dfn-${c.slug}`);
       expect(c.url).not.toMatch(/\/#/);
       expect(c.url).not.toMatch(/\/$/);
@@ -144,6 +152,11 @@ describe("global data catalogs", () => {
         expect(c.essayUrl).toMatch(/^\/writing\/[^/]+$/);
         expect(c.essayTitle).toBeTruthy();
         expect(typeof c.essayYear).toBe("number");
+      } else if (c.status === "grounded") {
+        expect(c.url).toBe(`/concepts#dfn-${c.slug}`);
+        expect(c.essayUrl).toBeNull();
+        expect(c.sourceUrl).toBe("/cv#working-papers");
+        expect(c.sourceLabel).toBe("Dissertation & working papers");
       } else {
         expect(c.url).toBe(`/concepts#dfn-${c.slug}`);
         expect(c.essayUrl).toBeNull();
@@ -153,6 +166,9 @@ describe("global data catalogs", () => {
     const io = conceptsCatalog.bySlug["interpretive-orchestration"];
     expect(io.doi).toBe("10.1177/14761270261448645");
     expect(io.essayUrl).toBe("/writing/research-memex");
+    expect(io.paperUrl).toBe("/papers/interpretive-orchestration");
+    expect(io.paperVenue).toBe("Strategic Organization");
+    expect(io.paperYear).toBe(2026);
   });
 
   test("collaboratorsCatalog aggregates human-AI lineage with valid slashless filter-book URLs", () => {
@@ -228,7 +244,7 @@ describe("eleventy/filters.js upgrades", () => {
     expect(out).toContain("![Code](/writing/attachments/rwa-01-cover.png)");
   });
 
-  test("cvHtml produces exactly one <h1>, converts top <h3> lines to .cv-contact, and demotes section <h1>s to <h2>", () => {
+  test("cvHtml produces exactly one <h1>, converts top <h3> lines to .cv-contact, and demotes section <h1>s to <h2> with deterministic anchor ids", () => {
     const md = markdownIt({ html: true });
     for (const file of ["src/cv/index.md", "src/cv-zh/index.md"]) {
       const raw = readFileSync(file, "utf8").replace(/^---[\s\S]*?---\r?\n/, "");
@@ -237,7 +253,23 @@ describe("eleventy/filters.js upgrades", () => {
       expect((html.match(/<p class="cv-contact"/gi) || []).length, `${file} cv-contact count`).toBe(2);
       expect((html.match(/<h2\b/gi) || []).length, `${file} h2 count`).toBeGreaterThanOrEqual(18);
       expect((html.match(/<h3\b/gi) || []).length, `${file} h3 count`).toBe(0);
+      expect(html, `${file} #publications anchor`).toContain('<h2 id="publications">');
+      expect(html, `${file} #working-papers anchor`).toContain('<h2 id="working-papers">');
     }
+  });
+
+  test("readableDateZh formats dates as YYYY年M月 and truncateWords truncates cleanly at word boundaries", () => {
+    expect(readableDateZh(new Date("2026-11-22T00:00:00Z"))).toBe("2026年11月");
+    expect(readableDateZh(new Date("2026-04-05T00:00:00Z"))).toBe("2026年4月");
+    expect(truncateWords("Short line.", 147)).toBe("Short line.");
+    const desc =
+      "Xule Lin (林徐乐) — Assistant Professor, SKEMA Centre for Artificial Intelligence, Paris. Imperial College London PhD. Human–AI collaboration, organizational theory, qualitative methods.";
+    const truncated = truncateWords(desc, 147);
+    expect(truncated.endsWith("…")).toBe(true);
+    expect(truncated).not.toMatch(/[,—–-]…$/);
+    expect(truncated).toBe(
+      "Xule Lin (林徐乐) — Assistant Professor, SKEMA Centre for Artificial Intelligence, Paris. Imperial College London PhD. Human–AI collaboration…",
+    );
   });
 
   test("src/assets/assets.json excludes static assets from Eleventy templates and collections", () => {

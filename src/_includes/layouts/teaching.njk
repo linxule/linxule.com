@@ -116,24 +116,12 @@ marker: "teaching"
         transition: color 0.3s ease;
     }
 
-    .item-plate-index {
-        position: absolute;
-        bottom: 0.35rem;
-        right: 0.45rem;
-        font-family: var(--font-mono);
-        font-size: var(--size-whisper);
-        letter-spacing: var(--tracking-quiet);
-        color: var(--ink-faint);
-        transition: color 0.3s ease;
-    }
-
     .teaching-item:is(:hover, :focus-within) .item-plate {
         border-color: var(--bloom);
         box-shadow: 0 12px 32px var(--bloom-glow);
     }
 
-    .teaching-item:is(:hover, :focus-within) .item-plate-numeral,
-    .teaching-item:is(:hover, :focus-within) .item-plate-index {
+    .teaching-item:is(:hover, :focus-within) .item-plate-numeral {
         color: var(--bloom);
     }
 
@@ -242,7 +230,6 @@ marker: "teaching"
     <article class="teaching-item">
         <div class="item-plate" aria-hidden="true">
             <span class="item-plate-numeral">{{ item.plate | default(loop.index) }}</span>
-            <span class="item-plate-index">{{ loop.index | string | padStart(2, '0') }}</span>
         </div>
         <div class="item-label">{{ item.label }}</div>
         <h2 class="item-title"><a href="{{ item.url }}">{{ item.title }} →</a></h2>

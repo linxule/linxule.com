@@ -141,15 +141,36 @@ describe("text-surface repairs", () => {
     expect(output).not.toMatch(/<\/?[a-z]/);
   });
 
-  test("artifact twins carry poster alternatives and absolute companion links", () => {
+  test("artifact twins carry poster alternatives, collaborator heading, and absolute companion links (preserving /tsm/, /play/, and external trailing slashes)", () => {
     const artifact = source("src/making/artifacts/artifact-2026-07-26-order-is-the-only-image.md");
     const output = markdownTemplate.render({ artifact, site });
     expect(output).toContain(`**Poster alt**: ${artifact.data.thumbnailAlt}`);
+    expect(output).toContain("## Collaborator");
     expect(output).toContain(`## Companions — ${artifact.data.companions.intro}`);
     for (const companion of artifact.data.companions.items) {
       expect(output).toContain(`](${new URL(companion.href, site.url).href})`);
     }
     expect(output).toContain(artifact.data.companions.note);
+
+    const withSpecialCompanions = {
+      ...artifact,
+      data: {
+        ...artifact.data,
+        companions: {
+          items: [
+            { relation: "matrix", title: "TSM", href: "/tsm/" },
+            { relation: "game", title: "Play", href: "/play/" },
+            { relation: "external", title: "Ext", href: "https://example.org/dir/" },
+            { relation: "internal", title: "Int", href: "/writing/foo/" },
+          ],
+        },
+      },
+    };
+    const specialOut = markdownTemplate.render({ artifact: withSpecialCompanions, site });
+    expect(specialOut).toContain("[TSM](https://linxule.com/tsm/)");
+    expect(specialOut).toContain("[Play](https://linxule.com/play/)");
+    expect(specialOut).toContain("[Ext](https://example.org/dir/)");
+    expect(specialOut).toContain("[Int](https://linxule.com/writing/foo)");
   });
 
   test("paper twins include full text and BibTeX, and the HTML index uses the same collection", () => {

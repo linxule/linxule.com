@@ -46,7 +46,7 @@ eleventyExcludeFromCollections: true
 
 ## Companions{% if portrait.data.companions.intro %} — {{ portrait.data.companions.intro | safe }}{% endif %}
 
-{% for c in portrait.data.companions.items %}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ c.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{% for c in portrait.data.companions.items %}{%- set cHref = c.href if (c.href.startsWith('http') or c.href == '/tsm/' or c.href == '/play/') else (c.href | stripTrailingSlash) -%}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ cHref | absoluteContentUrl(site.url) | safe }})
 {% endfor %}
 {%- if portrait.data.companions.note %}
 {{ portrait.data.companions.note | safe }}
@@ -57,7 +57,9 @@ eleventyExcludeFromCollections: true
 
 ## Companion{% if portrait.data.companion.relation %} — {{ portrait.data.companion.relation | safe }}{% endif %}
 
-- [{{ portrait.data.companion.title | safe }}]({{ portrait.data.companion.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{%- set compHref = portrait.data.companion.href if (portrait.data.companion.href.startsWith('http') or portrait.data.companion.href == '/tsm/' or portrait.data.companion.href == '/play/') else (portrait.data.companion.href | stripTrailingSlash) %}
+
+- [{{ portrait.data.companion.title | safe }}]({{ compHref | absoluteContentUrl(site.url) | safe }})
 {%- if portrait.data.companion.note %}
 
 {{ portrait.data.companion.note | safe }}

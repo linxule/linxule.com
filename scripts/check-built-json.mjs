@@ -123,8 +123,8 @@ if (siteIndex) {
         problems.push(`site-index.concepts is missing "${expected.term}"`);
         continue;
       }
-      if (actual.status && actual.status !== "anchored" && actual.status !== "forming") {
-        problems.push(`site-index.concepts["${expected.term}"].status must be "anchored" or "forming"`);
+      if (actual.status && !["anchored", "grounded", "forming"].includes(actual.status)) {
+        problems.push(`site-index.concepts["${expected.term}"].status must be "anchored", "grounded", or "forming"`);
       }
       if (typeof actual.url !== "string" || !actual.url.startsWith("/")) {
         problems.push(`site-index.concepts["${expected.term}"].url must be a canonical root-relative path`);

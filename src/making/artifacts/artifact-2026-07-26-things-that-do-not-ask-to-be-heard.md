@@ -38,7 +38,7 @@ contextAfter: |
 mediaDescription: |
   <p><strong>No speech.</strong> Forty-three seconds of sound built entirely from modelled physical objects. Struck and rubbed bodies of four material families — brass, glass, wood and ceramic — ring at inharmonic ratios and decay at rates that differ by frequency, so high partials die away first and leave a duller residue behind. Energy passes between the objects through a thirteen-node network: seven touches arrive from outside the system and provoke twenty-seven further events that the objects generate among themselves. Sympathetic strings answer only some of the strikes. Short friction gestures scrape between them. Each object stays put in the stereo image, so the exchanges read as movement across a room rather than as a widening effect. Three silences run longer than a second, including a 2.07-second one at the end; the piece stops without resolving.</p>
 companion:
-  href: /making/artifacts/no-sound-begins-here
+  href: /making/artifacts/artifact-2026-07-26-no-sound-begins-here
   relation: the second sound work
   title: no sound begins here
   note: Two tests of the same small Python stack under two incompatible theories of what a sound is.

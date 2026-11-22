@@ -7,6 +7,10 @@ eleventyExcludeFromCollections: true
 # {{ page.data.title | safe }}
 
 {{ page.data.description | safe }} *{{ page.data.accident | safe }}* *(accident)*.
+{% if page.data.thesis_continued %}
+
+{% for line in page.data.thesis_continued %}{{ (line.text | default(line)) | safe }}{% if line.accident %} *(accident)*{% endif %}
+{% endfor %}{% endif %}
 
 {% if page.data.items %}
 ## Materials

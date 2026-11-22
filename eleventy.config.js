@@ -6,6 +6,7 @@ import {
   IMAGE_CACHE_DIR,
   IMAGE_URL_PATH,
   getActiveOptimizedFiles,
+  preindexWritingAttachments,
   resetActiveOptimizedFiles,
 } from "./eleventy/image-pipeline.js";
 
@@ -85,9 +86,11 @@ export default function(eleventyConfig) {
   transforms(eleventyConfig);
 
   // Track only optimized filenames emitted in this build so retired cache orphans
-  // never copy to `_site`. Respect --output and programmatic builds.
-  eleventyConfig.on("eleventy.before", () => {
+  // never copy to `_site`. Pre-index writing attachments from source so `.md` twins
+  // resolve exact widths & formats even on a completely cold image cache.
+  eleventyConfig.on("eleventy.before", async () => {
     resetActiveOptimizedFiles();
+    await preindexWritingAttachments();
   });
   eleventyConfig.on("eleventy.after", async ({ dir }) => {
     const active = getActiveOptimizedFiles();

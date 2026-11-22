@@ -108,6 +108,11 @@ groups:
         href: "https://github.com/linxule/prompts"
         description: "A curated library of cognitive-technique prompts, and the origin of the Lotus OS framework that became Lotus Wisdom MCP."
 
+    note:
+      text: "All hosted MCP servers and client recipes are gathered on one page."
+      label: "Connect via MCP"
+      href: "/connect"
+
   - name: "Public experiments"
     projects:
       - name: "Vellum"

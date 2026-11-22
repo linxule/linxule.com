@@ -32,7 +32,7 @@ const SRC = {
 };
 const WEIGHTS = ["300", "400", "500"];
 const PUNCT = "，。、；：？！「」『』《》〈〉（）【】〔〕…～·　";
-const BROAD_CJK = "U+2E80-2FFF, U+3000-303F, U+3400-9FFF, U+F900-FAFF, U+FF00-FFEF, U+20000-2FFFF";
+const BROAD_CJK = "U+2E80-2FFF, U+3000-303F, U+3040-309F, U+30A0-30FF, U+3400-9FFF, U+F900-FAFF, U+FF00-FFEF, U+20000-2FFFF";
 const FEATURES = "ccmp,locl,halt,chws,kern";
 const UV_ENV = { ...process.env, SOURCE_DATE_EPOCH: "1781654400" };
 const UV_ARGS = ["run", "--no-project", "--with", "fonttools==4.68.0", "--with", "brotli==1.2.1"];

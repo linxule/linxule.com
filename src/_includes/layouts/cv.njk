@@ -90,6 +90,7 @@ marker: "cv"
         border-top: none;
         border-bottom: 1px solid var(--ink-ghost);
         font-weight: 400;
+        scroll-margin-top: 6rem;
     }
 
     .cv-content h2:first-of-type {
@@ -270,7 +271,7 @@ marker: "cv"
 <footer class="cv-footer">
     {% if isZh %}
     <a href="/" class="back-link">← 返回</a>
-    <span class="cv-updated">更新于 {{ page.date | readableDate }}</span>
+    <span class="cv-updated">更新于 {{ page.date | readableDateZh }}</span>
     {% else %}
     <a href="/" class="back-link">← return</a>
     <span class="cv-updated">updated {{ page.date | readableDate }}</span>

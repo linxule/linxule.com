@@ -71,6 +71,8 @@ This text catalogs the collection. Each linked image or interactive variation re
 {% if artifact.rawInput | safe | trim %}
 ---
 
+## Collaborator
+
 {{ artifact.rawInput | markdownBody | safe }}
 {% endif %}
 
@@ -87,7 +89,7 @@ This text catalogs the collection. Each linked image or interactive variation re
 
 ## Companions{% if artifact.data.companions.intro %} — {{ artifact.data.companions.intro | safe }}{% endif %}
 
-{% for c in artifact.data.companions.items %}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ c.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{% for c in artifact.data.companions.items %}{%- set cHref = c.href if (c.href.startsWith('http') or c.href == '/tsm/' or c.href == '/play/') else (c.href | stripTrailingSlash) -%}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ cHref | absoluteContentUrl(site.url) | safe }})
 {% endfor %}
 {%- if artifact.data.companions.note %}
 {{ artifact.data.companions.note | safe }}
@@ -98,7 +100,9 @@ This text catalogs the collection. Each linked image or interactive variation re
 
 ## Companion{% if artifact.data.companion.relation %} — {{ artifact.data.companion.relation | safe }}{% endif %}
 
-- [{{ artifact.data.companion.title | safe }}]({{ artifact.data.companion.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{%- set compHref = artifact.data.companion.href if (artifact.data.companion.href.startsWith('http') or artifact.data.companion.href == '/tsm/' or artifact.data.companion.href == '/play/') else (artifact.data.companion.href | stripTrailingSlash) %}
+
+- [{{ artifact.data.companion.title | safe }}]({{ compHref | absoluteContentUrl(site.url) | safe }})
 {%- if artifact.data.companion.note %}
 
 {{ artifact.data.companion.note | safe }}

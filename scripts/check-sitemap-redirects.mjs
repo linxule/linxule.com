@@ -2,12 +2,14 @@
  * Sitemap, URL-canonicalization, heading-hierarchy, and source-hygiene verification gate.
  *
  * Checks:
- *   1. No sitemap URL collides with a Vercel redirect rule.
- *   2. Sitemap contains 0 `/assets/` URLs and all 9 `/writing/series/<slug>` URLs.
- *   3. Zero internal trailing-slash links in HTML, `feed.xml`, JSON-LD, and `.md` twins
+ *   1. No sitemap URL or built HTML route (including `/tag/*`) collides with a Vercel redirect rule.
+ *   2. Every internal `vercel.json` redirect `#fragment` target exists in the destination HTML page.
+ *   3. Sitemap contains 0 `/assets/` URLs and all 9 `/writing/series/<slug>` URLs.
+ *   4. Zero internal trailing-slash links in HTML, `feed.xml`, JSON-LD, and `.md` twins
  *      (excluding `/`, `/play/`, `/tsm/`, `/assets/slides/<slug>/`, and `/assets/<path>`).
- *   4. Exactly one `<h1>` per built site HTML page (excluding `_site/tsm/` & `_site/assets/`).
- *   5. Source hygiene:
+ *   5. Every `/assets/images/optimized/*` reference in built `.html` and `.md` files exists on disk.
+ *   6. Exactly one `<h1>` per built site HTML page (excluding `_site/tsm/` & `_site/assets/`).
+ *   7. Source hygiene:
  *      - Every slide deck `src/assets/slides/<slug>/index.html` declares `<base href="/assets/slides/<slug>/">`.
  *      - Zero remote image URLs in `src/writing/*.md` (images must be self-hosted).
  *      - Every interactive HTML artifact in `src/making/artifacts/*.md` declares a valid `thumbnail:`.
@@ -123,6 +125,7 @@ function walkSiteFiles(siteDir, ext, { excludeAssets = true, excludeWellKnown = 
       const rel = path.relative(root, fullPath).split(path.sep).join("/");
       if (entry.isDirectory()) {
         if (rel === "tsm" || rel.startsWith("tsm/")) continue;
+        if (rel === "pagefind" || rel.startsWith("pagefind/")) continue;
         if (excludeAssets && (rel === "assets" || rel.startsWith("assets/"))) continue;
         if (excludeWellKnown && (rel === ".well-known" || rel.startsWith(".well-known/"))) continue;
         out.push(...recurse(fullPath));
@@ -134,6 +137,121 @@ function walkSiteFiles(siteDir, ext, { excludeAssets = true, excludeWellKnown = 
   }
 
   return recurse(root);
+}
+
+export function findBuiltHtmlRedirectCollisions(siteDir = "_site", redirects = []) {
+  const redirectMatchers = redirects.map(({ source, destination }) => ({
+    source,
+    destination,
+    matches: match(source, {
+      sensitive: true,
+      end: true,
+      decode: decodeURIComponent,
+    }),
+  }));
+
+  const htmlFiles = walkSiteFiles(siteDir, ".html", { excludeAssets: true });
+  const collisions = [];
+  for (const { rel } of htmlFiles) {
+    const route = rel === "index.html" ? "/" : `/${rel.replace(/\/index\.html$/, "")}`;
+    for (const { source, destination, matches } of redirectMatchers) {
+      if (matches(route) !== false) {
+        collisions.push({ path: route, source, destination });
+      }
+    }
+  }
+  return { collisions, htmlCount: htmlFiles.length };
+}
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export function checkRedirectFragmentTargets(siteDir = "_site", redirects = []) {
+  const problems = [];
+  const htmlCache = new Map();
+
+  for (const { source, destination } of redirects) {
+    if (typeof destination !== "string" || !destination.startsWith("/") || !destination.includes("#")) {
+      continue;
+    }
+    const hashIdx = destination.indexOf("#");
+    const rawPath = destination.slice(0, hashIdx);
+    const rawFragment = destination.slice(hashIdx + 1);
+    if (!rawFragment) continue;
+
+    let fragment = rawFragment;
+    try {
+      fragment = decodeURIComponent(rawFragment);
+    } catch {
+      // Keep raw fragment if percent-decoding fails.
+    }
+
+    const cleanPath = rawPath.replace(/^\/+/, "").replace(/\/+$/, "");
+    const targetFile = !cleanPath
+      ? path.join(siteDir, "index.html")
+      : cleanPath.endsWith(".html")
+        ? path.join(siteDir, cleanPath)
+        : path.join(siteDir, cleanPath, "index.html");
+
+    if (!existsSync(targetFile)) {
+      problems.push(`[redirect-fragment] ${source} -> ${destination}: destination page missing (${targetFile})`);
+      continue;
+    }
+
+    let stripped = htmlCache.get(targetFile);
+    if (stripped === undefined) {
+      stripped = readFileSync(targetFile, "utf8")
+        .replace(/<!--[\s\S]*?-->/g, "")
+        .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, "");
+      htmlCache.set(targetFile, stripped);
+    }
+
+    const idRe = new RegExp(`\\bid\\s*=\\s*(?:"${escapeRegExp(fragment)}"|'${escapeRegExp(fragment)}')`, "i");
+    if (!idRe.test(stripped)) {
+      problems.push(
+        `[redirect-fragment] ${source} -> ${destination}: anchor #${fragment} not found in ${path.relative(siteDir, targetFile)}`,
+      );
+    }
+  }
+
+  return [...new Set(problems)];
+}
+
+export function checkOptimizedImageReferences(siteDir = "_site") {
+  const problems = [];
+  const checkedRefs = new Set();
+  const refPattern = /\/assets\/images\/optimized\/[^"'\s,)<>\\`?#]+/g;
+
+  const inspectFile = (fullPath, rel, isMarkdown) => {
+    let text = readFileSync(fullPath, "utf8");
+    if (isMarkdown) {
+      text = text.replace(FENCE, "").replace(CODE_SPAN, "");
+    }
+    for (const m of text.matchAll(refPattern)) {
+      const urlPath = m[0];
+      checkedRefs.add(urlPath);
+      let decoded = urlPath;
+      try {
+        decoded = decodeURIComponent(urlPath);
+      } catch {
+        // Keep raw path if percent-decoding fails.
+      }
+      const diskPath = path.join(siteDir, decoded.replace(/^\/+/, ""));
+      if (!existsSync(diskPath)) {
+        problems.push(`[optimized-image] ${rel} references missing optimized asset: ${urlPath}`);
+      }
+    }
+  };
+
+  for (const { fullPath, rel } of walkSiteFiles(siteDir, ".html", { excludeAssets: true })) {
+    inspectFile(fullPath, rel, false);
+  }
+  for (const { fullPath, rel } of walkSiteFiles(siteDir, ".md", { excludeAssets: true, excludeWellKnown: true })) {
+    inspectFile(fullPath, rel, true);
+  }
+
+  return { problems: [...new Set(problems)], refsChecked: checkedRefs.size };
 }
 
 function inspectJsonLdTrailingSlashes(node, rel, problems) {
@@ -286,24 +404,30 @@ export function checkSourceHygiene(srcDir = "src") {
 
 if (import.meta.main) {
   const config = JSON.parse(readFileSync("vercel.json", "utf8"));
+  const redirects = config.redirects ?? [];
   const sitemap = readFileSync("_site/sitemap.xml", "utf8");
-  const { collisions, redirectCount, sitemapCount } = findRedirectCollisions(
-    sitemap,
-    config.redirects ?? [],
-  );
+  const { collisions, redirectCount, sitemapCount } = findRedirectCollisions(sitemap, redirects);
+  const { collisions: htmlCollisions, htmlCount } = findBuiltHtmlRedirectCollisions("_site", redirects);
 
   const problems = [];
-  for (const { path: collisionPath, source } of collisions) {
+  const seenCollisions = new Set();
+  for (const { path: collisionPath, source } of [...collisions, ...htmlCollisions]) {
+    const key = `${collisionPath}|${source}`;
+    if (seenCollisions.has(key)) continue;
+    seenCollisions.add(key);
     problems.push(`[redirect-collision] ${collisionPath} matches redirect ${source}`);
   }
+  problems.push(...checkRedirectFragmentTargets("_site", redirects));
   problems.push(...checkSitemapInvariants(sitemap));
   problems.push(...checkTrailingSlashLinks("_site"));
+  const { problems: imageProblems, refsChecked } = checkOptimizedImageReferences("_site");
+  problems.push(...imageProblems);
   const { problems: h1Problems, pagesChecked } = checkSingleH1("_site");
   problems.push(...h1Problems);
   problems.push(...checkSourceHygiene("src"));
 
   console.log(
-    `[sitemap-redirects] checked ${sitemapCount} sitemap URL(s) against ${redirectCount} redirect rule(s) and ${pagesChecked} site HTML page(s).`,
+    `[sitemap-redirects] checked ${sitemapCount} sitemap URL(s) and ${htmlCount} built HTML route(s) against ${redirectCount} redirect rule(s), ${refsChecked} optimized image ref(s), and ${pagesChecked} site HTML page(s).`,
   );
 
   if (problems.length > 0) {
@@ -315,6 +439,6 @@ if (import.meta.main) {
   }
 
   console.log(
-    "[sitemap-redirects] OK — no redirect collisions, 0 /assets/ sitemap URLs, all 9 series in sitemap, 0 internal trailing-slash links, exactly 1 <h1> per site page, and source hygiene clean.",
+    "[sitemap-redirects] OK — no redirect collisions (sitemap or built HTML), all redirect fragments valid, all optimized image refs present on disk, 0 /assets/ sitemap URLs, all 9 series in sitemap, 0 internal trailing-slash links, exactly 1 <h1> per site page, and source hygiene clean.",
   );
 }

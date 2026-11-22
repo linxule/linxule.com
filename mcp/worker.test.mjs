@@ -62,6 +62,54 @@ const FIXTURE_INDEX = {
       summary: "Read-only MCP connection recipes for linxule.com and sibling public MCP servers.",
     },
     {
+      url: "/making",
+      url_md: "/making.md",
+      title: "Making",
+      section: "making",
+      static: true,
+      keywords: ["making", "portraits", "artifacts", "AI art"],
+      summary: "AI-rendered portraits and artifacts made directly in conversation with named AI collaborators.",
+    },
+    {
+      url: "/builds",
+      url_md: "/builds.md",
+      title: "Builds",
+      section: "builds",
+      static: true,
+      keywords: ["builds", "open-source", "MCP", "daogov", "SIGNA"],
+      summary: "Open-source tools and public infrastructure built alongside the research.",
+    },
+    {
+      url: "/writing/loom-xvii-the-polanyi-inversion",
+      url_md: "/writing/loom-xvii-the-polanyi-inversion.md",
+      title: "LOOM XVII: The Polanyi Inversion",
+      section: "writing",
+      date: "2026-03-12",
+      authors: ["Xule Lin", "Kevin Corley", "Claude Opus 4.6"],
+      keywords: ["Polanyi Inversion", "tacit knowledge", "epistemic alienation", "LLMs"],
+      summary: "Polanyi's paradox inverted: when friction dissolves, articulation outruns understanding.",
+    },
+    {
+      url: "/writing/what-i-am-thinking-2026-01",
+      url_md: "/writing/what-i-am-thinking-2026-01.md",
+      title: "What I'm Thinking, January 2026",
+      section: "writing",
+      date: "2026-01-15",
+      authors: ["Xule Lin"],
+      keywords: ["thinking", "notes"],
+      summary: "What is happening in the field and what the notes show this month.",
+    },
+    {
+      url: "/writing/dao-governance-resources",
+      url_md: "/writing/dao-governance-resources.md",
+      title: "DAO Governance Resources",
+      section: "writing",
+      date: "2024-02-01",
+      authors: ["Xule Lin"],
+      keywords: ["DAO", "governance", "LLM"],
+      summary: "Curated research notes on DAO governance and LLM tools for organizational analysis.",
+    },
+    {
       url: "/writing/loom-xviii-the-end-of-positivism",
       url_md: "/writing/loom-xviii-the-end-of-positivism.md",
       title: "LOOM XVIII: It's the End of Positivism as We Know It (and I Feel Fine)",
@@ -116,6 +164,31 @@ const FIXTURE_INDEX = {
   ],
   concepts: [
     {
+      term: "Polanyi Inversion",
+      slug: "polanyi-inversion",
+      territory: "Epistemology of AI collaboration",
+      status: "anchored",
+      oneliner: "We can tell more than we know.",
+      definition: "The condition where articulation exceeds comprehension — we can tell more than we know.",
+      url: "/writing/loom-xvii-the-polanyi-inversion#dfn-polanyi-inversion",
+      essayUrl: "/writing/loom-xvii-the-polanyi-inversion",
+      canonicalEssay: "LOOM XVII: The Polanyi Inversion",
+      authors: ["Xule Lin", "Kevin Corley"],
+      date: "2026-03-12",
+    },
+    {
+      term: "Interpretive Orchestration",
+      slug: "interpretive-orchestration",
+      territory: "Epistemology of AI collaboration",
+      status: "anchored",
+      oneliner: "Holding your own judgment while gaining from what AI enables.",
+      definition: "Maintaining your own interpretive judgment while gaining from what AI enables.",
+      url: "/writing/research-memex#dfn-interpretive-orchestration",
+      essayUrl: "/writing/research-memex",
+      paperUrl: "/papers/interpretive-orchestration",
+      canonicalEssay: "Research Memex: Working at the AI Research Frontier",
+    },
+    {
       term: "Completion Authority",
       slug: "completion-authority",
       territory: "Epistemology of AI collaboration",
@@ -143,20 +216,20 @@ const FIXTURE_INDEX = {
       term: "Token Duality",
       slug: "token-duality",
       territory: "Governance and coordination",
-      status: "forming",
+      status: "grounded",
       oneliner: "Tokens are simultaneously economic instruments and governance mechanisms.",
-      definition: "Tokens are simultaneously economic instruments and governance mechanisms.",
+      definition: "Tokens are simultaneously economic instruments and governance mechanisms in DAOs.",
       open_questions: ["What happens when markets and governance become recursive?"],
-      url: "/concepts#token-duality",
+      url: "/concepts#dfn-token-duality",
     },
     {
       term: "SIGNA Framework",
       slug: "signa-framework",
       territory: "Governance and coordination",
-      status: "forming",
+      status: "grounded",
       oneliner: "Analyzing token governance across multiple dimensions simultaneously.",
       definition: "Analyzing token governance across multiple dimensions simultaneously.",
-      url: "/concepts#signa-framework",
+      url: "/concepts#dfn-signa-framework",
     },
     {
       term: "Artificial Organizing",
@@ -166,7 +239,7 @@ const FIXTURE_INDEX = {
       oneliner: "Once, organizations coordinated actors. Now they compose them.",
       definition: "Once, organizations coordinated actors. Now they compose them.",
       open_questions: ["What becomes invisible when the actors themselves are composed?"],
-      url: "/concepts#artificial-organizing",
+      url: "/concepts#dfn-artificial-organizing",
     },
   ],
   publications: [
@@ -212,6 +285,7 @@ const FIXTURE_INDEX = {
       family: "claude",
       name: "Claude",
       slug: "claude",
+      kind: "ai",
       roles: ["author", "prompter", "creator"],
       models: ["Claude Opus 4.8", "Claude 4.5 Sonnet"],
       prompterUrl: "/making/prompter/claude",
@@ -222,10 +296,43 @@ const FIXTURE_INDEX = {
       family: "kimi",
       name: "Kimi",
       slug: "kimi",
+      kind: "ai",
       roles: ["prompter", "creator"],
       models: ["Kimi K3", "Kimi Code"],
       creatorUrl: "/making/creator/kimi",
       totalWorks: 5,
+    },
+    {
+      name: "Kevin Corley",
+      slug: "kevin-corley",
+      kind: "human",
+      roles: ["coauthor"],
+      models: ["Kevin Corley"],
+      totalWorks: 16,
+    },
+    {
+      name: "Carliss Y. Baldwin",
+      slug: "carliss-y-baldwin",
+      kind: "human",
+      roles: ["coauthor"],
+      models: ["Carliss Y. Baldwin"],
+      totalWorks: 2,
+    },
+    {
+      name: "Erkko Autio",
+      slug: "erkko-autio",
+      kind: "human",
+      roles: ["coauthor"],
+      models: ["Erkko Autio"],
+      totalWorks: 2,
+    },
+    {
+      name: "Ying-Ying Hsieh",
+      slug: "ying-ying-hsieh",
+      kind: "human",
+      roles: ["coauthor"],
+      models: ["Ying-Ying Hsieh"],
+      totalWorks: 1,
     },
   ],
 };
@@ -331,13 +438,18 @@ describe("linxule-mcp metadata and HTTP boundary", () => {
     expect(card.serverInfo).toEqual({
       name: "linxule",
       title: "Xule Lin",
-      version: "2.0.0",
+      version: "2.0.1",
     });
+    expect(card.version).toBe("2.0.1");
     expect(card.url).toBe("https://linxule.com/mcp");
     expect(card.remotes[0].url).toBe("https://linxule.com/mcp");
     expect(card.transport).toEqual({ type: "streamable-http", endpoint: "/mcp" });
     expect(card.authentication).toEqual({ required: false });
     expect(card.tools.map((t) => t.name)).toEqual(["search_site", "list_site", "read_page"]);
+    const listSiteCardTool = card.tools.find((t) => t.name === "list_site");
+    expect(listSiteCardTool.inputSchema.properties.offset).toEqual(
+      expect.objectContaining({ type: "integer", minimum: 0 }),
+    );
     expect(card.prompts.map((p) => p.name)).toEqual(["xule-research-navigation", "enter-the-work"]);
   });
 
@@ -516,10 +628,10 @@ describe("linxule-mcp Streamable HTTP JSON-RPC 2.0 protocol & retrieval", () => 
       },
     });
     const listBody = await listRes.json();
-    expect(listBody.result.structuredContent.counts.concepts).toBe(5);
+    expect(listBody.result.structuredContent.counts.concepts).toBe(7);
     expect(listBody.result.structuredContent.counts.publications).toBe(1);
     expect(listBody.result.structuredContent.counts.projects).toBe(3);
-    expect(listBody.result.structuredContent.counts.collaborators).toBe(2);
+    expect(listBody.result.structuredContent.counts.collaborators).toBe(6);
 
     const collabListRes = await postRpc(worker, env, {
       jsonrpc: "2.0",
@@ -531,8 +643,17 @@ describe("linxule-mcp Streamable HTTP JSON-RPC 2.0 protocol & retrieval", () => 
       },
     });
     const collabListBody = await collabListRes.json();
-    expect(collabListBody.result.structuredContent.total).toBe(2);
-    expect(collabListBody.result.structuredContent.items.map((c) => c.slug)).toEqual(["claude", "kimi"]);
+    expect(collabListBody.result.structuredContent.total).toBe(6);
+    expect(collabListBody.result.structuredContent.count).toBe(6);
+    expect(collabListBody.result.structuredContent.offset).toBe(0);
+    expect(collabListBody.result.structuredContent.items.map((c) => c.slug)).toEqual([
+      "claude",
+      "kimi",
+      "kevin-corley",
+      "carliss-y-baldwin",
+      "erkko-autio",
+      "ying-ying-hsieh",
+    ]);
 
     // 5. read_page with #fragment stripping, SHA-256 verification, CONTENT_CHANGED guard, and portraits provenance
     const expectedEssayMd = FIXTURE_BODIES.get("/writing/loom-xviii-the-end-of-positivism.md");
@@ -685,11 +806,19 @@ describe("linxule-mcp Streamable HTTP JSON-RPC 2.0 protocol & retrieval", () => 
     const enterBody = await enterRes.json();
     const enterText = enterBody.result.messages[0].content.text;
     expect(enterText).toContain("What becomes impossible to see");
-    expect(enterText).toContain("Anchored Concepts");
-    expect(enterText).toContain("Forming Vocabulary");
+    expect(enterText).toContain("## Anchored Concepts (4)");
+    expect(enterText).toContain("## Scholarship-Grounded Concepts (2)");
+    expect(enterText).toContain("## Forming Vocabulary (1 — Still in Motion)");
     expect(enterText).toContain("Token Duality");
     expect(enterText).toContain("Artificial Organizing");
     expect(enterText).toContain("Cross-Surface Reading Trails");
+    // Human co-authors never leak into "named AI collaborators (...)"
+    expect(enterText).toContain(
+      "Human co-authors (Kevin Corley, Carliss Y. Baldwin, Erkko Autio, Ying-Ying Hsieh) and named AI collaborators (Claude, Kimi)",
+    );
+    expect(enterText).toContain("1 formal paper landing · 3 catalogued builds.");
+    expect(enterText).not.toContain("landing(s)");
+    expect(enterText).not.toContain("build(s)");
     expect(enterBody.result._meta.build_head).toBe(FIXTURE_BUILD_HEAD);
     expect(enterBody.result._meta.sha256).toMatch(/^[0-9a-f]{64}$/);
 
@@ -732,24 +861,24 @@ describe("linxule-mcp Streamable HTTP JSON-RPC 2.0 protocol & retrieval", () => 
     expect(signaMatches.some((m) => m.title === "signal bloom")).toBe(false);
     expect(signaMatches.some((m) => m.term === "Cognitive Signatures")).toBe(false);
 
-    // 2. Token Duality hits forming concept
+    // 2. Token Duality hits scholarship-grounded concept
     const tokenMatches = await search({ query: "Token Duality" });
     expect(
       tokenMatches.some(
-        (m) => m.kind === "concept" && m.term === "Token Duality" && m.status === "forming",
+        (m) => m.kind === "concept" && m.term === "Token Duality" && m.status === "grounded",
       ),
     ).toBe(true);
 
-    // 3. daogov hits unlinked project
+    // 3. daogov hits unlinked project #1 (ahead of /builds page)
     const daogovMatches = await search({ query: "daogov" });
-    expect(daogovMatches).toEqual([
+    expect(daogovMatches[0]).toEqual(
       expect.objectContaining({
         kind: "project",
         name: "daogov",
         url: null,
         read_path: "/builds",
       }),
-    ]);
+    );
 
     // 4. CJK search "林徐乐" hits /cv-zh and /cv
     const zhMatches = await search({ query: "林徐乐" });
@@ -1060,6 +1189,239 @@ describe("linxule-mcp Streamable HTTP JSON-RPC 2.0 protocol & retrieval", () => 
     expect(projectsMatches.length).toBeGreaterThanOrEqual(1);
     expect(projectsMatches[0].name).toBe("Research Memex");
     expect(projectsMatches.every((m) => m.kind === "project")).toBe(true);
+  });
+
+  test("v2.0.1 fixes: collaborator kind preservation, stop-words, acronym plurals, bilingual Chinese aliases, making/connect sections, and list_site offset pagination", async () => {
+    const { worker, env } = makeFixtureWorker();
+
+    const callTool = async (name, args) => {
+      const res = await postRpc(worker, env, {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "tools/call",
+        params: { name, arguments: args },
+      });
+      return { res, body: await res.json() };
+    };
+
+    // 1. Collaborator discriminator `kind: "collaborator"` is preserved alongside `collaboratorKind`
+    const { body: claudeSearch } = await callTool("search_site", {
+      query: "Claude",
+      kind: "collaborators",
+    });
+    expect(claudeSearch.result.structuredContent.matches[0]).toEqual(
+      expect.objectContaining({
+        kind: "collaborator",
+        collaboratorKind: "ai",
+        slug: "claude",
+      }),
+    );
+
+    const { body: erkkoSearch } = await callTool("search_site", {
+      query: "Erkko Autio",
+      kind: "collaborators",
+    });
+    expect(erkkoSearch.result.structuredContent.matches[0]).toEqual(
+      expect.objectContaining({
+        kind: "collaborator",
+        collaboratorKind: "human",
+        name: "Erkko Autio",
+      }),
+    );
+
+    // 2. Stop-word filtering: "what is the Polanyi Inversion" hits Polanyi Inversion concept & essay, NOT "What I'm Thinking"
+    const { body: nlPolanyi } = await callTool("search_site", {
+      query: "what is the Polanyi Inversion",
+    });
+    const nlMatches = nlPolanyi.result.structuredContent.matches;
+    expect(nlMatches[0]).toEqual(
+      expect.objectContaining({ kind: "concept", term: "Polanyi Inversion" }),
+    );
+    expect(
+      nlMatches.some(
+        (m) => m.kind === "page" && m.path === "/writing/loom-xvii-the-polanyi-inversion",
+      ),
+    ).toBe(true);
+    expect(nlMatches.some((m) => m.path === "/writing/what-i-am-thinking-2026-01")).toBe(false);
+
+    // All-stop-word query still falls back safely instead of returning empty or throwing
+    const { body: allStop } = await callTool("search_site", { query: "what is the" });
+    expect(allStop.result.structuredContent.ok).toBe(true);
+    expect(allStop.result.structuredContent.matches.length).toBeGreaterThan(0);
+
+    // 3. Mixed-case & lowercase acronym plural normalization (DAOs <-> DAO, LLMs <-> LLM)
+    for (const daoQuery of ["DAO", "DAOs", "daos", "dao"]) {
+      const { body } = await callTool("search_site", { query: daoQuery });
+      const matches = body.result.structuredContent.matches;
+      expect(
+        matches.some((m) => m.kind === "page" && m.path === "/writing/dao-governance-resources"),
+        `query "${daoQuery}" should hit DAO page`,
+      ).toBe(true);
+      expect(
+        matches.some((m) => m.kind === "concept" && m.term === "Token Duality"),
+        `query "${daoQuery}" should hit DAOs concept`,
+      ).toBe(true);
+    }
+
+    for (const llmQuery of ["LLM", "LLMs", "llms", "llm"]) {
+      const { body } = await callTool("search_site", { query: llmQuery });
+      const matches = body.result.structuredContent.matches;
+      expect(
+        matches.some((m) => m.kind === "page" && m.path === "/writing/dao-governance-resources"),
+        `query "${llmQuery}" should hit LLM page`,
+      ).toBe(true);
+      expect(
+        matches.some((m) => m.kind === "page" && m.path === "/writing/loom-xvii-the-polanyi-inversion"),
+        `query "${llmQuery}" should hit LLMs page`,
+      ).toBe(true);
+    }
+
+    // 4. Bilingual Chinese concept queries hit English concepts, essays, and publications
+    const { body: zhPolanyi } = await callTool("search_site", { query: "波兰尼反转" });
+    const zhPolanyiMatches = zhPolanyi.result.structuredContent.matches;
+    expect(zhPolanyiMatches[0]).toEqual(
+      expect.objectContaining({ kind: "concept", term: "Polanyi Inversion" }),
+    );
+    expect(
+      zhPolanyiMatches.some(
+        (m) => m.kind === "page" && m.path === "/writing/loom-xvii-the-polanyi-inversion",
+      ),
+    ).toBe(true);
+
+    for (const zhIo of ["诠释性编排", "诠释编排"]) {
+      const { body } = await callTool("search_site", { query: zhIo });
+      const matches = body.result.structuredContent.matches;
+      expect(
+        matches.some((m) => m.kind === "concept" && m.term === "Interpretive Orchestration"),
+        `query "${zhIo}" should hit Interpretive Orchestration concept`,
+      ).toBe(true);
+      expect(
+        matches.some((m) => m.kind === "publication" && m.title.includes("Interpretive Orchestration")),
+        `query "${zhIo}" should hit Interpretive Orchestration publication`,
+      ).toBe(true);
+    }
+
+    // 5. section="making" expands to ["making", "portraits", "artifacts"]; /connect accepted under "connect" and "builds"
+    const { body: makingSearch } = await callTool("search_site", {
+      query: "doorway",
+      section: "making",
+    });
+    expect(makingSearch.result.structuredContent.matches.map((m) => m.path)).toEqual([
+      "/making/portraits/01-threshold",
+    ]);
+
+    const { body: makingList } = await callTool("list_site", {
+      kind: "pages",
+      section: "making",
+    });
+    const makingPaths = makingList.result.structuredContent.items.map((i) => i.path);
+    expect(makingPaths).toEqual([
+      "/making",
+      "/making/portraits/01-threshold",
+      "/making/artifacts/signal-bloom",
+    ]);
+    expect(makingList.result.structuredContent.total).toBe(3);
+    expect(makingList.result.structuredContent.count).toBe(3);
+
+    const { body: connectSectionList } = await callTool("list_site", {
+      kind: "pages",
+      section: "connect",
+    });
+    expect(connectSectionList.result.structuredContent.items.map((i) => i.path)).toEqual(["/connect"]);
+
+    const { body: buildsSectionList } = await callTool("list_site", {
+      kind: "pages",
+      section: "builds",
+    });
+    expect(buildsSectionList.result.structuredContent.items.map((i) => i.path)).toEqual([
+      "/connect",
+      "/builds",
+    ]);
+
+    const { body: readConnect } = await callTool("read_page", { path: "/connect" });
+    expect(readConnect.result.structuredContent.section).toBe("connect");
+
+    // 6. list_site offset pagination (including >100 pages beyond limit=100)
+    const { body: page1 } = await callTool("list_site", {
+      kind: "pages",
+      limit: 4,
+      offset: 0,
+    });
+    const { body: page2 } = await callTool("list_site", {
+      kind: "pages",
+      limit: 4,
+      offset: 4,
+    });
+    expect(page1.result.structuredContent.total).toBe(FIXTURE_INDEX.pages.length);
+    expect(page1.result.structuredContent.count).toBe(4);
+    expect(page1.result.structuredContent.offset).toBe(0);
+    expect(page2.result.structuredContent.count).toBe(4);
+    expect(page2.result.structuredContent.offset).toBe(4);
+    expect(page1.result.structuredContent.items[0].path).not.toBe(
+      page2.result.structuredContent.items[0].path,
+    );
+
+    // Invalid offset rejected with -32602
+    const { body: badOffset } = await callTool("list_site", {
+      kind: "pages",
+      offset: -1,
+    });
+    expect(badOffset.error.code).toBe(-32602);
+
+    // 136-page archive pagination beyond limit=100
+    const manyPages = Array.from({ length: 136 }, (_, idx) => ({
+      url: `/writing/essay-${idx + 1}`,
+      url_md: `/writing/essay-${idx + 1}.md`,
+      title: `Essay ${idx + 1}`,
+      section: "writing",
+    }));
+    const bigIndex = { ...FIXTURE_INDEX, pages: manyPages };
+    const big = makeFixtureWorker({
+      extraBodies: new Map([["/site-index.json", JSON.stringify(bigIndex)]]),
+    });
+    const tailRes = await postRpc(big.worker, big.env, {
+      jsonrpc: "2.0",
+      id: 99,
+      method: "tools/call",
+      params: { name: "list_site", arguments: { kind: "pages", limit: 100, offset: 100 } },
+    });
+    const tailBody = (await tailRes.json()).result.structuredContent;
+    expect(tailBody.total).toBe(136);
+    expect(tailBody.offset).toBe(100);
+    expect(tailBody.count).toBe(36);
+    expect(tailBody.items[0].path).toBe("/writing/essay-101");
+    expect(tailBody.items[35].path).toBe("/writing/essay-136");
+
+    // 7. enter-the-work also accepts status: "established" alongside "grounded" and handles plural paper landings
+    const establishedIndex = {
+      ...FIXTURE_INDEX,
+      concepts: FIXTURE_INDEX.concepts.map((c) =>
+        c.status === "grounded" ? { ...c, status: "established" } : c,
+      ),
+      publications: [
+        ...FIXTURE_INDEX.publications,
+        {
+          title: "Cognitio Emergens",
+          authors: ["Xule Lin"],
+          year: 2025,
+          venue: "arXiv",
+          url: "https://arxiv.org/abs/2505.03105",
+        },
+      ],
+      projects: [FIXTURE_INDEX.projects[0]],
+    };
+    const estWorker = makeFixtureWorker({
+      extraBodies: new Map([["/site-index.json", JSON.stringify(establishedIndex)]]),
+    });
+    const estPromptRes = await postRpc(estWorker.worker, estWorker.env, {
+      jsonrpc: "2.0",
+      id: 100,
+      method: "prompts/get",
+      params: { name: "enter-the-work" },
+    });
+    const estText = (await estPromptRes.json()).result.messages[0].content.text;
+    expect(estText).toContain("## Scholarship-Grounded Concepts (2)");
+    expect(estText).toContain("2 formal paper landings · 1 catalogued build.");
   });
 
   test("every STATIC_MARKDOWN_TWINS mdPath exists as a non-empty file in _site when freshly built", () => {

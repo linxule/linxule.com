@@ -3,10 +3,13 @@ import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {
+  checkOptimizedImageReferences,
+  checkRedirectFragmentTargets,
   checkSingleH1,
   checkSitemapInvariants,
   checkSourceHygiene,
   checkTrailingSlashLinks,
+  findBuiltHtmlRedirectCollisions,
   findRedirectCollisions,
 } from './check-sitemap-redirects.mjs';
 
@@ -168,5 +171,76 @@ describe('source hygiene guard', () => {
 
   it('passes against the real src/ tree', () => {
     expect(checkSourceHygiene('src')).toEqual([]);
+  });
+});
+
+describe('built HTML redirect collision, fragment target, and optimized image guards', () => {
+  it('flags built HTML routes (including /tag/*) shadowed by vercel.json redirects', async () => {
+    const dir = await makeTemp('xule-html-redir-');
+    await mkdir(path.join(dir, 'tag/research-methods'), { recursive: true });
+    await mkdir(path.join(dir, 'tag/research-methodology'), { recursive: true });
+    await writeFile(path.join(dir, 'tag/research-methods/index.html'), '<h1>Methods</h1>');
+    await writeFile(path.join(dir, 'tag/research-methodology/index.html'), '<h1>Methodology</h1>');
+
+    const { collisions, htmlCount } = findBuiltHtmlRedirectCollisions(dir, [
+      { source: '/tag/research-methods', destination: '/tag/research-methodology' },
+    ]);
+    expect(htmlCount).toBe(2);
+    expect(collisions).toEqual([
+      {
+        path: '/tag/research-methods',
+        source: '/tag/research-methods',
+        destination: '/tag/research-methodology',
+      },
+    ]);
+  });
+
+  it('verifies internal redirect #fragment targets exist on destination HTML pages', async () => {
+    const dir = await makeTemp('xule-frag-');
+    await mkdir(path.join(dir, 'cv'), { recursive: true });
+    await writeFile(
+      path.join(dir, 'cv/index.html'),
+      '<html><body><h2 id="publications">Publications</h2><script>var x = \'id="missing"\';</script></body></html>',
+    );
+
+    const issues = checkRedirectFragmentTargets(dir, [
+      { source: '/publications', destination: '/cv#publications' },
+      { source: '/old-section', destination: '/cv#missing' },
+      { source: '/gone', destination: '/nonexistent#top' },
+      { source: '/ext', destination: 'https://example.org/page#anchor' },
+    ]);
+    expect(issues.some((m) => m.includes('/publications -> /cv#publications'))).toBe(false);
+    expect(issues.some((m) => m.includes('/old-section -> /cv#missing'))).toBe(true);
+    expect(issues.some((m) => m.includes('/gone -> /nonexistent#top'))).toBe(true);
+    expect(issues.some((m) => m.includes('example.org'))).toBe(false);
+  });
+
+  it('verifies every /assets/images/optimized/* reference in built HTML and Markdown exists on disk', async () => {
+    const dir = await makeTemp('xule-opt-img-');
+    await mkdir(path.join(dir, 'assets/images/optimized'), { recursive: true });
+    await mkdir(path.join(dir, 'writing/post'), { recursive: true });
+
+    await writeFile(path.join(dir, 'assets/images/optimized/attachments-good-400w.jpeg'), 'ok');
+    await writeFile(
+      path.join(dir, 'writing/post/index.html'),
+      '<img src="/assets/images/optimized/attachments-good-400w.jpeg" srcset="/assets/images/optimized/attachments-missing-html-800w.webp 800w">',
+    );
+    await writeFile(
+      path.join(dir, 'writing/post.md'),
+      [
+        '![Good](/assets/images/optimized/attachments-good-400w.jpeg)',
+        '![Bad](https://linxule.com/assets/images/optimized/attachments-missing-md-1200w.jpeg)',
+        '```md',
+        '![Ignored in code](/assets/images/optimized/attachments-in-code-1200w.jpeg)',
+        '```',
+      ].join('\n'),
+    );
+
+    const { problems, refsChecked } = checkOptimizedImageReferences(dir);
+    expect(refsChecked).toBe(3);
+    expect(problems).toHaveLength(2);
+    expect(problems.some((m) => m.includes('attachments-missing-html-800w.webp'))).toBe(true);
+    expect(problems.some((m) => m.includes('attachments-missing-md-1200w.jpeg'))).toBe(true);
+    expect(problems.some((m) => m.includes('attachments-in-code-1200w.jpeg'))).toBe(false);
   });
 });

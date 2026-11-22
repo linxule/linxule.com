@@ -67,7 +67,7 @@ This echoed Bullock et al.’s observation about AI-native organizations:
 
 > “This could include the rise of ‘AI-native’ organizations that leverage hundreds or thousands of AI agents to coordinate complex networks of human and artificial agents towards shared goals, potentially outcompeting traditional hierarchical institutions.”
 
-#### 4. Novel Coordination Beyond Markets or Managers
+### 4. Novel Coordination Beyond Markets or Managers
 
 Perhaps most intriguingly, they saw coordination happening through mechanisms we barely have names for. Not through managers. Not through market prices. Through algorithms, yes, but also through **stigmergic coordination** (like ant colonies leaving pheromone trails) and other non-human systems.
 

@@ -61,6 +61,9 @@ territories:
       - "What reveals itself when you stop performing expertise?"
 
   - name: "Governance and coordination"
+    status: grounded
+    source: "/cv#working-papers"
+    sourceLabel: "Dissertation & working papers"
     concepts:
       - term: "Token Duality"
         oneliner: "Tokens are simultaneously economic instruments and governance mechanisms."

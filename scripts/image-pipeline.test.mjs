@@ -13,7 +13,10 @@ import {
   getActiveOptimizedFiles,
   imageOptions,
   originalImageHTML,
+  preindexWritingAttachments,
   resetActiveOptimizedFiles,
+  resetSourceAttachmentIndex,
+  resolveOptimizedAttachmentUrl,
 } from "../eleventy/image-pipeline.js";
 import shortcodes from "../eleventy/shortcodes.js";
 
@@ -220,5 +223,73 @@ describe("shared image contract", () => {
       .toBe("active-bytes");
     expect(existsSync(path.join(fixtureDir, "custom-output/assets/images/optimized/orphan-2912w.png")))
       .toBe(false);
+  });
+
+  test("resolveOptimizedAttachmentUrl resolves exact width and PNG transparency from source even on a cold cache", async () => {
+    // Cold cache + un-preindexed lazy sync inspection
+    resetSourceAttachmentIndex();
+    expect(
+      resolveOptimizedAttachmentUrl("/writing/attachments/seam_01_chevrolet_toledo_1927.jpg", { cacheDirs: [] }),
+    ).toBe("/assets/images/optimized/attachments-seam_01_chevrolet_toledo_1927-400w.jpeg");
+    expect(
+      resolveOptimizedAttachmentUrl(
+        "/writing/attachments/epistemic_voids_01_citation_theater_02_aicoscientist_overview.png",
+        { cacheDirs: [] },
+      ),
+    ).toBe(
+      "/assets/images/optimized/attachments-epistemic_voids_01_citation_theater_02_aicoscientist_overview-1200w.png",
+    );
+
+    // Pre-indexed path (mirrors eleventy.before) + stale JPEG cache entry must NOT override transparent PNG
+    resetSourceAttachmentIndex();
+    await preindexWritingAttachments();
+    const staleCache = path.join(fixtureDir, "stale-cache");
+    await mkdir(staleCache, { recursive: true });
+    await writeFile(
+      path.join(
+        staleCache,
+        "attachments-epistemic_voids_01_citation_theater_02_aicoscientist_overview-1200w.jpeg",
+      ),
+      "stale",
+    );
+    await writeFile(path.join(staleCache, "attachments-only-in-cache-800w.jpeg"), "cached");
+
+    expect(
+      resolveOptimizedAttachmentUrl("/writing/attachments/seam_01_chevrolet_toledo_1927.jpg", { cacheDirs: [] }),
+    ).toBe("/assets/images/optimized/attachments-seam_01_chevrolet_toledo_1927-400w.jpeg");
+    expect(
+      resolveOptimizedAttachmentUrl("/writing/attachments/loom-vi-the-pattern-beneath-the-voices-03.png", {
+        cacheDirs: [],
+      }),
+    ).toBe("/assets/images/optimized/attachments-loom-vi-the-pattern-beneath-the-voices-03-586w.jpeg");
+    expect(
+      resolveOptimizedAttachmentUrl("/writing/attachments/loom-vi-the-pattern-beneath-the-voices-04.png", {
+        cacheDirs: [],
+      }),
+    ).toBe("/assets/images/optimized/attachments-loom-vi-the-pattern-beneath-the-voices-04-800w.jpeg");
+    expect(
+      resolveOptimizedAttachmentUrl(
+        "/writing/attachments/epistemic_voids_01_citation_theater_01_effortlessacademic.jpeg",
+        { cacheDirs: [] },
+      ),
+    ).toBe(
+      "/assets/images/optimized/attachments-epistemic_voids_01_citation_theater_01_effortlessacademic-1196w.jpeg",
+    );
+    expect(
+      resolveOptimizedAttachmentUrl(
+        "/writing/attachments/epistemic_voids_01_citation_theater_02_aicoscientist_overview.png",
+        { cacheDirs: [staleCache] },
+      ),
+    ).toBe(
+      "/assets/images/optimized/attachments-epistemic_voids_01_citation_theater_02_aicoscientist_overview-1200w.png",
+    );
+    // Fallback to cache scan when source file does not exist on disk
+    expect(
+      resolveOptimizedAttachmentUrl("/writing/attachments/only-in-cache.png", { cacheDirs: [staleCache] }),
+    ).toBe("/assets/images/optimized/attachments-only-in-cache-800w.jpeg");
+    // OG cards are never rewritten
+    expect(
+      resolveOptimizedAttachmentUrl("/writing/attachments/rwa-01-cover-og.jpg", { cacheDirs: [] }),
+    ).toBeNull();
   });
 });

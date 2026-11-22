@@ -1,6 +1,8 @@
 /**
  * Human–AI collaborator lineage aggregated across the whole archive:
  *   - `src/writing/*.md` (`authors`)
+ *   - `src/papers/<slug>/index.md` (`authors`)
+ *   - `src/cv/index.md` (`# Under Review`, `# Working Papers`, `# Public Scholarship` co-authors)
  *   - `src/making/portraits/*.md` (`prompter`, `generator`)
  *   - `src/making/artifacts/*.md` (`creator`)
  *   - `src/builds/vellum.md` (`## Made together` provenance record)
@@ -29,8 +31,36 @@ const FAMILY_DISPLAY = {
   midjourney: { name: "Midjourney", kind: "ai" },
 };
 
-const HUMAN_COLLABORATORS = new Set(["kevin corley", "carliss y. baldwin"]);
+const HUMAN_CANONICAL = new Map([
+  ["kevin corley", "Kevin Corley"],
+  ["kevin g. corley", "Kevin Corley"],
+  ["corley, k. g.", "Kevin Corley"],
+  ["carliss y. baldwin", "Carliss Y. Baldwin"],
+  ["carliss baldwin", "Carliss Y. Baldwin"],
+  ["baldwin, c. y.", "Carliss Y. Baldwin"],
+  ["erkko autio", "Erkko Autio"],
+  ["autio, e.", "Erkko Autio"],
+  ["ying-ying hsieh", "Ying-Ying Hsieh"],
+  ["hsieh, y.-y.", "Ying-Ying Hsieh"],
+]);
+
+const CV_HUMAN_MATCHERS = [
+  { name: "Kevin Corley", re: /\b(?:Kevin\s+(?:G\.\s+)?Corley|Corley,\s*K\.\s*G\.)/i },
+  { name: "Carliss Y. Baldwin", re: /\b(?:Carliss\s+(?:Y\.\s+)?Baldwin|Baldwin,\s*C\.\s*Y\.)/i },
+  { name: "Erkko Autio", re: /\b(?:Erkko\s+Autio|Autio,\s*E\.)/i },
+  { name: "Ying-Ying Hsieh", re: /\b(?:Ying-Ying\s+Hsieh|Hsieh,\s*Y\.-Y\.)/i },
+];
+
 const SELF_AUTHORS = new Set(["xule lin", "林徐乐"]);
+
+function preferDisplayName(current, candidate) {
+  if (!current) return candidate;
+  if (!candidate) return current;
+  const curHasUpper = /[A-Z]/.test(current);
+  const candHasUpper = /[A-Z]/.test(candidate);
+  if (!curHasUpper && candHasUpper) return candidate;
+  return current;
+}
 
 function readMarkdownDir(relDir) {
   const dir = path.join(ROOT, relDir);
@@ -56,13 +86,14 @@ function classifyCollaborator(raw) {
   const lower = cleaned.toLowerCase();
   if (SELF_AUTHORS.has(lower)) return null;
 
-  if (HUMAN_COLLABORATORS.has(lower)) {
+  const humanCanonical = HUMAN_CANONICAL.get(lower);
+  if (humanCanonical) {
     return {
-      familySlug: slugify(cleaned),
-      familyName: cleaned,
+      familySlug: slugify(humanCanonical),
+      familyName: humanCanonical,
       kind: "human",
-      modelName: cleaned,
-      modelSlug: slugify(cleaned),
+      modelName: humanCanonical,
+      modelSlug: slugify(humanCanonical),
     };
   }
 
@@ -232,12 +263,13 @@ function recordContribution({ raw, section, role, workUrl, explicitModelSlug = n
       roles: new Set(),
       worksBySection: {
         writing: new Set(),
+        papers: new Set(),
         portraits: new Set(),
         artifacts: new Set(),
         builds: new Set(),
       },
       allWorks: new Set(),
-      modelSlugs: new Set(),
+      modelKeys: new Set(),
     };
     familyMap.set(info.familySlug, fam);
   }
@@ -245,28 +277,35 @@ function recordContribution({ raw, section, role, workUrl, explicitModelSlug = n
   fam.worksBySection[section].add(workUrl);
   fam.allWorks.add(workUrl);
 
-  const mSlug = explicitModelSlug || info.modelSlug;
-  fam.modelSlugs.add(mSlug);
+  const canonicalModelSlug = slugify(info.modelName) || info.modelSlug;
+  const rawSlug = explicitModelSlug || info.modelSlug || canonicalModelSlug;
+  const modelKey = `${info.familySlug}::${canonicalModelSlug}`;
+  fam.modelKeys.add(modelKey);
 
-  let mod = modelMap.get(mSlug);
+  let mod = modelMap.get(modelKey);
   if (!mod) {
     mod = {
       name: info.modelName,
-      slug: mSlug,
+      slug: canonicalModelSlug,
+      rawSlugs: new Set(),
       family: info.familyName,
       familySlug: info.familySlug,
       kind: info.kind,
       roles: new Set(),
       worksBySection: {
         writing: new Set(),
+        papers: new Set(),
         portraits: new Set(),
         artifacts: new Set(),
         builds: new Set(),
       },
       allWorks: new Set(),
     };
-    modelMap.set(mSlug, mod);
+    modelMap.set(modelKey, mod);
   }
+  mod.name = preferDisplayName(mod.name, info.modelName);
+  mod.rawSlugs.add(canonicalModelSlug);
+  if (rawSlug) mod.rawSlugs.add(rawSlug);
   mod.roles.add(role);
   mod.worksBySection[section].add(workUrl);
   mod.allWorks.add(workUrl);
@@ -279,6 +318,55 @@ for (const doc of writingDocs) {
   for (const author of authors) {
     const name = typeof author === "string" ? author : author?.name;
     if (name) recordContribution({ raw: name, section: "writing", role: "coauthor", workUrl });
+  }
+}
+
+// 1b. Formal paper landing authors (`src/papers/*/index.md`)
+const papersDir = path.join(ROOT, "src/papers");
+if (existsSync(papersDir)) {
+  for (const entry of readdirSync(papersDir, { withFileTypes: true }).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  )) {
+    if (!entry.isDirectory()) continue;
+    const indexPath = path.join(papersDir, entry.name, "index.md");
+    if (!existsSync(indexPath)) continue;
+    const parsed = matter(readFileSync(indexPath, "utf8"), { cache: false });
+    const workUrl = `/papers/${entry.name}`;
+    const authors = Array.isArray(parsed.data.authors) ? parsed.data.authors : [];
+    for (const author of authors) {
+      const name = typeof author === "string" ? author : author?.name;
+      if (name) recordContribution({ raw: name, section: "papers", role: "coauthor", workUrl });
+    }
+  }
+}
+
+// 1c. Human co-authors from CV research sections (`# Under Review`, `# Working Papers`, `# Public Scholarship`)
+const cvPath = path.join(ROOT, "src/cv/index.md");
+if (existsSync(cvPath)) {
+  const { content: cvContent } = matter(readFileSync(cvPath, "utf8"), { cache: false });
+  const cvSections = [
+    { heading: "Under Review", anchor: "/cv#under-review", section: "papers" },
+    { heading: "Working Papers", anchor: "/cv#working-papers", section: "papers" },
+    { heading: "Public Scholarship", anchor: "/cv#public-scholarship", section: "writing" },
+  ];
+  for (const spec of cvSections) {
+    const headingRe = new RegExp(`^#\\s+${spec.heading}\\b`, "m");
+    const afterHeading = cvContent.split(headingRe)[1];
+    if (!afterHeading) continue;
+    const body = afterHeading.split(/^#\s+/m)[0] || "";
+    for (const line of body.split("\n")) {
+      if (!/^-\s+/.test(line)) continue;
+      for (const matcher of CV_HUMAN_MATCHERS) {
+        if (matcher.re.test(line)) {
+          recordContribution({
+            raw: matcher.name,
+            section: spec.section,
+            role: "coauthor",
+            workUrl: spec.anchor,
+          });
+        }
+      }
+    }
   }
 }
 
@@ -337,38 +425,52 @@ if (existsSync(vellumPath)) {
   }
 }
 
-const models = [...modelMap.values()]
-  .map((mod) =>
-    Object.freeze({
-      name: mod.name,
-      slug: mod.slug,
-      family: mod.family,
-      familySlug: mod.familySlug,
-      kind: mod.kind,
-      roles: Object.freeze([...mod.roles].sort()),
-      counts: Object.freeze({
-        writing: mod.worksBySection.writing.size,
-        portraits: mod.worksBySection.portraits.size,
-        artifacts: mod.worksBySection.artifacts.size,
-        builds: mod.worksBySection.builds.size,
+const models = [...modelMap.entries()]
+  .map(([key, mod]) => {
+    const matchedPrompterSlug = [...mod.rawSlugs].find((s) => prompterModelSlugs.has(s)) || null;
+    const matchedCreatorSlug = [...mod.rawSlugs].find((s) => creatorModelSlugs.has(s)) || null;
+    return [
+      key,
+      Object.freeze({
+        name: mod.name,
+        slug: mod.slug,
+        family: mod.family,
+        familySlug: mod.familySlug,
+        kind: mod.kind,
+        roles: Object.freeze([...mod.roles].sort()),
+        counts: Object.freeze({
+          writing: mod.worksBySection.writing.size,
+          papers: mod.worksBySection.papers.size,
+          portraits: mod.worksBySection.portraits.size,
+          artifacts: mod.worksBySection.artifacts.size,
+          builds: mod.worksBySection.builds.size,
+        }),
+        totalWorks: mod.allWorks.size,
+        prompterUrl: matchedPrompterSlug ? `/making/prompter/${matchedPrompterSlug}` : null,
+        creatorUrl: matchedCreatorSlug ? `/making/creator/${matchedCreatorSlug}` : null,
+        works: Object.freeze([...mod.allWorks].sort()),
       }),
-      totalWorks: mod.allWorks.size,
-      prompterUrl: prompterModelSlugs.has(mod.slug) ? `/making/prompter/${mod.slug}` : null,
-      creatorUrl: creatorModelSlugs.has(mod.slug) ? `/making/creator/${mod.slug}` : null,
-      works: Object.freeze([...mod.allWorks].sort()),
-    }),
-  )
-  .sort((a, b) => b.totalWorks - a.totalWorks || a.name.localeCompare(b.name));
+    ];
+  });
 
-const modelsBySlug = new Map(models.map((m) => [m.slug, m]));
+const modelsByKey = new Map(models);
+const sortedModels = models
+  .map(([, entry]) => entry)
+  .sort((a, b) => b.totalWorks - a.totalWorks || a.name.localeCompare(b.name));
 
 const families = [...familyMap.values()]
   .map((fam) => {
-    const famModels = [...fam.modelSlugs]
-      .map((s) => modelsBySlug.get(s))
+    const seenNames = new Set();
+    const famModels = [];
+    for (const m of [...fam.modelKeys]
+      .map((key) => modelsByKey.get(key))
       .filter(Boolean)
-      .sort((a, b) => b.totalWorks - a.totalWorks || a.name.localeCompare(b.name))
-      .map((m) => m.name);
+      .sort((a, b) => b.totalWorks - a.totalWorks || a.name.localeCompare(b.name))) {
+      const lowerName = m.name.toLowerCase();
+      if (seenNames.has(lowerName)) continue;
+      seenNames.add(lowerName);
+      famModels.push(m.name);
+    }
 
     return Object.freeze({
       name: fam.name,
@@ -377,6 +479,7 @@ const families = [...familyMap.values()]
       roles: Object.freeze([...fam.roles].sort()),
       counts: Object.freeze({
         writing: fam.worksBySection.writing.size,
+        papers: fam.worksBySection.papers.size,
         portraits: fam.worksBySection.portraits.size,
         artifacts: fam.worksBySection.artifacts.size,
         builds: fam.worksBySection.builds.size,
@@ -391,6 +494,6 @@ const families = [...familyMap.values()]
 
 export default {
   families: Object.freeze(families),
-  models: Object.freeze(models),
+  models: Object.freeze(sortedModels),
   totalWorks: allCreditedWorks.size,
 };

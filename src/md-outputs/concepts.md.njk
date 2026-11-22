@@ -10,20 +10,23 @@ eleventyExcludeFromCollections: true
 {% for line in item.data.thesis_continued %}{{ (line.text | default(line)) | safe }}{% if line.accident %} *(accident)*{% endif %}
 {% endfor %}
 
-{% for territory in item.data.territories %}
+{% for territory in conceptsCatalog.territories %}
 ## {{ territory.name | safe }}
 
 {% for concept in territory.concepts %}
 ### {{ concept.term | safe }}
 
 *{{ concept.oneliner | safe }}*
-{% for c in collections.concepts %}{% if c.term == concept.term %}
+{% if concept.status == "anchored" %}{% if concept.definition and concept.definition != concept.oneliner %}
 
-> {{ c.definition | safe }}
-
-Source: [{{ c.title | safe }}]({{ site.url }}{{ c.url | stripTrailingSlash }}#{{ c.anchor }})
-{% endif %}{% endfor %}{% if concept.essay %}
-Essay: {{ site.url }}{{ concept.essay | stripTrailingSlash }}
+> {{ concept.definition | safe }}
+{% endif %}
+Source: [{{ concept.essayTitle | safe }}]({{ site.url }}{{ concept.url | safe }}){% if concept.paperUrl and concept.paperVenue %}
+Paper: [{{ concept.paperVenue | safe }}{% if concept.paperYear %} ({{ concept.paperYear }}){% endif %}]({{ site.url }}{{ concept.paperUrl | safe }}){% if concept.doi %} · DOI: https://doi.org/{{ concept.doi }}{% endif %}{% endif %}
+{% elif concept.status == "grounded" %}
+Status: grounded{% if concept.sourceUrl and concept.sourceLabel %} — [{{ concept.sourceLabel | safe }}]({{ site.url }}{{ concept.sourceUrl | safe }}){% endif %}
+{% else %}
+Status: forming
 {% endif %}
 
 {% endfor %}

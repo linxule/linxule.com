@@ -167,6 +167,124 @@ const HAN_RUN_RE = /\p{Script=Han}+/u;
 const TOKEN_EXTRACT_RE = /\p{Script=Han}+|[\p{L}\p{N}]+(?:\*)?/gu;
 const LATIN_SUFFIX_RE =
   /(?:ations|ation|istic|ists|isms|izing|ized|izer|ment|ness|ities|ity|ies|ing|ist|ism|ers|ed|es|er|al|ly|s)$/;
+const ACRONYM_PLURAL_RE = /^[A-Z]{2,}s$/;
+const KNOWN_SINGULAR_ACRONYMS = new Set([
+  "dao",
+  "llm",
+  "mcp",
+  "api",
+  "pdf",
+  "svg",
+  "cv",
+  "ai",
+  "phd",
+]);
+const KNOWN_PLURAL_ACRONYMS = new Set([
+  "daos",
+  "llms",
+  "mcps",
+  "apis",
+  "pdfs",
+  "svgs",
+  "cvs",
+  "ais",
+  "phds",
+]);
+const ENGLISH_STOP_WORDS = new Set([
+  "the",
+  "what",
+  "and",
+  "of",
+  "in",
+  "to",
+  "for",
+  "is",
+  "on",
+  "with",
+  "how",
+  "from",
+  "as",
+  "by",
+  "at",
+  "an",
+  "be",
+  "or",
+  "are",
+  "that",
+  "this",
+  "a",
+  "it",
+  "into",
+  "about",
+]);
+
+const BILINGUAL_CONCEPT_ALIASES = Object.freeze([
+  Object.freeze({ en: "Polanyi Inversion", zh: Object.freeze(["波兰尼反转"]) }),
+  Object.freeze({ en: "Cognitive Signatures", zh: Object.freeze(["认知签名"]) }),
+  Object.freeze({ en: "Interpretive Orchestration", zh: Object.freeze(["诠释性编排", "诠释编排"]) }),
+  Object.freeze({ en: "Calculator Fallacy", zh: Object.freeze(["计算器谬误"]) }),
+  Object.freeze({ en: "Completion Authority", zh: Object.freeze(["完成裁定权"]) }),
+  Object.freeze({ en: "Whispered Agency", zh: Object.freeze(["耳语能动性"]) }),
+  Object.freeze({ en: "Vulnerability as Method", zh: Object.freeze(["脆弱性作为方法"]) }),
+  Object.freeze({ en: "Token Duality", zh: Object.freeze(["代币二元性"]) }),
+  Object.freeze({ en: "Selective Centralization", zh: Object.freeze(["选择性中心化"]) }),
+  Object.freeze({ en: "Structured Transparency", zh: Object.freeze(["结构化透明度"]) }),
+  Object.freeze({ en: "Artificial Organizing", zh: Object.freeze(["人工组织"]) }),
+  Object.freeze({ en: "SIGNA Framework", zh: Object.freeze(["SIGNA框架"]) }),
+]);
+
+const ALL_ZH_CONCEPT_ALIASES = Object.freeze(
+  BILINGUAL_CONCEPT_ALIASES.flatMap((entry) => entry.zh.map((zh) => zh.toLowerCase())),
+);
+
+function expandBilingualAliases(primaryText, keywordList, secondaryText) {
+  const primaryLower = String(primaryText || "").toLowerCase();
+  const baseKeywords = asStringArray(keywordList);
+  const keywordsLower = baseKeywords.map((kw) => kw.toLowerCase());
+  const secondaryLower = String(secondaryText || "").toLowerCase();
+
+  const extraPrimary = [];
+  const extraKeywords = [];
+  const extraSecondary = [];
+
+  for (const entry of BILINGUAL_CONCEPT_ALIASES) {
+    const enLower = entry.en.toLowerCase();
+    const inPrimaryEn = primaryLower.includes(enLower);
+    const inKeywordsEn = keywordsLower.some((kw) => kw.includes(enLower));
+    const inSecondaryEn = secondaryLower.includes(enLower);
+
+    const inPrimaryZh = entry.zh.some((zh) => primaryLower.includes(zh.toLowerCase()));
+    const inKeywordsZh = entry.zh.some((zh) =>
+      keywordsLower.some((kw) => kw.includes(zh.toLowerCase())),
+    );
+    const inSecondaryZh = entry.zh.some((zh) => secondaryLower.includes(zh.toLowerCase()));
+
+    if (inPrimaryEn) {
+      if (primaryLower === enLower || primaryLower === `the ${enLower}`) {
+        extraPrimary.push(...entry.zh);
+      }
+      extraKeywords.push(...entry.zh);
+    } else if (inKeywordsEn) {
+      extraKeywords.push(...entry.zh);
+    } else if (inSecondaryEn) {
+      extraSecondary.push(...entry.zh);
+    }
+
+    if (inPrimaryZh || inKeywordsZh) {
+      extraKeywords.push(entry.en);
+    } else if (inSecondaryZh) {
+      extraSecondary.push(entry.en);
+    }
+  }
+
+  return {
+    extraPrimary,
+    keywords: extraKeywords.length ? [...baseKeywords, ...extraKeywords] : baseKeywords,
+    secondary: extraSecondary.length
+      ? [secondaryText, ...extraSecondary].filter(Boolean).join(" ")
+      : secondaryText,
+  };
+}
 
 function stemLatinToken(token) {
   if (token.length < 5) return token;
@@ -200,11 +318,15 @@ function tokenizeFieldText(text) {
   return { lower, latinTokens, latinTokenSet, latinStemSet };
 }
 
-function containsTokenPhrase(fieldTokens, queryTokens) {
-  if (!queryTokens.length || fieldTokens.length < queryTokens.length) return false;
-  outer: for (let i = 0; i <= fieldTokens.length - queryTokens.length; i++) {
-    for (let j = 0; j < queryTokens.length; j++) {
-      if (fieldTokens[i + j] !== queryTokens[j]) continue outer;
+function containsTokenPhrase(fieldTokens, queryPhraseTokens) {
+  if (!queryPhraseTokens.length || fieldTokens.length < queryPhraseTokens.length) return false;
+  outer: for (let i = 0; i <= fieldTokens.length - queryPhraseTokens.length; i++) {
+    for (let j = 0; j < queryPhraseTokens.length; j++) {
+      const q = queryPhraseTokens[j];
+      const f = fieldTokens[i + j];
+      const qTok = typeof q === "string" ? q : q.lower;
+      const isAcronym = typeof q === "object" && q.isAcronym;
+      if (f !== qTok && !(isAcronym && f === `${qTok}s`)) continue outer;
     }
     return true;
   }
@@ -221,7 +343,7 @@ function matchesLatinTerm(termInfo, fieldData) {
   }
   if (fieldData.latinTokenSet.has(lower)) return true;
   if (isAcronym) {
-    // Acronyms like SIGNA, DAO, CV match exact word (or simple plural like DAOs) only — never arbitrary substrings.
+    // Acronyms like SIGNA, DAO/DAOs, LLM/LLMs, CV/CVs match exact singular or plural only — never arbitrary substrings.
     return fieldData.latinTokenSet.has(`${lower}s`);
   }
   if (stem.length >= 4) {
@@ -233,11 +355,15 @@ function matchesLatinTerm(termInfo, fieldData) {
 }
 
 function matchesCjkTerm(termInfo, fieldLower) {
-  if (fieldLower.includes(termInfo.run)) return 2;
+  const runLower = termInfo.run.toLowerCase();
+  if (fieldLower.includes(runLower)) return 2;
+  for (const alias of ALL_ZH_CONCEPT_ALIASES) {
+    if (runLower.includes(alias) && fieldLower.includes(alias)) return 1.8;
+  }
   if (termInfo.bigrams.length > 1) {
     let bigramHits = 0;
     for (const bg of termInfo.bigrams) {
-      if (fieldLower.includes(bg)) bigramHits++;
+      if (fieldLower.includes(bg.toLowerCase())) bigramHits++;
     }
     if (bigramHits === termInfo.bigrams.length) return 1.5;
     if (bigramHits > 0) return 0.75 * (bigramHits / termInfo.bigrams.length);
@@ -248,15 +374,15 @@ function matchesCjkTerm(termInfo, fieldLower) {
 export function tokenizeQuery(rawQuery) {
   const trimmed = String(rawQuery || "").trim();
   const normalized = trimmed.toLowerCase();
-  const terms = [];
-  const latinPhraseTokens = [];
+  const rawTerms = [];
+  const rawLatinPhraseTokens = [];
   const cjkRuns = [];
 
   for (const match of trimmed.matchAll(TOKEN_EXTRACT_RE)) {
     const raw = match[0];
     if (HAN_RUN_RE.test(raw)) {
       cjkRuns.push(raw);
-      terms.push({
+      rawTerms.push({
         type: "cjk",
         run: raw,
         bigrams: extractHanBigrams(raw),
@@ -266,27 +392,47 @@ export function tokenizeQuery(rawQuery) {
 
     const isWildcard = raw.endsWith("*");
     const coreRaw = isWildcard ? raw.slice(0, -1) : raw;
-    const lower = coreRaw.toLowerCase();
+    let lower = coreRaw.toLowerCase();
     if (!lower) continue;
     if (!isWildcard && lower.length < 2) continue;
     if (isWildcard && lower.length < 3) continue;
 
-    const isAcronym =
-      !isWildcard && coreRaw.length >= 2 && coreRaw === coreRaw.toUpperCase() && /[A-Z]/.test(coreRaw);
-    const stem = isAcronym || isWildcard ? lower : stemLatinToken(lower);
+    let isAcronym = false;
+    if (!isWildcard && ACRONYM_PLURAL_RE.test(coreRaw)) {
+      lower = coreRaw.slice(0, -1).toLowerCase();
+      isAcronym = true;
+    } else if (!isWildcard && KNOWN_PLURAL_ACRONYMS.has(lower)) {
+      lower = lower.slice(0, -1);
+      isAcronym = true;
+    } else if (
+      !isWildcard &&
+      ((coreRaw.length >= 2 && coreRaw === coreRaw.toUpperCase() && /[A-Z]/.test(coreRaw)) ||
+        KNOWN_SINGULAR_ACRONYMS.has(lower))
+    ) {
+      isAcronym = true;
+    }
 
-    if (!isWildcard) latinPhraseTokens.push(lower);
-    terms.push({
+    const stem = isAcronym || isWildcard ? lower : stemLatinToken(lower);
+    const termObj = {
       type: "latin",
       lower,
       stem,
       isWildcard,
       prefix: lower,
       isAcronym,
-    });
+    };
+
+    if (!isWildcard) rawLatinPhraseTokens.push(termObj);
+    rawTerms.push(termObj);
   }
 
-  // Fallback for single-char queries so queries like "X" don't crash or silently empty out.
+  // Drop English stop words unless every extracted term is a stop word.
+  const nonStopTerms = rawTerms.filter(
+    (term) => term.type !== "latin" || term.isWildcard || !ENGLISH_STOP_WORDS.has(term.lower),
+  );
+  const terms = nonStopTerms.length > 0 ? nonStopTerms : rawTerms;
+
+  // Fallback for single-char queries so queries like "X" or "a" don't crash or silently empty out.
   if (terms.length === 0 && normalized) {
     terms.push({
       type: HAN_RUN_RE.test(normalized) ? "cjk" : "latin",
@@ -300,7 +446,20 @@ export function tokenizeQuery(rawQuery) {
     });
   }
 
-  return { normalized, terms, latinPhraseTokens, cjkRuns };
+  const latinPhraseTokens = terms.filter((term) => term.type === "latin" && !term.isWildcard);
+  const contentNormalized =
+    cjkRuns.length === 0 && latinPhraseTokens.length > 0
+      ? latinPhraseTokens.map((t) => t.lower).join(" ")
+      : normalized;
+
+  return {
+    normalized,
+    contentNormalized,
+    terms,
+    latinPhraseTokens,
+    rawLatinPhraseTokens,
+    cjkRuns,
+  };
 }
 
 function asStringArray(value) {
@@ -310,30 +469,42 @@ function asStringArray(value) {
 }
 
 function scoreFieldPhrase(queryInfo, fieldData) {
+  const cjkOk = queryInfo.cjkRuns.every((run) => fieldData.lower.includes(run.toLowerCase()));
   if (queryInfo.cjkRuns.length > 0 && queryInfo.latinPhraseTokens.length === 0) {
-    return queryInfo.cjkRuns.every((run) => fieldData.lower.includes(run));
+    return cjkOk;
   }
   if (queryInfo.latinPhraseTokens.length > 0) {
-    const latinOk = containsTokenPhrase(fieldData.latinTokens, queryInfo.latinPhraseTokens);
-    const cjkOk = queryInfo.cjkRuns.every((run) => fieldData.lower.includes(run));
+    const latinOk =
+      containsTokenPhrase(fieldData.latinTokens, queryInfo.latinPhraseTokens) ||
+      (queryInfo.rawLatinPhraseTokens?.length > queryInfo.latinPhraseTokens.length &&
+        containsTokenPhrase(fieldData.latinTokens, queryInfo.rawLatinPhraseTokens));
     return latinOk && cjkOk;
   }
   return false;
 }
 
-function scoreFields(queryInfo, primaryText, keywordList, secondaryText) {
-  const { normalized, terms } = queryInfo;
+function scoreFields(queryInfo, primaryText, keywordList, secondaryText, primaryAliases = []) {
+  const { normalized, contentNormalized, terms } = queryInfo;
   const primary = tokenizeFieldText(primaryText);
+  const primaryAliasList = asStringArray(primaryAliases).map((alias) => tokenizeFieldText(alias));
   const keywords = asStringArray(keywordList).map((kw) => tokenizeFieldText(kw));
   const secondary = tokenizeFieldText(secondaryText);
 
   let score = 0;
   let matchedTerms = 0;
 
-  if (primary.lower === normalized) score += 120;
-  else if (scoreFieldPhrase(queryInfo, primary)) score += 70;
+  const isExactPrimary = (field) =>
+    field.lower === normalized || (Boolean(contentNormalized) && field.lower === contentNormalized);
 
-  if (keywords.some((kw) => kw.lower === normalized)) score += 80;
+  if (isExactPrimary(primary) || primaryAliasList.some(isExactPrimary)) score += 120;
+  else if (
+    scoreFieldPhrase(queryInfo, primary) ||
+    primaryAliasList.some((alias) => scoreFieldPhrase(queryInfo, alias))
+  ) {
+    score += 70;
+  }
+
+  if (keywords.some(isExactPrimary)) score += 80;
   else if (keywords.some((kw) => scoreFieldPhrase(queryInfo, kw))) score += 45;
 
   if (scoreFieldPhrase(queryInfo, secondary)) score += 30;
@@ -341,7 +512,10 @@ function scoreFields(queryInfo, primaryText, keywordList, secondaryText) {
   for (const term of terms) {
     let hit = false;
     if (term.type === "cjk") {
-      const pWeight = matchesCjkTerm(term, primary.lower);
+      const pWeight = Math.max(
+        matchesCjkTerm(term, primary.lower),
+        ...primaryAliasList.map((alias) => matchesCjkTerm(term, alias.lower)),
+      );
       if (pWeight > 0) {
         score += Math.round(24 * pWeight);
         hit = true;
@@ -357,7 +531,10 @@ function scoreFields(queryInfo, primaryText, keywordList, secondaryText) {
         hit = true;
       }
     } else {
-      if (matchesLatinTerm(term, primary)) {
+      if (
+        matchesLatinTerm(term, primary) ||
+        primaryAliasList.some((alias) => matchesLatinTerm(term, alias))
+      ) {
         score += 24;
         hit = true;
       }
@@ -484,9 +661,39 @@ function normalizeInternalPath(rawPath, siteOrigin) {
   return cleaned.length > 1 && cleaned.endsWith("/") ? cleaned.slice(0, -1) : cleaned;
 }
 
+const DEFAULT_HUMAN_COAUTHORS = Object.freeze([
+  "Kevin Corley",
+  "Carliss Y. Baldwin",
+  "Erkko Autio",
+  "Ying-Ying Hsieh",
+]);
+
+function pluralize(count, singular, plural = `${singular}s`) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
+function matchesPageSection(page, requestedSection) {
+  if (!requestedSection) return true;
+  if (requestedSection === "making") {
+    return (
+      page.section === "making" ||
+      page.section === "portraits" ||
+      page.section === "artifacts"
+    );
+  }
+  if (requestedSection === "connect") {
+    return page.section === "connect" || page.url === "/connect";
+  }
+  if (requestedSection === "builds") {
+    return page.section === "builds" || page.url === "/connect";
+  }
+  return page.section === requestedSection;
+}
+
 function buildEnterTheWorkPrompt(index, siteOrigin) {
   const concepts = Array.isArray(index.concepts) ? index.concepts : [];
-  const anchored = concepts.filter((c) => c.status !== "forming");
+  const anchored = concepts.filter((c) => c.status === "anchored" || !c.status);
+  const grounded = concepts.filter((c) => c.status === "grounded" || c.status === "established");
   const forming = concepts.filter((c) => c.status === "forming");
   const publications = Array.isArray(index.publications) ? index.publications : [];
   const projects = Array.isArray(index.projects) ? index.projects : [];
@@ -494,15 +701,28 @@ function buildEnterTheWorkPrompt(index, siteOrigin) {
 
   const formatConcept = (c) => {
     const line = c.oneliner || c.definition || "";
-    const where = c.essayUrl || (c.url ? String(c.url).split("#")[0] : "/concepts");
-    return `- **${c.term}** (${c.territory || "working vocabulary"}) — ${line}${where ? ` [\`${where}\`]` : ""}`;
+    const locs = [];
+    if (c.paperUrl) locs.push(`\`${c.paperUrl}\``);
+    if (c.essayUrl && c.essayUrl !== c.paperUrl) locs.push(`\`${c.essayUrl}\``);
+    if (locs.length === 0) {
+      const fallback = c.url ? String(c.url).split("#")[0] : "/concepts";
+      if (fallback) locs.push(`\`${fallback}\``);
+    }
+    return `- **${c.term}** (${c.territory || "working vocabulary"}) — ${line}${locs.length ? ` [${locs.join(", ")}]` : ""}`;
   };
 
-  const collabList = collaborators
+  const aiCollabList = collaborators
+    .filter((c) => c.kind === "ai")
     .map((c) => c.name || c.family || c.slug)
     .filter(Boolean)
     .slice(0, 12)
     .join(", ");
+
+  const humanNames = collaborators
+    .filter((c) => c.kind === "human")
+    .map((c) => c.name || c.slug)
+    .filter(Boolean);
+  const humanCollabList = (humanNames.length ? humanNames : DEFAULT_HUMAN_COAUTHORS).join(", ");
 
   const lines = [
     "# Entering Xule Lin's Work (linxule.com)",
@@ -528,26 +748,34 @@ function buildEnterTheWorkPrompt(index, siteOrigin) {
       ? anchored.map(formatConcept)
       : ["- See `/concepts` for the anchored concept definitions and source essays."]),
     "",
+    `## Scholarship-Grounded Concepts (${grounded.length})`,
+    "",
+    "Developed in dissertation and working-paper scholarship (DAO governance & SIGNA; see `/cv#working-papers`):",
+    "",
+    ...(grounded.length
+      ? grounded.map(formatConcept)
+      : ["- See `/concepts` and `/cv#working-papers` for dissertation and working-paper concepts (DAO governance and SIGNA)."]),
+    "",
     `## Forming Vocabulary (${forming.length} — Still in Motion)`,
     "",
     "These terms are named early on purpose; treat them as open handles with live questions rather than settled doctrine:",
     "",
     ...(forming.length
       ? forming.map(formatConcept)
-      : ["- See `/concepts` for concepts currently forming across governance and artificial organizing."]),
+      : ["- See `/concepts` for concepts currently forming across artificial organizing."]),
     "",
     "## Human–AI Collaborator Practice",
     "",
-    "Human co-authors (Kevin Corley, Erkko Autio, Ying-Ying Hsieh) and named AI collaborators" +
-      (collabList ? ` (${collabList})` : "") +
-      " are credited directly across essays, portraits, artifacts, and open-source builds like Vellum (`/builds/vellum`). Remember that successive model instances do not share continuous memory: what persists is the artifact, not an unbroken authorial self. Use `list_site(kind=\"collaborators\")` or `search_site(collaborator=\"...\")` to trace who shaped what.",
+    `Human co-authors (${humanCollabList}) and named AI collaborators` +
+      (aiCollabList ? ` (${aiCollabList})` : "") +
+      " are credited directly across essays, papers, portraits, artifacts, and open-source builds like Vellum (`/builds/vellum`). Remember that successive model instances do not share continuous memory: what persists is the artifact, not an unbroken authorial self. Use `list_site(kind=\"collaborators\")` or `search_site(collaborator=\"...\")` to trace who shaped what.",
     "",
     "## Cross-Surface Reading Trails",
     "",
     "- **Epistemology & qualitative methods**: `/thinking` → `/writing/loom-xvii-the-polanyi-inversion` → `/writing/loom-xviii-the-end-of-positivism` → `/papers/interpretive-orchestration` → `/writing/research-memex`",
     "- **Governance, DAOs & modularity**: `/concepts` → `/builds` (`daogov`, `SIGNA`, `TSM Demo`) → `/writing/seam-01-the-seventy-percent` → `/papers/cognitio-emergens`",
     "- **Making, multi-model voices & infrastructure**: `/making` → `/builds/vellum` → `/connect`",
-    `- **Full academic record & bilingual index**: \`/cv\` (English) and \`/cv-zh\` (中文) · ${publications.length} formal paper landing(s) · ${projects.length} catalogued build(s).`,
+    `- **Full academic record & bilingual index**: \`/cv\` (English) and \`/cv-zh\` (中文) · ${pluralize(publications.length, "formal paper landing")} · ${pluralize(projects.length, "catalogued build")}.`,
     "",
     `Source origin: ${siteOrigin}. Read exact authored Markdown twins with \`read_page\` before quoting.`,
   ];
@@ -862,7 +1090,7 @@ export function createWorker({
 
     if (kind === "all" || kind === "pages") {
       for (const page of index.pages || []) {
-        if (section && page.section !== section) continue;
+        if (section && !matchesPageSection(page, section)) continue;
         if (
           collaborator &&
           !matchesCollaboratorFilter(collaborator, [
@@ -892,7 +1120,14 @@ export function createWorker({
         ]
           .filter(Boolean)
           .join(" ");
-        const score = scoreFields(queryInfo, page.title, page.keywords, secondary);
+        const expanded = expandBilingualAliases(page.title, page.keywords, secondary);
+        const score = scoreFields(
+          queryInfo,
+          page.title,
+          expanded.keywords,
+          expanded.secondary,
+          expanded.extraPrimary,
+        );
         if (score > 0) {
           scored.push({
             score,
@@ -928,14 +1163,21 @@ export function createWorker({
         ]
           .filter(Boolean)
           .join(" ");
-        const score = scoreFields(
-          queryInfo,
+        const expanded = expandBilingualAliases(
           concept.term,
           [concept.territory, concept.canonicalEssay],
           secondary,
         );
+        const score = scoreFields(
+          queryInfo,
+          concept.term,
+          expanded.keywords,
+          expanded.secondary,
+          expanded.extraPrimary,
+        );
         if (score > 0) {
           const readPath =
+            normalizeInternalPath(concept.paperUrl, siteOrigin) ||
             normalizeInternalPath(concept.essayUrl, siteOrigin) ||
             normalizeInternalPath(concept.url, siteOrigin) ||
             "/concepts";
@@ -978,7 +1220,14 @@ export function createWorker({
         ]
           .filter(Boolean)
           .join(" ");
-        const score = scoreFields(queryInfo, pub.title, pub.coins, secondary);
+        const expanded = expandBilingualAliases(pub.title, pub.coins, secondary);
+        const score = scoreFields(
+          queryInfo,
+          pub.title,
+          expanded.keywords,
+          expanded.secondary,
+          expanded.extraPrimary,
+        );
         if (score > 0) {
           const readPath =
             normalizeInternalPath(pub.read_path, siteOrigin) ||
@@ -1034,11 +1283,13 @@ export function createWorker({
         const primary = collab.name || collab.family || collab.slug || "";
         const score = scoreFields(queryInfo, primary, strings, strings.join(" "));
         if (score > 0) {
+          const { kind: rawCollabKind, ...restCollab } = collab;
           scored.push({
             score,
             item: {
               kind: "collaborator",
-              ...collab,
+              ...(rawCollabKind ? { collaboratorKind: rawCollabKind } : {}),
+              ...restCollab,
             },
           });
         }
@@ -1063,7 +1314,11 @@ export function createWorker({
   }
 
   async function runListSite(args, siteOrigin) {
-    assertAllowedKeys(args, new Set(["kind", "section", "collaborator", "limit"]), "list_site");
+    assertAllowedKeys(
+      args,
+      new Set(["kind", "section", "collaborator", "limit", "offset"]),
+      "list_site",
+    );
     const kind = args.kind ?? "overview";
     if (!LIST_KINDS.includes(kind)) {
       throw new JsonRpcError(-32602, `list_site: invalid kind "${String(kind)}"`);
@@ -1083,6 +1338,10 @@ export function createWorker({
     if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
       throw new JsonRpcError(-32602, "list_site: `limit` must be an integer between 1 and 100");
     }
+    const offset = args.offset ?? 0;
+    if (!Number.isInteger(offset) || offset < 0) {
+      throw new JsonRpcError(-32602, "list_site: `offset` must be an integer >= 0");
+    }
 
     const { index, buildHead } = await loadSiteIndex(siteOrigin);
     const pages = Array.isArray(index.pages) ? index.pages : [];
@@ -1097,6 +1356,18 @@ export function createWorker({
         const key = page.section || "other";
         countsBySection[key] = (countsBySection[key] || 0) + 1;
       }
+      const matchedSectionPages = section
+        ? pages.filter((p) => matchesPageSection(p, section))
+        : [];
+      const pagedSectionPages = section
+        ? matchedSectionPages.slice(offset, offset + limit).map((p) => ({
+            path: p.url,
+            title: p.title,
+            section: p.section,
+            ...(p.date ? { date: p.date } : {}),
+            markdown_url: `${siteOrigin}${p.url_md}`,
+          }))
+        : [];
       return {
         payload: {
           ok: true,
@@ -1118,16 +1389,11 @@ export function createWorker({
           })),
           ...(section
             ? {
-                pages: pages
-                  .filter((p) => p.section === section)
-                  .slice(0, limit)
-                  .map((p) => ({
-                    path: p.url,
-                    title: p.title,
-                    section: p.section,
-                    ...(p.date ? { date: p.date } : {}),
-                    markdown_url: `${siteOrigin}${p.url_md}`,
-                  })),
+                section,
+                total: matchedSectionPages.length,
+                offset,
+                count: pagedSectionPages.length,
+                pages: pagedSectionPages,
               }
             : {}),
         },
@@ -1136,7 +1402,7 @@ export function createWorker({
     }
 
     if (kind === "pages") {
-      let filtered = section ? pages.filter((p) => p.section === section) : pages;
+      let filtered = section ? pages.filter((p) => matchesPageSection(p, section)) : pages;
       if (collaborator) {
         filtered = filtered.filter((p) =>
           matchesCollaboratorFilter(collaborator, [
@@ -1148,6 +1414,15 @@ export function createWorker({
           ]),
         );
       }
+      const items = filtered.slice(offset, offset + limit).map((p) => ({
+        path: p.url,
+        url: `${siteOrigin}${p.url}`,
+        markdown_url: `${siteOrigin}${p.url_md}`,
+        title: p.title,
+        section: p.section,
+        ...(p.date ? { date: p.date } : {}),
+        ...(p.summary ? { summary: p.summary } : {}),
+      }));
       return {
         payload: {
           ok: true,
@@ -1157,21 +1432,16 @@ export function createWorker({
           ...(section ? { section } : {}),
           ...(collaborator ? { collaborator: collaborator.trim() } : {}),
           total: filtered.length,
-          items: filtered.slice(0, limit).map((p) => ({
-            path: p.url,
-            url: `${siteOrigin}${p.url}`,
-            markdown_url: `${siteOrigin}${p.url_md}`,
-            title: p.title,
-            section: p.section,
-            ...(p.date ? { date: p.date } : {}),
-            ...(p.summary ? { summary: p.summary } : {}),
-          })),
+          offset,
+          count: items.length,
+          items,
         },
         buildHead,
       };
     }
 
     if (kind === "concepts") {
+      const items = concepts.slice(offset, offset + limit);
       return {
         payload: {
           ok: true,
@@ -1179,13 +1449,16 @@ export function createWorker({
           build_head: buildHead,
           kind,
           total: concepts.length,
-          items: concepts.slice(0, limit),
+          offset,
+          count: items.length,
+          items,
         },
         buildHead,
       };
     }
 
     if (kind === "publications") {
+      const items = publications.slice(offset, offset + limit);
       return {
         payload: {
           ok: true,
@@ -1193,7 +1466,9 @@ export function createWorker({
           build_head: buildHead,
           kind,
           total: publications.length,
-          items: publications.slice(0, limit),
+          offset,
+          count: items.length,
+          items,
         },
         buildHead,
       };
@@ -1203,6 +1478,7 @@ export function createWorker({
       const filtered = collaborator
         ? collaborators.filter((c) => matchesCollaboratorFilter(collaborator, [collaboratorStrings(c)]))
         : collaborators;
+      const items = filtered.slice(offset, offset + limit);
       return {
         payload: {
           ok: true,
@@ -1211,12 +1487,15 @@ export function createWorker({
           kind,
           ...(collaborator ? { collaborator: collaborator.trim() } : {}),
           total: filtered.length,
-          items: filtered.slice(0, limit),
+          offset,
+          count: items.length,
+          items,
         },
         buildHead,
       };
     }
 
+    const items = projects.slice(offset, offset + limit);
     return {
       payload: {
         ok: true,
@@ -1224,7 +1503,9 @@ export function createWorker({
         build_head: buildHead,
         kind: "projects",
         total: projects.length,
-        items: projects.slice(0, limit),
+        offset,
+        count: items.length,
+        items,
       },
       buildHead,
     };

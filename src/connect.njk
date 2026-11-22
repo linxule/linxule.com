@@ -5,6 +5,8 @@ preloadDisplay: true
 title: "Connect"
 seoTitle: "Connect — MCP servers & agent surfaces"
 description: "Read-only MCP connection recipes for linxule.com and sibling public MCP servers (Research Memex, Vellum, Music Studio, Lotus Wisdom)."
+ogImage: /assets/og-cards/connect.jpg
+ogImageAlt: "CONNECT · MCP & AGENT SURFACES. Connect to linxule.com. Read-only MCP recipes and sibling public servers. LINXULE.COM"
 marker: "connect"
 ---
 <style>
@@ -78,6 +80,9 @@ marker: "connect"
         letter-spacing: var(--tracking-label);
         text-transform: uppercase;
         color: var(--ink-faint);
+        border: none;
+        padding: 0;
+        margin-top: 0;
         margin-bottom: 1.5rem;
     }
 
@@ -269,7 +274,7 @@ marker: "connect"
     <section class="connect-section">
         <h2>Scope &amp; capabilities</h2>
         <p class="connect-note">
-            This server exposes only public content already published on linxule.com — essays, formal paper records, all 14 concepts (anchored and forming), talks, portraits, artifacts, builds, collaborator lineages, and English/Chinese CVs. Keep private drafts, transcripts, and keys out of every call; nothing asks for them.
+            This server exposes only public content already published on linxule.com — essays, formal paper records, all 14 concepts (anchored, scholarship-grounded, and forming), talks, portraits, artifacts, builds, collaborator lineages, and English/Chinese CVs. Keep private drafts, transcripts, and keys out of every call; nothing asks for them.
         </p>
         <ul class="plain-links">
             <li><code>search_site</code> — lexical and CJK search across pages, concepts, publications, projects, and collaborator lineages.</li>
@@ -309,7 +314,7 @@ marker: "connect"
     }
   }
 }</code></pre></div>
-                <button class="copy-recipe" type="button" data-copy='{"mcpServers":{"linxule":{"url":"https://linxule.com/mcp"}}}'>Copy JSON</button>
+                <button class="copy-recipe" type="button" data-copy='{&#10;  "mcpServers": {&#10;    "linxule": {&#10;      "url": "https://linxule.com/mcp"&#10;    }&#10;  }&#10;}'>Copy JSON</button>
             </div>
 
             <div class="recipe-item">
@@ -331,7 +336,7 @@ marker: "connect"
     }
   }
 }</code></pre></div>
-                <button class="copy-recipe" type="button" data-copy='{"mcpServers":{"linxule":{"httpUrl":"https://linxule.com/mcp"}}}'>Copy JSON</button>
+                <button class="copy-recipe" type="button" data-copy='{&#10;  "mcpServers": {&#10;    "linxule": {&#10;      "httpUrl": "https://linxule.com/mcp"&#10;    }&#10;  }&#10;}'>Copy JSON</button>
             </div>
         </div>
     </section>
@@ -339,7 +344,7 @@ marker: "connect"
     <section class="connect-section">
         <h2>Sibling public MCP servers</h2>
         <p class="connect-note">
-            Four neighboring servers live across the wider research and creative projects. Read each scope note before connecting: two are strictly read-only, while Vellum and Music Studio support explicit writes or sharing.
+            Four neighboring servers live across the wider research and creative projects. Read each scope note before connecting: Research Memex is strictly read-only, Lotus Wisdom runs stateless contemplative reflection with no persistent writes, Vellum accepts short public contributions, and MCP Music Studio offers explicit 30-day public share links.
         </p>
         <ul class="sibling-list">
             <li>
@@ -355,12 +360,12 @@ marker: "connect"
             <li>
                 <a class="sibling-name" href="https://music-studio.linxule.com">MCP Music Studio</a>
                 <span class="sibling-endpoint">https://music-studio.linxule.com/mcp · Interactive composition · Explicit 30-day sharing</span>
-                <p class="sibling-desc">ABC sheet-music composition, Strudel live coding, harmony analysis, and MIDI/WAV playback. Calling <code>create-share-link</code> uploads the piece publicly for 30 days (<a href="https://music-studio.linxule.com/privacy">privacy policy</a>).</p>
+                <p class="sibling-desc">ABC sheet-music composition, Strudel live coding, harmony analysis, and MIDI/WAV playback, with prompts <code>compose-beat</code>, <code>harmonize-melody</code>, and <code>arrange-tune</code>. Calling <code>create-share-link</code> uploads the piece publicly for 30 days (<a href="https://music-studio.linxule.com/privacy">privacy policy</a>).</p>
             </li>
             <li>
                 <a class="sibling-name" href="https://lotus-wisdom.linxule.com">Lotus Wisdom MCP</a>
-                <span class="sibling-endpoint">https://lotus-wisdom.linxule.com/mcp · Stateless structured reflection · No sign-in</span>
-                <p class="sibling-desc">Contemplative five-domain reasoning server grounded in the Lotus Sutra, with an interactive journey view.</p>
+                <span class="sibling-endpoint">https://lotus-wisdom.linxule.com/mcp · Stateless contemplative reflection (no persistent writes) · No sign-in</span>
+                <p class="sibling-desc">Contemplative five-domain reasoning server grounded in the Lotus Sutra, with an interactive journey view and prompts <code>contemplate</code> and <code>deep-inquiry</code>.</p>
             </li>
         </ul>
     </section>
@@ -387,15 +392,45 @@ marker: "connect"
 <script>
     (function () {
         const status = document.getElementById("copy-status");
+        function fallbackCopy(text) {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.setAttribute("readonly", "");
+            ta.style.position = "fixed";
+            ta.style.top = "-9999px";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            let ok = false;
+            try {
+                ok = document.execCommand("copy");
+            } catch {
+                ok = false;
+            }
+            document.body.removeChild(ta);
+            return ok;
+        }
         document.querySelectorAll(".copy-recipe").forEach((btn) => {
             btn.addEventListener("click", async () => {
                 const text = btn.getAttribute("data-copy") || "";
                 const orig = btn.textContent;
+                let copied = false;
                 try {
-                    await navigator.clipboard.writeText(text);
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(text);
+                        copied = true;
+                    }
+                } catch {
+                    copied = false;
+                }
+                if (!copied) {
+                    copied = fallbackCopy(text);
+                }
+                if (copied) {
                     btn.textContent = "Copied";
                     if (status) status.textContent = "Copied to clipboard.";
-                } catch {
+                } else {
                     btn.textContent = "Copy failed";
                     if (status) status.textContent = "Copy failed.";
                 }

@@ -1,11 +1,20 @@
+import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import Image from "@11ty/eleventy-img";
+import sharp from "sharp";
 import { decodeHTMLAttribute, escapeAttribute } from "entities";
+
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 export const IMAGE_CACHE_DIR = ".cache/@11ty/img/";
 export const IMAGE_URL_PATH = "/assets/images/optimized/";
+export const WRITING_ATTACHMENTS_DIR = "src/writing/attachments";
 export const WRITING_WIDTHS = [400, 800, 1200];
+// Matches @11ty/eleventy-img's default minimumThreshold (src/global-options.js)
+// so predicted widths agree 1:1 with the responsive files eleventy-img emits.
+export const WRITING_WIDTH_MINIMUM_THRESHOLD = 1.25;
 
 // Gallery images: AVIF/WebP for every browser since 2023, JPEG only as the
 // <picture> fallback. The 2000w step is the lightbox view; the original file
@@ -46,6 +55,125 @@ export function getActiveOptimizedFiles() {
 
 // Cached index of `attachments-<stem>-<w>w.<jpeg|png>` files per cache directory.
 const attachmentIndexCache = new Map();
+
+// Primary source-derived index: Map<resolvedAttachmentsDir, Map<filename, { width, ext, file }>>
+// Populated asynchronously in `eleventy.before` via `preindexWritingAttachments`,
+// with lazy single-file inspection if called cold outside a build (e.g. unit tests).
+const sourceAttachmentIndex = new Map();
+
+const ATTACHMENT_FILE_RE = /^([^/]+)\.(png|jpe?g|webp|avif|gif)$/i;
+
+export function resetSourceAttachmentIndex() {
+  sourceAttachmentIndex.clear();
+  attachmentIndexCache.clear();
+}
+
+export function selectOptimizedWritingWidth(intrinsicWidth, widths = WRITING_WIDTHS) {
+  if (!Number.isFinite(intrinsicWidth) || intrinsicWidth <= 0) {
+    return Math.max(...widths);
+  }
+  const valid = Image.getWidths(
+    Math.round(intrinsicWidth),
+    widths,
+    false,
+    WRITING_WIDTH_MINIMUM_THRESHOLD,
+  );
+  if (!valid.length) return Math.min(Math.round(intrinsicWidth), Math.max(...widths));
+  return valid[valid.length - 1];
+}
+
+function buildAttachmentRecord(stem, intrinsicWidth, losslessPng) {
+  const width = selectOptimizedWritingWidth(intrinsicWidth);
+  const ext = losslessPng ? "png" : "jpeg";
+  return { width, ext, file: `attachments-${stem}-${width}w.${ext}` };
+}
+
+export async function inspectWritingAttachment(filePath) {
+  const basename = path.basename(filePath);
+  const match = basename.match(ATTACHMENT_FILE_RE);
+  if (!match) return null;
+  const [, stem, ext] = match;
+  if (stem.endsWith("-og") && /^jpe?g$/i.test(ext)) return null;
+
+  const meta = await sharp(filePath).metadata();
+  let losslessPng = false;
+  if (ext.toLowerCase() === "png" && meta.hasAlpha) {
+    const stats = await sharp(filePath).stats();
+    losslessPng = !stats.isOpaque;
+  }
+  return buildAttachmentRecord(stem, meta.width, losslessPng);
+}
+
+const SYNC_PROBE_SCRIPT = `
+import sharp from "sharp";
+const [filePath, isPng] = process.argv.slice(1);
+const meta = await sharp(filePath).metadata();
+let lossless = false;
+if (isPng === "1" && meta.hasAlpha) {
+  const stats = await sharp(filePath).stats();
+  lossless = !stats.isOpaque;
+}
+process.stdout.write(JSON.stringify({ width: meta.width, lossless }));
+`;
+
+function inspectWritingAttachmentSync(filePath, stem, ext) {
+  const isPng = ext.toLowerCase() === "png" ? "1" : "0";
+  const stdout = execFileSync(
+    process.execPath,
+    ["-e", SYNC_PROBE_SCRIPT, path.resolve(filePath), isPng],
+    { cwd: REPO_ROOT, encoding: "utf8" },
+  );
+  const { width, lossless } = JSON.parse(stdout);
+  return buildAttachmentRecord(stem, width, Boolean(lossless));
+}
+
+export async function preindexWritingAttachments(attachmentsDir = WRITING_ATTACHMENTS_DIR) {
+  const resolvedDir = path.resolve(attachmentsDir);
+  const index = new Map();
+  sourceAttachmentIndex.set(resolvedDir, index);
+  if (!existsSync(resolvedDir)) return index;
+
+  const entries = readdirSync(resolvedDir).filter((name) => {
+    const m = name.match(ATTACHMENT_FILE_RE);
+    return m && !(m[1].endsWith("-og") && /^jpe?g$/i.test(m[2]));
+  });
+
+  await Promise.all(
+    entries.map(async (name) => {
+      try {
+        const record = await inspectWritingAttachment(path.join(resolvedDir, name));
+        if (record) index.set(name, record);
+      } catch {
+        // Let the writing transform surface unreadable source images loudly.
+      }
+    }),
+  );
+
+  return index;
+}
+
+function lookupSourceAttachment(filename, stem, ext, attachmentsDir) {
+  if (!attachmentsDir) return null;
+  const resolvedDir = path.resolve(attachmentsDir);
+  let index = sourceAttachmentIndex.get(resolvedDir);
+  if (index?.has(filename)) {
+    return index.get(filename).file;
+  }
+  const sourcePath = path.join(resolvedDir, filename);
+  if (!existsSync(sourcePath)) return null;
+
+  try {
+    const record = inspectWritingAttachmentSync(sourcePath, stem, ext);
+    if (!index) {
+      index = new Map();
+      sourceAttachmentIndex.set(resolvedDir, index);
+    }
+    index.set(filename, record);
+    return record.file;
+  } catch {
+    return null;
+  }
+}
 
 function scanAttachmentDir(dir) {
   const index = new Map();
@@ -92,12 +220,16 @@ function lookupCachedAttachment(stem, cacheDirs) {
 /**
  * Resolve `/writing/attachments/<name>.<ext>` (excluding `*-og.jpg`) to its
  * deterministic optimized `/assets/images/optimized/attachments-<stem>-<w>w.<jpeg|png>`
- * URL (preferring the largest generated width <= 1200w found in cache, falling
- * back to `1200w.jpeg`).
+ * URL. Primary authority is the source attachment under `./src/writing/attachments/`
+ * (intrinsic width via eleventy-img's width rules + PNG alpha inspection), falling
+ * back to cache scan only when the source file is absent on disk.
  */
 export function resolveOptimizedAttachmentUrl(
   src,
-  { cacheDirs = [IMAGE_CACHE_DIR, "node_modules/.cache/site-img"] } = {},
+  {
+    cacheDirs = [IMAGE_CACHE_DIR, "node_modules/.cache/site-img"],
+    attachmentsDir = WRITING_ATTACHMENTS_DIR,
+  } = {},
 ) {
   if (!src || typeof src !== "string") return null;
   const pathname = src.split(/[?#]/, 1)[0];
@@ -106,8 +238,8 @@ export function resolveOptimizedAttachmentUrl(
   const [, stem, ext] = match;
   if (stem.endsWith("-og") && /^jpe?g$/i.test(ext)) return null;
 
-  const cachedFile = lookupCachedAttachment(stem, cacheDirs);
-  const chosenFile = cachedFile || `attachments-${stem}-1200w.jpeg`;
+  const sourceFile = lookupSourceAttachment(`${stem}.${ext}`, stem, ext, attachmentsDir);
+  const chosenFile = sourceFile || lookupCachedAttachment(stem, cacheDirs) || `attachments-${stem}-1200w.jpeg`;
   recordOptimizedFilename(chosenFile);
   return `${IMAGE_URL_PATH}${chosenFile}`;
 }

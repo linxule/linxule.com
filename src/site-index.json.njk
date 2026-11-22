@@ -231,7 +231,8 @@ eleventyExcludeFromCollections: true
       "essaySeries": {{ concept.essaySeries | dump | safe }}{% endif %}{% if concept.essayYear %},
       "year": {{ concept.essayYear | dump | safe }}{% endif %}{% if concept.date %},
       "date": {{ concept.date | dump | safe }}{% endif %}{% if concept.authors and concept.authors.length %},
-      "authors": {{ concept.authors | dump | safe }}{% endif %}{% if concept.doi %},
+      "authors": {{ concept.authors | dump | safe }}{% endif %}{% if concept.sourceUrl %},
+      "sourceUrl": {{ concept.sourceUrl | dump | safe }}{% endif %}{% if concept.doi %},
       "doi": {{ concept.doi | dump | safe }}{% endif %}{% if concept.paperUrl %},
       "paperUrl": {{ (concept.paperUrl | stripTrailingSlash) | dump | safe }}{% endif %}
     }

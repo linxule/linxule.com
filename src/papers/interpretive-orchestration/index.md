@@ -48,4 +48,4 @@ links:
     href: "https://github.com/linxule/interpretive-orchestration-paper"
 ---
 
-Discussed on-site at [Research Memex](/writing/research-memex), which traces how this framework took shape through human–AI collaboration. This is the version-of-record landing page; the full text is open access under CC BY 4.0.
+This is the version-of-record landing page; the full text is open access under CC BY 4.0.

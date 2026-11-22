@@ -117,6 +117,15 @@ await writeTextCard(() => titleCard({
   title: vellum.title, subtitle: vellum.subtitle, kicker: "BUILDS · PUBLIC EXPERIMENT",
 }), `src${vellum.ogImage}`, vellumSource);
 
+// Connect uses an explicit text card matching its page title and subtitle.
+const connectSource = "src/connect.njk";
+const connect = readData(connectSource);
+await writeTextCard(() => titleCard({
+  title: "Connect to linxule.com",
+  subtitle: "Read-only MCP recipes and sibling public servers.",
+  kicker: "CONNECT · MCP & AGENT SURFACES",
+}), `src${connect.ogImage}`, connectSource);
+
 await writeTextCard(() => brandCard(BRAND_CARD), `src${DEFAULT_CARD}`);
 for (const [section, taglineLines] of Object.entries(SECTION_CARDS)) {
   await writeTextCard(() => sectionCard({ kicker: "XULE LIN", title: section, taglineLines }), `src${sectionCardPath(section)}`);

@@ -17,7 +17,7 @@ keywords:
   - automation frontier
   - interpretivism
   - epistemic responsibility
-  - research methods
+  - research methodology
   - replication crisis
   - reflexive quantitative research
   - human-AI collaboration

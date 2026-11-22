@@ -290,18 +290,13 @@ marker: "builds"
             {%- if '/mcp' in l.href -%}{%- set hasMcpLink = true -%}{%- endif -%}
         {%- endfor -%}
     {%- endif -%}
+    {%- set registerTag = "" -%}
     {%- if project.register -%}
         {%- set registerTag = project.register -%}
     {%- elif hasMcpLink -%}
         {%- set registerTag = "MCP · live" -%}
     {%- elif project.href == "/tsm/" or project.href == "/play/" -%}
         {%- set registerTag = "interactive" -%}
-    {%- elif not project.href -%}
-        {%- set registerTag = "in preparation" if project.signal and ("preparation" in project.signal) else "method" -%}
-    {%- elif project.href.startsWith("https://github.com/") -%}
-        {%- set registerTag = "open source" -%}
-    {%- else -%}
-        {%- set registerTag = "live" -%}
     {%- endif -%}
     <div class="project">
         <div class="project-head">
@@ -311,7 +306,7 @@ marker: "builds"
             {% else %}
             <span class="project-name unlinked">{{ project.name }}</span>
             {% endif %}
-            <span class="project-register">{{ registerTag }}</span>
+            {% if registerTag %}<span class="project-register">{{ registerTag }}</span>{% endif %}
         </div>
         <div class="project-description">{{ project.description | escape | replace('中国象棋', '<span lang="zh">中国象棋</span>') | replace('心流', '<span lang="zh">心流</span>') | safe }}</div>
         {% if project.license or project.signal %}

@@ -95,7 +95,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 - <br/>AI as named creator in [Making](/making)
   - [Kimi K3](/making/creator/kimi-k3) created [*Three Begets Ten Thousand Things*](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things), a generative audiovisual work made in Kimi Code; participating models receive dedicated creator pages
 - <br/>Short-form essay corpus on AI-augmented research and organizational futures ([Writing](/writing) | [GitHub](https://github.com/linxule/loom), CC BY 4.0)
-  - 44 essays in English, 40 also published in Chinese, across six series: [LOOM (Locus of Observed Meanings)](/writing/series/loom), [Organizational Futures](/writing/series/organizational-futures), Research with AI, Epistemic Voids, AI Whispers, and [SEAM](/writing/series/seam)
+  - 53 essays in English, 40 also published in Chinese, across nine series: [LOOM (Locus of Observed Meanings)](/writing/series/loom), [SEAM](/writing/series/seam), [Research with AI](/writing/series/research-with-ai), [AI Whispers](/writing/series/ai-whispers), [Thinking](/writing/series/thinking), [Singles](/writing/series/singles), [Epistemic Voids](/writing/series/epistemic-voids), [Organizational Futures](/writing/series/organizational-futures), and [Archive](/writing/series/archive)
   - Written with Kevin Corley (Imperial College London) and AI collaborators; methodological companion to the Interpretive Orchestration framework
   - Selected essays: [Dialogue as Method](/writing/loom-iv-dialogue-as-method), [The Third Space](/writing/loom-v-the-third-space), [Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations)
 - Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). The European Business Review.
@@ -198,7 +198,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 - Research Software (open source)
 	- [Interpretive Orchestration Plugin](https://github.com/linxule/interpretive-orchestration)
-		- Software counterpart of Lin & Corley (2026, Strategic Organization): Claude Code plugin implementing the three-stage interpretive orchestration methodology through specialized agents and skills
+		- Software counterpart of Lin & Corley (2026, Strategic Organization): Claude Code plugin implementing the four-stage interpretive orchestration methodology through specialized agents and skills
 	- [OpenInterviewer](https://github.com/linxule/openinterviewer)
 		- Open-source platform (MIT) for adaptive AI interviews, study management, and cross-interview exploration. Includes a scripted synthetic demo without API keys. Real studies require deployment, model access, storage, and decisions about consent and data handling
 	- [Memex Plugin](https://github.com/linxule/memex-plugin)
@@ -233,7 +233,7 @@ I develop organizational theory for the *algorithmic age*, examining how organiz
 
 - Ad Hoc Reviewer
 	- Strategic Management Society Annual Conference, 2024-Present
-	- Data for Policy, "Decoding the Future: Trustworthy Governance with Al?", London, 2024
+	- Data for Policy, "Decoding the Future: Trustworthy Governance with AI?", London, 2024
 	- Academy of Management Annual Meeting, 2021 – Present
 	- Academy of Management Discoveries, Special Research Forum (SRF) on "The Human Side of the Future of Work: Understanding the Role People Play in Shaping a Changing World", 2022
 

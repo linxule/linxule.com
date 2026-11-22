@@ -138,8 +138,18 @@ marker: "concepts"
         white-space: nowrap;
     }
 
-    .concept-locator.forming {
-        letter-spacing: var(--tracking-label);
+    .concept-locator a {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: var(--ink-ghost);
+        text-underline-offset: 0.2em;
+        transition: color 0.2s ease, text-decoration-color 0.2s ease;
+    }
+
+    .concept-locator a:hover,
+    .concept-locator a:focus-visible {
+        color: var(--bloom);
+        text-decoration-color: var(--bloom);
     }
 
     .concept-oneliner {
@@ -261,10 +271,19 @@ marker: "concepts"
         <div class="concept-entry-head">
             {% if concept.status == "anchored" %}
             <a class="concept-entry-name" href="{{ concept.url }}">{{ concept.term }}</a>
-            <span class="concept-locator">{{ concept.essaySeries or ((concept.essayTitle or 'Essay').split(' — ')[0].split(':')[0]) }}{% if concept.essayYear %} · {{ concept.essayYear }}{% endif %}</span>
+            {%- set essayLocator = concept.essaySeries or ((concept.essayTitle or 'Essay').split(' — ')[0].split(':')[0]) -%}
+            <span class="concept-locator">{% if concept.paperUrl and concept.paperVenue %}<a href="{{ concept.paperUrl }}">{{ concept.paperVenue }}{% if concept.paperYear %} · {{ concept.paperYear }}{% endif %}</a> · {% endif %}{{ essayLocator }}{% if concept.essayYear %} · {{ concept.essayYear }}{% endif %}</span>
+            {% elif concept.status == "grounded" %}
+            {% if concept.sourceUrl %}
+            <a class="concept-entry-name" href="{{ concept.sourceUrl }}">{{ concept.term }}</a>
+            {% else %}
+            <span class="concept-entry-name">{{ concept.term }}</span>
+            {% endif %}
+            {% if concept.sourceLabel %}
+            <span class="concept-locator">{{ concept.sourceLabel }}</span>
+            {% endif %}
             {% else %}
             <span class="concept-entry-name emerging">{{ concept.term }}</span>
-            <span class="concept-locator forming">forming</span>
             {% endif %}
         </div>
         <div class="concept-oneliner">{{ concept.oneliner }}</div>

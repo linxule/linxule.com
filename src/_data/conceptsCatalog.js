@@ -1,9 +1,11 @@
 /**
- * Unified catalog of all 14 signature concepts across anchored essays and forming territories.
+ * Unified catalog of all 14 signature concepts across anchored essays,
+ * scholarship-grounded dissertation/working-paper work, and forming territories.
  *
- * Joins `src/concepts/index.md` (territories, oneliners, open questions),
+ * Joins `src/concepts/index.md` (territories, statuses, oneliners, open questions),
  * `src/writing/*.md` (`defines:`, series, date, title, authors), and
- * `src/papers/<slug>/index.md` (`doi`, `coins`, `onSite`) with canonical slashless URLs.
+ * `src/papers/<slug>/index.md` (`doi`, `venue`, `year`, `coins`, `onSite`) with
+ * canonical slashless URLs.
  */
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -89,6 +91,8 @@ if (existsSync(papersDir)) {
     papers.push({
       url: `/papers/${entry.name}`,
       title: data.paperTitle || data.title || entry.name,
+      venue: typeof data.venue === "string" ? data.venue : null,
+      year: (typeof data.year === "number" ? data.year : null) || yearOf(data.date),
       coins: typeof data.coins === "string" ? data.coins : null,
       onSite: canonicalPathname(data.onSite),
       doi: typeof data.doi === "string" ? data.doi : null,
@@ -127,8 +131,11 @@ for (const territory of conceptsDoc.territories || []) {
       (declaredEssayUrl ? essaysByPath.get(declaredEssayUrl) : null) ||
       null;
     const essayUrl = essayMeta?.url || declaredEssayUrl || null;
-    const status = essayUrl ? "anchored" : "forming";
+    const declaredStatus = item.status || territory.status || null;
+    const status = essayUrl ? "anchored" : declaredStatus || "forming";
     const canonicalUrl = status === "anchored" ? `${essayUrl}#${anchorId}` : `/concepts#${anchorId}`;
+    const sourceUrl = item.source || territory.source || null;
+    const sourceLabel = item.sourceLabel || territory.sourceLabel || null;
     const paper = findPaperForConcept(slug, essayUrl);
     const pairedQuestion =
       territoryQuestions.length === (territory.concepts || []).length && territoryQuestions[idx]
@@ -150,8 +157,12 @@ for (const territory of conceptsDoc.territories || []) {
       date: essayMeta?.date || null,
       authors: essayMeta?.authors || [],
       definition: defEntry?.definition || item.oneliner || "",
+      sourceUrl,
+      sourceLabel,
       doi: paper?.doi || null,
       paperUrl: paper?.url || null,
+      paperVenue: paper?.venue || null,
+      paperYear: paper?.year || null,
       openQuestions: Object.freeze(pairedQuestion),
     });
 
@@ -171,6 +182,7 @@ for (const territory of conceptsDoc.territories || []) {
 
 const bySlug = Object.freeze(Object.fromEntries(list.map((c) => [c.slug, c])));
 const anchoredCount = list.filter((c) => c.status === "anchored").length;
+const groundedCount = list.filter((c) => c.status === "grounded").length;
 const formingCount = list.filter((c) => c.status === "forming").length;
 
 export default {
@@ -178,5 +190,6 @@ export default {
   bySlug,
   territories: Object.freeze(territories),
   anchoredCount,
+  groundedCount,
   formingCount,
 };

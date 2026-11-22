@@ -122,24 +122,84 @@ export function stripTrailingSlash(value) {
   return s.replace(/\/+$/, "") || "/";
 }
 
+const CV_ZH_SECTION_SLUGS = {
+  学术任职: "academic-appointments",
+  教育背景: "education",
+  研究兴趣: "research-interests",
+  奖项与资助: "awards-and-grants",
+  发表论文: "publications",
+  审稿中论文: "under-review",
+  工作论文: "working-papers",
+  公共学术: "public-scholarship",
+  组织研讨会: "organized-symposia",
+  学术报告: "presentations",
+  客座讲座: "guest-lectures",
+  教学经历: "teaching",
+  学术经历: "academic-experience",
+  技能: "skills",
+  "软件、数据与研究成果": "software-data-research-artifacts",
+  审稿服务: "reviewing",
+  服务: "service",
+  专业协会: "professional-affiliations",
+  语言: "languages",
+  推荐人: "references",
+};
+
+export function readableDateZh(dateObj) {
+  const date = new Date(dateObj);
+  return `${date.getUTCFullYear()}年${date.getUTCMonth() + 1}月`;
+}
+
+/**
+ * Word-boundary-clean truncation with a single ellipsis (`…`).
+ * Never cuts mid-word on space-delimited prose and trims trailing punctuation
+ * or dashes before the ellipsis.
+ */
+export function truncateWords(value, length = 147) {
+  if (value == null) return "";
+  const str = String(value).replace(/\s+/g, " ").trim();
+  if (str.length <= length) return str;
+  const slice = str.slice(0, length);
+  const lastSpace = slice.lastIndexOf(" ");
+  let head = lastSpace > Math.floor(length * 0.5) ? slice.slice(0, lastSpace) : slice;
+  head = head.replace(/[\s,;:\-—–(]+$/u, "").trim();
+  return `${head}…`;
+}
+
+function cvSectionSlug(inner) {
+  const plain = decodeHTML(String(inner).replace(/<[^>]+>/g, "")).trim();
+  if (!plain) return "";
+  if (CV_ZH_SECTION_SLUGS[plain]) return CV_ZH_SECTION_SLUGS[plain];
+  return slugify(plain).replace(/-+/g, "-").replace(/^-|-$/g, "");
+}
+
 /**
  * Normalize CV HTML heading hierarchy without editing raw `#` headings in `src/cv/index.md`
  * or `src/cv-zh/index.md`:
  *   - opening `<h2>Name</h2>` -> `<h1>Name</h1>`
  *   - opening `<h3>contact</h3>` lines before the first section -> `<p class="cv-contact">...</p>`
- *   - all section `<h1>...</h1>` headings -> `<h2>...</h2>` (preserving attributes and inner HTML)
+ *   - all section `<h1>...</h1>` headings -> `<h2 id="<slug>">...</h2>` (preserving attributes and inner HTML)
  */
 export function cvHtml(html) {
   if (!html) return "";
   let promotedName = false;
   let seenSection = false;
+  const usedIds = new Set();
   return String(html).replace(
     /<(h[123])(\b[^>]*)>([\s\S]*?)<\/\1>/gi,
     (match, tag, attrs, inner) => {
       const lower = tag.toLowerCase();
       if (lower === "h1") {
         seenSection = true;
-        return `<h2${attrs}>${inner}</h2>`;
+        if (/\bid\s*=/i.test(attrs)) {
+          return `<h2${attrs}>${inner}</h2>`;
+        }
+        const base = cvSectionSlug(inner);
+        if (!base) return `<h2${attrs}>${inner}</h2>`;
+        let id = base;
+        for (let n = 2; usedIds.has(id); n++) id = `${base}-${n}`;
+        usedIds.add(id);
+        return `<h2 id="${id}"${attrs}>${inner}</h2>`;
       }
       if (lower === "h2" && !seenSection && !promotedName) {
         promotedName = true;
@@ -198,6 +258,9 @@ export default function(eleventyConfig) {
       timeZone: 'UTC'
     });
   });
+
+  eleventyConfig.addFilter("readableDateZh", readableDateZh);
+  eleventyConfig.addFilter("truncateWords", truncateWords);
 
   // ISO date format (YYYY-MM-DD)
   eleventyConfig.addFilter("isoDate", (dateObj) => {
@@ -278,11 +341,8 @@ export default function(eleventyConfig) {
     // Get first non-empty paragraph (split by double newline)
     const paras = text.split(/\n\n/).map(p => p.trim()).filter(p => p.length > 0);
     const firstPara = paras[0] || '';
-    // Truncate if needed
-    if (firstPara.length > length) {
-      return firstPara.slice(0, length).trim() + '...';
-    }
-    return firstPara;
+    // Truncate cleanly at a word boundary if needed
+    return truncateWords(firstPara, length);
   });
 
   // Strip HTML tags for clean markdown output (used in .md templates)

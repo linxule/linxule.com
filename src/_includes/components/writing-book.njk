@@ -53,7 +53,13 @@
         </p>
 
         <div class="essay-meta">
-            {% if essay.data.authors %}with {{ essay.data.authors | join(", ") }}<br>{% endif %}
+            {%- set coauthors = [] -%}
+            {%- for author in essay.data.authors | default([]) -%}
+                {%- if author | trim != "Xule Lin" -%}
+                    {%- set coauthors = (coauthors.push(author), coauthors) -%}
+                {%- endif -%}
+            {%- endfor -%}
+            {% if coauthors.length %}with {{ coauthors | join(", ") }}<br>{% endif %}
             {{ essay.date | readableDate }}
         </div>
 

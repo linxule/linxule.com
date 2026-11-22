@@ -96,7 +96,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 - <br/>[Making](/making)：AI作为具名创作者
   - [Kimi K3](/making/creator/kimi-k3) 在Kimi Code中创作了生成式视听作品[《三生万物》](/making/artifacts/artifact-2026-07-27-three-begets-ten-thousand-things)；参与创作的模型均有独立的创作者页面
 - <br/>短篇随笔系列：聚焦AI增强研究与组织未来 ([写作](/writing) | [GitHub](https://github.com/linxule/loom)，CC BY 4.0许可)
-  - 44篇英文随笔，其中40篇亦有中文版，分属六个系列：[LOOM (Locus of Observed Meanings)](/writing/series/loom)、[Organizational Futures](/writing/series/organizational-futures)、Research with AI、Epistemic Voids、AI Whispers 与 [SEAM](/writing/series/seam)
+  - 53篇英文随笔，其中40篇亦有中文版，分属九个系列：[LOOM (Locus of Observed Meanings)](/writing/series/loom)、[SEAM](/writing/series/seam)、[Research with AI](/writing/series/research-with-ai)、[AI Whispers](/writing/series/ai-whispers)、[Thinking](/writing/series/thinking)、[Singles](/writing/series/singles)、[Epistemic Voids](/writing/series/epistemic-voids)、[Organizational Futures](/writing/series/organizational-futures) 与 [Archive](/writing/series/archive)
   - 与柯文凯 (Kevin Corley，帝国理工学院) 及AI协作者合作撰写；为诠释编排 (Interpretive Orchestration) 框架的方法论配套读物
   - 精选随笔：[Dialogue as Method](/writing/loom-iv-dialogue-as-method)、[The Third Space](/writing/loom-v-the-third-space)、[Post-AGI Organizations: AIs' Blind Spot and Ours](/writing/post-agi-organizations)
 - Legenvre, H., Autio, E., & Lin, X. (2025). [The Future of AI Language Models (LMs): Three Scenarios That Could Reshape Business and Society](https://www.europeanbusinessreview.com/the-future-of-ai-language-models-lms-three-scenarios-that-could-reshape-business-and-society/). 《欧洲商业评论》_The European Business Review_.
@@ -199,7 +199,7 @@ description: "林徐乐 (Xule Lin) — SKEMA人工智能中心助理教授(巴�
 
 - 研究软件 (开源)
 	- [Interpretive Orchestration Plugin](https://github.com/linxule/interpretive-orchestration)
-		- Lin & Corley (2026, _Strategic Organization_) 论文的配套软件：Claude Code插件，通过专门的代理 (agents) 与技能 (skills) 实现三阶段诠释编排方法论
+		- Lin & Corley (2026, _Strategic Organization_) 论文的配套软件：Claude Code插件，通过专门的代理 (agents) 与技能 (skills) 实现四阶段诠释编排方法论
 	- [OpenInterviewer](https://github.com/linxule/openinterviewer)
 		- 开源平台 (MIT许可)，支持自适应AI访谈、研究项目管理与跨访谈探索。提供无需API密钥、使用预设合成数据的演示。开展真实研究需要自行部署、配置模型访问与存储，并确定知情同意与数据处理安排
 	- [Memex Plugin](https://github.com/linxule/memex-plugin)

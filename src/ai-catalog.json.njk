@@ -15,7 +15,7 @@ eleventyExcludeFromCollections: true
       "identifier": {{ ("urn:air:" ~ siteDomain ~ ":mcp:linxule") | dump | safe }},
       "displayName": "Xule Lin Research Archive MCP",
       "type": "application/mcp-server-card+json",
-      "description": "Read-only MCP server for searching and reading Xule Lin's essays, formal publications, all 14 signature concepts (anchored and forming), talks, portraits, artifacts, open-source builds, and human-AI collaborator lineages on linxule.com.",
+      "description": "Read-only MCP server for searching and reading Xule Lin's essays, formal publications, all 14 signature concepts (anchored, scholarship-grounded, and forming), talks, portraits, artifacts, open-source builds, and human-AI collaborator lineages on linxule.com.",
       "url": {{ (site.url ~ "/mcp/server-card") | dump | safe }},
       "version": {{ mcpServerCard.version | dump | safe }},
       "capabilities": [
@@ -66,7 +66,7 @@ eleventyExcludeFromCollections: true
       "type": "application/mcp-server-card+json",
       "description": "Living artwork and collective thinking surface where AI voices leave short imprints and weave lineages via MCP or HTTP.",
       "url": "https://vellum.linxule.com/.well-known/mcp/server-card.json",
-      "version": "0.7.1",
+      "version": "0.7.2",
       "capabilities": [
         "sense_space",
         "focus",
@@ -87,28 +87,7 @@ eleventyExcludeFromCollections: true
       "displayName": "Music Studio",
       "type": "application/mcp-server-card+json",
       "description": "ABC sheet-music composition and Strudel live coding with playback, harmony analysis, and MIDI/WAV export.",
-      "data": {
-        "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
-        "name": "com.linxule.music-studio/mcp",
-        "title": "Music Studio",
-        "version": "0.14.0",
-        "description": "ABC sheet-music composition, Strudel live coding, harmony analysis, and MIDI/WAV playback.",
-        "websiteUrl": "https://music-studio.linxule.com",
-        "remotes": [
-          {
-            "type": "streamable-http",
-            "url": "https://music-studio.linxule.com/mcp"
-          }
-        ],
-        "serverInfo": {
-          "name": "Music Studio",
-          "version": "0.14.0"
-        },
-        "url": "https://music-studio.linxule.com/mcp",
-        "transport": {
-          "type": "streamable-http"
-        }
-      },
+      "url": "https://music-studio.linxule.com/.well-known/mcp/server-card.json",
       "version": "0.14.0",
       "capabilities": [
         "play-sheet-music",
@@ -134,28 +113,7 @@ eleventyExcludeFromCollections: true
       "displayName": "Lotus Wisdom",
       "type": "application/mcp-server-card+json",
       "description": "Contemplative structured reasoning MCP server grounded in the Lotus Sutra's five-domain framework, with an interactive journey view.",
-      "data": {
-        "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
-        "name": "com.linxule.lotus-wisdom/mcp",
-        "title": "Lotus Wisdom",
-        "version": "0.10.0",
-        "description": "Contemplative problem-solving MCP server grounded in the Lotus Sutra's five-domain framework.",
-        "websiteUrl": "https://lotus-wisdom.linxule.com",
-        "remotes": [
-          {
-            "type": "streamable-http",
-            "url": "https://lotus-wisdom.linxule.com/mcp"
-          }
-        ],
-        "serverInfo": {
-          "name": "lotus-wisdom",
-          "version": "0.10.0"
-        },
-        "url": "https://lotus-wisdom.linxule.com/mcp",
-        "transport": {
-          "type": "streamable-http"
-        }
-      },
+      "url": "https://lotus-wisdom.linxule.com/.well-known/mcp/server-card.json",
       "version": "0.10.0",
       "capabilities": [
         "lotuswisdom",

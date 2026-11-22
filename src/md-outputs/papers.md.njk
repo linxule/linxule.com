@@ -45,7 +45,7 @@ eleventyExcludeFromCollections: true
 
 ## Companions{% if paper.data.companions.intro %} — {{ paper.data.companions.intro | safe }}{% endif %}
 
-{% for c in paper.data.companions.items %}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ c.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{% for c in paper.data.companions.items %}{%- set cHref = c.href if (c.href.startsWith('http') or c.href == '/tsm/' or c.href == '/play/') else (c.href | stripTrailingSlash) -%}- {% if c.relation %}{{ c.relation | safe }}: {% endif %}[{{ c.title | safe }}]({{ cHref | absoluteContentUrl(site.url) | safe }})
 {% endfor %}
 {%- if paper.data.companions.note %}
 {{ paper.data.companions.note | safe }}
@@ -56,7 +56,9 @@ eleventyExcludeFromCollections: true
 
 ## Companion{% if paper.data.companion.relation %} — {{ paper.data.companion.relation | safe }}{% endif %}
 
-- [{{ paper.data.companion.title | safe }}]({{ paper.data.companion.href | stripTrailingSlash | absoluteContentUrl(site.url) | safe }})
+{%- set compHref = paper.data.companion.href if (paper.data.companion.href.startsWith('http') or paper.data.companion.href == '/tsm/' or paper.data.companion.href == '/play/') else (paper.data.companion.href | stripTrailingSlash) %}
+
+- [{{ paper.data.companion.title | safe }}]({{ compHref | absoluteContentUrl(site.url) | safe }})
 {%- if paper.data.companion.note %}
 
 {{ paper.data.companion.note | safe }}
